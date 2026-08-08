@@ -28,7 +28,7 @@ struct ContentView: View {
                     )
                 }
             }
-            .navigationTitle("ExpenseKu")
+            .navigationTitle("Expenses")
         }
     }
 }

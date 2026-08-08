@@ -16,6 +16,10 @@ struct ExpenseEditorView: View {
 
     /// nil = adding a new expense; non-nil = editing an existing one.
     let editing: Expense?
+    /// Called after save/cancel/delete. When nil, the view dismisses itself
+    /// (sheet or pushed presentation); a split-view detail pane passes a closure
+    /// that clears its selection instead.
+    let onFinish: (() -> Void)?
 
     @State private var amount: Decimal
     @State private var date: Date
@@ -24,8 +28,9 @@ struct ExpenseEditorView: View {
     @State private var people: [Person]
     @FocusState private var amountFocused: Bool
 
-    init(editing: Expense? = nil) {
+    init(editing: Expense? = nil, onFinish: (() -> Void)? = nil) {
         self.editing = editing
+        self.onFinish = onFinish
         _amount = State(initialValue: editing?.amount ?? 0)
         _date = State(initialValue: editing?.date ?? .now)
         _note = State(initialValue: editing?.note ?? "")
@@ -84,7 +89,7 @@ struct ExpenseEditorView: View {
                 Button("Save", action: save).disabled(!canSave)
             }
             ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") { dismiss() }
+                Button("Cancel") { finish() }
             }
         }
         .onAppear {
@@ -105,11 +110,15 @@ struct ExpenseEditorView: View {
         target.note = note.trimmingCharacters(in: .whitespacesAndNewlines)
         target.category = category
         target.people = people
-        dismiss()
+        finish()
     }
 
     private func deleteExpense() {
         if let editing { context.delete(editing) }
-        dismiss()
+        finish()
+    }
+
+    private func finish() {
+        if let onFinish { onFinish() } else { dismiss() }
     }
 }

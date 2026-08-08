@@ -10,7 +10,9 @@ See `spec.md` for scope and `CONTEXT.md` (repo root) for the ubiquitous language
 - **Insights** — Spend-by-Category, Spend-over-Time, People Leaderboard.
 - **Manage** — Categories and People (two sections/subscreens under one tab).
 
-**iPad / Mac** — `NavigationSplitView` with a sidebar (Expenses · Insights · Categories · People) and a detail pane. The expense list uses **list + detail**: selecting a row edits it in the detail pane. On iPhone, editing is a sheet.
+**iPad / Mac** — `NavigationSplitView` with a sidebar (Expenses · Insights · Categories · People) and a detail pane. The expense list uses **list + detail**: selecting a row edits it in the detail pane.
+
+**Implementation note (ticket 06):** the Expenses tab uses a single `NavigationSplitView` that adapts automatically — list+detail on iPad/Mac, and on iPhone it collapses so selecting a row **pushes** the editor (rather than the sheet originally sketched here). **Add** is still always a sheet (fast-add, §2). The list is **grouped by month** (reverse-chronological) for readability. The broader sidebar-across-all-tabs layout remains a future refinement; each tab currently owns its own navigation.
 
 Screens: Expense List · Add/Edit Expense (sheet) · Insights · Manage Categories · Manage People.
 

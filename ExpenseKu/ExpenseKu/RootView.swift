@@ -12,7 +12,7 @@ import SwiftUI
 struct RootView: View {
     var body: some View {
         TabView {
-            ContentView()
+            ExpensesView()
                 .tabItem { Label("Expenses", systemImage: "list.bullet") }
             InsightsView()
                 .tabItem { Label("Insights", systemImage: "chart.pie") }

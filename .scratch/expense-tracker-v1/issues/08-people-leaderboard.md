@@ -1,7 +1,6 @@
 # 08 — People leaderboard ("who did I spend the most with")
 
-Status: ready-for-agent
-Blocked by: 03, 05
+Status: resolved
 
 The headline analytics feature: rank companions by attributed spend.
 
@@ -17,3 +16,6 @@ The headline analytics feature: rank companions by attributed spend.
 - Leaderboard ranks people correctly, and the category + date filters produce the expected subsets.
 
 ## Comments
+
+- 2026-08-09: Implemented. Pure aggregation in `Analytics/PeopleLeaderboard.swift` (`ranked(from:category:dateRange:)` → `[PersonSpend]`, full-amount-to-each attribution, desc by total then name) — UI-free and dependency-free so it's unit-testable. `Features/Insights/PeopleLeaderboardView` renders the ranked list with a **period** filter (`DateRangeFilter`: all-time / last-30 / this-month / this-year) and a **category** filter. Hosted by `InsightsView` in the Insights tab (replaces the placeholder). Verified **BUILD SUCCEEDED** on the iOS 17 simulator.
+- Note: no XCTest target exists yet (adding one needs Xcode). The `Analytics/` layer was written UI-free precisely so the attribution + filter logic can be covered by unit tests once a test target is added — recommended follow-up to nail the DoD's "filters produce the expected subsets".

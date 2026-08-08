@@ -14,23 +14,10 @@ struct RootView: View {
         TabView {
             ContentView()
                 .tabItem { Label("Expenses", systemImage: "list.bullet") }
-            InsightsPlaceholderView()
+            InsightsView()
                 .tabItem { Label("Insights", systemImage: "chart.pie") }
             ManageView()
                 .tabItem { Label("Manage", systemImage: "folder") }
-        }
-    }
-}
-
-private struct InsightsPlaceholderView: View {
-    var body: some View {
-        NavigationStack {
-            ContentUnavailableView(
-                "Insights",
-                systemImage: "chart.pie",
-                description: Text("Charts & the people leaderboard arrive in tickets 07–08.")
-            )
-            .navigationTitle("Insights")
         }
     }
 }

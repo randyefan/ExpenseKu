@@ -11,6 +11,7 @@ import SwiftData
 
 struct CategoryPicker: View {
     @Binding var selection: Category?
+    @Environment(\.dismiss) private var dismiss
     @Query(sort: \Category.name) private var categories: [Category]
     @State private var showingNew = false
 
@@ -19,6 +20,7 @@ struct CategoryPicker: View {
             ForEach(categories) { category in
                 Button {
                     selection = category
+                    dismiss()
                 } label: {
                     HStack {
                         Text(category.name)

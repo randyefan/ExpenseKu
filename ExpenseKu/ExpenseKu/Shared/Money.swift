@@ -13,4 +13,10 @@ extension Decimal {
     func formattedIDR() -> String {
         formatted(.currency(code: "IDR").precision(.fractionLength(0)))
     }
+
+    /// Lossy Double for charting only (Swift Charts requires a Plottable value).
+    /// Never use this in the money path — Decimal remains the source of truth.
+    var doubleValue: Double {
+        NSDecimalNumber(decimal: self).doubleValue
+    }
 }

@@ -1,7 +1,6 @@
 # 02 — Project scaffold: SwiftUI multiplatform + SwiftData + CloudKit
 
-Status: needs-info
-Blocked by: 01
+Status: ready-for-agent
 
 Create the Xcode project and wire up persistence + sync.
 

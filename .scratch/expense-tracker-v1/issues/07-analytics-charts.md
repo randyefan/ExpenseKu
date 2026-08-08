@@ -1,7 +1,7 @@
 # 07 — Analytics: spend by category & spend over time
 
-Status: needs-info
-Blocked by: 01, 03, 05
+Status: ready-for-agent
+Blocked by: 03, 05
 
 The two overview charts, using Swift Charts.
 

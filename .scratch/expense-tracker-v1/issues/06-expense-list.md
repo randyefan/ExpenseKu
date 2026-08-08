@@ -1,7 +1,7 @@
 # 06 — Expense list
 
-Status: needs-info
-Blocked by: 01, 03, 05
+Status: ready-for-agent
+Blocked by: 03, 05
 
 Chronological list of expenses as the app's home surface.
 

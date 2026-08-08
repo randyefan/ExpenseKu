@@ -26,7 +26,7 @@ See `CONTEXT.md` at the repo root for the ubiquitous language this spec uses.
 - `amount`: `Decimal` — single implicit currency (IDR), no currency field in v1.
 - `date`: `Date` (date + time) — defaults to now at entry; UI surfaces date only.
 - `note`: `String`.
-- `category`: to-one → **Category**.
+- `category`: to-one → **Category**. **Required at entry**; stored-optional for CloudKit, may become nil only via category deletion (shown as "Uncategorized").
 - `people`: many-to-many → **Person** (companions).
 
 ### Category
@@ -62,10 +62,14 @@ See `CONTEXT.md` at the repo root for the ubiquitous language this spec uses.
 
 Budgets/limits · recurring expenses · receipt photos · multi-currency · bank/CSV import · income tracking · bill-splitting/beneficiary tracking · widgets/Siri/App Intents.
 
-## Open edges (tracked, not blocking)
+## Resolved edges (see design.md + ADRs)
 
-- **Person/Category de-duplication** — must be prevented in the UI (pick-from-existing) since CloudKit disallows unique constraints. Two "Fadil" records would silently corrupt the leaderboard.
-- **Delete semantics** — decide what happens to expenses when a referenced Category or Person is deleted.
+- **Person/Category de-duplication** — pick-from-existing only; on "＋ New", a case-insensitive name match **prompts** the owner rather than creating a duplicate. → **ADR-0002**.
+- **Delete semantics** — deletes **nullify, never cascade**: deleting a Category leaves expenses "Uncategorized"; deleting a Person removes them from expenses. Expenses are never destroyed. → **ADR-0001**.
+- **Category required** — mandatory on every new expense; "Uncategorized" is a display-only state for expenses whose category was later deleted.
+
+## Still deferred
+
 - **Multi-currency** — the `Decimal`-without-currency-field choice makes this a future migration, not a free addition.
 
 ## Comments

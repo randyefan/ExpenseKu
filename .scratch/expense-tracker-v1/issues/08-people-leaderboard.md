@@ -1,7 +1,7 @@
 # 08 — People leaderboard ("who did I spend the most with")
 
-Status: needs-info
-Blocked by: 01, 03, 05
+Status: ready-for-agent
+Blocked by: 03, 05
 
 The headline analytics feature: rank companions by attributed spend.
 

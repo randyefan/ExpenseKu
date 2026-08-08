@@ -1,7 +1,7 @@
 # 05 — Create / edit / delete an Expense
 
-Status: needs-info
-Blocked by: 01, 03, 04
+Status: ready-for-agent
+Blocked by: 03, 04
 
 The core logging loop: the add/edit-expense screen and flow.
 

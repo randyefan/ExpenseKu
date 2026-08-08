@@ -1,6 +1,6 @@
 # 01 — Design: architecture, UX flows & data schema
 
-Status: ready-for-agent
+Status: resolved
 
 Design the app before implementation. This is a collaborative design ticket — the agent proposes, the owner decides. Output is written design artifacts the implementation tickets (02–08) depend on.
 
@@ -27,3 +27,5 @@ See `../spec.md` for v1 scope and `CONTEXT.md` (repo root) for the ubiquitous la
 - Tickets 02–08 are unblocked (their "Blocked by: 01" removed) once this is accepted.
 
 ## Comments
+
+- 2026-08-09: Design accepted. Decisions: 3-tab iPhone nav (Expenses/Insights/Manage); delete = nullify (ADR-0001); de-dup = prompt on case-insensitive match (ADR-0002); category required at entry. Artifacts: `../design.md`, `docs/adr/0001-nullify-on-delete.md`, `docs/adr/0002-app-level-dedup-with-prompt.md`. Tickets 02–08 unblocked.

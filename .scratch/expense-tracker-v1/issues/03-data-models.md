@@ -1,7 +1,7 @@
 # 03 — Data models: Expense, Category, Person
 
-Status: needs-info
-Blocked by: 01, 02
+Status: ready-for-agent
+Blocked by: 02
 
 Implement the SwiftData `@Model` types per the design from ticket 01.
 

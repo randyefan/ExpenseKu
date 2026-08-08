@@ -1,7 +1,7 @@
 # 04 — Manage Categories & People (CRUD + pick-from-existing)
 
-Status: needs-info
-Blocked by: 01, 03
+Status: ready-for-agent
+Blocked by: 03
 
 Screens and pickers to add, rename, and delete Categories and People, and to select them on an expense.
 

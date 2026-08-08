@@ -2,60 +2,38 @@
 //  ContentView.swift
 //  ExpenseKu
 //
-//  Created by Randy Efan Jayaputra on 09/08/26.
+//  Placeholder home screen. The real Expenses list + logging loop arrive in
+//  tickets 05/06; this exists only so the app compiles and runs after ticket 03.
 //
 
 import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+    @Query(sort: \Expense.date, order: .reverse) private var expenses: [Expense]
 
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
-                }
-                .onDelete(perform: deleteItems)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
+        NavigationStack {
+            List(expenses) { expense in
+                LabeledContent(expense.note.isEmpty ? "Expense" : expense.note) {
+                    Text(expense.amount, format: .number)
                 }
             }
-        } detail: {
-            Text("Select an item")
-        }
-    }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
+            .overlay {
+                if expenses.isEmpty {
+                    ContentUnavailableView(
+                        "No Expenses",
+                        systemImage: "creditcard",
+                        description: Text("Expense logging arrives in ticket 05.")
+                    )
+                }
             }
+            .navigationTitle("ExpenseKu")
         }
     }
 }
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+        .modelContainer(for: [Expense.self, Category.self, Person.self], inMemory: true)
 }

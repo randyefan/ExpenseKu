@@ -12,8 +12,12 @@ import SwiftData
 struct ExpenseKuApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
+            Expense.self,
+            Category.self,
+            Person.self,
         ])
+        // cloudKitDatabase defaults to .automatic, which mirrors to the private
+        // CloudKit container declared in ExpenseKu.entitlements.
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
         do {

@@ -26,35 +26,32 @@ struct ExpensesView: View {
 
     var body: some View {
         NavigationSplitView {
-            Group {
-                if expenses.isEmpty {
-                    ContentUnavailableView(
-                        "No Expenses",
-                        systemImage: "creditcard",
-                        description: Text("Tap + to log your first expense.")
-                    )
-                } else {
-                    VStack(spacing: 0) {
-                        cycleHeader
-                        cycleContent
-                    }
+            ZStack {
+                Theme.bg.ignoresSafeArea()
+                // Header + arrows stay even with no expenses at all (home-empty.png);
+                // the content area carries the right empty message.
+                VStack(spacing: 0) {
+                    cycleHeader
+                    cycleContent
                 }
             }
             .navigationTitle("Expenses")
             .toolbar {
+                ToolbarItem(placement: .navigation) {
+                    Button {
+                        showingSettings = true
+                    } label: {
+                        Label("Monthly Start Date", systemImage: "calendar")
+                    }
+                    .tint(Theme.textSecondary)
+                }
                 ToolbarItem(placement: .primaryAction) {
                     Button {
                         showingNew = true
                     } label: {
                         Label("Add Expense", systemImage: "plus")
                     }
-                }
-                ToolbarItem {
-                    Button {
-                        showingSettings = true
-                    } label: {
-                        Label("Monthly Start Date", systemImage: "calendar")
-                    }
+                    .buttonStyle(AccentCircleButtonStyle())
                 }
             }
             .sheet(isPresented: $showingNew) {
@@ -83,12 +80,12 @@ struct ExpensesView: View {
     // MARK: - Cycle header (navigator + spending total)
 
     private var cycleHeader: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 16) {
             HStack {
                 Button {
                     cycle = cycle.previous(payday: payday, calendar: calendar)
                 } label: {
-                    Image(systemName: "chevron.left")
+                    Image(systemName: "chevron.left").font(.body.weight(.semibold))
                 }
                 .disabled(!canGoBack)
 
@@ -96,10 +93,11 @@ struct ExpensesView: View {
 
                 VStack(spacing: 2) {
                     Text(cycle.title(calendar: calendar))
-                        .font(.headline)
+                        .font(.dsHeadline).fontWeight(.bold)
+                        .foregroundStyle(Theme.text)
                     Text(cycle.rangeText(calendar: calendar))
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .font(.dsCaption)
+                        .foregroundStyle(Theme.textSecondary)
                 }
 
                 Spacer()
@@ -107,25 +105,22 @@ struct ExpensesView: View {
                 Button {
                     cycle = cycle.next(payday: payday, calendar: calendar)
                 } label: {
-                    Image(systemName: "chevron.right")
+                    Image(systemName: "chevron.right").font(.body.weight(.semibold))
                 }
                 .disabled(!canGoForward)
             }
-            .font(.title3)
 
-            HStack {
-                Text("Spending")
-                    .foregroundStyle(.secondary)
-                Spacer()
+            VStack(spacing: 4) {
+                SectionHeaderText("Spending")
                 // Spending total only — the domain has no income concept (Q6).
-                Text(cycleTotal.formattedIDR())
-                    .monospacedDigit()
+                // Hero total is the one place the coral accent lands on money.
+                MoneyText(cycleTotal, font: .dsHero, color: Theme.accent)
             }
-            .font(.subheadline.weight(.semibold))
         }
-        .padding(.horizontal)
-        .padding(.vertical, 10)
-        .background(.bar)
+        .cardStyle()
+        .padding(.horizontal, Metric.screenPadding)
+        .padding(.top, 8)
+        .padding(.bottom, Metric.cardGap)
     }
 
     // MARK: - Cycle content (day groups, or an inline empty state)
@@ -133,23 +128,46 @@ struct ExpensesView: View {
     @ViewBuilder
     private var cycleContent: some View {
         if cycleExpenses.isEmpty {
-            ContentUnavailableView(
-                "No expenses this cycle",
-                systemImage: "calendar",
-                description: Text("Nothing logged for \(cycle.rangeText(calendar: calendar)).")
-            )
+            if expenses.isEmpty {
+                // No expenses anywhere yet — the first-run empty state (home-empty.png).
+                EmptyStateView(
+                    title: "No expenses yet",
+                    systemImage: "doc.text",
+                    message: "Tap + to log your first expense."
+                )
+            } else {
+                // Data exists in other cycles; this one is just empty.
+                EmptyStateView(
+                    title: "No expenses this cycle",
+                    systemImage: "calendar",
+                    message: "Nothing logged for \(cycle.rangeText(calendar: calendar))."
+                )
+            }
         } else {
             List(selection: $selection) {
                 ForEach(dayGroups) { group in
-                    Section(group.title) {
+                    Section {
                         ForEach(group.expenses) { expense in
                             ExpenseRow(expense: expense)
                                 .tag(expense)
+                                .cardStyle()
+                                .listRowBackground(Color.clear)
+                                .listRowSeparator(.hidden)
+                                .listRowInsets(EdgeInsets(
+                                    top: 4, leading: Metric.screenPadding,
+                                    bottom: 4, trailing: Metric.screenPadding
+                                ))
                         }
                         .onDelete { delete($0, in: group) }
+                    } header: {
+                        SectionHeaderText(group.title)
+                            .padding(.leading, 4)
                     }
                 }
             }
+            .listStyle(.plain)
+            .scrollContentBackground(.hidden)
+            .background(Theme.bg)
         }
     }
 

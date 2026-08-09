@@ -71,16 +71,38 @@ struct MoneyText: View {
 
 struct CategoryIcon: View {
     let name: String
-    var systemImage: String = "tag.fill"
+    var systemImage: String?
     var body: some View {
         Circle()
             .fill(Theme.categoryTint(name))
             .frame(width: Metric.iconSize, height: Metric.iconSize)
             .overlay(
-                Image(systemName: systemImage)
+                Image(systemName: systemImage ?? CategoryIcon.symbol(for: name))
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundStyle(Theme.text.opacity(0.65))
             )
+    }
+
+    /// Best-effort mapping from a category name to a representative SF Symbol.
+    /// Purely cosmetic — falls back to a neutral tag so any name renders.
+    static func symbol(for name: String) -> String {
+        let n = name.lowercased()
+        let table: [(match: [String], symbol: String)] = [
+            (["groc", "belanja", "market", "mart"], "bag.fill"),
+            (["food", "makan", "dining", "dinner", "lunch", "resto", "restaurant"], "fork.knife"),
+            (["coffee", "kopi", "snack", "cafe", "drink"], "cup.and.saucer.fill"),
+            (["transport", "travel", "grab", "gojek", "taxi", "fuel", "bensin", "car"], "car.fill"),
+            (["util", "listrik", "electric", "water", "gas", "internet", "wifi", "phone", "bill"], "bolt.fill"),
+            (["home", "rent", "kos", "house", "sewa"], "house.fill"),
+            (["health", "medic", "doctor", "obat", "pharmacy"], "cross.case.fill"),
+            (["shop", "cloth", "fashion", "baju"], "cart.fill"),
+            (["fun", "entertain", "movie", "game", "hobby"], "gamecontroller.fill"),
+            (["gift", "donat", "charity"], "gift.fill"),
+        ]
+        for entry in table where entry.match.contains(where: n.contains) {
+            return entry.symbol
+        }
+        return "tag.fill"
     }
 }
 
@@ -92,9 +114,15 @@ struct EmptyStateView: View {
     let message: String
     var body: some View {
         VStack(spacing: 12) {
-            Image(systemName: systemImage)
-                .font(.system(size: 44, weight: .light))
-                .foregroundStyle(Theme.accent)
+            ZStack {
+                Circle()
+                    .fill(Theme.textSecondary.opacity(0.12))
+                    .frame(width: 96, height: 96)
+                Image(systemName: systemImage)
+                    .font(.system(size: 40, weight: .regular))
+                    .foregroundStyle(Theme.textSecondary)
+            }
+            .padding(.bottom, 4)
             Text(title)
                 .font(.dsTitle).fontWeight(.bold)
                 .foregroundStyle(Theme.text)

@@ -1,6 +1,6 @@
 # 01 — Account model + Expense.account + glossary
 
-Status: ready-for-agent
+Status: resolved
 
 Add the `Account` entity and wire it to `Expense`. See `../spec.md`.
 
@@ -21,3 +21,5 @@ Add the `Account` entity and wire it to `Expense`. See `../spec.md`.
 - No `Double` in the money path (unchanged); all Account properties CloudKit-safe.
 
 ## Comments
+
+Resolved — implemented and verified: full test build succeeds on the iOS simulator (iPhone 17 Pro) and all 16 unit tests pass (incl. 6 new AccountAnalyticsTests).

@@ -30,16 +30,21 @@ enum PeopleLeaderboard {
     /// - Parameters:
     ///   - expenses: the expenses to aggregate.
     ///   - category: when set, only expenses in this category are counted.
+    ///   - account: when set, only expenses paid from this account are counted.
     ///   - dateRange: when set, only expenses whose date falls inside are counted.
     static func ranked(
         from expenses: [Expense],
         category: Category? = nil,
+        account: Account? = nil,
         dateRange: ClosedRange<Date>? = nil
     ) -> [PersonSpend] {
         var totals: [PersistentIdentifier: (person: Person, total: Decimal, count: Int)] = [:]
 
         for expense in expenses {
             if let category, expense.category?.persistentModelID != category.persistentModelID {
+                continue
+            }
+            if let account, expense.account?.persistentModelID != account.persistentModelID {
                 continue
             }
             if let dateRange, !dateRange.contains(expense.date) {

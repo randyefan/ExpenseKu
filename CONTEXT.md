@@ -13,6 +13,8 @@ This document is the source of truth for the project's **ubiquitous language**. 
 - **Person** — a reusable entity naming a **companion** the owner was *with* when spending. An Expense can be tagged with many People; a Person appears across many Expenses (many-to-many).
   - A Person is **who I was with**, *not* who I paid on behalf of. There is no bill-splitting or beneficiary tracking.
 - **Companion** — synonym for Person in prose; the People tagged on an Expense.
+- **Account** — a reusable, owner-defined **payment source** an Expense was paid from (e.g. "Cash", "GoPay", a bank). A first-class tag-entity like Category, but **optional** on an Expense and single-select. It is a **label only** — *not* a balance-bearing ledger: no balances, income, top-ups, transfers, or reconciliation. Deleting an Account nullifies it on its expenses (ADR-0001), leaving them **Unassigned**.
+- **Unassigned** — the display state of an Expense with no Account (`account = nil`), whether never set (accounts are optional at entry) or left behind by Account deletion. The Account analogue of **Uncategorized**.
 - **Spend attribution** — how an Expense's amount is credited to its People for ranking. Rule: **full amount to each companion**. A 100k Expense tagged with two People counts 100k toward *each*. This is a per-person ranking, not a sum, so totals can exceed the grand total by design. Attribution is computed at query time; nothing extra is stored.
 - **People leaderboard** — the analytics view ranking People by total attributed spend, with a count of shared Expenses, filterable by Category and date range. This is the feature that answers "who did I spend the most with."
 
@@ -20,7 +22,7 @@ This document is the source of truth for the project's **ubiquitous language**. 
 
 - **Single-user, no auth.** Data is private to the owner's Apple ID via CloudKit; there is no server to run.
 - **SwiftData + CloudKit constraints are accepted.** All model properties are optional-or-defaulted and there are **no enforced unique constraints**. Consequence: de-duplication of Category and Person is a **UI concern** — always pick from existing, and prompt on a case-insensitive name match rather than creating a duplicate (**ADR-0002**).
-- **Deletes nullify, never cascade** (**ADR-0001**). Deleting a Category leaves its expenses **Uncategorized**; deleting a Person removes them from expenses. Expenses are never destroyed by deleting a tag.
+- **Deletes nullify, never cascade** (**ADR-0001**). Deleting a Category leaves its expenses **Uncategorized**; deleting a Person removes them from expenses; deleting an Account leaves its expenses **Unassigned**. Expenses are never destroyed by deleting a tag.
 - **Money is `Decimal`, never `Double`.** Avoids floating-point drift in totals.
 - **Timestamps store date + time**, default to now at entry; only the date is surfaced in the v1 UI.
 

@@ -28,6 +28,11 @@ struct ExpenseRow: View {
             }
             HStack(spacing: 4) {
                 Text(expense.date, format: .dateTime.day().month().year())
+                if let account = expense.account {
+                    Label(account.name, systemImage: "creditcard")
+                        .labelStyle(.titleAndIcon)
+                        .lineLimit(1)
+                }
                 if !peopleNames.isEmpty {
                     Text("· \(peopleNames)").lineLimit(1)
                 }

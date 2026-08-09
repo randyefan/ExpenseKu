@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ManageView: View {
-    enum Destination: Hashable { case categories, people }
+    enum Destination: Hashable { case categories, people, accounts }
 
     @State private var path: [Destination] = []
 
@@ -21,12 +21,16 @@ struct ManageView: View {
                 NavigationLink(value: Destination.people) {
                     Label("People", systemImage: "person.2")
                 }
+                NavigationLink(value: Destination.accounts) {
+                    Label("Accounts", systemImage: "creditcard")
+                }
             }
             .navigationTitle("Manage")
             .navigationDestination(for: Destination.self) { destination in
                 switch destination {
                 case .categories: ManageCategoriesView()
                 case .people: ManagePeopleView()
+                case .accounts: ManageAccountsView()
                 }
             }
         }
@@ -35,6 +39,7 @@ struct ManageView: View {
             switch DebugLaunch.startScreen {
             case "categories": path = [.categories]
             case "people": path = [.people]
+            case "accounts": path = [.accounts]
             default: break
             }
             #endif

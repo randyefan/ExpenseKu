@@ -24,17 +24,25 @@ final class Expense {
     var category: Category?
     var people: [Person]? = []
 
+    // The payment source this expense was paid from (Cash, a bank, an e-wallet).
+    // Optional — unlike category — and "Unassigned" when nil. Deleting an Account
+    // nullifies this rather than destroying the expense (ADR-0001). Inverse lives
+    // on the Account side.
+    var account: Account?
+
     init(
         amount: Decimal = 0,
         date: Date = .now,
         note: String = "",
         category: Category? = nil,
-        people: [Person] = []
+        people: [Person] = [],
+        account: Account? = nil
     ) {
         self.amount = amount
         self.date = date
         self.note = note
         self.category = category
         self.people = people
+        self.account = account
     }
 }

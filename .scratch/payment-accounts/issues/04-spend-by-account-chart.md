@@ -1,6 +1,6 @@
 # 04 — Spend-by-Account chart
 
-Status: ready-for-agent
+Status: resolved
 Blocked by: 01
 
 Add a spend-by-account chart to Insights, reusing the SpendSummary pattern.
@@ -19,3 +19,5 @@ Add a spend-by-account chart to Insights, reusing the SpendSummary pattern.
 - Builds on the iOS 17 simulator.
 
 ## Comments
+
+Resolved — implemented and verified: full test build succeeds on the iOS simulator (iPhone 17 Pro) and all 16 unit tests pass (incl. 6 new AccountAnalyticsTests).

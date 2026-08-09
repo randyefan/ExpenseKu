@@ -1,6 +1,6 @@
 # 06 — Unit tests for account analytics
 
-Status: ready-for-agent
+Status: resolved
 Blocked by: 04, 05
 
 Cover the new pure aggregations in `ExpenseKuTests`, following the existing pattern
@@ -19,3 +19,5 @@ and likewise for `Account` if the name is ambiguous under `@testable import`).
 - New tests pass via `xcodebuild test` on the iOS 17 simulator; existing tests stay green.
 
 ## Comments
+
+Resolved — implemented and verified: full test build succeeds on the iOS simulator (iPhone 17 Pro) and all 16 unit tests pass (incl. 6 new AccountAnalyticsTests).

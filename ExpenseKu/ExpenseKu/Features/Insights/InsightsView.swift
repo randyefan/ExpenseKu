@@ -25,6 +25,10 @@ struct InsightsView: View {
         SpendSummary.overTime(from: expenses, dateRange: range.range(), granularity: .month)
     }
 
+    private var byAccount: [AccountSpend] {
+        SpendSummary.byAccount(from: expenses, dateRange: range.range())
+    }
+
     var body: some View {
         NavigationStack(path: $path) {
             List {
@@ -42,6 +46,15 @@ struct InsightsView: View {
                             .foregroundStyle(.secondary)
                     } else {
                         SpendByCategoryChart(data: byCategory)
+                    }
+                }
+
+                Section("Spend by Account") {
+                    if byAccount.isEmpty {
+                        Text("No spending in this period.")
+                            .foregroundStyle(.secondary)
+                    } else {
+                        SpendByAccountChart(data: byAccount)
                     }
                 }
 

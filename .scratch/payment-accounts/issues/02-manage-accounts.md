@@ -1,6 +1,6 @@
 # 02 — Manage Accounts screen + AccountPicker
 
-Status: ready-for-agent
+Status: resolved
 Blocked by: 01
 
 CRUD for accounts and the single-select picker, mirroring Categories.
@@ -20,3 +20,5 @@ CRUD for accounts and the single-select picker, mirroring Categories.
 - Builds on the iOS 17 simulator.
 
 ## Comments
+
+Resolved — implemented and verified: full test build succeeds on the iOS simulator (iPhone 17 Pro) and all 16 unit tests pass (incl. 6 new AccountAnalyticsTests).

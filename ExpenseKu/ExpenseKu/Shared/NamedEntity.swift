@@ -17,6 +17,7 @@ protocol NamedEntity: PersistentModel {
 
 extension Category: NamedEntity {}
 extension Person: NamedEntity {}
+extension Account: NamedEntity {}
 
 enum NameKey {
     /// The comparison key for duplicate detection: trimmed + case-insensitive.

@@ -1,6 +1,6 @@
 # 05 — Account filter on the People leaderboard
 
-Status: ready-for-agent
+Status: resolved
 Blocked by: 01, 02
 
 Let the leaderboard be filtered by account ("who I spend with, on GoPay").
@@ -18,3 +18,5 @@ Let the leaderboard be filtered by account ("who I spend with, on GoPay").
 - Builds on the iOS 17 simulator.
 
 ## Comments
+
+Resolved — implemented and verified: full test build succeeds on the iOS simulator (iPhone 17 Pro) and all 16 unit tests pass (incl. 6 new AccountAnalyticsTests).

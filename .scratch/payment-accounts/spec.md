@@ -1,6 +1,6 @@
 # Spec: Payment Account tracking
 
-Status: ready-for-agent
+Status: resolved
 
 Track which **account / payment method** each expense was paid from (Cash, a bank,
 an e-wallet). A **label only** — no balances, income, or transfers. Mirrors the

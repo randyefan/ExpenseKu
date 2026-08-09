@@ -16,6 +16,13 @@ struct CategorySpend: Identifiable {
     var id: String { categoryName }
 }
 
+/// Total spend for one account (or the "Unassigned" bucket).
+struct AccountSpend: Identifiable {
+    let accountName: String
+    let total: Decimal
+    var id: String { accountName }
+}
+
 /// Total spend within one time bucket, keyed by the bucket's start date.
 struct PeriodSpend: Identifiable {
     let date: Date
@@ -43,6 +50,23 @@ enum SpendSummary {
         }
         return totals
             .map { CategorySpend(categoryName: $0.key, total: $0.value) }
+            .sorted { $0.total > $1.total }
+    }
+
+    /// Spend grouped by account, highest first. Expenses with no account — never
+    /// set, or left behind by account deletion — fall into an "Unassigned" bucket.
+    static func byAccount(
+        from expenses: [Expense],
+        dateRange: ClosedRange<Date>? = nil
+    ) -> [AccountSpend] {
+        var totals: [String: Decimal] = [:]
+        for expense in expenses {
+            if let dateRange, !dateRange.contains(expense.date) { continue }
+            let name = expense.account?.name ?? "Unassigned"
+            totals[name, default: 0] += expense.amount
+        }
+        return totals
+            .map { AccountSpend(accountName: $0.key, total: $0.value) }
             .sorted { $0.total > $1.total }
     }
 

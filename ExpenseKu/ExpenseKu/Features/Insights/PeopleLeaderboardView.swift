@@ -13,14 +13,17 @@ import SwiftData
 struct PeopleLeaderboardView: View {
     @Query private var expenses: [Expense]
     @Query(sort: \Category.name) private var categories: [Category]
+    @Query(sort: \Account.name) private var accounts: [Account]
 
     @State private var categoryFilter: Category?
+    @State private var accountFilter: Account?
     @State private var rangeFilter: DateRangeFilter = .allTime
 
     private var ranked: [PersonSpend] {
         PeopleLeaderboard.ranked(
             from: expenses,
             category: categoryFilter,
+            account: accountFilter,
             dateRange: rangeFilter.range()
         )
     }
@@ -41,6 +44,15 @@ struct PeopleLeaderboardView: View {
                     }
                 } label: {
                     LabeledContent("Category", value: categoryFilter?.name ?? "All")
+                }
+                Menu {
+                    Button("All Accounts") { accountFilter = nil }
+                    Divider()
+                    ForEach(accounts) { account in
+                        Button(account.name) { accountFilter = account }
+                    }
+                } label: {
+                    LabeledContent("Account", value: accountFilter?.name ?? "All")
                 }
             }
 

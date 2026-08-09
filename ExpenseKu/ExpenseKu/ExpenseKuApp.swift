@@ -15,6 +15,7 @@ struct ExpenseKuApp: App {
             Expense.self,
             Category.self,
             Person.self,
+            Account.self,
         ])
 
         // Primary store: persistent, CloudKit-mirrored via the container in

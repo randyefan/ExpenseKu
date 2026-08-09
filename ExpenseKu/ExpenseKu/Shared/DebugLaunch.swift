@@ -24,7 +24,7 @@ enum DebugLaunch {
     /// -startTab expenses|insights|manage
     static var startTab: String? { value(for: "-startTab") }
 
-    /// -startScreen categories|people|leaderboard
+    /// -startScreen categories|people|accounts|leaderboard
     static var startScreen: String? { value(for: "-startScreen") }
 
     /// Inserts a small, realistic dataset once, only if the store is empty.
@@ -44,15 +44,20 @@ enum DebugLaunch {
         let budi = Person(name: "Budi")
         [tarisa, fadil, budi].forEach(context.insert)
 
+        let cash = Account(name: "Cash")
+        let gopay = Account(name: "GoPay")
+        [cash, gopay].forEach(context.insert)
+
         func day(_ month: Int, _ day: Int) -> Date {
             Calendar.current.date(from: DateComponents(year: 2026, month: month, day: day)) ?? .now
         }
 
+        // One expense left account-less on purpose, to exercise the "Unassigned" bucket.
         let expenses = [
-            Expense(amount: 120_000, date: day(8, 2), note: "Dinner", category: makan, people: [tarisa, fadil]),
-            Expense(amount: 45_000, date: day(8, 5), note: "Lunch", category: makan, people: [tarisa]),
-            Expense(amount: 30_000, date: day(8, 6), note: "Grab home", category: transport, people: []),
-            Expense(amount: 25_000, date: day(7, 20), note: "Latte", category: kopi, people: [fadil, budi]),
+            Expense(amount: 120_000, date: day(8, 2), note: "Dinner", category: makan, people: [tarisa, fadil], account: gopay),
+            Expense(amount: 45_000, date: day(8, 5), note: "Lunch", category: makan, people: [tarisa], account: cash),
+            Expense(amount: 30_000, date: day(8, 6), note: "Grab home", category: transport, people: [], account: gopay),
+            Expense(amount: 25_000, date: day(7, 20), note: "Latte", category: kopi, people: [fadil, budi], account: cash),
             Expense(amount: 80_000, date: day(7, 28), note: "Ojek + makan", category: makan, people: [budi]),
         ]
         expenses.forEach(context.insert)

@@ -26,6 +26,7 @@ struct ExpenseEditorView: View {
     @State private var note: String
     @State private var category: Category?
     @State private var people: [Person]
+    @State private var account: Account?
     @FocusState private var amountFocused: Bool
 
     init(editing: Expense? = nil, onFinish: (() -> Void)? = nil) {
@@ -36,6 +37,7 @@ struct ExpenseEditorView: View {
         _note = State(initialValue: editing?.note ?? "")
         _category = State(initialValue: editing?.category)
         _people = State(initialValue: editing?.people ?? [])
+        _account = State(initialValue: editing?.account)
     }
 
     private var canSave: Bool { amount > 0 && category != nil }
@@ -60,6 +62,14 @@ struct ExpenseEditorView: View {
                     LabeledContent("Category") {
                         Text(category?.name ?? "Required")
                             .foregroundStyle(category == nil ? .secondary : .primary)
+                    }
+                }
+                NavigationLink {
+                    AccountPicker(selection: $account)
+                } label: {
+                    LabeledContent("Account") {
+                        Text(account?.name ?? "None")
+                            .foregroundStyle(account == nil ? .secondary : .primary)
                     }
                 }
                 NavigationLink {
@@ -110,6 +120,7 @@ struct ExpenseEditorView: View {
         target.note = note.trimmingCharacters(in: .whitespacesAndNewlines)
         target.category = category
         target.people = people
+        target.account = account
         finish()
     }
 

@@ -1,0 +1,61 @@
+//
+//  DebugLaunch.swift
+//  ExpenseKu
+//
+//  DEBUG-only helpers to seed sample data and deep-link to a starting screen
+//  via launch arguments, so the app can be driven to a known state for
+//  screenshots/manual QA. Never compiled into release builds.
+//
+
+#if DEBUG
+import Foundation
+import SwiftData
+
+enum DebugLaunch {
+    private static var args: [String] { ProcessInfo.processInfo.arguments }
+
+    static var shouldSeed: Bool { args.contains("-seedSampleData") }
+
+    private static func value(for flag: String) -> String? {
+        guard let i = args.firstIndex(of: flag), i + 1 < args.count else { return nil }
+        return args[i + 1]
+    }
+
+    /// -startTab expenses|insights|manage
+    static var startTab: String? { value(for: "-startTab") }
+
+    /// -startScreen categories|people|leaderboard
+    static var startScreen: String? { value(for: "-startScreen") }
+
+    /// Inserts a small, realistic dataset once, only if the store is empty.
+    @MainActor
+    static func seedIfNeeded(_ context: ModelContext) {
+        guard shouldSeed else { return }
+        let count = (try? context.fetchCount(FetchDescriptor<Expense>())) ?? 0
+        guard count == 0 else { return }
+
+        let makan = Category(name: "Makan")
+        let transport = Category(name: "Transport")
+        let kopi = Category(name: "Kopi")
+        [makan, transport, kopi].forEach(context.insert)
+
+        let tarisa = Person(name: "Tarisa")
+        let fadil = Person(name: "Fadil")
+        let budi = Person(name: "Budi")
+        [tarisa, fadil, budi].forEach(context.insert)
+
+        func day(_ month: Int, _ day: Int) -> Date {
+            Calendar.current.date(from: DateComponents(year: 2026, month: month, day: day)) ?? .now
+        }
+
+        let expenses = [
+            Expense(amount: 120_000, date: day(8, 2), note: "Dinner", category: makan, people: [tarisa, fadil]),
+            Expense(amount: 45_000, date: day(8, 5), note: "Lunch", category: makan, people: [tarisa]),
+            Expense(amount: 30_000, date: day(8, 6), note: "Grab home", category: transport, people: []),
+            Expense(amount: 25_000, date: day(7, 20), note: "Latte", category: kopi, people: [fadil, budi]),
+            Expense(amount: 80_000, date: day(7, 28), note: "Ojek + makan", category: makan, people: [budi]),
+        ]
+        expenses.forEach(context.insert)
+    }
+}
+#endif

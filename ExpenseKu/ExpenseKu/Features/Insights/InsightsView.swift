@@ -11,8 +11,11 @@ import SwiftUI
 import SwiftData
 
 struct InsightsView: View {
+    enum Destination: Hashable { case leaderboard }
+
     @Query private var expenses: [Expense]
     @State private var range: DateRangeFilter = .thisYear
+    @State private var path: [Destination] = []
 
     private var byCategory: [CategorySpend] {
         SpendSummary.byCategory(from: expenses, dateRange: range.range())
@@ -23,7 +26,7 @@ struct InsightsView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             List {
                 Section {
                     Picker("Period", selection: $range) {
@@ -52,14 +55,20 @@ struct InsightsView: View {
                 }
 
                 Section {
-                    NavigationLink {
-                        PeopleLeaderboardView()
-                    } label: {
+                    NavigationLink(value: Destination.leaderboard) {
                         Label("Who you spend with", systemImage: "person.2")
                     }
                 }
             }
             .navigationTitle("Insights")
+            .navigationDestination(for: Destination.self) { _ in
+                PeopleLeaderboardView()
+            }
+        }
+        .task {
+            #if DEBUG
+            if DebugLaunch.startScreen == "leaderboard" { path = [.leaderboard] }
+            #endif
         }
     }
 }

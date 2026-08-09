@@ -3,21 +3,39 @@
 //  ExpenseKu
 //
 //  Top-level 3-tab shell (design.md §1). iPad/Mac sidebar refinement is deferred
-//  to ticket 06; a TabView is correct on every platform for now. Expenses and
-//  Insights are placeholders until tickets 05–08.
+//  to ticket 06; a TabView is correct on every platform for now.
 //
 
 import SwiftUI
 
 struct RootView: View {
+    enum Tab: Hashable { case expenses, insights, manage }
+
+    @Environment(\.modelContext) private var modelContext
+    @State private var selection: Tab = .expenses
+
     var body: some View {
-        TabView {
+        TabView(selection: $selection) {
             ExpensesView()
                 .tabItem { Label("Expenses", systemImage: "list.bullet") }
+                .tag(Tab.expenses)
             InsightsView()
                 .tabItem { Label("Insights", systemImage: "chart.pie") }
+                .tag(Tab.insights)
             ManageView()
                 .tabItem { Label("Manage", systemImage: "folder") }
+                .tag(Tab.manage)
+        }
+        .task {
+            #if DEBUG
+            DebugLaunch.seedIfNeeded(modelContext)
+            switch DebugLaunch.startTab {
+            case "insights": selection = .insights
+            case "manage": selection = .manage
+            case "expenses": selection = .expenses
+            default: break
+            }
+            #endif
         }
     }
 }

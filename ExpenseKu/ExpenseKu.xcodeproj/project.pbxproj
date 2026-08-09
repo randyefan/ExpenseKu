@@ -6,8 +6,19 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		FEED0000000000000000AA0B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 93A540DD3027BB2D00297F0F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 93A540E43027BB2D00297F0F;
+			remoteInfo = ExpenseKu;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		93A540E53027BB2D00297F0F /* ExpenseKu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ExpenseKu.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FEED0000000000000000AA02 /* ExpenseKuTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExpenseKuTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -29,10 +40,22 @@
 			path = ExpenseKu;
 			sourceTree = "<group>";
 		};
+		FEED0000000000000000AA09 /* ExpenseKuTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ExpenseKuTests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		93A540E23027BB2D00297F0F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FEED0000000000000000AA04 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -46,6 +69,7 @@
 			isa = PBXGroup;
 			children = (
 				93A540E73027BB2D00297F0F /* ExpenseKu */,
+				FEED0000000000000000AA09 /* ExpenseKuTests */,
 				93A540E63027BB2D00297F0F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -54,6 +78,7 @@
 			isa = PBXGroup;
 			children = (
 				93A540E53027BB2D00297F0F /* ExpenseKu.app */,
+				FEED0000000000000000AA02 /* ExpenseKuTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -83,6 +108,29 @@
 			productReference = 93A540E53027BB2D00297F0F /* ExpenseKu.app */;
 			productType = "com.apple.product-type.application";
 		};
+		FEED0000000000000000AA01 /* ExpenseKuTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FEED0000000000000000AA08 /* Build configuration list for PBXNativeTarget "ExpenseKuTests" */;
+			buildPhases = (
+				FEED0000000000000000AA03 /* Sources */,
+				FEED0000000000000000AA04 /* Frameworks */,
+				FEED0000000000000000AA05 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				FEED0000000000000000AA0A /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				FEED0000000000000000AA09 /* ExpenseKuTests */,
+			);
+			name = ExpenseKuTests;
+			packageProductDependencies = (
+			);
+			productName = ExpenseKuTests;
+			productReference = FEED0000000000000000AA02 /* ExpenseKuTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -95,6 +143,10 @@
 				TargetAttributes = {
 					93A540E43027BB2D00297F0F = {
 						CreatedOnToolsVersion = 26.6;
+					};
+					FEED0000000000000000AA01 = {
+						CreatedOnToolsVersion = 26.6;
+						TestTargetID = 93A540E43027BB2D00297F0F;
 					};
 				};
 			};
@@ -113,12 +165,20 @@
 			projectRoot = "";
 			targets = (
 				93A540E43027BB2D00297F0F /* ExpenseKu */,
+				FEED0000000000000000AA01 /* ExpenseKuTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		93A540E33027BB2D00297F0F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FEED0000000000000000AA05 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -135,7 +195,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		FEED0000000000000000AA03 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		FEED0000000000000000AA0A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 93A540E43027BB2D00297F0F /* ExpenseKu */;
+			targetProxy = FEED0000000000000000AA0B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		93A540F43027BB2E00297F0F /* Debug */ = {
@@ -329,6 +404,48 @@
 			};
 			name = Release;
 		};
+		FEED0000000000000000AA06 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 33Z87RYAC2;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = randyefan.ExpenseKuTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ExpenseKu.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ExpenseKu";
+			};
+			name = Debug;
+		};
+		FEED0000000000000000AA07 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 33Z87RYAC2;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = randyefan.ExpenseKuTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ExpenseKu.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ExpenseKu";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -346,6 +463,15 @@
 			buildConfigurations = (
 				93A540F43027BB2E00297F0F /* Debug */,
 				93A540F53027BB2E00297F0F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FEED0000000000000000AA08 /* Build configuration list for PBXNativeTarget "ExpenseKuTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FEED0000000000000000AA06 /* Debug */,
+				FEED0000000000000000AA07 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

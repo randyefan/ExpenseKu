@@ -71,10 +71,10 @@ struct ExpensesView: View {
                 ExpenseEditorView(editing: selection, onFinish: { self.selection = nil })
                     .id(selection.persistentModelID)
             } else {
-                ContentUnavailableView(
-                    "No Expense Selected",
+                EmptyStateView(
+                    title: "No Expense Selected",
                     systemImage: "sidebar.right",
-                    description: Text("Select an expense to view or edit it.")
+                    message: "Select an expense to view or edit it."
                 )
             }
         }

@@ -24,36 +24,40 @@ struct DebugHarness: View {
     @State private var category: Category?
     @State private var account: Account?
     @State private var selectedPeople: [Person] = []
+    @State private var payday: Int = Payday.current
 
     var body: some View {
-        NavigationStack {
-            content
-        }
-        .onAppear {
-            // Preselect so the coral checkmark / selected state is visible.
-            if category == nil { category = categories.first }
-            if selectedPeople.isEmpty { selectedPeople = Array(people.prefix(2)) }
-        }
+        content
+            .onAppear {
+                // Preselect so the coral checkmark / selected state is visible.
+                if category == nil { category = categories.first }
+                if selectedPeople.isEmpty { selectedPeople = Array(people.prefix(2)) }
+            }
     }
 
     @ViewBuilder
     private var content: some View {
         switch screen {
         case "editor":
-            ExpenseEditorView()
+            NavigationStack { ExpenseEditorView() }
         case "picker-category":
-            CategoryPicker(selection: $category)
+            NavigationStack { CategoryPicker(selection: $category) }
         case "picker-people":
-            PeoplePicker(selection: $selectedPeople)
+            NavigationStack { PeoplePicker(selection: $selectedPeople) }
         case "picker-account":
-            AccountPicker(selection: $account)
+            NavigationStack { AccountPicker(selection: $account) }
+        case "settings":
+            // Brings its own NavigationStack.
+            TransactionSettingsView(payday: $payday)
         case "name-duplicate":
             // Prefill with a seeded category name so the dedup prompt shows.
-            NameEditorView<Category>(
-                title: "New Category",
-                makeNew: { Category() },
-                debugPrefill: categories.first?.name ?? "Makan"
-            )
+            NavigationStack {
+                NameEditorView<Category>(
+                    title: "New Category",
+                    makeNew: { Category() },
+                    debugPrefill: categories.first?.name ?? "Makan"
+                )
+            }
         default:
             EmptyView()
         }

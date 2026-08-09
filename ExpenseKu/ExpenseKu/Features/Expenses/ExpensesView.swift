@@ -60,9 +60,12 @@ struct ExpensesView: View {
                 }
             }
             .sheet(isPresented: $showingSettings) {
-                settingsSheet
+                TransactionSettingsView(payday: $payday)
             }
             .onAppear { resetToCurrentCycle() }
+            .onChange(of: payday) { _, newValue in
+                cycle = PayCycle.containing(.now, payday: newValue, calendar: calendar)
+            }
         } detail: {
             if let selection {
                 ExpenseEditorView(editing: selection, onFinish: { self.selection = nil })
@@ -168,35 +171,6 @@ struct ExpensesView: View {
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
             .background(Theme.bg)
-        }
-    }
-
-    // MARK: - Monthly Start Date
-
-    private var settingsSheet: some View {
-        NavigationStack {
-            Form {
-                Section {
-                    Stepper(value: $payday, in: Payday.range) {
-                        LabeledContent("Monthly Start Date", value: "Day \(payday)")
-                    }
-                    .onChange(of: payday) { _, newValue in
-                        Payday.current = newValue
-                        cycle = PayCycle.containing(.now, payday: newValue, calendar: calendar)
-                    }
-                } footer: {
-                    Text("The day of the month your spending cycle resets. Shared with the Insights pay-period view.")
-                }
-            }
-            .navigationTitle("Transaction Settings")
-            #if !os(macOS)
-            .navigationBarTitleDisplayMode(.inline)
-            #endif
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { showingSettings = false }
-                }
-            }
         }
     }
 

@@ -26,6 +26,7 @@ struct RootView: View {
                 .tabItem { Label("Manage", systemImage: "folder") }
                 .tag(Tab.manage)
         }
+        .tint(Theme.accent)
         .task {
             #if DEBUG
             DebugLaunch.seedIfNeeded(modelContext)

@@ -10,6 +10,10 @@ import SwiftData
 
 @main
 struct ExpenseKuApp: App {
+    init() {
+        AppFont.registerIfNeeded()
+    }
+
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Expense.self,

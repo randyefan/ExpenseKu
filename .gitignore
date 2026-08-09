@@ -22,3 +22,7 @@ DerivedData/
 # CocoaPods / Carthage (not used now, ignored pre-emptively)
 Pods/
 Carthage/Build/
+
+# Revamp harness — transient verify artifacts
+.scratch/revamp/shots/
+.scratch/revamp/DerivedData/

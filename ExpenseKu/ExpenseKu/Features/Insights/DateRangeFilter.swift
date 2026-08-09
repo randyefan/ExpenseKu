@@ -43,33 +43,13 @@ enum DateRangeFilter: String, CaseIterable, Identifiable {
             let start = calendar.dateInterval(of: .month, for: now)?.start ?? now
             return start...now
         case .payPeriod:
-            return payPeriodStart(now: now, calendar: calendar, payday: payday)...now
+            // The pay period's start is the cycle-boundary math owned by PayCycle —
+            // one clamp implementation shared with the home screen (ADR-0004). This
+            // preset keeps its "spend-so-far" end at `now`.
+            return PayCycle.containing(now, payday: payday, calendar: calendar).start...now
         case .thisYear:
             let start = calendar.dateInterval(of: .year, for: now)?.start ?? now
             return start...now
         }
-    }
-
-    /// Start of the pay period containing `now`: the most recent payday on-or-before
-    /// `now`. The payday is clamped to the last valid day of a short month (a 31 anchor
-    /// lands on Feb 28/29), and normalized to the start of that day.
-    private func payPeriodStart(now: Date, calendar: Calendar, payday: Int) -> Date {
-        let day = max(1, min(31, payday))
-
-        func paydayDate(inMonthContaining reference: Date) -> Date {
-            var comps = calendar.dateComponents([.year, .month], from: reference)
-            let monthStart = calendar.date(from: comps) ?? reference
-            let lastDay = calendar.range(of: .day, in: .month, for: monthStart)?.count ?? 28
-            comps.day = min(day, lastDay)
-            let date = calendar.date(from: comps) ?? reference
-            return calendar.startOfDay(for: date)
-        }
-
-        let thisMonthsPayday = paydayDate(inMonthContaining: now)
-        if thisMonthsPayday <= now {
-            return thisMonthsPayday
-        }
-        let previousMonth = calendar.date(byAdding: .month, value: -1, to: now) ?? now
-        return paydayDate(inMonthContaining: previousMonth)
     }
 }

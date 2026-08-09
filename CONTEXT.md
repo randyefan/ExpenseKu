@@ -17,6 +17,7 @@ This document is the source of truth for the project's **ubiquitous language**. 
 - **Unassigned** — the display state of an Expense with no Account (`account = nil`), whether never set (accounts are optional at entry) or left behind by Account deletion. The Account analogue of **Uncategorized**.
 - **Spend attribution** — how an Expense's amount is credited to its People for ranking. Rule: **full amount to each companion**. A 100k Expense tagged with two People counts 100k toward *each*. This is a per-person ranking, not a sum, so totals can exceed the grand total by design. Attribution is computed at query time; nothing extra is stored.
 - **People leaderboard** — the analytics view ranking People by total attributed spend, with a count of shared Expenses, filterable by Category and date range. This is the feature that answers "who did I spend the most with."
+- **Pay period** — the owner's spending cycle as an Insights date-filter preset, anchored to a configurable **payday** (day-of-month, default 1, synced via `NSUbiquitousKeyValueStore`). **This pay period** = the most recent payday on-or-before now, through now (spend-so-far, like *This month*); a payday past the month's length clamps to the last valid day. Single owner, monthly cycle, analytics-only — *not* a budget, income, or a redefinition of "month" elsewhere (**ADR-0003**).
 
 ## Key decisions
 

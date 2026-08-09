@@ -15,18 +15,23 @@ struct InsightsView: View {
 
     @Query private var expenses: [Expense]
     @State private var range: DateRangeFilter = .thisYear
+    @State private var payday: Int = Payday.current
     @State private var path: [Destination] = []
 
+    private var dateRange: ClosedRange<Date>? {
+        range.range(payday: payday)
+    }
+
     private var byCategory: [CategorySpend] {
-        SpendSummary.byCategory(from: expenses, dateRange: range.range())
+        SpendSummary.byCategory(from: expenses, dateRange: dateRange)
     }
 
     private var overTime: [PeriodSpend] {
-        SpendSummary.overTime(from: expenses, dateRange: range.range(), granularity: .month)
+        SpendSummary.overTime(from: expenses, dateRange: dateRange, granularity: .month)
     }
 
     private var byAccount: [AccountSpend] {
-        SpendSummary.byAccount(from: expenses, dateRange: range.range())
+        SpendSummary.byAccount(from: expenses, dateRange: dateRange)
     }
 
     var body: some View {
@@ -36,6 +41,14 @@ struct InsightsView: View {
                     Picker("Period", selection: $range) {
                         ForEach(DateRangeFilter.allCases) { filter in
                             Text(filter.label).tag(filter)
+                        }
+                    }
+                    if range == .payPeriod {
+                        Stepper(value: $payday, in: Payday.range) {
+                            LabeledContent("Payday", value: "Day \(payday)")
+                        }
+                        .onChange(of: payday) { _, newValue in
+                            Payday.current = newValue
                         }
                     }
                 }

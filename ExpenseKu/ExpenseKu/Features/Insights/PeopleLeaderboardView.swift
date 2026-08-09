@@ -24,7 +24,7 @@ struct PeopleLeaderboardView: View {
             from: expenses,
             category: categoryFilter,
             account: accountFilter,
-            dateRange: rangeFilter.range()
+            dateRange: rangeFilter.range(payday: Payday.current)
         )
     }
 

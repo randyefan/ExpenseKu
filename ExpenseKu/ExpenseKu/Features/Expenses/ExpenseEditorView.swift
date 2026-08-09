@@ -27,7 +27,6 @@ struct ExpenseEditorView: View {
     @State private var category: Category?
     @State private var people: [Person]
     @State private var account: Account?
-    @FocusState private var amountFocused: Bool
 
     init(editing: Expense? = nil, onFinish: (() -> Void)? = nil) {
         self.editing = editing
@@ -54,14 +53,7 @@ struct ExpenseEditorView: View {
                     Text("Rp")
                         .font(.dsTitle).fontWeight(.semibold)
                         .foregroundStyle(Theme.textSecondary)
-                    TextField("0", value: $amount, format: .number)
-                        .font(.dsHero).fontWeight(.bold)
-                        .monospacedDigit()
-                        .multilineTextAlignment(.center)
-                        .fixedSize()
-                        .foregroundStyle(Theme.text)
-                        .focused($amountFocused)
-                        .decimalKeyboard()
+                    AmountField(amount: $amount, autoFocus: editing == nil)
                     Spacer(minLength: 0)
                 }
                 .padding(.vertical, 10)
@@ -135,9 +127,6 @@ struct ExpenseEditorView: View {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Cancel") { finish() }
             }
-        }
-        .onAppear {
-            if editing == nil { amountFocused = true }
         }
     }
 

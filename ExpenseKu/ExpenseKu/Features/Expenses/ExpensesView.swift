@@ -14,15 +14,31 @@ import SwiftData
 
 struct ExpensesView: View {
     @Environment(\.modelContext) private var context
+    #if os(iOS)
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    #endif
     @Query(sort: \Expense.date, order: .reverse) private var expenses: [Expense]
 
     @State private var selection: Expense?
     @State private var showingNew = false
     @State private var showingSettings = false
     @State private var payday: Int = Payday.current
+    /// Edit sheet opens fully (.large); still draggable down to .medium.
+    @State private var editDetent: PresentationDetent = .large
     @State private var cycle: PayCycle = PayCycle.containing(.now, payday: Payday.current)
 
     private var calendar: Calendar { .current }
+
+    /// On compact width (iPhone) the split view would push the editor as a full
+    /// page; there we present editing as a bottom sheet instead. iPad/Mac keep
+    /// the detail-pane editing (design.md §1).
+    private var editsInSheet: Bool {
+        #if os(iOS)
+        horizontalSizeClass == .compact
+        #else
+        false
+        #endif
+    }
 
     var body: some View {
         NavigationSplitView {
@@ -51,7 +67,7 @@ struct ExpensesView: View {
                     } label: {
                         Label("Add Expense", systemImage: "plus")
                     }
-                    .buttonStyle(AccentCircleButtonStyle())
+                    .accentCircleButton()
                 }
             }
             .sheet(isPresented: $showingNew) {
@@ -62,12 +78,19 @@ struct ExpensesView: View {
             .sheet(isPresented: $showingSettings) {
                 TransactionSettingsView(payday: $payday)
             }
+            .sheet(item: editsInSheet ? $selection : .constant(nil)) { expense in
+                NavigationStack {
+                    ExpenseEditorView(editing: expense, onFinish: { selection = nil })
+                }
+                .presentationDetents([.medium, .large], selection: $editDetent)
+                .presentationDragIndicator(.visible)
+            }
             .onAppear { resetToCurrentCycle() }
             .onChange(of: payday) { _, newValue in
                 cycle = PayCycle.containing(.now, payday: newValue, calendar: calendar)
             }
         } detail: {
-            if let selection {
+            if let selection, !editsInSheet {
                 ExpenseEditorView(editing: selection, onFinish: { self.selection = nil })
                     .id(selection.persistentModelID)
             } else {
@@ -147,19 +170,24 @@ struct ExpensesView: View {
                 )
             }
         } else {
-            List(selection: $selection) {
+            List {
                 ForEach(dayGroups) { group in
                     Section {
                         ForEach(group.expenses) { expense in
-                            ExpenseRow(expense: expense)
-                                .tag(expense)
-                                .cardStyle()
-                                .listRowBackground(Color.clear)
-                                .listRowSeparator(.hidden)
-                                .listRowInsets(EdgeInsets(
-                                    top: 4, leading: Metric.screenPadding,
-                                    bottom: 4, trailing: Metric.screenPadding
-                                ))
+                            Button {
+                                editDetent = .large
+                                selection = expense
+                            } label: {
+                                ExpenseRow(expense: expense)
+                            }
+                            .buttonStyle(.plain)
+                            .cardStyle()
+                            .listRowBackground(Color.clear)
+                            .listRowSeparator(.hidden)
+                            .listRowInsets(EdgeInsets(
+                                top: 4, leading: Metric.screenPadding,
+                                bottom: 4, trailing: Metric.screenPadding
+                            ))
                         }
                         .onDelete { delete($0, in: group) }
                     } header: {

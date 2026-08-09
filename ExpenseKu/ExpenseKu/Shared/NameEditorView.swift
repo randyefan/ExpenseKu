@@ -25,24 +25,62 @@ struct NameEditorView<T: NamedEntity>: View {
     @State private var name: String
     @State private var duplicate: T?
 
+    /// DEBUG screenshot support: a name to prefill and immediately run the
+    /// duplicate check against, so the inline prompt can be captured. Never set
+    /// in the real UI.
+    private let debugPrefill: String?
+
     init(
         title: String,
         editing: T? = nil,
         makeNew: @escaping () -> T,
-        onCommit: @escaping (T) -> Void = { _ in }
+        onCommit: @escaping (T) -> Void = { _ in },
+        debugPrefill: String? = nil
     ) {
         self.title = title
         self.editing = editing
         self.makeNew = makeNew
         self.onCommit = onCommit
-        _name = State(initialValue: editing?.name ?? "")
+        self.debugPrefill = debugPrefill
+        _name = State(initialValue: debugPrefill ?? editing?.name ?? "")
+    }
+
+    /// The lowercase noun for the entity kind, derived from the screen title
+    /// ("New Category" → "category"), for the duplicate explanation copy.
+    private var entityNoun: String {
+        title
+            .replacingOccurrences(of: "New ", with: "")
+            .replacingOccurrences(of: "Rename ", with: "")
+            .lowercased()
     }
 
     var body: some View {
-        Form {
-            TextField("Name", text: $name)
+        ScrollView {
+            VStack(alignment: .leading, spacing: Metric.cardGap) {
+                VStack(alignment: .leading, spacing: 8) {
+                    TextField("Name", text: $name)
+                        .font(.dsTitle).fontWeight(.semibold)
+                        .foregroundStyle(Theme.text)
+                        .onChange(of: name) { _, _ in duplicate = nil }
+                    Rectangle()
+                        .fill(Theme.accent)
+                        .frame(height: 2)
+                }
+
+                if let dup = duplicate {
+                    duplicatePrompt(dup)
+                }
+
+                Spacer(minLength: 0)
+            }
+            .padding(Metric.screenPadding)
         }
+        .background(Theme.bg)
+        .onAppear { if debugPrefill != nil { attemptSave() } }
         .navigationTitle(title)
+        #if !os(macOS)
+        .navigationBarTitleDisplayMode(.inline)
+        #endif
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save", action: attemptSave)
@@ -52,16 +90,60 @@ struct NameEditorView<T: NamedEntity>: View {
                 Button("Cancel") { dismiss() }
             }
         }
-        .confirmationDialog(
-            duplicate.map { "“\($0.name)” already exists." } ?? "",
-            isPresented: Binding(get: { duplicate != nil }, set: { if !$0 { duplicate = nil } }),
-            titleVisibility: .visible
-        ) {
-            if let dup = duplicate {
-                Button("Use “\(dup.name)”") { onCommit(dup); dismiss() }
-                Button("Create new anyway") { save(into: makeNew()) }
-                Button("Cancel", role: .cancel) { duplicate = nil }
+    }
+
+    /// Inline duplicate prompt (ADR-0002): explain the clash, then offer the same
+    /// three choices as before — reuse the existing entity, create a duplicate
+    /// anyway, or back out.
+    @ViewBuilder
+    private func duplicatePrompt(_ dup: T) -> some View {
+        VStack(spacing: Metric.cardGap) {
+            HStack(alignment: .top, spacing: 12) {
+                Image(systemName: "info.circle")
+                    .font(.title3)
+                    .foregroundStyle(Theme.textSecondary)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("“\(dup.name)” already exists")
+                        .font(.dsBody).fontWeight(.bold)
+                        .foregroundStyle(Theme.text)
+                    Text("You already have a \(entityNoun) with this name.")
+                        .font(.dsSubhead)
+                        .foregroundStyle(Theme.textSecondary)
+                }
+                Spacer(minLength: 0)
             }
+            .cardStyle()
+
+            Button {
+                onCommit(dup); dismiss()
+            } label: {
+                Text("Use existing")
+                    .font(.dsBody).fontWeight(.semibold)
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(Theme.accent, in: RoundedRectangle(cornerRadius: Metric.cardRadius, style: .continuous))
+            }
+
+            Button {
+                save(into: makeNew())
+            } label: {
+                Text("Create new anyway")
+                    .font(.dsBody).fontWeight(.semibold)
+                    .foregroundStyle(Theme.text)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(Theme.card, in: RoundedRectangle(cornerRadius: Metric.cardRadius, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: Metric.cardRadius, style: .continuous)
+                            .stroke(Theme.accent.opacity(0.5), lineWidth: 1)
+                    )
+            }
+
+            Button("Cancel") { duplicate = nil }
+                .font(.dsBody)
+                .foregroundStyle(Theme.textSecondary)
+                .padding(.top, 2)
         }
     }
 

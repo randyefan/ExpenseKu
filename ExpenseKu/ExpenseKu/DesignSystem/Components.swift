@@ -72,13 +72,14 @@ struct MoneyText: View {
 struct CategoryIcon: View {
     let name: String
     var systemImage: String?
+    var size: CGFloat = Metric.iconSize
     var body: some View {
         Circle()
             .fill(Theme.categoryTint(name))
-            .frame(width: Metric.iconSize, height: Metric.iconSize)
+            .frame(width: size, height: size)
             .overlay(
                 Image(systemName: systemImage ?? CategoryIcon.symbol(for: name))
-                    .font(.system(size: 18, weight: .semibold))
+                    .font(.system(size: size * 0.41, weight: .semibold))
                     .foregroundStyle(Theme.text.opacity(0.65))
             )
     }
@@ -103,6 +104,48 @@ struct CategoryIcon: View {
             return entry.symbol
         }
         return "tag.fill"
+    }
+}
+
+// MARK: - Person avatar (initial in a soft circle)
+
+struct PersonAvatar: View {
+    let name: String
+    var size: CGFloat = Metric.iconSize
+    private var initial: String {
+        name.trimmingCharacters(in: .whitespaces).first.map { String($0).uppercased() } ?? "?"
+    }
+    var body: some View {
+        Circle()
+            .fill(Theme.textSecondary.opacity(0.15))
+            .frame(width: size, height: size)
+            .overlay(
+                Text(initial)
+                    .font(.jakarta(size * 0.38)).fontWeight(.semibold)
+                    .foregroundStyle(Theme.text.opacity(0.7))
+            )
+    }
+}
+
+// MARK: - "New …" add row (pastel + circle + accent label)
+
+struct PickerAddRow: View {
+    let title: String
+    var body: some View {
+        HStack(spacing: 12) {
+            Circle()
+                .fill(Theme.textSecondary.opacity(0.12))
+                .frame(width: Metric.iconSize, height: Metric.iconSize)
+                .overlay(
+                    Image(systemName: "plus")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundStyle(Theme.accent)
+                )
+            Text(title)
+                .font(.dsBody).fontWeight(.semibold)
+                .foregroundStyle(Theme.accent)
+            Spacer()
+        }
     }
 }
 

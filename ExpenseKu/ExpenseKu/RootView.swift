@@ -13,6 +13,12 @@ struct RootView: View {
 
     @Environment(\.modelContext) private var modelContext
     @State private var selection: Tab = .expenses
+    #if DEBUG
+    @State private var debugScreen: String?
+    private static let debugScreens: Set<String> = [
+        "editor", "picker-category", "picker-people", "picker-account", "name-duplicate"
+    ]
+    #endif
 
     var body: some View {
         TabView(selection: $selection) {
@@ -27,6 +33,14 @@ struct RootView: View {
                 .tag(Tab.manage)
         }
         .tint(Theme.accent)
+        #if DEBUG
+        .fullScreenCover(isPresented: Binding(
+            get: { debugScreen != nil },
+            set: { if !$0 { debugScreen = nil } }
+        )) {
+            if let debugScreen { DebugHarness(screen: debugScreen) }
+        }
+        #endif
         .task {
             #if DEBUG
             DebugLaunch.seedIfNeeded(modelContext)
@@ -35,6 +49,9 @@ struct RootView: View {
             case "manage": selection = .manage
             case "expenses": selection = .expenses
             default: break
+            }
+            if let screen = DebugLaunch.startScreen, RootView.debugScreens.contains(screen) {
+                debugScreen = screen
             }
             #endif
         }

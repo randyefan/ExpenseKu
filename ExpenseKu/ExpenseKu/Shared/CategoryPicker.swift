@@ -17,27 +17,38 @@ struct CategoryPicker: View {
 
     var body: some View {
         List {
-            ForEach(categories) { category in
-                Button {
-                    selection = category
-                    dismiss()
-                } label: {
-                    HStack {
-                        Text(category.name)
-                        Spacer()
-                        if isSelected(category) {
-                            Image(systemName: "checkmark").foregroundStyle(.tint)
+            Section {
+                ForEach(categories) { category in
+                    Button {
+                        selection = category
+                        dismiss()
+                    } label: {
+                        HStack(spacing: 12) {
+                            CategoryIcon(name: category.name, size: 36)
+                            Text(category.name)
+                                .font(.dsBody)
+                                .foregroundStyle(Theme.text)
+                            Spacer()
+                            if isSelected(category) {
+                                Image(systemName: "checkmark")
+                                    .font(.dsBody.weight(.bold))
+                                    .foregroundStyle(Theme.accent)
+                            }
                         }
                     }
+                    .listRowBackground(Theme.card)
                 }
-                .foregroundStyle(.primary)
             }
-            Button {
-                showingNew = true
-            } label: {
-                Label("New Category", systemImage: "plus")
+            Section {
+                Button { showingNew = true } label: {
+                    PickerAddRow(title: "New Category")
+                }
+                .listRowBackground(Theme.card)
             }
         }
+        .listStyle(.insetGrouped)
+        .scrollContentBackground(.hidden)
+        .background(Theme.bg)
         .navigationTitle("Category")
         .sheet(isPresented: $showingNew) {
             NavigationStack {

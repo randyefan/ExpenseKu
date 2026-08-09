@@ -49,51 +49,85 @@ struct ExpenseEditorView: View {
     var body: some View {
         Form {
             Section {
-                TextField("Amount", value: $amount, format: .number)
-                    .focused($amountFocused)
-                    .decimalKeyboard()
-                DatePicker("Date", selection: $date, displayedComponents: .date)
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    Spacer(minLength: 0)
+                    Text("Rp")
+                        .font(.dsTitle).fontWeight(.semibold)
+                        .foregroundStyle(Theme.textSecondary)
+                    TextField("0", value: $amount, format: .number)
+                        .font(.dsHero).fontWeight(.bold)
+                        .monospacedDigit()
+                        .multilineTextAlignment(.center)
+                        .fixedSize()
+                        .foregroundStyle(Theme.text)
+                        .focused($amountFocused)
+                        .decimalKeyboard()
+                    Spacer(minLength: 0)
+                }
+                .padding(.vertical, 10)
+                .listRowBackground(Theme.card)
             }
 
             Section {
+                DatePicker("Date", selection: $date, displayedComponents: .date)
+                    .font(.dsBody)
+                    .listRowBackground(Theme.card)
+
                 NavigationLink {
                     CategoryPicker(selection: $category)
                 } label: {
                     LabeledContent("Category") {
                         Text(category?.name ?? "Required")
-                            .foregroundStyle(category == nil ? .secondary : .primary)
+                            .foregroundStyle(category == nil ? Theme.accent : Theme.text)
                     }
+                    .font(.dsBody)
                 }
+                .listRowBackground(Theme.card)
+
                 NavigationLink {
                     AccountPicker(selection: $account)
                 } label: {
                     LabeledContent("Account") {
                         Text(account?.name ?? "None")
-                            .foregroundStyle(account == nil ? .secondary : .primary)
+                            .foregroundStyle(account == nil ? Theme.textSecondary : Theme.text)
                     }
+                    .font(.dsBody)
                 }
+                .listRowBackground(Theme.card)
+
                 NavigationLink {
                     PeoplePicker(selection: $people)
                 } label: {
                     LabeledContent("People") {
                         Text(peopleSummary)
-                            .foregroundStyle(people.isEmpty ? .secondary : .primary)
+                            .foregroundStyle(people.isEmpty ? Theme.textSecondary : Theme.text)
                             .lineLimit(1)
                     }
+                    .font(.dsBody)
                 }
+                .listRowBackground(Theme.card)
             }
 
             Section {
-                TextField("Note", text: $note, axis: .vertical)
+                TextField("Add a note…", text: $note, axis: .vertical)
+                    .font(.dsBody)
+                    .listRowBackground(Theme.card)
             }
 
             if editing != nil {
                 Section {
                     Button("Delete Expense", role: .destructive, action: deleteExpense)
+                        .font(.dsBody)
+                        .listRowBackground(Theme.card)
                 }
             }
         }
-        .navigationTitle(editing == nil ? "New Expense" : "Edit Expense")
+        .scrollContentBackground(.hidden)
+        .background(Theme.bg)
+        .navigationTitle(editing == nil ? "Add Expense" : "Edit Expense")
+        #if !os(macOS)
+        .navigationBarTitleDisplayMode(.inline)
+        #endif
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save", action: save).disabled(!canSave)

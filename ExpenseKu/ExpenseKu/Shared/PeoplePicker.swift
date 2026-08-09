@@ -11,32 +11,47 @@ import SwiftData
 
 struct PeoplePicker: View {
     @Binding var selection: [Person]
+    @Environment(\.dismiss) private var dismiss
     @Query(sort: \Person.name) private var people: [Person]
     @State private var showingNew = false
 
     var body: some View {
         List {
-            ForEach(people) { person in
-                Button {
-                    toggle(person)
-                } label: {
-                    HStack {
-                        Text(person.name)
-                        Spacer()
-                        if isSelected(person) {
-                            Image(systemName: "checkmark").foregroundStyle(.tint)
+            Section {
+                ForEach(people) { person in
+                    Button {
+                        toggle(person)
+                    } label: {
+                        HStack(spacing: 12) {
+                            PersonAvatar(name: person.name, size: 36)
+                            Text(person.name)
+                                .font(.dsBody)
+                                .foregroundStyle(Theme.text)
+                            Spacer()
+                            Image(systemName: isSelected(person) ? "checkmark.circle.fill" : "circle")
+                                .font(.title3)
+                                .foregroundStyle(isSelected(person) ? Theme.accent : Theme.textSecondary.opacity(0.5))
                         }
                     }
+                    .listRowBackground(Theme.card)
                 }
-                .foregroundStyle(.primary)
             }
-            Button {
-                showingNew = true
-            } label: {
-                Label("New Person", systemImage: "plus")
+            Section {
+                Button { showingNew = true } label: {
+                    PickerAddRow(title: "New Person")
+                }
+                .listRowBackground(Theme.card)
             }
         }
+        .listStyle(.insetGrouped)
+        .scrollContentBackground(.hidden)
+        .background(Theme.bg)
         .navigationTitle("People")
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Done") { dismiss() }
+            }
+        }
         .sheet(isPresented: $showingNew) {
             NavigationStack {
                 NameEditorView<Person>(title: "New Person", makeNew: { Person() }) { created in

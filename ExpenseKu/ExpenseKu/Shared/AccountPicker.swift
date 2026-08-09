@@ -19,41 +19,57 @@ struct AccountPicker: View {
 
     var body: some View {
         List {
-            Button {
-                selection = nil
-                dismiss()
-            } label: {
-                HStack {
-                    Text("None")
-                    Spacer()
-                    if selection == nil {
-                        Image(systemName: "checkmark").foregroundStyle(.tint)
-                    }
-                }
-            }
-            .foregroundStyle(.primary)
-
-            ForEach(accounts) { account in
+            Section {
                 Button {
-                    selection = account
+                    selection = nil
                     dismiss()
                 } label: {
-                    HStack {
-                        Text(account.name)
+                    HStack(spacing: 12) {
+                        CategoryIcon(name: "None", systemImage: "nosign", size: 36)
+                        Text("None")
+                            .font(.dsBody)
+                            .foregroundStyle(Theme.text)
                         Spacer()
-                        if isSelected(account) {
-                            Image(systemName: "checkmark").foregroundStyle(.tint)
+                        if selection == nil {
+                            Image(systemName: "checkmark")
+                                .font(.dsBody.weight(.bold))
+                                .foregroundStyle(Theme.accent)
                         }
                     }
                 }
-                .foregroundStyle(.primary)
+                .listRowBackground(Theme.card)
+
+                ForEach(accounts) { account in
+                    Button {
+                        selection = account
+                        dismiss()
+                    } label: {
+                        HStack(spacing: 12) {
+                            CategoryIcon(name: account.name, systemImage: "creditcard.fill", size: 36)
+                            Text(account.name)
+                                .font(.dsBody)
+                                .foregroundStyle(Theme.text)
+                            Spacer()
+                            if isSelected(account) {
+                                Image(systemName: "checkmark")
+                                    .font(.dsBody.weight(.bold))
+                                    .foregroundStyle(Theme.accent)
+                            }
+                        }
+                    }
+                    .listRowBackground(Theme.card)
+                }
             }
-            Button {
-                showingNew = true
-            } label: {
-                Label("New Account", systemImage: "plus")
+            Section {
+                Button { showingNew = true } label: {
+                    PickerAddRow(title: "New Account")
+                }
+                .listRowBackground(Theme.card)
             }
         }
+        .listStyle(.insetGrouped)
+        .scrollContentBackground(.hidden)
+        .background(Theme.bg)
         .navigationTitle("Account")
         .sheet(isPresented: $showingNew) {
             NavigationStack {

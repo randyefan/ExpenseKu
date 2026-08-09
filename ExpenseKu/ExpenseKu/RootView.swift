@@ -50,6 +50,14 @@ struct RootView: View {
             case "expenses": selection = .expenses
             default: break
             }
+            switch DebugLaunch.startScreen {
+            case "leaderboard", "categories", "people", "accounts":
+                // These live under a tab; make sure the owning tab is active so
+                // the tab's deep-link task actually fires.
+                selection = DebugLaunch.startScreen == "leaderboard" ? .insights : .manage
+            default:
+                break
+            }
             if let screen = DebugLaunch.startScreen, RootView.debugScreens.contains(screen) {
                 debugScreen = screen
             }

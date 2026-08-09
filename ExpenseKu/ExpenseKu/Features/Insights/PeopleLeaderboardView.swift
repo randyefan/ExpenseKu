@@ -3,8 +3,10 @@
 //  ExpenseKu
 //
 //  "Who did I spend the most with." Ranks people by total attributed spend,
-//  filterable by category and time window. Aggregation lives in the pure
-//  PeopleLeaderboard layer; this view only fetches, filters, and renders.
+//  filterable by category, account and time window. Aggregation lives in the
+//  pure PeopleLeaderboard layer; this view only fetches, filters, and renders.
+//  Warm Cards styling; behaviour unchanged (full-amount-to-each-companion
+//  attribution, so totals may exceed the grand total by design).
 //
 
 import SwiftUI
@@ -29,63 +31,125 @@ struct PeopleLeaderboardView: View {
     }
 
     var body: some View {
-        List {
-            Section {
-                Picker("Period", selection: $rangeFilter) {
-                    ForEach(DateRangeFilter.allCases) { filter in
-                        Text(filter.label).tag(filter)
+        ScrollView {
+            VStack(alignment: .leading, spacing: Metric.cardGap) {
+                Text("Who you spend with")
+                    .font(.dsSubhead)
+                    .foregroundStyle(Theme.textSecondary)
+
+                filters
+
+                if ranked.isEmpty {
+                    EmptyStateView(
+                        title: "No People Yet",
+                        systemImage: "person.2",
+                        message: "Tag expenses with the people you were with to see who you spend the most with."
+                    )
+                    .frame(minHeight: 360)
+                } else {
+                    ForEach(Array(ranked.enumerated()), id: \.element.id) { index, entry in
+                        rankRow(index: index, entry: entry)
                     }
+
+                    Text("Totals may exceed your grand total as each companion is credited the full shared amount.")
+                        .font(.dsCaption)
+                        .foregroundStyle(Theme.textSecondary)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
+                        .padding(.top, 4)
                 }
+            }
+            .padding(Metric.screenPadding)
+        }
+        .background(Theme.bg)
+        .navigationTitle("People leaderboard")
+        #if !os(macOS)
+        .navigationBarTitleDisplayMode(.inline)
+        #endif
+    }
+
+    // MARK: - Filters
+
+    private var filters: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
                 Menu {
-                    Button("All Categories") { categoryFilter = nil }
+                    Picker("Period", selection: $rangeFilter) {
+                        ForEach(DateRangeFilter.allCases) { filter in
+                            Text(filter.label).tag(filter)
+                        }
+                    }
+                } label: {
+                    filterChip("Period", value: rangeFilter.label)
+                }
+
+                Menu {
+                    Button("All") { categoryFilter = nil }
                     Divider()
                     ForEach(categories) { category in
                         Button(category.name) { categoryFilter = category }
                     }
                 } label: {
-                    LabeledContent("Category", value: categoryFilter?.name ?? "All")
+                    filterChip("Category", value: categoryFilter?.name ?? "All")
                 }
+
                 Menu {
-                    Button("All Accounts") { accountFilter = nil }
+                    Button("All") { accountFilter = nil }
                     Divider()
                     ForEach(accounts) { account in
                         Button(account.name) { accountFilter = account }
                     }
                 } label: {
-                    LabeledContent("Account", value: accountFilter?.name ?? "All")
+                    filterChip("Account", value: accountFilter?.name ?? "All")
                 }
+            }
+            .padding(.horizontal, 2)
+        }
+    }
+
+    private func filterChip(_ label: String, value: String) -> some View {
+        HStack(spacing: 4) {
+            Text("\(label): \(value)")
+                .font(.dsSubhead).fontWeight(.semibold)
+                .foregroundStyle(Theme.text)
+            Image(systemName: "chevron.down")
+                .font(.dsCaption.weight(.semibold))
+                .foregroundStyle(Theme.textSecondary)
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 8)
+        .background {
+            Capsule()
+                .fill(Theme.card)
+                .overlay(Capsule().stroke(Theme.hairline, lineWidth: 1))
+        }
+    }
+
+    // MARK: - Row
+
+    private func rankRow(index: Int, entry: PersonSpend) -> some View {
+        HStack(spacing: 12) {
+            Text("\(index + 1)")
+                .font(.dsBody).fontWeight(.bold)
+                .monospacedDigit()
+                .foregroundStyle(index == 0 ? Theme.accent : Theme.textSecondary)
+                .frame(minWidth: 20, alignment: .center)
+
+            PersonAvatar(name: entry.person.name, size: 40)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(entry.person.name)
+                    .font(.dsBody).fontWeight(.semibold)
+                    .foregroundStyle(Theme.text)
+                Text("^[\(entry.sharedCount) expense](inflect: true)")
+                    .font(.dsCaption)
+                    .foregroundStyle(Theme.textSecondary)
             }
 
-            Section("Ranked by spend") {
-                ForEach(Array(ranked.enumerated()), id: \.element.id) { index, entry in
-                    HStack(spacing: 12) {
-                        Text("\(index + 1)")
-                            .font(.headline)
-                            .foregroundStyle(.secondary)
-                            .monospacedDigit()
-                            .frame(minWidth: 24, alignment: .trailing)
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(entry.person.name)
-                            Text("^[\(entry.sharedCount) expense](inflect: true)")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                        Spacer()
-                        Text(entry.total.formattedIDR())
-                            .monospacedDigit()
-                    }
-                }
-            }
+            Spacer(minLength: 8)
+
+            MoneyText(entry.total, font: .dsBody, color: Theme.text)
         }
-        .overlay {
-            if ranked.isEmpty {
-                ContentUnavailableView(
-                    "No People Yet",
-                    systemImage: "person.2",
-                    description: Text("Tag expenses with the people you were with to see who you spend the most with.")
-                )
-            }
-        }
-        .navigationTitle("People")
+        .cardStyle()
     }
 }

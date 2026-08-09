@@ -229,13 +229,21 @@ struct EmptyStateView: View {
 
 // MARK: - Accent button (the "+" style)
 
-struct AccentCircleButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(.system(size: 18, weight: .bold))
-            .foregroundStyle(.white)
-            .frame(width: 38, height: 38)
-            .background(Theme.accent, in: Circle())
-            .opacity(configuration.isPressed ? 0.8 : 1)
+/// The circular accent "+" button used in toolbars. Rendered with the system's
+/// prominent circular button so it stays a true circle inside the toolbar's own
+/// button chrome (a custom fixed-size Circle background gets clipped there).
+private struct AccentCircleButton: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .labelStyle(.iconOnly)
+            .font(.body.weight(.bold))
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.circle)
+            .tint(Theme.accent)
     }
+}
+
+extension View {
+    /// Styles a toolbar `Button` (with a `Label`) as the accent "+" circle.
+    func accentCircleButton() -> some View { modifier(AccentCircleButton()) }
 }

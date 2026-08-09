@@ -40,7 +40,7 @@ struct ManageCategoriesView: View {
                 Button { editor = EditorTarget(category: nil) } label: {
                     Label("Add Category", systemImage: "plus")
                 }
-                .buttonStyle(AccentCircleButtonStyle())
+                .accentCircleButton()
             }
         }
         .overlay {

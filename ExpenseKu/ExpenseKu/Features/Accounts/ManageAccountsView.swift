@@ -41,7 +41,7 @@ struct ManageAccountsView: View {
                 Button { editor = EditorTarget(account: nil) } label: {
                     Label("Add Account", systemImage: "plus")
                 }
-                .buttonStyle(AccentCircleButtonStyle())
+                .accentCircleButton()
             }
         }
         .overlay {

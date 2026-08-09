@@ -39,7 +39,7 @@ struct ManagePeopleView: View {
                 Button { editor = EditorTarget(person: nil) } label: {
                     Label("Add Person", systemImage: "plus")
                 }
-                .buttonStyle(AccentCircleButtonStyle())
+                .accentCircleButton()
             }
         }
         .overlay {

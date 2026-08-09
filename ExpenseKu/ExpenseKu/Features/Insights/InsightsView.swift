@@ -2,9 +2,11 @@
 //  InsightsView.swift
 //  ExpenseKu
 //
-//  The Insights tab: spend-by-category and spend-over-time charts over a shared
-//  period filter, plus a link to the People leaderboard. Aggregation lives in
-//  the pure SpendSummary / PeopleLeaderboard layers.
+//  The Insights tab: spend-by-category, spend-by-account and spend-over-time
+//  charts over a shared period filter, plus a link to the People leaderboard.
+//  Aggregation lives in the pure SpendSummary / PeopleLeaderboard layers.
+//  Warm Cards styling; behaviour unchanged (all five presets + the pay-period
+//  stepper, ADR-0003).
 //
 
 import SwiftUI
@@ -36,56 +38,39 @@ struct InsightsView: View {
 
     var body: some View {
         NavigationStack(path: $path) {
-            List {
-                Section {
-                    Picker("Period", selection: $range) {
-                        ForEach(DateRangeFilter.allCases) { filter in
-                            Text(filter.label).tag(filter)
-                        }
-                    }
+            ScrollView {
+                VStack(spacing: Metric.cardGap) {
+                    filterChips
+
                     if range == .payPeriod {
-                        Stepper(value: $payday, in: Payday.range) {
-                            LabeledContent("Payday", value: "Day \(payday)")
+                        HStack {
+                            Label("Payday", systemImage: "calendar")
+                                .font(.dsBody)
+                                .foregroundStyle(Theme.text)
+                            Spacer()
+                            PaydayStepper(payday: $payday, accessibilityTitle: "Payday")
                         }
-                        .onChange(of: payday) { _, newValue in
-                            Payday.current = newValue
-                        }
+                        .cardStyle()
+                        .onChange(of: payday) { _, newValue in Payday.current = newValue }
                     }
-                }
 
-                Section("Spend by Category") {
-                    if byCategory.isEmpty {
-                        Text("No spending in this period.")
-                            .foregroundStyle(.secondary)
-                    } else {
-                        SpendByCategoryChart(data: byCategory)
+                    chartCard("Spend by Category") {
+                        if byCategory.isEmpty { emptyChart } else { SpendByCategoryChart(data: byCategory) }
                     }
-                }
 
-                Section("Spend by Account") {
-                    if byAccount.isEmpty {
-                        Text("No spending in this period.")
-                            .foregroundStyle(.secondary)
-                    } else {
-                        SpendByAccountChart(data: byAccount)
+                    chartCard("Spend by Account") {
+                        if byAccount.isEmpty { emptyChart } else { SpendByAccountChart(data: byAccount) }
                     }
-                }
 
-                Section("Spend over Time") {
-                    if overTime.isEmpty {
-                        Text("No spending in this period.")
-                            .foregroundStyle(.secondary)
-                    } else {
-                        SpendOverTimeChart(data: overTime, granularity: .month)
+                    chartCard("Spend over Time", accessory: AnyView(byMonthTag)) {
+                        if overTime.isEmpty { emptyChart } else { SpendOverTimeChart(data: overTime, granularity: .month) }
                     }
-                }
 
-                Section {
-                    NavigationLink(value: Destination.leaderboard) {
-                        Label("Who you spend with", systemImage: "person.2")
-                    }
+                    leaderboardLink
                 }
+                .padding(Metric.screenPadding)
             }
+            .background(Theme.bg)
             .navigationTitle("Insights")
             .navigationDestination(for: Destination.self) { _ in
                 PeopleLeaderboardView()
@@ -96,5 +81,90 @@ struct InsightsView: View {
             if DebugLaunch.startScreen == "leaderboard" { path = [.leaderboard] }
             #endif
         }
+    }
+
+    // MARK: - Period filter chips
+
+    private var filterChips: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(DateRangeFilter.allCases) { filter in
+                    let selected = range == filter
+                    Button {
+                        range = filter
+                    } label: {
+                        Text(filter.label)
+                            .font(.dsSubhead).fontWeight(.semibold)
+                            .foregroundStyle(selected ? .white : Theme.textSecondary)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 8)
+                            .background {
+                                Capsule()
+                                    .fill(selected ? Theme.accent : Theme.card)
+                                    .overlay(Capsule().stroke(Theme.hairline, lineWidth: selected ? 0 : 1))
+                            }
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityAddTraits(selected ? [.isSelected] : [])
+                }
+            }
+            .padding(.horizontal, 2)
+        }
+    }
+
+    // MARK: - Card scaffolding
+
+    private var byMonthTag: some View {
+        Text("By month")
+            .font(.dsCaption).fontWeight(.semibold)
+            .foregroundStyle(Theme.textSecondary)
+            .padding(.horizontal, 10).padding(.vertical, 4)
+            .background(Theme.textSecondary.opacity(0.1), in: Capsule())
+    }
+
+    private func chartCard<Content: View>(
+        _ title: String,
+        accessory: AnyView? = nil,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                SectionHeaderText(title)
+                Spacer()
+                if let accessory { accessory }
+            }
+            content()
+        }
+        .cardStyle()
+    }
+
+    private var emptyChart: some View {
+        Text("No spending in this period.")
+            .font(.dsSubhead)
+            .foregroundStyle(Theme.textSecondary)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.vertical, 8)
+    }
+
+    private var leaderboardLink: some View {
+        NavigationLink(value: Destination.leaderboard) {
+            HStack(spacing: 12) {
+                CategoryIcon(name: "people", systemImage: "person.2.fill", size: 40)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("People leaderboard")
+                        .font(.dsBody).fontWeight(.semibold)
+                        .foregroundStyle(Theme.text)
+                    Text("Who you spend with")
+                        .font(.dsCaption)
+                        .foregroundStyle(Theme.textSecondary)
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.dsSubhead.weight(.semibold))
+                    .foregroundStyle(Theme.textSecondary)
+            }
+            .cardStyle()
+        }
+        .buttonStyle(.plain)
     }
 }

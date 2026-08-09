@@ -2,29 +2,35 @@
 //  ManageView.swift
 //  ExpenseKu
 //
-//  The "Manage" tab: entry points to the Categories and People screens.
+//  The "Manage" tab: entry points to the Categories, People and Accounts
+//  screens, each a Warm Cards menu row with a live count.
 //
 
 import SwiftUI
+import SwiftData
 
 struct ManageView: View {
     enum Destination: Hashable { case categories, people, accounts }
 
+    @Query private var categories: [Category]
+    @Query private var people: [Person]
+    @Query private var accounts: [Account]
     @State private var path: [Destination] = []
 
     var body: some View {
         NavigationStack(path: $path) {
-            List {
-                NavigationLink(value: Destination.categories) {
-                    Label("Categories", systemImage: "folder")
+            ScrollView {
+                VStack(spacing: Metric.cardGap) {
+                    menuRow(.categories, title: "Categories", systemImage: "folder.fill",
+                            subtitle: "^[\(categories.count) category](inflect: true)")
+                    menuRow(.people, title: "People", systemImage: "person.2.fill",
+                            subtitle: "^[\(people.count) person](inflect: true)")
+                    menuRow(.accounts, title: "Accounts", systemImage: "creditcard.fill",
+                            subtitle: "^[\(accounts.count) account](inflect: true)")
                 }
-                NavigationLink(value: Destination.people) {
-                    Label("People", systemImage: "person.2")
-                }
-                NavigationLink(value: Destination.accounts) {
-                    Label("Accounts", systemImage: "creditcard")
-                }
+                .padding(Metric.screenPadding)
             }
+            .background(Theme.bg)
             .navigationTitle("Manage")
             .navigationDestination(for: Destination.self) { destination in
                 switch destination {
@@ -44,5 +50,27 @@ struct ManageView: View {
             }
             #endif
         }
+    }
+
+    private func menuRow(_ destination: Destination, title: String, systemImage: String, subtitle: LocalizedStringKey) -> some View {
+        NavigationLink(value: destination) {
+            HStack(spacing: 12) {
+                CategoryIcon(name: title, systemImage: systemImage, size: 44)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.dsBody).fontWeight(.semibold)
+                        .foregroundStyle(Theme.text)
+                    Text(subtitle)
+                        .font(.dsCaption)
+                        .foregroundStyle(Theme.textSecondary)
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.dsSubhead.weight(.semibold))
+                    .foregroundStyle(Theme.textSecondary)
+            }
+            .cardStyle()
+        }
+        .buttonStyle(.plain)
     }
 }

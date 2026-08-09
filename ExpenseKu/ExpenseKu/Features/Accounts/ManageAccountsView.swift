@@ -19,23 +19,35 @@ struct ManageAccountsView: View {
     var body: some View {
         List {
             ForEach(accounts) { account in
-                Button(account.name) { editor = EditorTarget(account: account) }
-                    .foregroundStyle(.primary)
+                Button { editor = EditorTarget(account: account) } label: {
+                    HStack(spacing: 12) {
+                        CategoryIcon(name: account.name, systemImage: "creditcard.fill", size: 36)
+                        Text(account.name)
+                            .font(.dsBody)
+                            .foregroundStyle(Theme.text)
+                        Spacer()
+                    }
+                }
+                .listRowBackground(Theme.card)
             }
             .onDelete(perform: delete)
         }
+        .listStyle(.insetGrouped)
+        .scrollContentBackground(.hidden)
+        .background(Theme.bg)
         .navigationTitle("Accounts")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button { editor = EditorTarget(account: nil) } label: {
                     Label("Add Account", systemImage: "plus")
                 }
+                .buttonStyle(AccentCircleButtonStyle())
             }
         }
         .overlay {
             if accounts.isEmpty {
-                ContentUnavailableView("No Accounts", systemImage: "creditcard",
-                    description: Text("Add one with the + button."))
+                EmptyStateView(title: "No Accounts", systemImage: "creditcard",
+                    message: "Add one with the + button.")
             }
         }
         .sheet(item: $editor) { target in

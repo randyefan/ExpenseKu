@@ -17,23 +17,35 @@ struct ManagePeopleView: View {
     var body: some View {
         List {
             ForEach(people) { person in
-                Button(person.name) { editor = EditorTarget(person: person) }
-                    .foregroundStyle(.primary)
+                Button { editor = EditorTarget(person: person) } label: {
+                    HStack(spacing: 12) {
+                        PersonAvatar(name: person.name, size: 36)
+                        Text(person.name)
+                            .font(.dsBody)
+                            .foregroundStyle(Theme.text)
+                        Spacer()
+                    }
+                }
+                .listRowBackground(Theme.card)
             }
             .onDelete(perform: delete)
         }
+        .listStyle(.insetGrouped)
+        .scrollContentBackground(.hidden)
+        .background(Theme.bg)
         .navigationTitle("People")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button { editor = EditorTarget(person: nil) } label: {
                     Label("Add Person", systemImage: "plus")
                 }
+                .buttonStyle(AccentCircleButtonStyle())
             }
         }
         .overlay {
             if people.isEmpty {
-                ContentUnavailableView("No People", systemImage: "person.2",
-                    description: Text("Add one with the + button."))
+                EmptyStateView(title: "No People", systemImage: "person.2",
+                    message: "Add one with the + button.")
             }
         }
         .sheet(item: $editor) { target in

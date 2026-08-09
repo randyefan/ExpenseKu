@@ -18,23 +18,35 @@ struct ManageCategoriesView: View {
     var body: some View {
         List {
             ForEach(categories) { category in
-                Button(category.name) { editor = EditorTarget(category: category) }
-                    .foregroundStyle(.primary)
+                Button { editor = EditorTarget(category: category) } label: {
+                    HStack(spacing: 12) {
+                        CategoryIcon(name: category.name, size: 36)
+                        Text(category.name)
+                            .font(.dsBody)
+                            .foregroundStyle(Theme.text)
+                        Spacer()
+                    }
+                }
+                .listRowBackground(Theme.card)
             }
             .onDelete(perform: delete)
         }
+        .listStyle(.insetGrouped)
+        .scrollContentBackground(.hidden)
+        .background(Theme.bg)
         .navigationTitle("Categories")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button { editor = EditorTarget(category: nil) } label: {
                     Label("Add Category", systemImage: "plus")
                 }
+                .buttonStyle(AccentCircleButtonStyle())
             }
         }
         .overlay {
             if categories.isEmpty {
-                ContentUnavailableView("No Categories", systemImage: "folder",
-                    description: Text("Add one with the + button."))
+                EmptyStateView(title: "No Categories", systemImage: "folder",
+                    message: "Add one with the + button.")
             }
         }
         .sheet(item: $editor) { target in

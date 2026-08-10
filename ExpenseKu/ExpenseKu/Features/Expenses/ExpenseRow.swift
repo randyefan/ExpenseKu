@@ -39,6 +39,7 @@ struct ExpenseRow: View {
                     .fontWeight(.bold)
                     .foregroundStyle(Theme.text)
                     .lineLimit(1)
+                    .padding(.bottom, 2)
 
                 if !expense.note.isEmpty {
                     Text(expense.note)
@@ -59,22 +60,23 @@ struct ExpenseRow: View {
 
     @ViewBuilder
     private var metaLine: some View {
-        HStack(spacing: 4) {
+        VStack(alignment: .leading, spacing: 3) {
             if let account = expense.account {
-                HStack(spacing: 3) {
-                    Image(systemName: "creditcard")
-                        .fontWeight(.bold)
-                    Text(account.name)
-                        .fontWeight(.bold)
-                }
-                .lineLimit(1)
+                metaItem(icon: "creditcard", text: account.name)
             }
             if !peopleNames.isEmpty {
-                Text(expense.account == nil ? peopleNames : "⏤  \(peopleNames)")
-                    .lineLimit(1)
+                metaItem(icon: "person.2", text: peopleNames)
             }
         }
         .font(.dsCaption)
         .foregroundStyle(Theme.textSecondary)
+    }
+
+    private func metaItem(icon: String, text: String) -> some View {
+        HStack(spacing: 3) {
+            Image(systemName: icon)
+            Text(text)
+        }
+        .lineLimit(1)
     }
 }

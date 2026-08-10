@@ -52,12 +52,16 @@ struct ExpenseRow: View {
     private var metaLine: some View {
         HStack(spacing: 4) {
             if let account = expense.account {
-                Label(account.name, systemImage: "creditcard")
-                    .labelStyle(.titleAndIcon)
-                    .lineLimit(1)
+                HStack(spacing: 3) {
+                    Image(systemName: "creditcard")
+                        .fontWeight(.bold)
+                    Text(account.name)
+                        .fontWeight(.bold)
+                }
+                .lineLimit(1)
             }
             if !peopleNames.isEmpty {
-                Text(expense.account == nil ? peopleNames : "· \(peopleNames)")
+                Text(expense.account == nil ? peopleNames : "⏤  \(peopleNames)")
                     .lineLimit(1)
             }
         }

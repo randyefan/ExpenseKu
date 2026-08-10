@@ -49,6 +49,9 @@ struct ExpensesView: View {
                     cycleContent
                 }
             }
+            #if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .navigation) {
                     Button {

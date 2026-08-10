@@ -16,7 +16,8 @@ struct RootView: View {
     #if DEBUG
     @State private var debugScreen: String?
     private static let debugScreens: Set<String> = [
-        "editor", "picker-category", "picker-people", "picker-account", "name-duplicate", "settings"
+        "editor", "picker-category", "picker-people", "picker-account", "name-duplicate", "settings",
+        "category-editor", "account-editor"
     ]
     #endif
 

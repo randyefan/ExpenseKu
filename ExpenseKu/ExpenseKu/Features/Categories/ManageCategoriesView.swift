@@ -20,7 +20,7 @@ struct ManageCategoriesView: View {
             ForEach(categories) { category in
                 Button { editor = EditorTarget(category: category) } label: {
                     HStack(spacing: 12) {
-                        CategoryIcon(name: category.name, size: 36)
+                        CategoryIcon(category: category, size: 36)
                         Text(category.name)
                             .font(.dsBody)
                             .foregroundStyle(Theme.text)
@@ -51,7 +51,7 @@ struct ManageCategoriesView: View {
         }
         .sheet(item: $editor) { target in
             NavigationStack {
-                NameEditorView<Category>(
+                AppearanceEntityEditor<Category>(
                     title: target.category == nil ? "New Category" : "Edit Category",
                     editing: target.category,
                     makeNew: { Category() }

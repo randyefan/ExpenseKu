@@ -24,7 +24,7 @@ enum DebugLaunch {
     /// -startTab expenses|insights|manage
     static var startTab: String? { value(for: "-startTab") }
 
-    /// -startScreen categories|people|accounts|leaderboard
+    /// -startScreen categories|people|accounts|leaderboard|category-editor|account-editor
     static var startScreen: String? { value(for: "-startScreen") }
 
     /// Inserts a small, realistic dataset once, only if the store is empty.
@@ -34,8 +34,10 @@ enum DebugLaunch {
         let count = (try? context.fetchCount(FetchDescriptor<Expense>())) ?? 0
         guard count == 0 else { return }
 
-        let makan = Category(name: "Makan")
-        let transport = Category(name: "Transport")
+        // A couple carry an explicit color/icon to exercise the customization;
+        // Kopi is left "auto" so the name-derived fallback stays covered.
+        let makan = Category(name: "Makan", colorHex: AppearancePalette.swatches[1], iconName: "fork.knife")
+        let transport = Category(name: "Transport", colorHex: AppearancePalette.swatches[8], iconName: "car.fill")
         let kopi = Category(name: "Kopi")
         [makan, transport, kopi].forEach(context.insert)
 
@@ -44,8 +46,8 @@ enum DebugLaunch {
         let budi = Person(name: "Budi")
         [tarisa, fadil, budi].forEach(context.insert)
 
-        let cash = Account(name: "Cash")
-        let gopay = Account(name: "GoPay")
+        let cash = Account(name: "Cash", colorHex: AppearancePalette.swatches[5], iconName: "banknote.fill")
+        let gopay = Account(name: "GoPay", colorHex: AppearancePalette.swatches[7], iconName: "wallet.pass.fill")
         [cash, gopay].forEach(context.insert)
 
         func day(_ month: Int, _ day: Int) -> Date {

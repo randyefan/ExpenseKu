@@ -58,9 +58,9 @@ struct PeoplePicker: View {
         }
         .sheet(isPresented: $showingNew) {
             NavigationStack {
-                NameEditorView<Person>(title: "New Person", makeNew: { Person() }) { created in
+                NameEditorView<Person>(title: "New Person", makeNew: { Person() }, onCommit: { created in
                     if !isSelected(created) { selection.append(created) }
-                }
+                })
             }
         }
     }

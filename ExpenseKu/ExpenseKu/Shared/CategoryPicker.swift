@@ -24,7 +24,7 @@ struct CategoryPicker: View {
                         dismiss()
                     } label: {
                         HStack(spacing: 12) {
-                            CategoryIcon(name: category.name, size: 36)
+                            CategoryIcon(category: category, size: 36)
                             Text(category.name)
                                 .font(.dsBody)
                                 .foregroundStyle(Theme.text)
@@ -52,7 +52,7 @@ struct CategoryPicker: View {
         .navigationTitle("Category")
         .sheet(isPresented: $showingNew) {
             NavigationStack {
-                NameEditorView<Category>(title: "New Category", makeNew: { Category() }) { created in
+                AppearanceEntityEditor<Category>(title: "New Category", makeNew: { Category() }) { created in
                     selection = created
                 }
             }

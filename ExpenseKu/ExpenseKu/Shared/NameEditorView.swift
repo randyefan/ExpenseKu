@@ -19,6 +19,12 @@ struct NameEditorView<T: NamedEntity>: View {
     /// Called with the entity the owner settled on — the newly created one, the
     /// renamed one, or an existing duplicate they chose to reuse.
     let onCommit: (T) -> Void
+    /// Optional extra fields shown below the name (e.g. the appearance picker).
+    let accessory: AnyView?
+    /// Stamps extra owner choices onto the entity just before commit. Runs on the
+    /// create / rename / "create anyway" paths — never when reusing an existing
+    /// entity (that one keeps its own appearance).
+    let applyExtras: (T) -> Void
 
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
@@ -35,12 +41,16 @@ struct NameEditorView<T: NamedEntity>: View {
         editing: T? = nil,
         makeNew: @escaping () -> T,
         onCommit: @escaping (T) -> Void = { _ in },
+        accessory: AnyView? = nil,
+        applyExtras: @escaping (T) -> Void = { _ in },
         debugPrefill: String? = nil
     ) {
         self.title = title
         self.editing = editing
         self.makeNew = makeNew
         self.onCommit = onCommit
+        self.accessory = accessory
+        self.applyExtras = applyExtras
         self.debugPrefill = debugPrefill
         _name = State(initialValue: debugPrefill ?? editing?.name ?? "")
     }
@@ -69,6 +79,10 @@ struct NameEditorView<T: NamedEntity>: View {
 
                 if let dup = duplicate {
                     duplicatePrompt(dup)
+                }
+
+                if let accessory {
+                    accessory
                 }
 
                 Spacer(minLength: 0)
@@ -160,6 +174,7 @@ struct NameEditorView<T: NamedEntity>: View {
     private func save(into entity: T) {
         if entity.modelContext == nil { context.insert(entity) }
         entity.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        applyExtras(entity)
         onCommit(entity)
         dismiss()
     }

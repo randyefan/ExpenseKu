@@ -7,7 +7,8 @@
 //  pickers, and the inline name-duplicate prompt. Never compiled into release.
 //
 //  Reached via `-startScreen editor|picker-category|picker-people|
-//  picker-account|name-duplicate` (see DebugLaunch + RootView).
+//  picker-account|name-duplicate|category-editor|account-editor` (see
+//  DebugLaunch + RootView).
 //
 
 #if DEBUG
@@ -46,6 +47,23 @@ struct DebugHarness: View {
             NavigationStack { PeoplePicker(selection: $selectedPeople) }
         case "picker-account":
             NavigationStack { AccountPicker(selection: $account) }
+        case "category-editor":
+            // Edit a seeded category so the appearance picker shows a live preview.
+            NavigationStack {
+                AppearanceEntityEditor<Category>(
+                    title: categories.first == nil ? "New Category" : "Edit Category",
+                    editing: categories.first,
+                    makeNew: { Category() }
+                )
+            }
+        case "account-editor":
+            NavigationStack {
+                AppearanceEntityEditor<Account>(
+                    title: accounts.first == nil ? "New Account" : "Edit Account",
+                    editing: accounts.first,
+                    makeNew: { Account() }
+                )
+            }
         case "settings":
             // Brings its own NavigationStack.
             TransactionSettingsView(payday: $payday)

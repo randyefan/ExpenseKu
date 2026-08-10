@@ -45,7 +45,7 @@ struct AccountPicker: View {
                         dismiss()
                     } label: {
                         HStack(spacing: 12) {
-                            CategoryIcon(name: account.name, systemImage: "creditcard.fill", size: 36)
+                            CategoryIcon(account: account, size: 36)
                             Text(account.name)
                                 .font(.dsBody)
                                 .foregroundStyle(Theme.text)
@@ -73,7 +73,7 @@ struct AccountPicker: View {
         .navigationTitle("Account")
         .sheet(isPresented: $showingNew) {
             NavigationStack {
-                NameEditorView<Account>(title: "New Account", makeNew: { Account() }) { created in
+                AppearanceEntityEditor<Account>(title: "New Account", makeNew: { Account() }) { created in
                     selection = created
                 }
             }

@@ -21,7 +21,7 @@ struct ManageAccountsView: View {
             ForEach(accounts) { account in
                 Button { editor = EditorTarget(account: account) } label: {
                     HStack(spacing: 12) {
-                        CategoryIcon(name: account.name, systemImage: "creditcard.fill", size: 36)
+                        CategoryIcon(account: account, size: 36)
                         Text(account.name)
                             .font(.dsBody)
                             .foregroundStyle(Theme.text)
@@ -52,7 +52,7 @@ struct ManageAccountsView: View {
         }
         .sheet(item: $editor) { target in
             NavigationStack {
-                NameEditorView<Account>(
+                AppearanceEntityEditor<Account>(
                     title: target.account == nil ? "New Account" : "Edit Account",
                     editing: target.account,
                     makeNew: { Account() }

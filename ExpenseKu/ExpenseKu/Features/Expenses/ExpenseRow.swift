@@ -31,7 +31,11 @@ struct ExpenseRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            CategoryIcon(name: categoryName)
+            if let category = expense.category {
+                CategoryIcon(category: category)
+            } else {
+                CategoryIcon(name: categoryName)
+            }
 
             VStack(alignment: .leading, spacing: 3) {
                 Text(categoryName)

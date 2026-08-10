@@ -17,7 +17,16 @@ struct ExpenseRow: View {
 
     private var peopleNames: String {
         guard let people = expense.people, !people.isEmpty else { return "" }
-        return people.map(\.name).sorted().joined(separator: ", ")
+        let names = people.map(\.name).sorted()
+        switch names.count {
+        case 1:
+            return names[0]
+        case 2:
+            return "\(names[0]) and \(names[1])"
+        default:
+            // Oxford comma: "Anas, Beni, and Me"
+            return names.dropLast().joined(separator: ", ") + ", and " + names.last!
+        }
     }
 
     var body: some View {

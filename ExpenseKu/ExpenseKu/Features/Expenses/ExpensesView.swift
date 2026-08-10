@@ -23,8 +23,6 @@ struct ExpensesView: View {
     @State private var showingNew = false
     @State private var showingSettings = false
     @State private var payday: Int = Payday.current
-    /// Edit sheet opens fully (.large); still draggable down to .medium.
-    @State private var editDetent: PresentationDetent = .large
     @State private var cycle: PayCycle = PayCycle.containing(.now, payday: Payday.current)
 
     private var calendar: Calendar { .current }
@@ -51,7 +49,6 @@ struct ExpensesView: View {
                     cycleContent
                 }
             }
-            .navigationTitle("Expenses")
             .toolbar {
                 ToolbarItem(placement: .navigation) {
                     Button {
@@ -82,7 +79,6 @@ struct ExpensesView: View {
                 NavigationStack {
                     ExpenseEditorView(editing: expense, onFinish: { selection = nil })
                 }
-                .presentationDetents([.medium, .large], selection: $editDetent)
                 .presentationDragIndicator(.visible)
             }
             .onAppear { resetToCurrentCycle() }
@@ -175,7 +171,6 @@ struct ExpensesView: View {
                     Section {
                         ForEach(group.expenses) { expense in
                             Button {
-                                editDetent = .large
                                 selection = expense
                             } label: {
                                 ExpenseRow(expense: expense)

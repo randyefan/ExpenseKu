@@ -2,9 +2,11 @@
 //  ExpenseEditorView.swift
 //  ExpenseKu
 //
-//  The core logging loop: add or edit an Expense. Amount is auto-focused for a
-//  fast add on iPhone (design.md §2). Category is required; People are optional.
-//  Presented inside a NavigationStack so the pickers can push.
+//  The core logging loop: add or edit an Expense. On iOS/iPadOS the amount is
+//  driven by an always-docked calculator keypad (design.md §2, calculator revamp):
+//  the detail rows scroll above a pinned dock of amount display → notes → keypad →
+//  delete. Tapping Notes swaps the keypad for the native keyboard. macOS keeps the
+//  plain Form with a hardware-keyboard amount field.
 //
 
 import SwiftUI
@@ -21,17 +23,22 @@ struct ExpenseEditorView: View {
     /// that clears its selection instead.
     let onFinish: (() -> Void)?
 
-    @State private var amount: Decimal
+    @State private var amount: Decimal            // macOS amount field binding
+    @State private var expr: ExpressionEvaluator  // iOS keypad-driven amount
     @State private var date: Date
     @State private var note: String
     @State private var category: Category?
     @State private var people: [Person]
     @State private var account: Account?
 
+    @FocusState private var notesFocused: Bool
+
     init(editing: Expense? = nil, onFinish: (() -> Void)? = nil) {
         self.editing = editing
         self.onFinish = onFinish
-        _amount = State(initialValue: editing?.amount ?? 0)
+        let startAmount = editing?.amount ?? 0
+        _amount = State(initialValue: startAmount)
+        _expr = State(initialValue: ExpressionEvaluator(amount: startAmount))
         _date = State(initialValue: editing?.date ?? .now)
         _note = State(initialValue: editing?.note ?? "")
         _category = State(initialValue: editing?.category)
@@ -39,13 +46,186 @@ struct ExpenseEditorView: View {
         _account = State(initialValue: editing?.account)
     }
 
-    private var canSave: Bool { amount > 0 && category != nil }
+    /// The amount that will be saved, resolved per platform.
+    private var resolvedAmount: Decimal {
+        #if os(iOS)
+        expr.committedAmount
+        #else
+        amount
+        #endif
+    }
+
+    private var canSave: Bool { resolvedAmount > 0 && category != nil }
 
     private var peopleSummary: String {
         people.isEmpty ? "None" : people.map(\.name).sorted().joined(separator: ", ")
     }
 
     var body: some View {
+        #if os(iOS)
+        iosBody
+        #else
+        macBody
+        #endif
+    }
+
+    // MARK: - Shared detail rows (Date / Category / Account / People)
+
+    @ViewBuilder private var detailRows: some View {
+        DatePicker("Date", selection: $date, displayedComponents: .date)
+            .font(.dsBody)
+            .listRowBackground(Theme.card)
+
+        NavigationLink {
+            CategoryPicker(selection: $category)
+        } label: {
+            LabeledContent("Category") {
+                Text(category?.name ?? "Required")
+                    .foregroundStyle(category == nil ? Theme.accent : Theme.text)
+            }
+            .font(.dsBody)
+        }
+        .listRowBackground(Theme.card)
+
+        NavigationLink {
+            AccountPicker(selection: $account)
+        } label: {
+            LabeledContent("Account") {
+                Text(account?.name ?? "None")
+                    .foregroundStyle(account == nil ? Theme.textSecondary : Theme.text)
+            }
+            .font(.dsBody)
+        }
+        .listRowBackground(Theme.card)
+
+        NavigationLink {
+            PeoplePicker(selection: $people)
+        } label: {
+            LabeledContent("People") {
+                Text(peopleSummary)
+                    .foregroundStyle(people.isEmpty ? Theme.textSecondary : Theme.text)
+                    .lineLimit(1)
+            }
+            .font(.dsBody)
+        }
+        .listRowBackground(Theme.card)
+    }
+
+    // MARK: - iOS: big amount hero + scrolling rows + sticky keypad dock
+
+    #if os(iOS)
+    private var iosBody: some View {
+        VStack(spacing: 0) {
+            ScrollViewReader { proxy in
+                List {
+                    Section {
+                        amountHero
+                            .listRowBackground(Color.clear)
+                            .listRowSeparator(.hidden)
+                            .listRowInsets(EdgeInsets(top: 12, leading: 16, bottom: 8, trailing: 16))
+                    }
+
+                    Section { detailRows }
+
+                    Section {
+                        TextField("Add a note…", text: $note, axis: .vertical)
+                            .font(.dsBody)
+                            .focused($notesFocused)
+                            .listRowBackground(Theme.card)
+                            .id(notesRowID)
+                    }
+                }
+                .listStyle(.insetGrouped)
+                .scrollContentBackground(.hidden)
+                .scrollDismissesKeyboard(.interactively)
+                .onChange(of: notesFocused) { _, focused in
+                    if focused {
+                        withAnimation { proxy.scrollTo(notesRowID, anchor: .bottom) }
+                    }
+                }
+            }
+
+            if !notesFocused {
+                dock
+            }
+        }
+        .background(Theme.bg)
+        .navigationTitle(editing == nil ? "Add Expense" : "Edit Expense")
+        .navigationBarTitleDisplayMode(.inline)
+        .animation(.easeInOut(duration: 0.2), value: notesFocused)
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("Done") { notesFocused = false }
+            }
+        }
+    }
+
+    private var notesRowID: String { "notes" }
+
+    /// Sticky bottom dock: keypad plus (when editing) a restrained Delete button.
+    private var dock: some View {
+        VStack(spacing: 12) {
+            CalculatorKeypad(
+                canSave: canSave,
+                onDigit: { expr.appendDigit($0) },
+                onDecimal: { expr.appendDecimal() },
+                onOperator: { expr.appendOperator($0) },
+                onBackspace: { expr.backspace() },
+                onClear: { expr.clear() },
+                onSave: save,
+                onCancel: finish
+            )
+
+            if editing != nil {
+                Button("Delete Expense", role: .destructive, action: deleteExpense)
+                    .font(.dsSubhead)
+                    .foregroundStyle(Theme.accent)
+                    .padding(.top, 4)
+            }
+        }
+        .padding(.horizontal, Metric.screenPadding)
+        .padding(.top, 12)
+        .padding(.bottom, 8)
+        .frame(maxWidth: .infinity)
+        .background(Theme.bg)
+        .overlay(alignment: .top) {
+            Rectangle().fill(Theme.hairline).frame(height: 1)
+        }
+        .transition(.move(edge: .bottom).combined(with: .opacity))
+    }
+
+    /// Big, page-top amount: the calculator working line above the `Rp` result.
+    private var amountHero: some View {
+        VStack(spacing: 4) {
+            if !expr.displayExpression.isEmpty {
+                Text(expr.displayExpression)
+                    .font(.dsBody)
+                    .foregroundStyle(Theme.textSecondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
+            }
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Text("Rp")
+                    .font(.dsTitle).fontWeight(.semibold)
+                    .foregroundStyle(Theme.textSecondary)
+                Text(resolvedAmount.formatted(.number.precision(.fractionLength(0))))
+                    .font(.jakarta(48, relativeTo: .largeTitle)).fontWeight(.bold)
+                    .monospacedDigit()
+                    .foregroundStyle(resolvedAmount > 0 ? Theme.text : Theme.textSecondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.4)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 8)
+    }
+    #endif
+
+    // MARK: - macOS: plain Form
+
+    #if os(macOS)
+    private var macBody: some View {
         Form {
             Section {
                 HStack(alignment: .firstTextBaseline, spacing: 6) {
@@ -60,45 +240,7 @@ struct ExpenseEditorView: View {
                 .listRowBackground(Theme.card)
             }
 
-            Section {
-                DatePicker("Date", selection: $date, displayedComponents: .date)
-                    .font(.dsBody)
-                    .listRowBackground(Theme.card)
-
-                NavigationLink {
-                    CategoryPicker(selection: $category)
-                } label: {
-                    LabeledContent("Category") {
-                        Text(category?.name ?? "Required")
-                            .foregroundStyle(category == nil ? Theme.accent : Theme.text)
-                    }
-                    .font(.dsBody)
-                }
-                .listRowBackground(Theme.card)
-
-                NavigationLink {
-                    AccountPicker(selection: $account)
-                } label: {
-                    LabeledContent("Account") {
-                        Text(account?.name ?? "None")
-                            .foregroundStyle(account == nil ? Theme.textSecondary : Theme.text)
-                    }
-                    .font(.dsBody)
-                }
-                .listRowBackground(Theme.card)
-
-                NavigationLink {
-                    PeoplePicker(selection: $people)
-                } label: {
-                    LabeledContent("People") {
-                        Text(peopleSummary)
-                            .foregroundStyle(people.isEmpty ? Theme.textSecondary : Theme.text)
-                            .lineLimit(1)
-                    }
-                    .font(.dsBody)
-                }
-                .listRowBackground(Theme.card)
-            }
+            Section { detailRows }
 
             Section {
                 TextField("Add a note…", text: $note, axis: .vertical)
@@ -117,9 +259,6 @@ struct ExpenseEditorView: View {
         .scrollContentBackground(.hidden)
         .background(Theme.bg)
         .navigationTitle(editing == nil ? "Add Expense" : "Edit Expense")
-        #if !os(macOS)
-        .navigationBarTitleDisplayMode(.inline)
-        #endif
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save", action: save).disabled(!canSave)
@@ -129,8 +268,12 @@ struct ExpenseEditorView: View {
             }
         }
     }
+    #endif
+
+    // MARK: - Actions
 
     private func save() {
+        guard canSave else { return }
         let target: Expense
         if let editing {
             target = editing
@@ -138,7 +281,7 @@ struct ExpenseEditorView: View {
             target = Expense()
             context.insert(target)
         }
-        target.amount = amount
+        target.amount = resolvedAmount
         target.date = date
         target.note = note.trimmingCharacters(in: .whitespacesAndNewlines)
         target.category = category

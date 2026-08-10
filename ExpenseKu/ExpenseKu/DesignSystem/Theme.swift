@@ -32,27 +32,33 @@ enum Theme {
     static let text           = adaptive(light: 0x2A2320, dark: 0xF5F0EC)
     static let textSecondary  = adaptive(light: 0x8A817C, dark: 0xA79E98)
 
-    /// A muted pastel fill for a category icon, derived deterministically from its name.
+    /// A muted tint fill for a category icon, derived deterministically from its
+    /// name. Adapts to the interface style so the glyph on top keeps its contrast:
+    /// a light pastel in light mode, a deep muted tone in dark mode.
     static func categoryTint(_ seed: String) -> Color {
         let hues: [Double] = [0.03, 0.09, 0.13, 0.33, 0.55, 0.72, 0.85]
-        let idx = abs(seed.hashValue) % hues.count
-        return Color(hue: hues[idx], saturation: 0.28, brightness: 0.96)
+        let hue = hues[abs(seed.hashValue) % hues.count]
+        let light = Color(hue: hue, saturation: 0.28, brightness: 0.96)
+        let dark  = Color(hue: hue, saturation: 0.32, brightness: 0.30)
+        return adaptive(light: light, dark: dark)
     }
 
     private static func adaptive(light: UInt, dark: UInt) -> Color {
+        adaptive(light: Color(hex: light), dark: Color(hex: dark))
+    }
+
+    private static func adaptive(light: Color, dark: Color) -> Color {
         #if canImport(UIKit)
         return Color(uiColor: UIColor { traits in
-            traits.userInterfaceStyle == .dark
-                ? UIColor(Color(hex: dark))
-                : UIColor(Color(hex: light))
+            UIColor(traits.userInterfaceStyle == .dark ? dark : light)
         })
         #elseif canImport(AppKit)
         return Color(nsColor: NSColor(name: nil) { appearance in
             let isDark = appearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
-            return NSColor(Color(hex: isDark ? dark : light))
+            return NSColor(isDark ? dark : light)
         })
         #else
-        return Color(hex: light)
+        return light
         #endif
     }
 }

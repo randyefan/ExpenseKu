@@ -31,6 +31,13 @@ struct ExpenseEditorView: View {
     @State private var people: [Person]
     @State private var account: Account?
 
+    /// The protected owner entry, auto-selected on a new expense (design: "Me by
+    /// default"). Empty until `ensureMe` has run, but that happens at app launch.
+    @Query(filter: #Predicate<Person> { $0.isMe }) private var me: [Person]
+    /// Guards the one-shot default so re-appearing (e.g. returning from the People
+    /// picker after the user unselected "Me") doesn't re-add it.
+    @State private var didApplyDefaults = false
+
     @FocusState private var notesFocused: Bool
 
     init(editing: Expense? = nil, onFinish: (() -> Void)? = nil) {
@@ -62,11 +69,25 @@ struct ExpenseEditorView: View {
     }
 
     var body: some View {
-        #if os(iOS)
-        iosBody
-        #else
-        macBody
-        #endif
+        Group {
+            #if os(iOS)
+            iosBody
+            #else
+            macBody
+            #endif
+        }
+        .onAppear(perform: applyDefaultsIfNeeded)
+    }
+
+    /// On a brand-new expense, pre-select the protected "Me" so logging a solo
+    /// expense is one tap. Runs once; the user can still unselect it.
+    private func applyDefaultsIfNeeded() {
+        guard !didApplyDefaults else { return }
+        didApplyDefaults = true
+        guard editing == nil, let me = me.first,
+              !people.contains(where: { $0.persistentModelID == me.persistentModelID })
+        else { return }
+        people.insert(me, at: 0)
     }
 
     // MARK: - Shared detail rows (Date / Category / Account / People)

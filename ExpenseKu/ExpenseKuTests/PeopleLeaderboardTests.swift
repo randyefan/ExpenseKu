@@ -90,6 +90,22 @@ final class PeopleLeaderboardTests: XCTestCase {
         XCTAssertTrue(PeopleLeaderboard.ranked(from: [expense]).isEmpty)
     }
 
+    /// The protected owner ("Me") is never ranked — the board lists companions.
+    func testMeIsExcludedFromRanking() {
+        let me = Person(name: "Me", isMe: true)
+        let tarisa = Person(name: "Tarisa")
+        let expenses = [
+            Expense(amount: 100_000, people: [me, tarisa]),
+            Expense(amount: 50_000, people: [me]),   // solo — contributes nothing
+        ]
+
+        let ranked = PeopleLeaderboard.ranked(from: expenses)
+
+        XCTAssertEqual(ranked.map(\.person.name), ["Tarisa"])
+        XCTAssertEqual(ranked[0].total, 100_000)
+        XCTAssertFalse(ranked.contains { $0.person.isMe })
+    }
+
     // MARK: - Helpers
 
     private func date(_ year: Int, _ month: Int, _ day: Int) -> Date {

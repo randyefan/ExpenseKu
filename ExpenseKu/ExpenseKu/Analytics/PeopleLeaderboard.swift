@@ -53,6 +53,9 @@ enum PeopleLeaderboard {
             guard let people = expense.people, !people.isEmpty else { continue }
 
             for person in people {
+                // The owner ("Me") is on nearly every expense; a companion ranking
+                // that always leads with yourself is noise, so skip it.
+                if person.isMe { continue }
                 let id = person.persistentModelID
                 var entry = totals[id] ?? (person: person, total: 0, count: 0)
                 entry.total += expense.amount   // full amount to each companion

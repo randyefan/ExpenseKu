@@ -11,22 +11,20 @@ import SwiftData
 
 struct ManagePeopleView: View {
     @Environment(\.modelContext) private var context
-    @Query(sort: \Person.name) private var people: [Person]
+    @Query(sort: \Person.name) private var allPeople: [Person]
     @State private var editor: EditorTarget?
+
+    /// "Me" pinned to the top, then everyone else alphabetically.
+    private var people: [Person] {
+        allPeople.filter(\.isMe) + allPeople.filter { !$0.isMe }
+    }
 
     var body: some View {
         List {
             ForEach(people) { person in
-                Button { editor = EditorTarget(person: person) } label: {
-                    HStack(spacing: 12) {
-                        PersonAvatar(name: person.name, size: 36)
-                        Text(person.name)
-                            .font(.dsBody)
-                            .foregroundStyle(Theme.text)
-                        Spacer()
-                    }
-                }
-                .listRowBackground(Theme.card)
+                row(for: person)
+                    .listRowBackground(Theme.card)
+                    .deleteDisabled(person.isMe)
             }
             .onDelete(perform: delete)
         }
@@ -59,8 +57,37 @@ struct ManagePeopleView: View {
         }
     }
 
+    /// A normal person is tappable to rename; the protected "Me" is a plain,
+    /// non-editable row marked "You".
+    @ViewBuilder private func row(for person: Person) -> some View {
+        if person.isMe {
+            HStack(spacing: 12) {
+                PersonAvatar(name: person.name, size: 36)
+                Text(person.name)
+                    .font(.dsBody)
+                    .foregroundStyle(Theme.text)
+                Spacer()
+                Text("You")
+                    .font(.dsSubhead)
+                    .foregroundStyle(Theme.textSecondary)
+            }
+        } else {
+            Button { editor = EditorTarget(person: person) } label: {
+                HStack(spacing: 12) {
+                    PersonAvatar(name: person.name, size: 36)
+                    Text(person.name)
+                        .font(.dsBody)
+                        .foregroundStyle(Theme.text)
+                    Spacer()
+                }
+            }
+        }
+    }
+
     private func delete(at offsets: IndexSet) {
-        for index in offsets { context.delete(people[index]) }
+        for index in offsets where !people[index].isMe {
+            context.delete(people[index])
+        }
     }
 
     struct EditorTarget: Identifiable {

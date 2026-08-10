@@ -42,6 +42,7 @@ struct RootView: View {
         }
         #endif
         .task {
+            Person.ensureMe(in: modelContext)
             #if DEBUG
             DebugLaunch.seedIfNeeded(modelContext)
             switch DebugLaunch.startTab {

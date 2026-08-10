@@ -12,7 +12,11 @@ import SwiftData
 struct PeoplePicker: View {
     @Binding var selection: [Person]
     @Environment(\.dismiss) private var dismiss
-    @Query(sort: \Person.name) private var people: [Person]
+    @Query(sort: \Person.name) private var allPeople: [Person]
+    /// "Me" pinned to the top, then everyone else alphabetically.
+    private var people: [Person] {
+        allPeople.filter(\.isMe) + allPeople.filter { !$0.isMe }
+    }
     @State private var showingNew = false
 
     var body: some View {

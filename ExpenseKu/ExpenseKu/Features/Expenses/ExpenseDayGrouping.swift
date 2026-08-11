@@ -17,6 +17,11 @@ struct ExpenseDayGroup {
     let day: Date
     /// The day's expenses, ordered by `date` descending (latest time first).
     let expenses: [Expense]
+
+    /// Sum of the day's expense amounts — the per-day total shown in the list header.
+    var total: Decimal {
+        expenses.reduce(Decimal(0)) { $0 + $1.amount }
+    }
 }
 
 /// Group `expenses` by calendar day and sort:

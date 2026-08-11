@@ -59,6 +59,40 @@ final class ExpenseDayGroupingTests: XCTestCase {
         XCTAssertEqual(groups[0].expenses.map(\.note), ["late", "early"])
     }
 
+    // MARK: - Per-day total (daily-total feature)
+
+    /// A day's total is the sum of its expense amounts.
+    func testDayTotalSumsAmounts() {
+        let a = Expense(amount: 25_000, date: date(2026, 8, 2, 8, 15), note: "a")
+        let b = Expense(amount: 120_000, date: date(2026, 8, 2, 20, 30), note: "b")
+
+        let groups = expenseDayGroups([a, b], calendar: calendar)
+
+        XCTAssertEqual(groups.count, 1)
+        XCTAssertEqual(groups[0].total, 145_000)
+    }
+
+    /// Each day reports its own total, not a running or global sum.
+    func testDayTotalsPerGroupAreIndependent() {
+        let aug2a = Expense(amount: 25_000, date: date(2026, 8, 2, 8, 0), note: "aug2a")
+        let aug2b = Expense(amount: 120_000, date: date(2026, 8, 2, 20, 0), note: "aug2b")
+        let aug6 = Expense(amount: 30_000, date: date(2026, 8, 6, 9, 0), note: "aug6")
+
+        let groups = expenseDayGroups([aug2a, aug2b, aug6], calendar: calendar)
+
+        // groups[0] is the most recent day (Aug 6), groups[1] is Aug 2.
+        XCTAssertEqual(groups.map(\.total), [30_000, 145_000])
+    }
+
+    /// A single-expense day totals to exactly that expense's amount.
+    func testSingleExpenseDayTotalEqualsItsAmount() {
+        let only = Expense(amount: 45_000, date: date(2026, 8, 2, 12, 0), note: "only")
+
+        let groups = expenseDayGroups([only], calendar: calendar)
+
+        XCTAssertEqual(groups[0].total, 45_000)
+    }
+
     // MARK: - Helpers
 
     private func date(_ y: Int, _ m: Int, _ d: Int, _ h: Int, _ min: Int) -> Date {

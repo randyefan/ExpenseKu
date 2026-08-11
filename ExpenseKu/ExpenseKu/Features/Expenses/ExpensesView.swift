@@ -189,8 +189,18 @@ struct ExpensesView: View {
                         }
                         .onDelete { delete($0, in: group) }
                     } header: {
-                        SectionHeaderText(group.title)
-                            .padding(.leading, 4)
+                        HStack {
+                            SectionHeaderText(group.title)
+                            Spacer()
+                            // Day total, styled to match the header label (Variant A):
+                            // quiet, secondary, monospaced — never the coral hero accent.
+                            Text(group.total.formattedIDR())
+                                .font(.dsCaption)
+                                .fontWeight(.semibold)
+                                .monospacedDigit()
+                                .foregroundStyle(Theme.textSecondary)
+                        }
+                        .padding(.horizontal, 4)
                     }
                 }
             }
@@ -232,6 +242,7 @@ struct ExpensesView: View {
         let id: Date          // start of day
         let title: String
         let expenses: [Expense]
+        let total: Decimal
     }
 
     private var dayGroups: [DayGroup] {
@@ -239,7 +250,8 @@ struct ExpensesView: View {
             DayGroup(
                 id: group.day,
                 title: dayTitle(group.day),
-                expenses: group.expenses
+                expenses: group.expenses,
+                total: group.total
             )
         }
     }

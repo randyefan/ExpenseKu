@@ -93,7 +93,7 @@ struct ExpenseEditorView: View {
     // MARK: - Shared detail rows (Date / Category / Account / People)
 
     @ViewBuilder private var detailRows: some View {
-        DatePicker("Date", selection: $date, displayedComponents: .date)
+        DatePicker("Date & Time", selection: $date, displayedComponents: [.date, .hourAndMinute])
             .font(.dsBody)
             .listRowBackground(Theme.card)
 

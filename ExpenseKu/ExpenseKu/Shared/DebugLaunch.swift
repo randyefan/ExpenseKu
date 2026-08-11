@@ -50,17 +50,20 @@ enum DebugLaunch {
         let gopay = Account(name: "GoPay", colorHex: AppearancePalette.swatches[7], iconName: "wallet.pass.fill")
         [cash, gopay].forEach(context.insert)
 
-        func day(_ month: Int, _ day: Int) -> Date {
-            Calendar.current.date(from: DateComponents(year: 2026, month: month, day: day)) ?? .now
+        func day(_ month: Int, _ day: Int, _ hour: Int = 12, _ minute: Int = 0) -> Date {
+            Calendar.current.date(from: DateComponents(year: 2026, month: month, day: day, hour: hour, minute: minute)) ?? .now
         }
 
         // One expense left account-less on purpose, to exercise the "Unassigned" bucket.
+        // Aug 2 has two expenses at different times, so the list demonstrates that same-day
+        // rows order by the time set on each expense (latest first).
         let expenses = [
-            Expense(amount: 120_000, date: day(8, 2), note: "Dinner", category: makan, people: [tarisa, fadil], account: gopay),
-            Expense(amount: 45_000, date: day(8, 5), note: "Lunch", category: makan, people: [tarisa], account: cash),
-            Expense(amount: 30_000, date: day(8, 6), note: "Grab home", category: transport, people: [], account: gopay),
-            Expense(amount: 25_000, date: day(7, 20), note: "Latte", category: kopi, people: [fadil, budi], account: cash),
-            Expense(amount: 80_000, date: day(7, 28), note: "Ojek + makan", category: makan, people: [budi]),
+            Expense(amount: 120_000, date: day(8, 2, 20, 30), note: "Dinner", category: makan, people: [tarisa, fadil], account: gopay),
+            Expense(amount: 25_000, date: day(8, 2, 8, 15), note: "Morning coffee", category: kopi, people: [], account: cash),
+            Expense(amount: 45_000, date: day(8, 5, 13, 5), note: "Lunch", category: makan, people: [tarisa], account: cash),
+            Expense(amount: 30_000, date: day(8, 6, 18, 40), note: "Grab home", category: transport, people: [], account: gopay),
+            Expense(amount: 25_000, date: day(7, 20, 9, 25), note: "Latte", category: kopi, people: [fadil, budi], account: cash),
+            Expense(amount: 80_000, date: day(7, 28, 19, 0), note: "Ojek + makan", category: makan, people: [budi]),
         ]
         expenses.forEach(context.insert)
     }

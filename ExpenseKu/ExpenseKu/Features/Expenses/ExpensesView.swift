@@ -235,12 +235,11 @@ struct ExpensesView: View {
     }
 
     private var dayGroups: [DayGroup] {
-        let grouped = Dictionary(grouping: cycleExpenses) { calendar.startOfDay(for: $0.date) }
-        return grouped.keys.sorted(by: >).map { day in
+        expenseDayGroups(cycleExpenses, calendar: calendar).map { group in
             DayGroup(
-                id: day,
-                title: dayTitle(day),
-                expenses: (grouped[day] ?? []).sorted { $0.date > $1.date }
+                id: group.day,
+                title: dayTitle(group.day),
+                expenses: group.expenses
             )
         }
     }

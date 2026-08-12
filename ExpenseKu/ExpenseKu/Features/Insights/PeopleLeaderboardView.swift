@@ -48,7 +48,17 @@ struct PeopleLeaderboardView: View {
                     .frame(minHeight: 360)
                 } else {
                     ForEach(Array(ranked.enumerated()), id: \.element.id) { index, entry in
-                        rankRow(index: index, entry: entry)
+                        NavigationLink(value: InsightsView.Destination.personExpenses(
+                            PersonExpensesRoute(
+                                person: entry.person,
+                                category: categoryFilter,
+                                account: accountFilter,
+                                range: rangeFilter
+                            )
+                        )) {
+                            rankRow(index: index, entry: entry)
+                        }
+                        .buttonStyle(.plain)
                     }
 
                     Text("Totals may exceed your grand total as each companion is credited the full shared amount.")
@@ -149,6 +159,10 @@ struct PeopleLeaderboardView: View {
             Spacer(minLength: 8)
 
             MoneyText(entry.total, font: .dsBody, color: Theme.text)
+
+            Image(systemName: "chevron.right")
+                .font(.dsCaption.weight(.semibold))
+                .foregroundStyle(Theme.textSecondary)
         }
         .cardStyle()
     }

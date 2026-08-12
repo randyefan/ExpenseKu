@@ -13,7 +13,10 @@ import SwiftUI
 import SwiftData
 
 struct InsightsView: View {
-    enum Destination: Hashable { case leaderboard }
+    enum Destination: Hashable {
+        case leaderboard
+        case personExpenses(PersonExpensesRoute)
+    }
 
     @Query private var expenses: [Expense]
     @State private var range: DateRangeFilter = .thisYear
@@ -72,13 +75,33 @@ struct InsightsView: View {
             }
             .background(Theme.bg)
             .navigationTitle("Insights")
-            .navigationDestination(for: Destination.self) { _ in
-                PeopleLeaderboardView()
+            .navigationDestination(for: Destination.self) { destination in
+                switch destination {
+                case .leaderboard:
+                    PeopleLeaderboardView()
+                case .personExpenses(let route):
+                    PersonExpensesView(route: route)
+                }
             }
         }
         .task {
             #if DEBUG
-            if DebugLaunch.startScreen == "leaderboard" { path = [.leaderboard] }
+            switch DebugLaunch.startScreen {
+            case "leaderboard":
+                path = [.leaderboard]
+            case "person-detail":
+                // Drive Insights → leaderboard → detail for the top-ranked companion,
+                // so the pushed screen is screenshot-able with realistic data.
+                if let person = PeopleLeaderboard.ranked(from: expenses).first?.person {
+                    let route = PersonExpensesRoute(person: person, category: nil,
+                                                    account: nil, range: .allTime)
+                    path = [.leaderboard, .personExpenses(route)]
+                } else {
+                    path = [.leaderboard]
+                }
+            default:
+                break
+            }
             #endif
         }
     }

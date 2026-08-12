@@ -71,4 +71,36 @@ enum PeopleLeaderboard {
                 return lhs.person.name.localizedCaseInsensitiveCompare(rhs.person.name) == .orderedAscending
             }
     }
+
+    /// The expenses behind one leaderboard row: every expense the given person is
+    /// tagged on, under the same filters `ranked` uses, sorted newest-first.
+    ///
+    /// This is the drill-down for a leaderboard row. Because attribution credits each
+    /// companion the full amount, the returned list reconciles with the row exactly:
+    /// its `count` equals the row's `sharedCount` and its amount-sum equals the row's
+    /// `total`. Pure and UI-free, same as `ranked`.
+    static func expenses(
+        for person: Person,
+        from expenses: [Expense],
+        category: Category? = nil,
+        account: Account? = nil,
+        dateRange: ClosedRange<Date>? = nil
+    ) -> [Expense] {
+        let personID = person.persistentModelID
+
+        return expenses.filter { expense in
+            if let category, expense.category?.persistentModelID != category.persistentModelID {
+                return false
+            }
+            if let account, expense.account?.persistentModelID != account.persistentModelID {
+                return false
+            }
+            if let dateRange, !dateRange.contains(expense.date) {
+                return false
+            }
+            guard let people = expense.people else { return false }
+            return people.contains { $0.persistentModelID == personID }
+        }
+        .sorted { $0.date > $1.date }   // newest first
+    }
 }

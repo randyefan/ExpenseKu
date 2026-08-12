@@ -24,7 +24,7 @@ enum DebugLaunch {
     /// -startTab expenses|insights|manage
     static var startTab: String? { value(for: "-startTab") }
 
-    /// -startScreen categories|people|accounts|leaderboard|category-editor|account-editor
+    /// -startScreen categories|people|accounts|leaderboard|person-detail|category-editor|account-editor
     static var startScreen: String? { value(for: "-startScreen") }
 
     /// Inserts a small, realistic dataset once, only if the store is empty.

@@ -32,7 +32,7 @@ struct ExpenseEditorView: View {
     @State private var account: Account?
 
     /// The protected owner entry, auto-selected on a new expense (design: "Me by
-    /// default"). Empty until `ensureMe` has run, but that happens at app launch.
+    /// default"). Empty until `reconcileMe` has run, but that happens at app launch.
     @Query(filter: #Predicate<Person> { $0.isMe }) private var me: [Person]
     /// Guards the one-shot default so re-appearing (e.g. returning from the People
     /// picker after the user unselected "Me") doesn't re-add it.

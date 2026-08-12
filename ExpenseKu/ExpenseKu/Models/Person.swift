@@ -34,13 +34,58 @@ extension Person {
     /// The default display name for the protected owner entry.
     static let meName = "Me"
 
-    /// Guarantees exactly one protected "Me" exists. Called at app launch; creates
-    /// it on first run and is a no-op thereafter. Idempotent and safe to call often.
+    /// Guarantees exactly one protected "Me" exists — creating it on first run and
+    /// healing duplicates thereafter. Called at app launch *and* on every CloudKit
+    /// remote change (see RootView), because SwiftData mirrored to CloudKit can't
+    /// enforce a unique constraint (ADR-0002): two devices each running the
+    /// first-run insert before they sync will produce two `isMe` records.
+    ///
+    /// When more than one exists, the extras are merged into a single survivor:
+    /// every expense tagged with a duplicate is re-tagged onto the survivor, then
+    /// the duplicate is deleted (which nullifies its remaining links, ADR-0001).
+    /// Idempotent and safe to call often.
     @MainActor
-    static func ensureMe(in context: ModelContext) {
-        var descriptor = FetchDescriptor<Person>(predicate: #Predicate { $0.isMe })
-        descriptor.fetchLimit = 1
-        if let existing = try? context.fetch(descriptor), !existing.isEmpty { return }
-        context.insert(Person(name: meName, isMe: true))
+    static func reconcileMe(in context: ModelContext) {
+        let descriptor = FetchDescriptor<Person>(predicate: #Predicate { $0.isMe })
+        guard let mes = try? context.fetch(descriptor) else { return }
+
+        // First run: no owner yet — create it.
+        guard let survivor = canonicalMe(among: mes) else {
+            context.insert(Person(name: meName, isMe: true))
+            return
+        }
+
+        // Unique already — the common case, nothing to heal.
+        guard mes.count > 1 else { return }
+
+        // Fold each duplicate's expenses onto the survivor, then delete it.
+        for duplicate in mes where duplicate !== survivor {
+            for expense in duplicate.expenses ?? [] {
+                var people = expense.people ?? []
+                if !people.contains(where: { $0 === survivor }) {
+                    people.append(survivor)
+                }
+                people.removeAll { $0 === duplicate }
+                expense.people = people
+            }
+            context.delete(duplicate)
+        }
+
+        // The survivor keeps the protected name even if a duplicate had been renamed.
+        if survivor.name != meName { survivor.name = meName }
+    }
+
+    /// Picks the survivor when duplicate "Me" records exist, using a deterministic
+    /// order so independent devices converge on the same winner rather than each
+    /// keeping a different one: most-used first, then by name, then by stable
+    /// identity. Returns nil only when there are no "Me" records at all.
+    private static func canonicalMe(among mes: [Person]) -> Person? {
+        mes.min { a, b in
+            let ca = a.expenses?.count ?? 0
+            let cb = b.expenses?.count ?? 0
+            if ca != cb { return ca > cb }
+            if a.name != b.name { return a.name < b.name }
+            return "\(a.persistentModelID)" < "\(b.persistentModelID)"
+        }
     }
 }

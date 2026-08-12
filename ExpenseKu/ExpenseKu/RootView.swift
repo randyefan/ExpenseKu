@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct RootView: View {
     enum Tab: Hashable { case expenses, insights, manage }
@@ -42,8 +43,13 @@ struct RootView: View {
             if let debugScreen { DebugHarness(screen: debugScreen) }
         }
         #endif
+        .onReceive(NotificationCenter.default.publisher(for: .NSPersistentStoreRemoteChange)) { _ in
+            // CloudKit merged changes from another device — re-check the "Me"
+            // singleton and heal any duplicate that sync just introduced.
+            Person.reconcileMe(in: modelContext)
+        }
         .task {
-            Person.ensureMe(in: modelContext)
+            Person.reconcileMe(in: modelContext)
             #if DEBUG
             DebugLaunch.seedIfNeeded(modelContext)
             switch DebugLaunch.startTab {

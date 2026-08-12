@@ -80,6 +80,29 @@ enum Theme {
     static let accent = Color(hex: 0xE8735C)
 
     static let bg             = adaptive(light: 0xFBF7F3, dark: 0x17130F)
+
+    #if canImport(UIKit)
+    /// The `bg` token as an adaptive `UIColor`, for UIKit appearance proxies
+    /// (e.g. painting nav bars cream — see `configureBarAppearance()`).
+    static let bgUIColor = UIColor { traits in
+        UIColor(traits.userInterfaceStyle == .dark ? Color(hex: 0x17130F) : Color(hex: 0xFBF7F3))
+    }
+
+    /// Paint navigation bars with the cream `bg` and no hairline shadow, so the
+    /// bar blends into the surface on every platform. On a Designed-for-iPad Mac
+    /// build the `NavigationSplitView` sidebar bar ignores SwiftUI's
+    /// `.toolbarBackground`, so this proxy is the reliable path. Call once at
+    /// launch (ExpenseKuApp.init).
+    static func configureBarAppearance() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = bgUIColor
+        appearance.shadowColor = .clear
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
+        UINavigationBar.appearance().compactAppearance = appearance
+    }
+    #endif
     static let card           = adaptive(light: 0xFFFFFF, dark: 0x211C1A)
     static let hairline       = adaptive(light: 0xEFE8E1, dark: 0x2E2825)
     static let text           = adaptive(light: 0x2A2320, dark: 0xF5F0EC)

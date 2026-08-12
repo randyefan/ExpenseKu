@@ -27,6 +27,7 @@ struct ManageView: View {
                             subtitle: "^[\(people.count) person](inflect: true)")
                     menuRow(.accounts, title: "Accounts", systemImage: "creditcard.fill",
                             subtitle: "^[\(accounts.count) account](inflect: true)")
+                    footer
                 }
                 .padding(Metric.screenPadding)
             }
@@ -50,6 +51,26 @@ struct ManageView: View {
             }
             #endif
         }
+    }
+
+    private var footer: some View {
+        VStack(spacing: 2) {
+            Text("Made By REJ ❤️")
+                .font(.dsCaption).fontWeight(.semibold)
+                .foregroundStyle(Theme.textSecondary)
+            Text("Version \(appVersion)")
+                .font(.dsCaption)
+                .foregroundStyle(Theme.textSecondary.opacity(0.7))
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.top, Metric.cardGap)
+    }
+
+    private var appVersion: String {
+        let info = Bundle.main.infoDictionary
+        let short = info?["CFBundleShortVersionString"] as? String ?? "1.0"
+        let build = info?["CFBundleVersion"] as? String ?? "1"
+        return "\(short) (\(build))"
     }
 
     private func menuRow(_ destination: Destination, title: String, systemImage: String, subtitle: LocalizedStringKey) -> some View {

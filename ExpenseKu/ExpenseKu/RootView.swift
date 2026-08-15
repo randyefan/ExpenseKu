@@ -59,6 +59,9 @@ struct RootView: View {
             default: break
             }
             switch DebugLaunch.startScreen {
+            case "calendar", "calendar-day":
+                // In-tab state, not a cover: ExpensesView's own task flips the lens.
+                selection = .expenses
             case "leaderboard", "person-detail", "categories", "people", "accounts":
                 // These live under a tab; make sure the owning tab is active so
                 // the tab's deep-link task actually fires.

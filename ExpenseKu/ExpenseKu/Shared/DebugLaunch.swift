@@ -25,6 +25,12 @@ enum DebugLaunch {
     static var startTab: String? { value(for: "-startTab") }
 
     /// -startScreen categories|people|accounts|leaderboard|person-detail|category-editor|account-editor
+    ///              |calendar|calendar-day
+    ///
+    /// `calendar` opens the Expenses tab in the Month lens with its default day
+    /// selected; `calendar-day` selects the cycle's heaviest day instead, so the
+    /// populated day-list state is screenshot-able. Both are in-tab state, so they
+    /// route through RootView → ExpensesView rather than DebugHarness.
     static var startScreen: String? { value(for: "-startScreen") }
 
     /// Inserts a small, realistic dataset once, only if the store is empty.

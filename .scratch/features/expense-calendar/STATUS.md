@@ -1,7 +1,7 @@
 # STATUS — expense-calendar
 
-**Current stage:** 3 Build + verify (awaiting gate 3)
-**Branch:** feature/expense-calendar (created at stage 4)
+**Current stage:** 4 Ship — DONE (committed on feature/expense-calendar)
+**Branch:** feature/expense-calendar
 
 ## Gate log
 <!-- one line per passed gate: stage · date · what was approved -->
@@ -16,6 +16,9 @@
   **total** under the date instead of an intensity dot. Brief decision 3, the wireframe's
   cell notation + Dynamic-Type note, and the tech spec were all updated and re-approved
   ("Abbreviated + weighted"). Intensity survives as the number's weight + tone.
+- Stage 3 Build · 2026-08-16 · approved "ship it" (91 unit tests green, shots match
+  Variant A in light/dark/empty/iPad, 10-step interactive flow verified).
+- Stage 4 Ship · 2026-08-16 · committed `10d4d4d` (feature) + `441405b` (simdrive fix).
 
 ## Stage 3 — build + verify results
 

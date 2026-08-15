@@ -54,21 +54,46 @@ frontmost() {
   osascript -e 'tell application "System Events" to tell process "Simulator" to set frontmost to true' >/dev/null 2>&1 || true
 }
 
-# Live pixel→screen mapping from the Simulator window bounds. The device screen
-# sits below a ~TITLEBAR-tall title bar, horizontally centered in the window with
-# a small side margin. `k` = on-screen points per screenshot pixel = (winH -
-# titlebar) / pixelHeight; the same scale applies on both axes.
+# Live pixel→screen mapping.
+#
+# Preferred source: the Simulator window's device-screen AXGroup, whose position and
+# size ARE the on-screen device rect — no guessing. `k` = on-screen points per
+# screenshot pixel = groupWidth / pixelWidth; the same scale applies on both axes.
+#
+# Fallback (only if that element can't be read): the old estimate, which assumes the
+# screen sits below a TITLEBAR-tall bar, horizontally centered in the window. That
+# estimate is fragile — the title bar is not really 28pt on current Simulator builds,
+# and the resulting ~28pt y-error silently lands taps just outside small controls.
 read_mapping() {
-  local pos size WX WY WW WH tmp pxW pxH k devW originX originY
-  pos="$(osascript -e 'tell application "System Events" to tell process "Simulator" to get position of window 1')"
-  size="$(osascript -e 'tell application "System Events" to tell process "Simulator" to get size of window 1')"
-  WX="${pos%%,*}"; WY="$(echo "$pos" | sed 's/.*, *//')"
-  WW="${size%%,*}"; WH="$(echo "$size" | sed 's/.*, *//')"
+  local grp gx gy gw gh tmp pxW pxH k
+  local pos size WX WY WW WH devW originX originY
+
   tmp="$(mktemp -t simdrive).png"
   xcrun simctl io "$UDID" screenshot "$tmp" >/dev/null 2>&1
   pxW="$(sips -g pixelWidth "$tmp" | awk '/pixelWidth/{print $2}')"
   pxH="$(sips -g pixelHeight "$tmp" | awk '/pixelHeight/{print $2}')"
   rm -f "$tmp"
+
+  # {x, y, w, h} of the device screen inside the window.
+  grp="$(osascript -e 'tell application "System Events" to tell process "Simulator" to tell window 1 to get {position, size} of (first UI element whose role is "AXGroup")' 2>/dev/null || true)"
+  if [[ -n "$grp" ]]; then
+    IFS=', ' read -r gx gy gw gh <<< "$(echo "$grp" | tr -d ' ' | tr ',' ' ')"
+  fi
+
+  # Accept it only if its aspect ratio matches the screenshot's (guards against
+  # picking up some other group if the window layout ever changes).
+  if [[ -n "${gw:-}" && -n "${gh:-}" && "$gw" -gt 0 && "$gh" -gt 0 ]] \
+     && awk -v a="$gw" -v b="$gh" -v c="$pxW" -v d="$pxH" \
+            'BEGIN { r = a/b - c/d; if (r < 0) r = -r; exit !(r < 0.01) }'; then
+    k="$(echo "scale=8; $gw / $pxW" | bc -l)"
+    echo "$gx $gy $k"
+    return
+  fi
+
+  pos="$(osascript -e 'tell application "System Events" to tell process "Simulator" to get position of window 1')"
+  size="$(osascript -e 'tell application "System Events" to tell process "Simulator" to get size of window 1')"
+  WX="${pos%%,*}"; WY="$(echo "$pos" | sed 's/.*, *//')"
+  WW="${size%%,*}"; WH="$(echo "$size" | sed 's/.*, *//')"
   k="$(echo "scale=8; ($WH - $TITLEBAR) / $pxH" | bc -l)"
   devW="$(echo "scale=8; $pxW * $k" | bc -l)"
   originX="$(echo "scale=8; $WX + ($WW - $devW) / 2" | bc -l)"

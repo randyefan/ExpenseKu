@@ -42,7 +42,7 @@ struct InsightsView: View {
     var body: some View {
         NavigationStack(path: $path) {
             ScrollView {
-                VStack(spacing: Metric.cardGap) {
+                VStack {
                     filterChips
 
                     if range == .payPeriod {
@@ -73,6 +73,9 @@ struct InsightsView: View {
                 }
                 .padding(Metric.screenPadding)
             }
+#if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+#endif
             .background(Theme.bg)
             .navigationTitle("Insights")
             .navigationDestination(for: Destination.self) { destination in

@@ -32,6 +32,9 @@ struct ManageView: View {
                 .padding(Metric.screenPadding)
             }
             .background(Theme.bg)
+#if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+#endif
             .navigationTitle("Manage")
             .navigationDestination(for: Destination.self) { destination in
                 switch destination {

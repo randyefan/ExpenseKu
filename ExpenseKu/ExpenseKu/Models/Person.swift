@@ -49,9 +49,12 @@ extension Person {
         let descriptor = FetchDescriptor<Person>(predicate: #Predicate { $0.isMe })
         guard let mes = try? context.fetch(descriptor) else { return }
 
-        // First run: no owner yet — create it.
+        // First run: no owner yet — create it. Saved right away because the persistent
+        // ID is temporary until the first save, and `canonicalMe`'s last tiebreak
+        // compares those IDs across devices — an unsaved temp ID makes it unstable.
         guard let survivor = canonicalMe(among: mes) else {
             context.insert(Person(name: meName, isMe: true))
+            try? context.save()
             return
         }
 
@@ -73,6 +76,11 @@ extension Person {
 
         // The survivor keeps the protected name even if a duplicate had been renamed.
         if survivor.name != meName { survivor.name = meName }
+
+        // Persist immediately: this also runs from the CloudKit remote-change handler, so
+        // if the app is killed before autosave fires the merge is lost, never pushed back
+        // to CloudKit, and the duplicate "Me" survives on every device.
+        try? context.save()
     }
 
     /// Picks the survivor when duplicate "Me" records exist, using a deterministic

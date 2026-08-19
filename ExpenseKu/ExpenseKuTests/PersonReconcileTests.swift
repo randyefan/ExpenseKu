@@ -40,6 +40,30 @@ final class PersonReconcileTests: XCTestCase {
         XCTAssertEqual(mes.first?.name, "Me")
     }
 
+    /// Reconcile flushes its own work. It runs from the CloudKit remote-change handler,
+    /// where autosave may never get a chance to fire before the app is killed — an
+    /// unflushed merge is lost on every device and the duplicate "Me" survives.
+    func testCreatingMeIsPersisted() throws {
+        let context = try makeContext()
+        Person.reconcileMe(in: context)
+        XCTAssertFalse(context.hasChanges, "the new Me is written, not left pending")
+    }
+
+    /// Same guarantee for the healing path, which deletes and re-tags rather than inserts.
+    func testMergeIsPersisted() throws {
+        let context = try makeContext()
+        let a = Person(name: "Me", isMe: true)
+        let b = Person(name: "Me", isMe: true)
+        [a, b].forEach(context.insert)
+        [Expense(amount: 1, people: [a]),
+         Expense(amount: 1, people: [a]),
+         Expense(amount: 1, people: [b])].forEach(context.insert)
+
+        Person.reconcileMe(in: context)
+
+        XCTAssertFalse(context.hasChanges, "the merge is written, not left pending")
+    }
+
     /// Calling it again is a no-op — it stays at one.
     func testIdempotent() throws {
         let context = try makeContext()

@@ -88,6 +88,7 @@ struct ManagePeopleView: View {
         for index in offsets where !people[index].isMe {
             context.delete(people[index])
         }
+        try? context.save()
     }
 
     struct EditorTarget: Identifiable {

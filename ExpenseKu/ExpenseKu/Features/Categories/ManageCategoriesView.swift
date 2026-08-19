@@ -62,6 +62,7 @@ struct ManageCategoriesView: View {
 
     private func delete(at offsets: IndexSet) {
         for index in offsets { context.delete(categories[index]) }
+        try? context.save()
     }
 
     struct EditorTarget: Identifiable {

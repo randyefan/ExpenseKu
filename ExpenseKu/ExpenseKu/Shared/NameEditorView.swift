@@ -175,6 +175,9 @@ struct NameEditorView<T: NamedEntity>: View {
         if entity.modelContext == nil { context.insert(entity) }
         entity.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
         applyExtras(entity)
+        // Before onCommit, which hands the entity to the caller (often straight onto an
+        // Expense): a persistent ID is only permanent once saved.
+        try? context.save()
         onCommit(entity)
         dismiss()
     }

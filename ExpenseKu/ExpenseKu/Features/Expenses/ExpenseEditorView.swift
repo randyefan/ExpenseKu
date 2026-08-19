@@ -311,11 +311,15 @@ struct ExpenseEditorView: View {
         target.category = category
         target.people = people
         target.account = account
+        try? context.save()
         finish()
     }
 
     private func deleteExpense() {
-        if let editing { context.delete(editing) }
+        if let editing {
+            context.delete(editing)
+            try? context.save()
+        }
         finish()
     }
 

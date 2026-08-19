@@ -464,5 +464,7 @@ struct ExpensesView: View {
             if expense == selection { selection = nil }
             context.delete(expense)
         }
+        // Outside the loop: one transaction for the whole swipe batch.
+        try? context.save()
     }
 }

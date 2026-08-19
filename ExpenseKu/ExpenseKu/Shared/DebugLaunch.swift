@@ -72,6 +72,8 @@ enum DebugLaunch {
             Expense(amount: 80_000, date: day(7, 28, 19, 0), note: "Ojek + makan", category: makan, people: [budi]),
         ]
         expenses.forEach(context.insert)
+        // The `fetchCount == 0` guard above only holds if the previous seed landed.
+        try? context.save()
     }
 }
 #endif

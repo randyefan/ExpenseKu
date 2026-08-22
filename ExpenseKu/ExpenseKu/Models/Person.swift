@@ -83,10 +83,16 @@ extension Person {
         try? context.save()
     }
 
-    /// Picks the survivor when duplicate "Me" records exist, using a deterministic
-    /// order so independent devices converge on the same winner rather than each
-    /// keeping a different one: most-used first, then by name, then by stable
-    /// identity. Returns nil only when there are no "Me" records at all.
+    /// Picks the survivor when duplicate "Me" records exist: most-used first, then by
+    /// name, then by identity. Returns nil only when there are no "Me" records at all.
+    ///
+    /// The first two keys agree across devices. The third does not: persistent IDs are
+    /// only stable once saved, and their string form is not a documented ordering — so
+    /// this is best-effort, not a convergence guarantee. It only decides between records
+    /// that are otherwise identical, where either choice is equally correct locally, and
+    /// reconcile re-runs on the next remote change to fold whichever loser arrives.
+    /// A real guarantee needs a tiebreak stored in the data itself, which is a schema
+    /// change — see the vault note "Temp ID Tiebreak".
     private static func canonicalMe(among mes: [Person]) -> Person? {
         mes.min { a, b in
             let ca = a.expenses?.count ?? 0

@@ -134,7 +134,7 @@ struct NameEditorView<T: NamedEntity>: View {
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
-                    .background(Theme.accent, in: RoundedRectangle(cornerRadius: Metric.cardRadius, style: .continuous))
+                    .background(Theme.accent, in: RoundedRectangle(cornerRadius: Metric.cardRadius))
             }
 
             Button {
@@ -145,9 +145,9 @@ struct NameEditorView<T: NamedEntity>: View {
                     .foregroundStyle(Theme.text)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
-                    .background(Theme.card, in: RoundedRectangle(cornerRadius: Metric.cardRadius, style: .continuous))
+                    .background(Theme.card, in: RoundedRectangle(cornerRadius: Metric.cardRadius))
                     .overlay(
-                        RoundedRectangle(cornerRadius: Metric.cardRadius, style: .continuous)
+                        RoundedRectangle(cornerRadius: Metric.cardRadius)
                             .stroke(Theme.accent.opacity(0.5), lineWidth: 1)
                     )
             }

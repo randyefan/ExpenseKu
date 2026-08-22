@@ -38,6 +38,7 @@ struct ExpenseEditorView: View {
     @State private var didApplyDefaults = false
 
     @FocusState private var notesFocused: Bool
+    @State private var scrollPosition = ScrollPosition()
 
     init(editing: Expense? = nil, onFinish: (() -> Void)? = nil) {
         self.editing = editing
@@ -75,40 +76,39 @@ struct ExpenseEditorView: View {
 
     private var editorBody: some View {
         VStack(spacing: 0) {
-            ScrollViewReader { proxy in
-                List {
-                    Section {
-                        AmountHero(displayExpression: expr.displayExpression, amount: resolvedAmount)
-                            .listRowBackground(Color.clear)
-                            .listRowSeparator(.hidden)
-                            .listRowInsets(EdgeInsets(top: 12, leading: 16, bottom: 8, trailing: 16))
-                    }
-
-                    Section {
-                        ExpenseDetailRows(
-                            date: $date, category: $category,
-                            account: $account, people: $people
-                        )
-                    }
-
-                    Section {
-                        TextField("Add a note…", text: $note, axis: .vertical)
-                            .font(.dsBody)
-                            .focused($notesFocused)
-                            .listRowBackground(Theme.card)
-                            .id(notesRowID)
-                    }
+            List {
+                Section {
+                    AmountHero(displayExpression: expr.displayExpression, amount: resolvedAmount)
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(EdgeInsets(top: 12, leading: 16, bottom: 8, trailing: 16))
                 }
-                .listStyle(.insetGrouped)
-                .scrollContentBackground(.hidden)
-                .scrollDismissesKeyboard(.interactively)
-                // Tapping anywhere outside a text field dismisses the notes
-                // keyboard (List gives drag-dismiss but no tap-outside dismiss).
-                .dismissesKeyboardOnOutsideTap()
-                .onChange(of: notesFocused) { _, focused in
-                    if focused {
-                        withAnimation { proxy.scrollTo(notesRowID, anchor: .bottom) }
-                    }
+
+                Section {
+                    ExpenseDetailRows(
+                        date: $date, category: $category,
+                        account: $account, people: $people
+                    )
+                }
+
+                Section {
+                    TextField("Add a note…", text: $note, axis: .vertical)
+                        .font(.dsBody)
+                        .focused($notesFocused)
+                        .listRowBackground(Theme.card)
+                        .id(notesRowID)
+                }
+            }
+            .listStyle(.insetGrouped)
+            .scrollContentBackground(.hidden)
+            .scrollDismissesKeyboard(.interactively)
+            // Tapping anywhere outside a text field dismisses the notes
+            // keyboard (List gives drag-dismiss but no tap-outside dismiss).
+            .dismissesKeyboardOnOutsideTap()
+            .scrollPosition($scrollPosition)
+            .onChange(of: notesFocused) { _, focused in
+                if focused {
+                    withAnimation { scrollPosition.scrollTo(id: notesRowID, anchor: .bottom) }
                 }
             }
 

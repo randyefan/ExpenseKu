@@ -2,99 +2,99 @@
 //  RootView.swift
 //  ExpenseKu
 //
-//  Top-level 3-tab shell (design.md §1). iPad/Mac sidebar refinement is deferred
-//  to ticket 06; a TabView is correct on every platform for now.
+//  Top-level 3-tab shell (design.md §1). iPad sidebar refinement is deferred
+//  to ticket 06; a TabView is correct on every size class for now.
 //
 
 import SwiftUI
 import CoreData
 
 struct RootView: View {
-    enum Tab: Hashable { case expenses, insights, manage }
+    enum AppTab: Hashable { case expenses, insights, manage }
 
     @Environment(\.modelContext) private var modelContext
     @Environment(\.isEphemeralStore) private var isEphemeralStore
-    @State private var selection: Tab = .expenses
+    @State private var selection: AppTab = .expenses
     #if DEBUG
-    @State private var debugScreen: String?
-    private static let debugScreens: Set<String> = [
-        "editor", "picker-category", "picker-people", "picker-account", "name-duplicate", "settings",
-        "category-editor", "account-editor"
-    ]
+    @State private var debugScreen: DebugScreen?
     #endif
 
     var body: some View {
         TabView(selection: $selection) {
-            ExpensesView()
-                .tabItem { Label("Expenses", systemImage: "list.bullet") }
-                .tag(Tab.expenses)
-            InsightsView()
-                .tabItem { Label("Insights", systemImage: "chart.pie") }
-                .tag(Tab.insights)
-            ManageView()
-                .tabItem { Label("Manage", systemImage: "folder") }
-                .tag(Tab.manage)
+            Tab("Expenses", systemImage: "list.bullet", value: AppTab.expenses) {
+                ExpensesView()
+            }
+            Tab("Insights", systemImage: "chart.pie", value: AppTab.insights) {
+                InsightsView()
+            }
+            Tab("Manage", systemImage: "folder", value: AppTab.manage) {
+                ManageView()
+            }
         }
         .tint(Theme.accent)
         .safeAreaInset(edge: .top) {
             if isEphemeralStore { EphemeralStoreBanner() }
         }
         #if DEBUG
-        .fullScreenCover(isPresented: Binding(
-            get: { debugScreen != nil },
-            set: { if !$0 { debugScreen = nil } }
-        )) {
-            if let debugScreen { DebugHarness(screen: debugScreen) }
+        .fullScreenCover(item: $debugScreen) { screen in
+            DebugHarness(screen: screen.name)
         }
         #endif
-        .onReceive(NotificationCenter.default.publisher(for: .NSPersistentStoreRemoteChange)) { _ in
-            // CloudKit merged changes from another device — re-check the "Me"
-            // singleton and heal any duplicate that sync just introduced.
-            Person.reconcileMe(in: modelContext)
-        }
         .task {
             Person.reconcileMe(in: modelContext)
             #if DEBUG
-            DebugLaunch.seedIfNeeded(modelContext)
-            switch DebugLaunch.startTab {
-            case "insights": selection = .insights
-            case "manage": selection = .manage
-            case "expenses": selection = .expenses
-            default: break
-            }
-            switch DebugLaunch.startScreen {
-            case "calendar", "calendar-day":
-                // In-tab state, not a cover: ExpensesView's own task flips the lens.
-                selection = .expenses
-            case "leaderboard", "person-detail", "categories", "people", "accounts":
-                // These live under a tab; make sure the owning tab is active so
-                // the tab's deep-link task actually fires.
-                selection = ["leaderboard", "person-detail"].contains(DebugLaunch.startScreen) ? .insights : .manage
-            default:
-                break
-            }
-            if let screen = DebugLaunch.startScreen, RootView.debugScreens.contains(screen) {
-                debugScreen = screen
-            }
+            applyDebugLaunch()
             #endif
         }
+        .task {
+            // CloudKit merged changes from another device — re-check the "Me"
+            // singleton and heal any duplicate that sync just introduced.
+            let changes = NotificationCenter.default.notifications(named: .NSPersistentStoreRemoteChange)
+            for await _ in changes {
+                Person.reconcileMe(in: modelContext)
+            }
+        }
     }
+
+    #if DEBUG
+    private func applyDebugLaunch() {
+        DebugLaunch.seedIfNeeded(modelContext)
+
+        switch DebugLaunch.startTab {
+        case "insights": selection = .insights
+        case "manage": selection = .manage
+        case "expenses": selection = .expenses
+        default: break
+        }
+
+        switch DebugLaunch.startScreen {
+        case "calendar", "calendar-day":
+            // In-tab state, not a cover: ExpensesView's own task flips the lens.
+            selection = .expenses
+        case "leaderboard", "person-detail":
+            selection = .insights
+        case "categories", "people", "accounts":
+            selection = .manage
+        default:
+            break
+        }
+
+        if let screen = DebugLaunch.startScreen, DebugScreen.coverScreens.contains(screen) {
+            debugScreen = DebugScreen(name: screen)
+        }
+    }
+    #endif
 }
 
-/// Shown when the store failed to open and the app is running on the in-memory fallback.
-/// The owner has to know *before* they log anything, because an ephemeral store behaves
-/// exactly like a working one until the app quits and takes everything with it.
-struct EphemeralStoreBanner: View {
-    var body: some View {
-        HStack(spacing: Metric.cardGap) {
-            Image(systemName: "exclamationmark.triangle.fill")
-            Text("Storage unavailable — expenses won’t be saved.")
-                .font(.dsSubhead)
-            Spacer(minLength: 0)
-        }
-        .foregroundStyle(.white)
-        .padding(.horizontal, Metric.screenPadding)
-        .padding(.vertical, Metric.cardGap)
-        .background(Theme.accent)
-    }
+#if DEBUG
+/// A `-startScreen` value that opens as a full-screen cover rather than in-tab state.
+struct DebugScreen: Identifiable, Hashable {
+    let name: String
+    var id: String { name }
+
+    static let coverScreens: Set<String> = [
+        "editor", "picker-category", "picker-people", "picker-account", "name-duplicate",
+        "settings", "category-editor", "account-editor",
+    ]
 }
+#endif

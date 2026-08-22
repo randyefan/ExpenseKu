@@ -15,11 +15,11 @@ struct CardStyle: ViewModifier {
     func body(content: Content) -> some View {
         content
             .padding(padding)
-            .background(Theme.card, in: RoundedRectangle(cornerRadius: Metric.cardRadius, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: Metric.cardRadius, style: .continuous)
+            .background {
+                RoundedRectangle(cornerRadius: Metric.cardRadius)
+                    .fill(Theme.card)
                     .stroke(Theme.hairline, lineWidth: 1)
-            )
+            }
     }
 }
 

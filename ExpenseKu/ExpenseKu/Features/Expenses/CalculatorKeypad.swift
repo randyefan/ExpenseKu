@@ -155,7 +155,7 @@ struct CalculatorKeypad: View {
     }
 
     private func keyShape(fill: Color) -> some View {
-        RoundedRectangle(cornerRadius: 12, style: .continuous).fill(fill)
+        RoundedRectangle(cornerRadius: 12).fill(fill)
     }
 
     private func glyph(_ s: String) -> some View {

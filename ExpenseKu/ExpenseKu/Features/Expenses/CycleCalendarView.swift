@@ -25,7 +25,7 @@ struct CycleCalendarGrid: View {
     var body: some View {
         VStack(spacing: 4) {
             weekdayHeader
-            ForEach(Array(calendarGrid.weeks.enumerated()), id: \.offset) { _, week in
+            ForEach(calendarGrid.weeks.enumerated(), id: \.offset) { _, week in
                 HStack(spacing: 0) {
                     ForEach(week) { day in
                         DayCell(
@@ -52,7 +52,7 @@ struct CycleCalendarGrid: View {
         let symbols = calendar.veryShortStandaloneWeekdaySymbols
         let ordered = (0..<7).map { symbols[(calendar.firstWeekday - 1 + $0) % 7] }
         return HStack(spacing: 0) {
-            ForEach(Array(ordered.enumerated()), id: \.offset) { _, symbol in
+            ForEach(ordered.enumerated(), id: \.offset) { _, symbol in
                 Text(symbol)
                     .font(.dsCaption)
                     .fontWeight(.semibold)

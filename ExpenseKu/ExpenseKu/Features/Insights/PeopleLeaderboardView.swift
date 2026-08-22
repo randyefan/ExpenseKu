@@ -47,7 +47,7 @@ struct PeopleLeaderboardView: View {
                     )
                     .frame(minHeight: 360)
                 } else {
-                    ForEach(Array(ranked.enumerated()), id: \.element.id) { index, entry in
+                    ForEach(ranked.enumerated(), id: \.element.id) { index, entry in
                         NavigationLink(value: InsightsView.Destination.personExpenses(
                             PersonExpensesRoute(
                                 person: entry.person,

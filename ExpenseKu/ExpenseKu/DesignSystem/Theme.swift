@@ -112,7 +112,16 @@ enum Theme {
     /// a light pastel in light mode, a deep muted tone in dark mode.
     static func categoryTint(_ seed: String) -> Color {
         let hues: [Double] = [0.03, 0.09, 0.13, 0.33, 0.55, 0.72, 0.85]
-        return tint(hue: hues[abs(seed.hashValue) % hues.count])
+        return tint(hue: hues[stableIndex(seed, upperBound: hues.count)])
+    }
+
+    nonisolated static func stableIndex(_ seed: String, upperBound: Int) -> Int {
+        var hash: UInt64 = 0xcbf2_9ce4_8422_2325
+        for byte in seed.utf8 {
+            hash ^= UInt64(byte)
+            hash = hash &* 0x0000_0100_0000_01b3
+        }
+        return Int(hash % UInt64(upperBound))
     }
 
     /// The tint for an entity: its owner-chosen swatch when set (an "RRGGBB" hex),

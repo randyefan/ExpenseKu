@@ -10,7 +10,7 @@
 import SwiftUI
 import SwiftData
 
-struct NameEditorView<T: NamedEntity>: View {
+struct NameEditorView<T: NamedEntity, Accessory: View>: View {
     let title: String
     /// Non-nil when renaming an existing entity; nil when adding a new one.
     let editing: T?
@@ -19,8 +19,9 @@ struct NameEditorView<T: NamedEntity>: View {
     /// Called with the entity the owner settled on — the newly created one, the
     /// renamed one, or an existing duplicate they chose to reuse.
     let onCommit: (T) -> Void
-    /// Optional extra fields shown below the name (e.g. the appearance picker).
-    let accessory: AnyView?
+    /// Extra fields shown below the name (e.g. the appearance picker); `EmptyView`
+    /// when the entity has none.
+    @ViewBuilder let accessory: Accessory
     /// Stamps extra owner choices onto the entity just before commit. Runs on the
     /// create / rename / "create anyway" paths — never when reusing an existing
     /// entity (that one keeps its own appearance).
@@ -41,7 +42,7 @@ struct NameEditorView<T: NamedEntity>: View {
         editing: T? = nil,
         makeNew: @escaping () -> T,
         onCommit: @escaping (T) -> Void = { _ in },
-        accessory: AnyView? = nil,
+        @ViewBuilder accessory: () -> Accessory,
         applyExtras: @escaping (T) -> Void = { _ in },
         debugPrefill: String? = nil
     ) {
@@ -49,19 +50,10 @@ struct NameEditorView<T: NamedEntity>: View {
         self.editing = editing
         self.makeNew = makeNew
         self.onCommit = onCommit
-        self.accessory = accessory
+        self.accessory = accessory()
         self.applyExtras = applyExtras
         self.debugPrefill = debugPrefill
         _name = State(initialValue: debugPrefill ?? editing?.name ?? "")
-    }
-
-    /// The lowercase noun for the entity kind, derived from the screen title
-    /// ("New Category" → "category"), for the duplicate explanation copy.
-    private var entityNoun: String {
-        title
-            .replacingOccurrences(of: "New ", with: "")
-            .replacingOccurrences(of: "Rename ", with: "")
-            .lowercased()
     }
 
     var body: some View {
@@ -81,9 +73,7 @@ struct NameEditorView<T: NamedEntity>: View {
                     duplicatePrompt(dup)
                 }
 
-                if let accessory {
-                    accessory
-                }
+                accessory
 
                 Spacer(minLength: 0)
             }
@@ -118,7 +108,7 @@ struct NameEditorView<T: NamedEntity>: View {
                     Text("“\(dup.name)” already exists")
                         .font(.dsBody).bold()
                         .foregroundStyle(Theme.text)
-                    Text("You already have a \(entityNoun) with this name.")
+                    Text("You already have a \(T.noun) with this name.")
                         .font(.dsSubhead)
                         .foregroundStyle(Theme.textSecondary)
                 }
@@ -180,3 +170,24 @@ struct NameEditorView<T: NamedEntity>: View {
         dismiss()
     }
 }
+
+extension NameEditorView where Accessory == EmptyView {
+    /// For entities with no extra fields — Person.
+    init(
+        title: String,
+        editing: T? = nil,
+        makeNew: @escaping () -> T,
+        onCommit: @escaping (T) -> Void = { _ in },
+        debugPrefill: String? = nil
+    ) {
+        self.init(
+            title: title,
+            editing: editing,
+            makeNew: makeNew,
+            onCommit: onCommit,
+            accessory: { EmptyView() },
+            debugPrefill: debugPrefill
+        )
+    }
+}
+

@@ -70,7 +70,7 @@ struct DebugHarness: View {
         case "name-duplicate":
             // Prefill with a seeded category name so the dedup prompt shows.
             NavigationStack {
-                NameEditorView<Category>(
+                NameEditorView<Category, EmptyView>(
                     title: "New Category",
                     makeNew: { Category() },
                     debugPrefill: categories.first?.name ?? "Makan"

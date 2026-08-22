@@ -51,19 +51,19 @@ struct AppearanceEntityEditor<T: AppearanceEntity>: View {
     }
 
     var body: some View {
-        NameEditorView<T>(
+        NameEditorView(
             title: title,
             editing: editing,
             makeNew: makeNew,
             onCommit: onCommit,
-            accessory: AnyView(
+            accessory: {
                 AppearancePickerView(
                     colorHex: $colorHex,
                     iconName: $iconName,
                     previewName: editing?.name ?? "",
                     autoSymbol: T.autoSymbol(forName: editing?.name ?? "")
                 )
-            ),
+            },
             applyExtras: { entity in
                 entity.colorHex = colorHex
                 entity.iconName = iconName

@@ -48,7 +48,7 @@ struct ManagePeopleView: View {
         }
         .sheet(item: $editor) { target in
             NavigationStack {
-                NameEditorView<Person>(
+                NameEditorView<Person, EmptyView>(
                     title: target.person == nil ? "New Person" : "Edit Person",
                     editing: target.person,
                     makeNew: { Person() }

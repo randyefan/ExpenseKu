@@ -11,7 +11,7 @@
 
 import Foundation
 
-nonisolated enum Payday {
+enum Payday {
     static let range = 1...31
     static let defaultValue = 1
 

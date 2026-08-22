@@ -108,7 +108,8 @@ private struct DayCell: View {
                     .frame(height: 12)
             }
             .padding(.vertical, 1)
-            .contentShape(Rectangle())
+            .frame(maxWidth: .infinity, minHeight: 44)
+            .contentShape(.rect)
         }
         .buttonStyle(.plain)
         .disabled(!day.inCycle)

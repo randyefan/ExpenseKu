@@ -44,6 +44,7 @@ struct CalculatorKeypad: View {
                         } label: {
                             glyph(String(op.rawValue))
                         }
+                        .accessibilityLabel(op.accessibilityName)
                     }
                 }
 
@@ -100,16 +101,23 @@ struct CalculatorKeypad: View {
     }
 
     private func backspaceKey(width: CGFloat) -> some View {
-        keyShape(fill: Theme.card)
-            .overlay(
-                Image(systemName: "delete.left")
-                    .font(.system(size: 22, weight: .regular))
-                    .foregroundStyle(Theme.text)
-            )
-            .frame(width: width, height: tallHeight)
-            .contentShape(Rectangle())
-            .onTapGesture { tap(); onBackspace() }
-            .onLongPressGesture(minimumDuration: 0.4) { tap(); onClear() }
+        Button {
+            tap(); onBackspace()
+        } label: {
+            keyShape(fill: Theme.card)
+                .overlay {
+                    Image(systemName: "delete.left")
+                        .font(.system(size: 22, weight: .regular))
+                        .foregroundStyle(Theme.text)
+                }
+                .frame(width: width, height: tallHeight)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Delete")
+        .accessibilityHint("Double tap and hold to clear the amount")
+        .simultaneousGesture(
+            LongPressGesture(minimumDuration: 0.4).onEnded { _ in tap(); onClear() }
+        )
     }
 
     private func saveKey(width: CGFloat) -> some View {
@@ -127,6 +135,7 @@ struct CalculatorKeypad: View {
         .buttonStyle(.plain)
         .disabled(!canSave)
         .opacity(canSave ? 1 : 0.4)
+        .accessibilityLabel("Save expense")
     }
 
     // MARK: - Key builder
@@ -167,5 +176,14 @@ struct CalculatorKeypad: View {
 private extension CalcOperator {
     /// Top-to-bottom order down the keypad's operator column.
     static var orderedForKeypad: [CalcOperator] { [.divide, .multiply, .subtract, .add] }
+
+    var accessibilityName: String {
+        switch self {
+        case .add: "Add"
+        case .subtract: "Subtract"
+        case .multiply: "Multiply"
+        case .divide: "Divide"
+        }
+    }
 }
 #endif

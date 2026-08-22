@@ -92,7 +92,7 @@ struct PersonExpensesView: View {
             HStack(spacing: 12) {
                 PersonAvatar(name: route.person.name, size: 44)
                 Text(route.person.name)
-                    .font(.dsTitle).fontWeight(.bold)
+                    .font(.dsTitle).bold()
                     .foregroundStyle(Theme.text)
             }
 

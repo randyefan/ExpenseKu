@@ -30,7 +30,7 @@ struct CycleHeader: View {
 
                 VStack(spacing: 2) {
                     Text(cycle.title(calendar: calendar))
-                        .font(.dsHeadline).fontWeight(.bold)
+                        .font(.dsHeadline).bold()
                         .foregroundStyle(Theme.text)
                     Text(cycle.rangeText(calendar: calendar))
                         .font(.dsCaption)

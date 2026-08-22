@@ -25,7 +25,7 @@ struct AmountHero: View {
                     .font(.dsTitle).fontWeight(.semibold)
                     .foregroundStyle(Theme.textSecondary)
                 Text(amount.formatted(.number.precision(.fractionLength(0))))
-                    .font(.jakarta(48, relativeTo: .largeTitle)).fontWeight(.bold)
+                    .font(.jakarta(48, relativeTo: .largeTitle)).bold()
                     .monospacedDigit()
                     .foregroundStyle(amount > 0 ? Theme.text : Theme.textSecondary)
                     .lineLimit(1)

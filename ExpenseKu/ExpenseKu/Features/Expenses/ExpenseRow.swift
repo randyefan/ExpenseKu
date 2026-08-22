@@ -40,7 +40,7 @@ struct ExpenseRow: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text(categoryName)
                     .font(.dsBody)
-                    .fontWeight(.bold)
+                    .bold()
                     .foregroundStyle(Theme.text)
                     .lineLimit(1)
                     .padding(.bottom, 2)
@@ -52,7 +52,10 @@ struct ExpenseRow: View {
                         .lineLimit(1)
                 }
 
-                metaLine
+                ExpenseMetaLine(
+                    accountName: expense.account?.name,
+                    peopleNames: peopleNames
+                )
             }
 
             Spacer(minLength: 8)
@@ -60,27 +63,5 @@ struct ExpenseRow: View {
             MoneyText(expense.amount, font: .dsBody, color: Theme.text)
         }
         .padding(.vertical, 4)
-    }
-
-    @ViewBuilder
-    private var metaLine: some View {
-        VStack(alignment: .leading, spacing: 3) {
-            if let account = expense.account {
-                metaItem(icon: "creditcard", text: account.name)
-            }
-            if !peopleNames.isEmpty {
-                metaItem(icon: "person.2", text: peopleNames)
-            }
-        }
-        .font(.dsCaption)
-        .foregroundStyle(Theme.textSecondary)
-    }
-
-    private func metaItem(icon: String, text: String) -> some View {
-        HStack(spacing: 3) {
-            Image(systemName: icon)
-            Text(text)
-        }
-        .lineLimit(1)
     }
 }

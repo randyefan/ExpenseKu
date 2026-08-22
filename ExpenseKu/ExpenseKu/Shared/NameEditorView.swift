@@ -116,7 +116,7 @@ struct NameEditorView<T: NamedEntity>: View {
                     .foregroundStyle(Theme.textSecondary)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("“\(dup.name)” already exists")
-                        .font(.dsBody).fontWeight(.bold)
+                        .font(.dsBody).bold()
                         .foregroundStyle(Theme.text)
                     Text("You already have a \(entityNoun) with this name.")
                         .font(.dsSubhead)

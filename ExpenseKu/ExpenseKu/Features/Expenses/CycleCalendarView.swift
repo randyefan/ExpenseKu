@@ -99,7 +99,7 @@ private struct DayCell: View {
 
                 // Reserve the total's row even when empty so dates stay on one baseline.
                 Text(totalText ?? "")
-                    .font(.jakarta(10, relativeTo: .caption2))
+                    .font(.jakarta(10, relativeTo: .caption))
                     .fontWeight(totalWeight)
                     .monospacedDigit()
                     .foregroundStyle(totalColor)

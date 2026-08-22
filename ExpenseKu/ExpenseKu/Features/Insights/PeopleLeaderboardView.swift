@@ -138,7 +138,7 @@ struct PeopleLeaderboardView: View {
     private func rankRow(index: Int, entry: PersonSpend) -> some View {
         HStack(spacing: 12) {
             Text("\(index + 1)")
-                .font(.dsBody).fontWeight(.bold)
+                .font(.dsBody).bold()
                 .monospacedDigit()
                 .foregroundStyle(index == 0 ? Theme.accent : Theme.textSecondary)
                 .frame(minWidth: 20, alignment: .center)

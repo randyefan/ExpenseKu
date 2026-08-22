@@ -61,7 +61,7 @@ struct MoneyText: View {
     var body: some View {
         Text(amount.formattedIDR())
             .font(font)
-            .fontWeight(.bold)
+            .bold()
             .monospacedDigit()
             .foregroundStyle(color)
     }
@@ -170,11 +170,11 @@ struct PickerAddRow: View {
             Circle()
                 .fill(Theme.textSecondary.opacity(0.12))
                 .frame(width: Metric.iconSize, height: Metric.iconSize)
-                .overlay(
+                .overlay {
                     Image(systemName: "plus")
-                        .font(.system(size: 18, weight: .semibold))
+                        .font(.system(size: Metric.iconSize * 0.41, weight: .semibold))
                         .foregroundStyle(Theme.accent)
-                )
+                }
             Text(title)
                 .font(.dsBody).fontWeight(.semibold)
                 .foregroundStyle(Theme.accent)
@@ -287,19 +287,22 @@ struct EmptyStateView: View {
     let title: String
     let systemImage: String
     let message: String
+
+    @ScaledMetric(relativeTo: .largeTitle) private var badgeSize: CGFloat = 96
+
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: Metric.cardGap) {
             ZStack {
                 Circle()
                     .fill(Theme.textSecondary.opacity(0.12))
-                    .frame(width: 96, height: 96)
+                    .frame(width: badgeSize, height: badgeSize)
                 Image(systemName: systemImage)
-                    .font(.system(size: 40, weight: .regular))
+                    .font(.system(size: badgeSize * (40 / 96), weight: .regular))
                     .foregroundStyle(Theme.textSecondary)
             }
             .padding(.bottom, 4)
             Text(title)
-                .font(.dsTitle).fontWeight(.bold)
+                .font(.dsTitle).bold()
                 .foregroundStyle(Theme.text)
             Text(message)
                 .font(.dsSubhead)

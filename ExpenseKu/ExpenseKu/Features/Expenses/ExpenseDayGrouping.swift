@@ -12,7 +12,9 @@
 import Foundation
 
 /// One calendar day's worth of expenses, newest-time first.
-nonisolated struct ExpenseDayGroup {
+nonisolated struct ExpenseDayGroup: Identifiable {
+    var id: Date { day }
+
     /// Start of the day this group covers (from `calendar.startOfDay`).
     let day: Date
     /// The day's expenses, ordered by `date` descending (latest time first).

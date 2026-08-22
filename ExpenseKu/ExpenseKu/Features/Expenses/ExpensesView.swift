@@ -10,7 +10,7 @@
 //
 //  Within the cycle the owner picks one of two lenses with the List/Month toggle:
 //  the day-grouped list (default) or the calendar grid (see CycleCalendar.swift).
-//  Both read the same cycle and the same day grouping, so they can never disagree.
+//  Both read the same `CycleContents`, so they can never disagree.
 //
 
 import SwiftUI
@@ -57,17 +57,50 @@ struct ExpensesView: View {
     }
 
     var body: some View {
+        // Derived once per pass and shared by both lenses, rather than each of the
+        // header, list, calendar and day sections re-filtering the whole table.
+        let contents = CycleContents(cycle: cycle, allExpenses: expenses, calendar: calendar)
+
         NavigationSplitView {
             ZStack {
                 Theme.bg.ignoresSafeArea()
                 // Header + arrows stay even with no expenses at all (home-empty.png);
                 // the content area carries the right empty message.
                 VStack(spacing: 0) {
-                    cycleHeader
-                    lensToggle
+                    CycleHeader(
+                        cycle: cycle,
+                        total: contents.total,
+                        canGoBack: CyclePaging.canGoBack(from: cycle, oldestExpense: expenses.last?.date),
+                        canGoForward: CyclePaging.canGoForward(from: cycle, now: .now),
+                        calendar: calendar,
+                        onPrevious: { cycle = cycle.previous(payday: payday, calendar: calendar) },
+                        onNext: { cycle = cycle.next(payday: payday, calendar: calendar) }
+                    )
+
+                    SegmentedToggle(
+                        selection: $lens,
+                        segments: [
+                            .init(.list, title: "List", systemImage: "list.bullet"),
+                            .init(.calendar, title: "Month", systemImage: "calendar"),
+                        ]
+                    )
+                    .padding(.bottom, Metric.cardGap)
+
                     switch lens {
-                    case .list: cycleContent
-                    case .calendar: calendarContent
+                    case .list:
+                        listLens(contents)
+                    case .calendar:
+                        CycleCalendarLens(
+                            calendarGrid: calendarGrid,
+                            contents: contents,
+                            cycle: cycle,
+                            storeIsEmpty: expenses.isEmpty,
+                            calendar: calendar,
+                            selectedDay: $selectedDay,
+                            resolvedDay: resolvedSelectedDay,
+                            onSelect: { selection = $0 },
+                            onDelete: delete
+                        )
                     }
                 }
             }
@@ -78,18 +111,14 @@ struct ExpensesView: View {
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .navigation) {
-                    Button {
+                    Button("Monthly Start Date", systemImage: "calendar") {
                         showingSettings = true
-                    } label: {
-                        Label("Monthly Start Date", systemImage: "calendar")
                     }
                     .tint(Theme.textSecondary)
                 }
                 ToolbarItem(placement: .primaryAction) {
-                    Button {
+                    Button("Add Expense", systemImage: "plus") {
                         showingNew = true
-                    } label: {
-                        Label("Add Expense", systemImage: "plus")
                     }
                     .accentCircleButton()
                 }
@@ -139,176 +168,11 @@ struct ExpensesView: View {
         }
     }
 
-    // MARK: - Cycle header (navigator + spending total)
-
-    private var cycleHeader: some View {
-        VStack(spacing: 16) {
-            HStack {
-                Button {
-                    cycle = cycle.previous(payday: payday, calendar: calendar)
-                } label: {
-                    Image(systemName: "chevron.left").font(.body.weight(.semibold))
-                }
-                .disabled(!canGoBack)
-
-                Spacer()
-
-                VStack(spacing: 2) {
-                    Text(cycle.title(calendar: calendar))
-                        .font(.dsHeadline).fontWeight(.bold)
-                        .foregroundStyle(Theme.text)
-                    Text(cycle.rangeText(calendar: calendar))
-                        .font(.dsCaption)
-                        .foregroundStyle(Theme.textSecondary)
-                }
-
-                Spacer()
-
-                Button {
-                    cycle = cycle.next(payday: payday, calendar: calendar)
-                } label: {
-                    Image(systemName: "chevron.right").font(.body.weight(.semibold))
-                }
-                .disabled(!canGoForward)
-            }
-
-            VStack(spacing: 4) {
-                SectionHeaderText("Spending")
-                // Spending total only — the domain has no income concept (Q6).
-                // Hero total is the one place the coral accent lands on money.
-                MoneyText(cycleTotal, font: .dsHero, color: Theme.accent)
-            }
-        }
-        .cardStyle()
-        .padding(.horizontal, Metric.screenPadding)
-        .padding(.top, 8)
-        .padding(.bottom, Metric.cardGap)
-    }
-
-    // MARK: - Lens toggle (List / Month)
-
-    private var lensToggle: some View {
-        SegmentedToggle(
-            selection: $lens,
-            segments: [
-                .init(.list, title: "List", systemImage: "list.bullet"),
-                .init(.calendar, title: "Month", systemImage: "calendar"),
-            ]
-        )
-        .padding(.bottom, Metric.cardGap)
-    }
-
-    // MARK: - Calendar content (grid card + the selected day's expenses)
-
-    private var calendarContent: some View {
-        // A List (not a ScrollView) so the day's rows keep swipe-to-delete and the
-        // same row chrome as the list lens.
-        List {
-            Section {
-                CycleCalendarGrid(
-                    calendarGrid: calendarGrid,
-                    selection: Binding(
-                        get: { resolvedSelectedDay },
-                        set: { selectedDay = $0 }
-                    ),
-                    calendar: calendar
-                )
-                .listRowBackground(Color.clear)
-                .listRowSeparator(.hidden)
-                .listRowInsets(EdgeInsets(
-                    top: 0, leading: Metric.screenPadding,
-                    bottom: Metric.cardGap, trailing: Metric.screenPadding
-                ))
-            }
-
-            if cycleExpenses.isEmpty {
-                // Nothing in this cycle at all — the grid stays, the message speaks
-                // for the whole cycle rather than for one empty day.
-                Section {
-                    inlineMessage(
-                        expenses.isEmpty ? "No expenses yet" : "No expenses this cycle",
-                        detail: expenses.isEmpty
-                            ? "Tap + to log your first expense."
-                            : "Nothing logged for \(cycle.rangeText(calendar: calendar))."
-                    )
-                }
-            } else if let day = resolvedSelectedDay {
-                Section {
-                    if let group = selectedDayGroup {
-                        ForEach(group.expenses) { expense in
-                            Button {
-                                selection = expense
-                            } label: {
-                                ExpenseRow(expense: expense)
-                            }
-                            .buttonStyle(.plain)
-                            .cardStyle()
-                            .listRowBackground(Color.clear)
-                            .listRowSeparator(.hidden)
-                            .listRowInsets(EdgeInsets(
-                                top: 4, leading: Metric.screenPadding,
-                                bottom: 4, trailing: Metric.screenPadding
-                            ))
-                        }
-                        .onDelete { delete($0, from: group.expenses) }
-                    } else {
-                        inlineMessage(
-                            "No expenses \(dayPhrase(day))",
-                            detail: "Tap + to log one."
-                        )
-                    }
-                } header: {
-                    HStack {
-                        SectionHeaderText(dayTitle(day))
-                        Spacer()
-                        // Day total in the same quiet, secondary, monospaced style as
-                        // the list lens's day header — never the coral hero accent.
-                        Text((selectedDayGroup?.total ?? 0).formattedIDR())
-                            .font(.dsCaption)
-                            .fontWeight(.semibold)
-                            .monospacedDigit()
-                            .foregroundStyle(Theme.textSecondary)
-                    }
-                    .padding(.horizontal, 4)
-                }
-            }
-        }
-        .listStyle(.plain)
-        // The grid is tall; without this the stock section gap pushes the day's
-        // rows further under the tab bar than they need to be.
-        .listSectionSpacing(.compact)
-        .scrollContentBackground(.hidden)
-        .background(Theme.bg)
-    }
-
-    /// A quiet inline message card — the in-list counterpart of `EmptyStateView`,
-    /// which is full-bleed and can't sit inside a list row.
-    private func inlineMessage(_ title: String, detail: String) -> some View {
-        VStack(spacing: 6) {
-            Text(title)
-                .font(.dsBody).fontWeight(.semibold)
-                .foregroundStyle(Theme.text)
-            Text(detail)
-                .font(.dsSubhead)
-                .foregroundStyle(Theme.textSecondary)
-        }
-        .multilineTextAlignment(.center)
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 12)
-        .cardStyle()
-        .listRowBackground(Color.clear)
-        .listRowSeparator(.hidden)
-        .listRowInsets(EdgeInsets(
-            top: 4, leading: Metric.screenPadding,
-            bottom: 4, trailing: Metric.screenPadding
-        ))
-    }
-
-    // MARK: - Cycle content (day groups, or an inline empty state)
+    // MARK: - List lens (or the empty state that replaces it)
 
     @ViewBuilder
-    private var cycleContent: some View {
-        if cycleExpenses.isEmpty {
+    private func listLens(_ contents: CycleContents) -> some View {
+        if contents.isEmpty {
             if expenses.isEmpty {
                 // No expenses anywhere yet — the first-run empty state (home-empty.png).
                 EmptyStateView(
@@ -325,71 +189,13 @@ struct ExpensesView: View {
                 )
             }
         } else {
-            List {
-                ForEach(dayGroups) { group in
-                    Section {
-                        ForEach(group.expenses) { expense in
-                            Button {
-                                selection = expense
-                            } label: {
-                                ExpenseRow(expense: expense)
-                            }
-                            .buttonStyle(.plain)
-                            .cardStyle()
-                            .listRowBackground(Color.clear)
-                            .listRowSeparator(.hidden)
-                            .listRowInsets(EdgeInsets(
-                                top: 4, leading: Metric.screenPadding,
-                                bottom: 4, trailing: Metric.screenPadding
-                            ))
-                        }
-                        .onDelete { delete($0, in: group) }
-                    } header: {
-                        HStack {
-                            SectionHeaderText(group.title)
-                            Spacer()
-                            // Day total, styled to match the header label (Variant A):
-                            // quiet, secondary, monospaced — never the coral hero accent.
-                            Text(group.total.formattedIDR())
-                                .font(.dsCaption)
-                                .fontWeight(.semibold)
-                                .monospacedDigit()
-                                .foregroundStyle(Theme.textSecondary)
-                        }
-                        .padding(.horizontal, 4)
-                    }
-                }
-            }
-            .listStyle(.plain)
-            .scrollContentBackground(.hidden)
-            .background(Theme.bg)
+            CycleListLens(
+                dayGroups: contents.dayGroups,
+                calendar: calendar,
+                onSelect: { selection = $0 },
+                onDelete: delete
+            )
         }
-    }
-
-    // MARK: - Derived state
-
-    private var cycleExpenses: [Expense] {
-        expenses.filter { cycle.contains($0.date) }
-    }
-
-    private var cycleTotal: Decimal {
-        cycleExpenses.reduce(Decimal(0)) { $0 + $1.amount }
-    }
-
-    /// There is data older than the current cycle to page back to.
-    private var canGoBack: Bool {
-        guard let oldest = expenses.last?.date else { return false }
-        return oldest < cycle.start
-    }
-
-    /// Forward paging stops at the present cycle — no empty future cycles (Q7).
-    private var canGoForward: Bool {
-        cycle.end <= Date.now
-    }
-
-    private func resetToCurrentCycle() {
-        payday = Payday.current
-        cycle = PayCycle.containing(.now, payday: payday, calendar: calendar)
     }
 
     // MARK: - Calendar state
@@ -412,48 +218,11 @@ struct ExpensesView: View {
         return defaultSelectedDay(in: calendarGrid, today: .now, calendar: calendar)
     }
 
-    /// The selected day's expenses, taken from the same grouping the list lens uses.
-    private var selectedDayGroup: ExpenseDayGroup? {
-        guard let day = resolvedSelectedDay else { return nil }
-        return expenseDayGroups(cycleExpenses, calendar: calendar).first { $0.day == day }
-    }
+    // MARK: - Actions
 
-    // MARK: - Day grouping
-
-    private struct DayGroup: Identifiable {
-        let id: Date          // start of day
-        let title: String
-        let expenses: [Expense]
-        let total: Decimal
-    }
-
-    private var dayGroups: [DayGroup] {
-        expenseDayGroups(cycleExpenses, calendar: calendar).map { group in
-            DayGroup(
-                id: group.day,
-                title: dayTitle(group.day),
-                expenses: group.expenses,
-                total: group.total
-            )
-        }
-    }
-
-    private func dayTitle(_ day: Date) -> String {
-        if calendar.isDateInToday(day) { return "Today" }
-        if calendar.isDateInYesterday(day) { return "Yesterday" }
-        return day.formatted(.dateTime.weekday(.abbreviated).day().month(.wide))
-    }
-
-    /// The same day, phrased to sit inside a sentence: "No expenses **today**",
-    /// "No expenses **on Thu, 6 August**". `dayTitle` alone reads "on Today".
-    private func dayPhrase(_ day: Date) -> String {
-        if calendar.isDateInToday(day) { return "today" }
-        if calendar.isDateInYesterday(day) { return "yesterday" }
-        return "on \(day.formatted(.dateTime.weekday(.abbreviated).day().month(.wide)))"
-    }
-
-    private func delete(_ offsets: IndexSet, in group: DayGroup) {
-        delete(offsets, from: group.expenses)
+    private func resetToCurrentCycle() {
+        payday = Payday.current
+        cycle = PayCycle.containing(.now, payday: payday, calendar: calendar)
     }
 
     /// Delete by offset within one day's rows — shared by both lenses, so a swipe

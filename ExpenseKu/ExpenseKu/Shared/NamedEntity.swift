@@ -48,7 +48,9 @@ func existingEntity<T: NamedEntity>(
 ) -> T? {
     let key = NameKey.normalized(name)
     guard !key.isEmpty else { return nil }
-    let all = (try? context.fetch(FetchDescriptor<T>())) ?? []
+    var descriptor = FetchDescriptor<T>()
+    descriptor.propertiesToFetch = [\.name]
+    let all = (try? context.fetch(descriptor)) ?? []
     return all.first {
         NameKey.normalized($0.name) == key && $0.persistentModelID != excluding?.persistentModelID
     }

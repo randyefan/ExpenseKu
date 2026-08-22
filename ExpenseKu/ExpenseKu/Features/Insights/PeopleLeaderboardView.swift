@@ -73,9 +73,7 @@ struct PeopleLeaderboardView: View {
         }
         .background(Theme.bg)
         .navigationTitle("People leaderboard")
-        #if !os(macOS)
         .navigationBarTitleDisplayMode(.inline)
-        #endif
     }
 
     // MARK: - Filters

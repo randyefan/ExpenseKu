@@ -81,7 +81,6 @@ enum Theme {
 
     static let bg             = adaptive(light: 0xFBF7F3, dark: 0x17130F)
 
-    #if canImport(UIKit)
     /// The `bg` token as an adaptive `UIColor`, for UIKit appearance proxies
     /// (e.g. painting nav bars cream — see `configureBarAppearance()`).
     static let bgUIColor = UIColor { traits in
@@ -102,7 +101,7 @@ enum Theme {
         UINavigationBar.appearance().scrollEdgeAppearance = appearance
         UINavigationBar.appearance().compactAppearance = appearance
     }
-    #endif
+
     static let card           = adaptive(light: 0xFFFFFF, dark: 0x211C1A)
     static let hairline       = adaptive(light: 0xEFE8E1, dark: 0x2E2825)
     static let text           = adaptive(light: 0x2A2320, dark: 0xF5F0EC)
@@ -141,17 +140,8 @@ enum Theme {
     }
 
     private static func adaptive(light: Color, dark: Color) -> Color {
-        #if canImport(UIKit)
-        return Color(uiColor: UIColor { traits in
+        Color(uiColor: UIColor { traits in
             UIColor(traits.userInterfaceStyle == .dark ? dark : light)
         })
-        #elseif canImport(AppKit)
-        return Color(nsColor: NSColor(name: nil) { appearance in
-            let isDark = appearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
-            return NSColor(isDark ? dark : light)
-        })
-        #else
-        return light
-        #endif
     }
 }

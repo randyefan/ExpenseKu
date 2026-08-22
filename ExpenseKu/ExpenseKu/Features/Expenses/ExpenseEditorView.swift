@@ -23,8 +23,7 @@ struct ExpenseEditorView: View {
     /// that clears its selection instead.
     let onFinish: (() -> Void)?
 
-    @State private var amount: Decimal            // macOS amount field binding
-    @State private var expr: ExpressionEvaluator  // iOS keypad-driven amount
+    @State private var expr: ExpressionEvaluator  // keypad-driven amount
     @State private var date: Date
     @State private var note: String
     @State private var category: Category?
@@ -43,9 +42,7 @@ struct ExpenseEditorView: View {
     init(editing: Expense? = nil, onFinish: (() -> Void)? = nil) {
         self.editing = editing
         self.onFinish = onFinish
-        let startAmount = editing?.amount ?? 0
-        _amount = State(initialValue: startAmount)
-        _expr = State(initialValue: ExpressionEvaluator(amount: startAmount))
+        _expr = State(initialValue: ExpressionEvaluator(amount: editing?.amount ?? 0))
         _date = State(initialValue: editing?.date ?? .now)
         _note = State(initialValue: editing?.note ?? "")
         _category = State(initialValue: editing?.category)
@@ -53,26 +50,14 @@ struct ExpenseEditorView: View {
         _account = State(initialValue: editing?.account)
     }
 
-    /// The amount that will be saved, resolved per platform.
-    private var resolvedAmount: Decimal {
-        #if os(iOS)
-        expr.committedAmount
-        #else
-        amount
-        #endif
-    }
+    /// The amount that will be saved.
+    private var resolvedAmount: Decimal { expr.committedAmount }
 
     private var canSave: Bool { resolvedAmount > 0 && category != nil }
 
     var body: some View {
-        Group {
-            #if os(iOS)
-            iosBody
-            #else
-            macBody
-            #endif
-        }
-        .onAppear(perform: applyDefaultsIfNeeded)
+        editorBody
+            .onAppear(perform: applyDefaultsIfNeeded)
     }
 
     /// On a brand-new expense, pre-select the protected "Me" so logging a solo
@@ -86,10 +71,9 @@ struct ExpenseEditorView: View {
         people.insert(me, at: 0)
     }
 
-    // MARK: - iOS: big amount hero + scrolling rows + sticky keypad dock
+    // MARK: - Big amount hero + scrolling rows + sticky keypad dock
 
-    #if os(iOS)
-    private var iosBody: some View {
+    private var editorBody: some View {
         VStack(spacing: 0) {
             ScrollViewReader { proxy in
                 List {
@@ -152,60 +136,6 @@ struct ExpenseEditorView: View {
     }
 
     private var notesRowID: String { "notes" }
-    #endif
-
-    // MARK: - macOS: plain Form
-
-    #if os(macOS)
-    private var macBody: some View {
-        Form {
-            Section {
-                HStack(alignment: .firstTextBaseline, spacing: 6) {
-                    Spacer(minLength: 0)
-                    Text("Rp")
-                        .font(.dsTitle).fontWeight(.semibold)
-                        .foregroundStyle(Theme.textSecondary)
-                    AmountField(amount: $amount, autoFocus: editing == nil)
-                    Spacer(minLength: 0)
-                }
-                .padding(.vertical, 10)
-                .listRowBackground(Theme.card)
-            }
-
-            Section {
-                ExpenseDetailRows(
-                    date: $date, category: $category,
-                    account: $account, people: $people
-                )
-            }
-
-            Section {
-                TextField("Add a note…", text: $note, axis: .vertical)
-                    .font(.dsBody)
-                    .listRowBackground(Theme.card)
-            }
-
-            if editing != nil {
-                Section {
-                    Button("Delete Expense", role: .destructive, action: deleteExpense)
-                        .font(.dsBody)
-                        .listRowBackground(Theme.card)
-                }
-            }
-        }
-        .scrollContentBackground(.hidden)
-        .background(Theme.bg)
-        .navigationTitle(editing == nil ? "Add Expense" : "Edit Expense")
-        .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                Button("Save", action: save).disabled(!canSave)
-            }
-            ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") { finish() }
-            }
-        }
-    }
-    #endif
 
     // MARK: - Actions
 

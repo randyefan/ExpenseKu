@@ -8,7 +8,6 @@
 //  only UIKit shim on this screen.
 //
 
-#if os(iOS)
 import SwiftUI
 
 extension View {
@@ -88,4 +87,3 @@ private struct KeyboardDismissTap: UIViewRepresentable {
         ) -> Bool { true }
     }
 }
-#endif

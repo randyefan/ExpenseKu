@@ -9,9 +9,7 @@
 //  `ExpressionEvaluator` and decides what each key means.
 //
 
-#if os(iOS)
 import SwiftUI
-import UIKit
 
 struct CalculatorKeypad: View {
     /// Enables the ✓ (save) key. When false it's dimmed and inert.
@@ -186,4 +184,3 @@ private extension CalcOperator {
         }
     }
 }
-#endif

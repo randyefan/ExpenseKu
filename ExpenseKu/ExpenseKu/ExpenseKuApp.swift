@@ -77,9 +77,7 @@ struct ExpenseKuApp: App {
 
     init() {
         AppFont.registerIfNeeded()
-        #if canImport(UIKit)
         Theme.configureBarAppearance()
-        #endif
     }
 
     var body: some Scene {

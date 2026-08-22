@@ -67,9 +67,7 @@ struct InsightsView: View {
                 }
                 .padding(Metric.screenPadding)
             }
-            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
-            #endif
             .background(Theme.bg)
             .navigationTitle("Insights")
             .navigationDestination(for: Destination.self) { destination in

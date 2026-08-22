@@ -5,7 +5,6 @@
 //  The editor's page-top amount: the calculator's working line above the `Rp` result.
 //
 
-#if os(iOS)
 import SwiftUI
 
 struct AmountHero: View {
@@ -37,4 +36,3 @@ struct AmountHero: View {
         .padding(.vertical, 8)
     }
 }
-#endif

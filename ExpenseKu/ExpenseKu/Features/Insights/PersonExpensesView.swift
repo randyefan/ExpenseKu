@@ -82,9 +82,7 @@ struct PersonExpensesView: View {
         }
         .background(Theme.bg)
         .navigationTitle(route.person.name)
-        #if !os(macOS)
         .navigationBarTitleDisplayMode(.inline)
-        #endif
     }
 
     // MARK: - Header

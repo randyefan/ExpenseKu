@@ -6,7 +6,6 @@
 //  existing expense, a restrained Delete button.
 //
 
-#if os(iOS)
 import SwiftUI
 
 struct EditorKeypadDock: View {
@@ -48,4 +47,3 @@ struct EditorKeypadDock: View {
         .transition(.move(edge: .bottom).combined(with: .opacity))
     }
 }
-#endif

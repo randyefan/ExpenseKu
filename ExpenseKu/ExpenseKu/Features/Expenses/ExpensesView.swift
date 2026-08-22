@@ -22,9 +22,7 @@ struct ExpensesView: View {
     enum Lens: Hashable { case list, calendar }
 
     @Environment(\.modelContext) private var context
-    #if os(iOS)
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    #endif
     @Query(sort: \Expense.date, order: .reverse) private var expenses: [Expense]
 
     @State private var selection: Expense?
@@ -46,14 +44,10 @@ struct ExpensesView: View {
     private var calendar: Calendar { .current }
 
     /// On compact width (iPhone) the split view would push the editor as a full
-    /// page; there we present editing as a bottom sheet instead. iPad/Mac keep
+    /// page; there we present editing as a bottom sheet instead. iPad keeps
     /// the detail-pane editing (design.md §1).
     private var editsInSheet: Bool {
-        #if os(iOS)
         horizontalSizeClass == .compact
-        #else
-        false
-        #endif
     }
 
     var body: some View {
@@ -104,9 +98,7 @@ struct ExpensesView: View {
                     }
                 }
             }
-            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
-            #endif
             .toolbarBackground(Theme.bg, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {

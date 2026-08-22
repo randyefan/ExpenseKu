@@ -92,9 +92,7 @@ struct NameEditorView<T: NamedEntity>: View {
         .background(Theme.bg)
         .onAppear { if debugPrefill != nil { attemptSave() } }
         .navigationTitle(title)
-        #if !os(macOS)
         .navigationBarTitleDisplayMode(.inline)
-        #endif
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save", action: attemptSave)

@@ -21,13 +21,22 @@ struct ManageView: View {
         NavigationStack(path: $path) {
             ScrollView {
                 VStack(spacing: Metric.cardGap) {
-                    menuRow(.categories, title: "Categories", systemImage: "folder.fill",
-                            subtitle: "^[\(categories.count) category](inflect: true)")
-                    menuRow(.people, title: "People", systemImage: "person.2.fill",
-                            subtitle: "^[\(people.count) person](inflect: true)")
-                    menuRow(.accounts, title: "Accounts", systemImage: "creditcard.fill",
-                            subtitle: "^[\(accounts.count) account](inflect: true)")
-                    footer
+                    NavigationLink(value: Destination.categories) {
+                        ManageMenuRow(title: "Categories", systemImage: "folder.fill",
+                                      subtitle: "^[\(categories.count) category](inflect: true)")
+                    }
+                    .buttonStyle(.plain)
+                    NavigationLink(value: Destination.people) {
+                        ManageMenuRow(title: "People", systemImage: "person.2.fill",
+                                      subtitle: "^[\(people.count) person](inflect: true)")
+                    }
+                    .buttonStyle(.plain)
+                    NavigationLink(value: Destination.accounts) {
+                        ManageMenuRow(title: "Accounts", systemImage: "creditcard.fill",
+                                      subtitle: "^[\(accounts.count) account](inflect: true)")
+                    }
+                    .buttonStyle(.plain)
+                    AppVersionFooter()
                 }
                 .padding(Metric.screenPadding)
             }
@@ -52,47 +61,5 @@ struct ManageView: View {
             }
             #endif
         }
-    }
-
-    private var footer: some View {
-        VStack(spacing: 2) {
-            Text("Made By REJ ❤️")
-                .font(.dsCaption).fontWeight(.semibold)
-                .foregroundStyle(Theme.textSecondary)
-            Text("Version \(appVersion)")
-                .font(.dsCaption)
-                .foregroundStyle(Theme.textSecondary.opacity(0.7))
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.top, Metric.cardGap)
-    }
-
-    private var appVersion: String {
-        let info = Bundle.main.infoDictionary
-        let short = info?["CFBundleShortVersionString"] as? String ?? "1.0"
-        let build = info?["CFBundleVersion"] as? String ?? "1"
-        return "\(short) (\(build))"
-    }
-
-    private func menuRow(_ destination: Destination, title: String, systemImage: String, subtitle: LocalizedStringKey) -> some View {
-        NavigationLink(value: destination) {
-            HStack(spacing: 12) {
-                CategoryIcon(name: title, systemImage: systemImage, size: 44)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(title)
-                        .font(.dsBody).fontWeight(.semibold)
-                        .foregroundStyle(Theme.text)
-                    Text(subtitle)
-                        .font(.dsCaption)
-                        .foregroundStyle(Theme.textSecondary)
-                }
-                Spacer()
-                Image(systemName: "chevron.right")
-                    .font(.dsSubhead.weight(.semibold))
-                    .foregroundStyle(Theme.textSecondary)
-            }
-            .cardStyle()
-        }
-        .buttonStyle(.plain)
     }
 }

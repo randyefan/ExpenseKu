@@ -70,7 +70,13 @@ struct NameEditorView<T: NamedEntity, Accessory: View>: View {
                 }
 
                 if let dup = duplicate {
-                    duplicatePrompt(dup)
+                    DuplicateNamePrompt(
+                        existingName: dup.name,
+                        noun: T.noun,
+                        onUseExisting: { onCommit(dup); dismiss() },
+                        onCreateAnyway: { save(into: makeNew()) },
+                        onCancel: { duplicate = nil }
+                    )
                 }
 
                 accessory
@@ -91,61 +97,6 @@ struct NameEditorView<T: NamedEntity, Accessory: View>: View {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Cancel") { dismiss() }
             }
-        }
-    }
-
-    /// Inline duplicate prompt (ADR-0002): explain the clash, then offer the same
-    /// three choices as before — reuse the existing entity, create a duplicate
-    /// anyway, or back out.
-    @ViewBuilder
-    private func duplicatePrompt(_ dup: T) -> some View {
-        VStack(spacing: Metric.cardGap) {
-            HStack(alignment: .top, spacing: 12) {
-                Image(systemName: "info.circle")
-                    .font(.title3)
-                    .foregroundStyle(Theme.textSecondary)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("“\(dup.name)” already exists")
-                        .font(.dsBody).bold()
-                        .foregroundStyle(Theme.text)
-                    Text("You already have a \(T.noun) with this name.")
-                        .font(.dsSubhead)
-                        .foregroundStyle(Theme.textSecondary)
-                }
-                Spacer(minLength: 0)
-            }
-            .cardStyle()
-
-            Button {
-                onCommit(dup); dismiss()
-            } label: {
-                Text("Use existing")
-                    .font(.dsBody).fontWeight(.semibold)
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 14)
-                    .background(Theme.accent, in: RoundedRectangle(cornerRadius: Metric.cardRadius))
-            }
-
-            Button {
-                save(into: makeNew())
-            } label: {
-                Text("Create new anyway")
-                    .font(.dsBody).fontWeight(.semibold)
-                    .foregroundStyle(Theme.text)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 14)
-                    .background(Theme.card, in: RoundedRectangle(cornerRadius: Metric.cardRadius))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: Metric.cardRadius)
-                            .stroke(Theme.accent.opacity(0.5), lineWidth: 1)
-                    )
-            }
-
-            Button("Cancel") { duplicate = nil }
-                .font(.dsBody)
-                .foregroundStyle(Theme.textSecondary)
-                .padding(.top, 2)
         }
     }
 

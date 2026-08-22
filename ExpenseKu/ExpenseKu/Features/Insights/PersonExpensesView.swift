@@ -49,7 +49,12 @@ struct PersonExpensesView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: Metric.cardGap) {
-                header
+                PersonSpendHeader(
+                    name: route.person.name,
+                    total: total,
+                    count: listed.count,
+                    rangeLabel: route.range.label
+                )
 
                 if let filterSummary {
                     Text("Filtered by \(filterSummary)")
@@ -67,7 +72,7 @@ struct PersonExpensesView: View {
                     .frame(minHeight: 320)
                 } else {
                     ForEach(listed) { expense in
-                        expenseCard(expense)
+                        PersonExpenseCard(expense: expense)
                     }
 
                     Text("Each shared expense credits \(route.person.name) the full amount.")
@@ -83,40 +88,6 @@ struct PersonExpensesView: View {
         .background(Theme.bg)
         .navigationTitle(route.person.name)
         .navigationBarTitleDisplayMode(.inline)
-    }
-
-    // MARK: - Header
-
-    private var header: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 12) {
-                PersonAvatar(name: route.person.name, size: 44)
-                Text(route.person.name)
-                    .font(.dsTitle).bold()
-                    .foregroundStyle(Theme.text)
-            }
-
-            MoneyText(total, font: .dsHero, color: Theme.text)
-
-            Text("^[\(listed.count) expense](inflect: true) · \(route.range.label)")
-                .font(.dsSubhead)
-                .foregroundStyle(Theme.textSecondary)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .cardStyle()
-    }
-
-    // MARK: - Expense card (reuses ExpenseRow; adds the date this drill-down needs)
-
-    private func expenseCard(_ expense: Expense) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            ExpenseRow(expense: expense)
-            Text(expense.date.formatted(date: .abbreviated, time: .omitted))
-                .font(.dsCaption)
-                .foregroundStyle(Theme.textSecondary)
-                .padding(.leading, Metric.iconSize + 12)   // align under ExpenseRow's text column
-        }
-        .cardStyle()
     }
 
     private var emptyMessage: String {

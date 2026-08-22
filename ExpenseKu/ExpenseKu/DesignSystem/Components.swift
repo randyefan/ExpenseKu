@@ -104,7 +104,7 @@ struct CategoryIcon: View {
 
     /// Best-effort mapping from a category name to a representative SF Symbol.
     /// Purely cosmetic — falls back to a neutral tag so any name renders.
-    static func symbol(for name: String) -> String {
+    nonisolated static func symbol(for name: String) -> String {
         let n = name.lowercased()
         let table: [(match: [String], symbol: String)] = [
             (["groc", "belanja", "market", "mart"], "bag.fill"),

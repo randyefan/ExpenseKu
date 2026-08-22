@@ -11,7 +11,7 @@
 import XCTest
 @testable import ExpenseKu
 
-final class ExpressionEvaluatorTests: XCTestCase {
+nonisolated final class ExpressionEvaluatorTests: XCTestCase {
 
     /// Builds an evaluator by pressing each character of `keys` in order,
     /// mirroring how the keypad drives it.

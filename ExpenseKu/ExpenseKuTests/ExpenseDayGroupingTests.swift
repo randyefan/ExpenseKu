@@ -10,7 +10,7 @@
 import XCTest
 @testable import ExpenseKu
 
-final class ExpenseDayGroupingTests: XCTestCase {
+nonisolated final class ExpenseDayGroupingTests: XCTestCase {
 
     private let calendar = Calendar(identifier: .gregorian)
 

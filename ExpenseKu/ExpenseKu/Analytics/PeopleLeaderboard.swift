@@ -17,14 +17,14 @@ import SwiftData
 
 /// One row of the leaderboard: a person, their total attributed spend, and how
 /// many expenses they were tagged on (within the active filters).
-struct PersonSpend: Identifiable {
+nonisolated struct PersonSpend: Identifiable {
     let person: Person
     let total: Decimal
     let sharedCount: Int
     var id: PersistentIdentifier { person.persistentModelID }
 }
 
-enum PeopleLeaderboard {
+nonisolated enum PeopleLeaderboard {
     /// Ranks people by total attributed spend (desc), tie-broken by name (asc).
     ///
     /// - Parameters:

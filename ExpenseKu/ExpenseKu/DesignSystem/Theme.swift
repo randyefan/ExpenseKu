@@ -30,7 +30,7 @@ extension Color {
 
 /// Small sRGB ⇄ hex ⇄ HSB helpers for owner-chosen swatches. Kept dependency-free
 /// so the palette can round-trip a stored hex back into an adaptive tint.
-enum HexColor {
+nonisolated enum HexColor {
     /// Parses "RRGGBB" (optionally "#"-prefixed) into 0…1 channels.
     static func rgb(_ hex: String) -> (r: Double, g: Double, b: Double)? {
         var s = hex.trimmingCharacters(in: .whitespacesAndNewlines)

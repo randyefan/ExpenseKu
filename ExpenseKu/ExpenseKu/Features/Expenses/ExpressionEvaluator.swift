@@ -15,7 +15,7 @@
 import Foundation
 
 /// The four operators the keypad exposes.
-enum CalcOperator: Character, CaseIterable {
+nonisolated enum CalcOperator: Character, CaseIterable {
     case add = "+"
     case subtract = "−"   // U+2212 MINUS SIGN (matches the key glyph)
     case multiply = "×"
@@ -34,7 +34,7 @@ enum CalcOperator: Character, CaseIterable {
 
 /// A calculator expression built up from keypad presses. Value semantics so it's
 /// trivially testable and cheap to hold in SwiftUI `@State`.
-struct ExpressionEvaluator: Equatable {
+nonisolated struct ExpressionEvaluator: Equatable {
     /// Raw expression, e.g. "10000÷2". Numbers use plain ASCII digits and ".";
     /// operators use the `CalcOperator` glyphs.
     private(set) var raw: String = ""

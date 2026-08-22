@@ -17,7 +17,7 @@ import XCTest
 // app module). Pin it to our model. `Account` is unambiguous, so it needs no alias.
 private typealias Category = ExpenseKu.Category
 
-final class AccountAnalyticsTests: XCTestCase {
+nonisolated final class AccountAnalyticsTests: XCTestCase {
 
     // MARK: - SpendSummary.byAccount
 

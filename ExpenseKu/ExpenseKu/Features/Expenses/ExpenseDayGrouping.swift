@@ -12,7 +12,7 @@
 import Foundation
 
 /// One calendar day's worth of expenses, newest-time first.
-struct ExpenseDayGroup {
+nonisolated struct ExpenseDayGroup {
     /// Start of the day this group covers (from `calendar.startOfDay`).
     let day: Date
     /// The day's expenses, ordered by `date` descending (latest time first).
@@ -27,7 +27,7 @@ struct ExpenseDayGroup {
 /// Group `expenses` by calendar day and sort:
 /// - days descending (most recent first),
 /// - within a day, by full `date` descending so the user-set time orders the rows.
-func expenseDayGroups(_ expenses: [Expense], calendar: Calendar) -> [ExpenseDayGroup] {
+nonisolated func expenseDayGroups(_ expenses: [Expense], calendar: Calendar) -> [ExpenseDayGroup] {
     let grouped = Dictionary(grouping: expenses) { calendar.startOfDay(for: $0.date) }
     return grouped.keys.sorted(by: >).map { day in
         ExpenseDayGroup(

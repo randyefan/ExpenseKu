@@ -14,11 +14,15 @@ import SwiftData
 
 private typealias Category = ExpenseKu.Category
 
-@MainActor
-final class PersonReconcileTests: XCTestCase {
+// The class itself must be `nonisolated`: the target defaults to MainActor
+// isolation, and a MainActor-isolated `XCTestCase` subclass cannot override
+// XCTest's nonisolated initialisers. `Person.reconcileMe` is @MainActor, so the
+// isolation moves down to the members that actually need it.
+nonisolated final class PersonReconcileTests: XCTestCase {
 
     /// A private in-memory container so the test never touches the host app's
     /// CloudKit-backed store (cloudKitDatabase: .none).
+    @MainActor
     private func makeContext() throws -> ModelContext {
         let schema = Schema([Expense.self, Category.self, Person.self, Account.self])
         let config = ModelConfiguration(
@@ -27,11 +31,13 @@ final class PersonReconcileTests: XCTestCase {
         return ModelContext(container)
     }
 
+    @MainActor
     private func fetchMe(_ context: ModelContext) throws -> [Person] {
         try context.fetch(FetchDescriptor<Person>(predicate: #Predicate { $0.isMe }))
     }
 
     /// First run creates exactly one protected "Me".
+    @MainActor
     func testCreatesMeOnFirstRun() throws {
         let context = try makeContext()
         Person.reconcileMe(in: context)
@@ -43,6 +49,7 @@ final class PersonReconcileTests: XCTestCase {
     /// Reconcile flushes its own work. It runs from the CloudKit remote-change handler,
     /// where autosave may never get a chance to fire before the app is killed — an
     /// unflushed merge is lost on every device and the duplicate "Me" survives.
+    @MainActor
     func testCreatingMeIsPersisted() throws {
         let context = try makeContext()
         Person.reconcileMe(in: context)
@@ -50,6 +57,7 @@ final class PersonReconcileTests: XCTestCase {
     }
 
     /// Same guarantee for the healing path, which deletes and re-tags rather than inserts.
+    @MainActor
     func testMergeIsPersisted() throws {
         let context = try makeContext()
         let a = Person(name: "Me", isMe: true)
@@ -65,6 +73,7 @@ final class PersonReconcileTests: XCTestCase {
     }
 
     /// Calling it again is a no-op — it stays at one.
+    @MainActor
     func testIdempotent() throws {
         let context = try makeContext()
         Person.reconcileMe(in: context)
@@ -75,6 +84,7 @@ final class PersonReconcileTests: XCTestCase {
     /// Two "Me" records (as two devices' first-run inserts would produce after
     /// they sync) collapse into one, and every expense tagged on either keeps a
     /// single "Me" — the one on the losing record is re-tagged onto the survivor.
+    @MainActor
     func testMergesDuplicateMe() throws {
         let context = try makeContext()
         let a = Person(name: "Me", isMe: true)
@@ -110,6 +120,7 @@ final class PersonReconcileTests: XCTestCase {
 
     /// The survivor is renamed back to the protected name even if the winning
     /// duplicate had been given a different name on another device.
+    @MainActor
     func testSurvivorKeepsProtectedName() throws {
         let context = try makeContext()
         // Give the would-be winner more expenses so it's chosen, but a stray name.

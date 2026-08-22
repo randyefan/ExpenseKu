@@ -31,7 +31,7 @@ final class Account {
     }
 
     /// The default glyph for an account with no explicit icon.
-    static let defaultSymbol = "creditcard.fill"
+    nonisolated static let defaultSymbol = "creditcard.fill"
 
     /// The SF Symbol to render: the owner's pick, else the default card glyph.
     var resolvedSymbol: String { iconName ?? Account.defaultSymbol }

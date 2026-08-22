@@ -11,7 +11,7 @@
 import SwiftUI
 
 /// The fixed set of swatches and glyphs offered to the owner.
-enum AppearancePalette {
+nonisolated enum AppearancePalette {
     /// Twelve evenly-spread hues, authored through the same pastel recipe as the
     /// auto tints so a picked swatch matches its "Auto" neighbours.
     static let hues: [Double] = [

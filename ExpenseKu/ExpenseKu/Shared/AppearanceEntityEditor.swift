@@ -16,15 +16,15 @@ protocol AppearanceEntity: NamedEntity {
     var colorHex: String? { get set }
     var iconName: String? { get set }
     /// The glyph shown when no icon is chosen, for a (possibly in-progress) name.
-    static func autoSymbol(forName name: String) -> String
+    nonisolated static func autoSymbol(forName name: String) -> String
 }
 
 extension Category: AppearanceEntity {
-    static func autoSymbol(forName name: String) -> String { CategoryIcon.symbol(for: name) }
+    nonisolated static func autoSymbol(forName name: String) -> String { CategoryIcon.symbol(for: name) }
 }
 
 extension Account: AppearanceEntity {
-    static func autoSymbol(forName name: String) -> String { Account.defaultSymbol }
+    nonisolated static func autoSymbol(forName name: String) -> String { Account.defaultSymbol }
 }
 
 struct AppearanceEntityEditor<T: AppearanceEntity>: View {

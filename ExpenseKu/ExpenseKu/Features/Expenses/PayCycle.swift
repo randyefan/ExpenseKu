@@ -12,7 +12,7 @@
 
 import Foundation
 
-struct PayCycle: Equatable, Identifiable {
+nonisolated struct PayCycle: Equatable, Identifiable {
     /// Inclusive lower bound, normalized to the start of the day.
     let start: Date
     /// Exclusive upper bound — the start of the next cycle. A cycle therefore

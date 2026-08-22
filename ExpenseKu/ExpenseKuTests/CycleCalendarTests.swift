@@ -10,7 +10,7 @@
 import XCTest
 @testable import ExpenseKu
 
-final class CycleCalendarTests: XCTestCase {
+nonisolated final class CycleCalendarTests: XCTestCase {
 
     /// Sunday-first, matching the default US gregorian calendar.
     private let calendar = Calendar(identifier: .gregorian)

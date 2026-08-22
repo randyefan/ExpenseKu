@@ -18,17 +18,13 @@ struct InsightsView: View {
         case personExpenses(PersonExpensesRoute)
     }
 
-    @Query private var expenses: [Expense]
+    @Environment(\.modelContext) private var context
     @State private var range: DateRangeFilter = .thisYear
     @State private var payday: Int = Payday.current
     @State private var path: [Destination] = []
 
     var body: some View {
-        // Derived once per pass: each of these walks the whole expense table.
         let dateRange = range.range(payday: payday)
-        let byCategory = SpendSummary.byCategory(from: expenses, dateRange: dateRange)
-        let byAccount = SpendSummary.byAccount(from: expenses, dateRange: dateRange)
-        let overTime = SpendSummary.overTime(from: expenses, dateRange: dateRange, granularity: .month)
 
         NavigationStack(path: $path) {
             ScrollView {
@@ -39,29 +35,10 @@ struct InsightsView: View {
                         PaydayRow(payday: $payday)
                     }
 
-                    ChartCard("Spend by Category") {
-                        if byCategory.isEmpty {
-                            EmptyChartMessage()
-                        } else {
-                            SpendByCategoryChart(data: byCategory)
-                        }
-                    }
-
-                    ChartCard("Spend by Account") {
-                        if byAccount.isEmpty {
-                            EmptyChartMessage()
-                        } else {
-                            SpendByAccountChart(data: byAccount)
-                        }
-                    }
-
-                    ChartCard(title: "Spend over Time", accessory: { ByMonthTag() }) {
-                        if overTime.isEmpty {
-                            EmptyChartMessage()
-                        } else {
-                            SpendOverTimeChart(data: overTime, granularity: .month)
-                        }
-                    }
+                    // Re-created whenever the window changes, because @Query fixes its
+                    // predicate at init.
+                    InsightsCharts(dateRange: dateRange)
+                        .id(dateRange)
 
                     LeaderboardLinkCard()
                 }
@@ -94,7 +71,8 @@ struct InsightsView: View {
         case "person-detail":
             // Drive Insights → leaderboard → detail for the top-ranked companion,
             // so the pushed screen is screenshot-able with realistic data.
-            if let person = PeopleLeaderboard.ranked(from: expenses).first?.person {
+            let all = (try? context.fetch(FetchDescriptor<Expense>())) ?? []
+            if let person = PeopleLeaderboard.ranked(from: all).first?.person {
                 let route = PersonExpensesRoute(person: person, category: nil,
                                                 account: nil, range: .allTime)
                 path = [.leaderboard, .personExpenses(route)]

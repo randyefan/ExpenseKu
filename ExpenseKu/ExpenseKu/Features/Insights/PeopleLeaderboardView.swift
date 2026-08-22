@@ -13,7 +13,6 @@ import SwiftUI
 import SwiftData
 
 struct PeopleLeaderboardView: View {
-    @Query private var expenses: [Expense]
     @Query(sort: \Category.name) private var categories: [Category]
     @Query(sort: \Account.name) private var accounts: [Account]
 
@@ -22,13 +21,6 @@ struct PeopleLeaderboardView: View {
     @State private var rangeFilter: DateRangeFilter = .allTime
 
     var body: some View {
-        let ranked = PeopleLeaderboard.ranked(
-            from: expenses,
-            category: categoryFilter,
-            account: accountFilter,
-            dateRange: rangeFilter.range(payday: Payday.current)
-        )
-
         ScrollView {
             VStack(alignment: .leading, spacing: Metric.cardGap) {
                 Text("Who you spend with")
@@ -43,35 +35,14 @@ struct PeopleLeaderboardView: View {
                     accounts: accounts
                 )
 
-                if ranked.isEmpty {
-                    EmptyStateView(
-                        title: "No People Yet",
-                        systemImage: "person.2",
-                        message: "Tag expenses with the people you were with to see who you spend the most with."
-                    )
-                    .frame(minHeight: 360)
-                } else {
-                    ForEach(ranked.enumerated(), id: \.element.id) { index, entry in
-                        NavigationLink(value: InsightsView.Destination.personExpenses(
-                            PersonExpensesRoute(
-                                person: entry.person,
-                                category: categoryFilter,
-                                account: accountFilter,
-                                range: rangeFilter
-                            )
-                        )) {
-                            LeaderboardRankRow(rank: index + 1, entry: entry)
-                        }
-                        .buttonStyle(.plain)
-                    }
-
-                    Text("Totals may exceed your grand total as each companion is credited the full shared amount.")
-                        .font(.dsCaption)
-                        .foregroundStyle(Theme.textSecondary)
-                        .multilineTextAlignment(.center)
-                        .frame(maxWidth: .infinity)
-                        .padding(.top, 4)
-                }
+                // Re-created whenever the window changes, because @Query fixes its
+                // predicate at init.
+                LeaderboardRanking(
+                    range: rangeFilter,
+                    category: categoryFilter,
+                    account: accountFilter
+                )
+                .id(rangeFilter)
             }
             .padding(Metric.screenPadding)
         }

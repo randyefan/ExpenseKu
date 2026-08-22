@@ -26,7 +26,24 @@ struct PersonExpensesRoute: Hashable {
 struct PersonExpensesView: View {
     let route: PersonExpensesRoute
 
+    /// Bounded by the route's date range so the store returns only rows this screen can
+    /// show. Category and person narrowing stays in the pure PeopleLeaderboard layer —
+    /// only the date bound is cheap and safe to express as a predicate.
     @Query private var expenses: [Expense]
+
+    init(route: PersonExpensesRoute) {
+        self.route = route
+        // Bound to plain values before the macro sees them: a predicate that evaluates
+        // an optional or a computed property compiles clean and traps at runtime.
+        let range = route.range.range(payday: Payday.current)
+        let lower = range?.lowerBound ?? .distantPast
+        let upper = range?.upperBound ?? .distantFuture
+        _expenses = Query(
+            filter: #Predicate<Expense> { $0.date >= lower && $0.date <= upper },
+            sort: \Expense.date,
+            order: .reverse
+        )
+    }
 
     private var listed: [Expense] {
         PeopleLeaderboard.expenses(

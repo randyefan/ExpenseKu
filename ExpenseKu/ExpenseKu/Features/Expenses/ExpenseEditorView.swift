@@ -81,17 +81,17 @@ struct ExpenseEditorView: View {
                     AmountHero(displayExpression: expr.displayExpression, amount: resolvedAmount)
                         .listRowBackground(Color.clear)
                         .listRowSeparator(.hidden)
-                        .listRowInsets(EdgeInsets(top: 12, leading: 16, bottom: 8, trailing: 16))
+                        .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
                 }
 
                 Section {
                     ExpenseDetailRows(
-                        date: $date, category: $category,
-                        account: $account, people: $people
+                        date: $date,
+                        category: $category,
+                        account: $account,
+                        people: $people
                     )
-                }
-
-                Section {
+                    
                     TextField("Add a note…", text: $note, axis: .vertical)
                         .font(.dsBody)
                         .focused($notesFocused)
@@ -102,8 +102,6 @@ struct ExpenseEditorView: View {
             .listStyle(.insetGrouped)
             .scrollContentBackground(.hidden)
             .scrollDismissesKeyboard(.interactively)
-            // Tapping anywhere outside a text field dismisses the notes
-            // keyboard (List gives drag-dismiss but no tap-outside dismiss).
             .dismissesKeyboardOnOutsideTap()
             .scrollPosition($scrollPosition)
             .onChange(of: notesFocused) { _, focused in

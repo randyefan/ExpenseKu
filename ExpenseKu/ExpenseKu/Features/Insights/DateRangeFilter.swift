@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum DateRangeFilter: String, CaseIterable, Identifiable {
+nonisolated enum DateRangeFilter: String, CaseIterable, Identifiable {
     case allTime
     case last30Days
     case thisMonth

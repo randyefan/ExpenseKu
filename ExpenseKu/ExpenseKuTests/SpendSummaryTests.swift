@@ -15,7 +15,7 @@ import XCTest
 // the app module). Pin it to our model.
 private typealias Category = ExpenseKu.Category
 
-final class SpendSummaryTests: XCTestCase {
+nonisolated final class SpendSummaryTests: XCTestCase {
 
     /// Category totals are summed and ordered highest-first.
     func testByCategorySortedDescending() {

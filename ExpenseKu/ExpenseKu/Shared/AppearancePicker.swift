@@ -11,7 +11,7 @@
 import SwiftUI
 
 /// The fixed set of swatches and glyphs offered to the owner.
-enum AppearancePalette {
+nonisolated enum AppearancePalette {
     /// Twelve evenly-spread hues, authored through the same pastel recipe as the
     /// auto tints so a picked swatch matches its "Auto" neighbours.
     static let hues: [Double] = [
@@ -119,7 +119,7 @@ struct AppearancePickerView: View {
         Button {
             iconName = symbol
         } label: {
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
+            RoundedRectangle(cornerRadius: 12)
                 .fill(Theme.textSecondary.opacity(0.1))
                 .frame(width: cell, height: cell)
                 .overlay(
@@ -138,7 +138,7 @@ struct AppearancePickerView: View {
         Button {
             iconName = nil
         } label: {
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
+            RoundedRectangle(cornerRadius: 12)
                 .fill(Theme.textSecondary.opacity(0.1))
                 .frame(width: cell, height: cell)
                 .overlay(
@@ -165,7 +165,7 @@ struct AppearancePickerView: View {
     @ViewBuilder
     private func selectionRing(isSelected: Bool, cornerRadius: CGFloat? = nil) -> some View {
         if isSelected {
-            let shape = RoundedRectangle(cornerRadius: cornerRadius ?? cell / 2, style: .continuous)
+            let shape = RoundedRectangle(cornerRadius: cornerRadius ?? cell / 2)
             shape
                 .stroke(Theme.accent, lineWidth: 2.5)
                 .padding(-3)

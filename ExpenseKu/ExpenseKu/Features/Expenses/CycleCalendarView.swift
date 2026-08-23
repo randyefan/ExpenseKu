@@ -25,7 +25,7 @@ struct CycleCalendarGrid: View {
     var body: some View {
         VStack(spacing: 4) {
             weekdayHeader
-            ForEach(Array(calendarGrid.weeks.enumerated()), id: \.offset) { _, week in
+            ForEach(calendarGrid.weeks.enumerated(), id: \.offset) { _, week in
                 HStack(spacing: 0) {
                     ForEach(week) { day in
                         DayCell(
@@ -52,7 +52,7 @@ struct CycleCalendarGrid: View {
         let symbols = calendar.veryShortStandaloneWeekdaySymbols
         let ordered = (0..<7).map { symbols[(calendar.firstWeekday - 1 + $0) % 7] }
         return HStack(spacing: 0) {
-            ForEach(Array(ordered.enumerated()), id: \.offset) { _, symbol in
+            ForEach(ordered.enumerated(), id: \.offset) { _, symbol in
                 Text(symbol)
                     .font(.dsCaption)
                     .fontWeight(.semibold)
@@ -99,7 +99,7 @@ private struct DayCell: View {
 
                 // Reserve the total's row even when empty so dates stay on one baseline.
                 Text(totalText ?? "")
-                    .font(.jakarta(10, relativeTo: .caption2))
+                    .font(.jakarta(10, relativeTo: .caption))
                     .fontWeight(totalWeight)
                     .monospacedDigit()
                     .foregroundStyle(totalColor)
@@ -108,7 +108,8 @@ private struct DayCell: View {
                     .frame(height: 12)
             }
             .padding(.vertical, 1)
-            .contentShape(Rectangle())
+            .frame(maxWidth: .infinity, minHeight: 44)
+            .contentShape(.rect)
         }
         .buttonStyle(.plain)
         .disabled(!day.inCycle)

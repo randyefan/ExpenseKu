@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension Decimal {
+nonisolated extension Decimal {
     /// The amount formatted as Indonesian Rupiah, e.g. "Rp100,000".
     func formattedIDR() -> String {
         formatted(.currency(code: "IDR").precision(.fractionLength(0)))

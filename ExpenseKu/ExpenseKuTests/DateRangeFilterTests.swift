@@ -10,7 +10,7 @@
 import XCTest
 @testable import ExpenseKu
 
-final class DateRangeFilterTests: XCTestCase {
+nonisolated final class DateRangeFilterTests: XCTestCase {
 
     private let calendar = Calendar(identifier: .gregorian)
 

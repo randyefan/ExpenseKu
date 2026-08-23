@@ -23,8 +23,7 @@ struct ExpenseEditorView: View {
     /// that clears its selection instead.
     let onFinish: (() -> Void)?
 
-    @State private var amount: Decimal            // macOS amount field binding
-    @State private var expr: ExpressionEvaluator  // iOS keypad-driven amount
+    @State private var expr: ExpressionEvaluator  // keypad-driven amount
     @State private var date: Date
     @State private var note: String
     @State private var category: Category?
@@ -39,13 +38,12 @@ struct ExpenseEditorView: View {
     @State private var didApplyDefaults = false
 
     @FocusState private var notesFocused: Bool
+    @State private var scrollPosition = ScrollPosition()
 
     init(editing: Expense? = nil, onFinish: (() -> Void)? = nil) {
         self.editing = editing
         self.onFinish = onFinish
-        let startAmount = editing?.amount ?? 0
-        _amount = State(initialValue: startAmount)
-        _expr = State(initialValue: ExpressionEvaluator(amount: startAmount))
+        _expr = State(initialValue: ExpressionEvaluator(amount: editing?.amount ?? 0))
         _date = State(initialValue: editing?.date ?? .now)
         _note = State(initialValue: editing?.note ?? "")
         _category = State(initialValue: editing?.category)
@@ -53,30 +51,14 @@ struct ExpenseEditorView: View {
         _account = State(initialValue: editing?.account)
     }
 
-    /// The amount that will be saved, resolved per platform.
-    private var resolvedAmount: Decimal {
-        #if os(iOS)
-        expr.committedAmount
-        #else
-        amount
-        #endif
-    }
+    /// The amount that will be saved.
+    private var resolvedAmount: Decimal { expr.committedAmount }
 
     private var canSave: Bool { resolvedAmount > 0 && category != nil }
 
-    private var peopleSummary: String {
-        people.isEmpty ? "None" : people.map(\.name).sorted().joined(separator: ", ")
-    }
-
     var body: some View {
-        Group {
-            #if os(iOS)
-            iosBody
-            #else
-            macBody
-            #endif
-        }
-        .onAppear(perform: applyDefaultsIfNeeded)
+        editorBody
+            .onAppear(perform: applyDefaultsIfNeeded)
     }
 
     /// On a brand-new expense, pre-select the protected "Me" so logging a solo
@@ -90,87 +72,55 @@ struct ExpenseEditorView: View {
         people.insert(me, at: 0)
     }
 
-    // MARK: - Shared detail rows (Date / Category / Account / People)
+    // MARK: - Big amount hero + scrolling rows + sticky keypad dock
 
-    @ViewBuilder private var detailRows: some View {
-        DatePicker("Date & Time", selection: $date, displayedComponents: [.date, .hourAndMinute])
-            .font(.dsBody)
-            .listRowBackground(Theme.card)
-
-        NavigationLink {
-            CategoryPicker(selection: $category)
-        } label: {
-            LabeledContent("Category") {
-                Text(category?.name ?? "Required")
-                    .foregroundStyle(category == nil ? Theme.accent : Theme.text)
-            }
-            .font(.dsBody)
-        }
-        .listRowBackground(Theme.card)
-
-        NavigationLink {
-            AccountPicker(selection: $account)
-        } label: {
-            LabeledContent("Account") {
-                Text(account?.name ?? "None")
-                    .foregroundStyle(account == nil ? Theme.textSecondary : Theme.text)
-            }
-            .font(.dsBody)
-        }
-        .listRowBackground(Theme.card)
-
-        NavigationLink {
-            PeoplePicker(selection: $people)
-        } label: {
-            LabeledContent("People") {
-                Text(peopleSummary)
-                    .foregroundStyle(people.isEmpty ? Theme.textSecondary : Theme.text)
-                    .lineLimit(1)
-            }
-            .font(.dsBody)
-        }
-        .listRowBackground(Theme.card)
-    }
-
-    // MARK: - iOS: big amount hero + scrolling rows + sticky keypad dock
-
-    #if os(iOS)
-    private var iosBody: some View {
+    private var editorBody: some View {
         VStack(spacing: 0) {
-            ScrollViewReader { proxy in
-                List {
-                    Section {
-                        amountHero
-                            .listRowBackground(Color.clear)
-                            .listRowSeparator(.hidden)
-                            .listRowInsets(EdgeInsets(top: 12, leading: 16, bottom: 8, trailing: 16))
-                    }
-
-                    Section { detailRows }
-
-                    Section {
-                        TextField("Add a note…", text: $note, axis: .vertical)
-                            .font(.dsBody)
-                            .focused($notesFocused)
-                            .listRowBackground(Theme.card)
-                            .id(notesRowID)
-                    }
+            List {
+                Section {
+                    AmountHero(displayExpression: expr.displayExpression, amount: resolvedAmount)
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(EdgeInsets(top: 12, leading: 16, bottom: 8, trailing: 16))
                 }
-                .listStyle(.insetGrouped)
-                .scrollContentBackground(.hidden)
-                .scrollDismissesKeyboard(.interactively)
-                // Tapping anywhere outside a text field dismisses the notes
-                // keyboard (List gives drag-dismiss but no tap-outside dismiss).
-                .dismissesKeyboardOnOutsideTap()
-                .onChange(of: notesFocused) { _, focused in
-                    if focused {
-                        withAnimation { proxy.scrollTo(notesRowID, anchor: .bottom) }
-                    }
+
+                Section {
+                    ExpenseDetailRows(
+                        date: $date, category: $category,
+                        account: $account, people: $people
+                    )
+                }
+
+                Section {
+                    TextField("Add a note…", text: $note, axis: .vertical)
+                        .font(.dsBody)
+                        .focused($notesFocused)
+                        .listRowBackground(Theme.card)
+                        .id(notesRowID)
+                }
+            }
+            .listStyle(.insetGrouped)
+            .scrollContentBackground(.hidden)
+            .scrollDismissesKeyboard(.interactively)
+            // Tapping anywhere outside a text field dismisses the notes
+            // keyboard (List gives drag-dismiss but no tap-outside dismiss).
+            .dismissesKeyboardOnOutsideTap()
+            .scrollPosition($scrollPosition)
+            .onChange(of: notesFocused) { _, focused in
+                if focused {
+                    withAnimation { scrollPosition.scrollTo(id: notesRowID, anchor: .bottom) }
                 }
             }
 
             if !notesFocused {
-                dock
+                EditorKeypadDock(
+                    expr: $expr,
+                    canSave: canSave,
+                    showsDelete: editing != nil,
+                    onSave: save,
+                    onCancel: finish,
+                    onDelete: deleteExpense
+                )
             }
         }
         .background(Theme.bg)
@@ -186,113 +136,6 @@ struct ExpenseEditorView: View {
     }
 
     private var notesRowID: String { "notes" }
-
-    /// Sticky bottom dock: keypad plus (when editing) a restrained Delete button.
-    private var dock: some View {
-        VStack(spacing: 12) {
-            CalculatorKeypad(
-                canSave: canSave,
-                onDigit: { expr.appendDigit($0) },
-                onDecimal: { expr.appendDecimal() },
-                onOperator: { expr.appendOperator($0) },
-                onBackspace: { expr.backspace() },
-                onClear: { expr.clear() },
-                onSave: save,
-                onCancel: finish
-            )
-
-            if editing != nil {
-                Button("Delete Expense", role: .destructive, action: deleteExpense)
-                    .font(.dsSubhead)
-                    .foregroundStyle(Theme.accent)
-                    .padding(.top, 4)
-            }
-        }
-        .padding(.horizontal, Metric.screenPadding)
-        .padding(.top, 12)
-        .padding(.bottom, 8)
-        .frame(maxWidth: .infinity)
-        .background(Theme.bg)
-        .overlay(alignment: .top) {
-            Rectangle().fill(Theme.hairline).frame(height: 1)
-        }
-        .transition(.move(edge: .bottom).combined(with: .opacity))
-    }
-
-    /// Big, page-top amount: the calculator working line above the `Rp` result.
-    private var amountHero: some View {
-        VStack(spacing: 4) {
-            if !expr.displayExpression.isEmpty {
-                Text(expr.displayExpression)
-                    .font(.dsBody)
-                    .foregroundStyle(Theme.textSecondary)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.6)
-            }
-            HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Text("Rp")
-                    .font(.dsTitle).fontWeight(.semibold)
-                    .foregroundStyle(Theme.textSecondary)
-                Text(resolvedAmount.formatted(.number.precision(.fractionLength(0))))
-                    .font(.jakarta(48, relativeTo: .largeTitle)).fontWeight(.bold)
-                    .monospacedDigit()
-                    .foregroundStyle(resolvedAmount > 0 ? Theme.text : Theme.textSecondary)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.4)
-            }
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 8)
-    }
-    #endif
-
-    // MARK: - macOS: plain Form
-
-    #if os(macOS)
-    private var macBody: some View {
-        Form {
-            Section {
-                HStack(alignment: .firstTextBaseline, spacing: 6) {
-                    Spacer(minLength: 0)
-                    Text("Rp")
-                        .font(.dsTitle).fontWeight(.semibold)
-                        .foregroundStyle(Theme.textSecondary)
-                    AmountField(amount: $amount, autoFocus: editing == nil)
-                    Spacer(minLength: 0)
-                }
-                .padding(.vertical, 10)
-                .listRowBackground(Theme.card)
-            }
-
-            Section { detailRows }
-
-            Section {
-                TextField("Add a note…", text: $note, axis: .vertical)
-                    .font(.dsBody)
-                    .listRowBackground(Theme.card)
-            }
-
-            if editing != nil {
-                Section {
-                    Button("Delete Expense", role: .destructive, action: deleteExpense)
-                        .font(.dsBody)
-                        .listRowBackground(Theme.card)
-                }
-            }
-        }
-        .scrollContentBackground(.hidden)
-        .background(Theme.bg)
-        .navigationTitle(editing == nil ? "Add Expense" : "Edit Expense")
-        .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                Button("Save", action: save).disabled(!canSave)
-            }
-            ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") { finish() }
-            }
-        }
-    }
-    #endif
 
     // MARK: - Actions
 
@@ -311,11 +154,15 @@ struct ExpenseEditorView: View {
         target.category = category
         target.people = people
         target.account = account
+        try? context.save()
         finish()
     }
 
     private func deleteExpense() {
-        if let editing { context.delete(editing) }
+        if let editing {
+            context.delete(editing)
+            try? context.save()
+        }
         finish()
     }
 
@@ -323,88 +170,3 @@ struct ExpenseEditorView: View {
         if let onFinish { onFinish() } else { dismiss() }
     }
 }
-
-#if os(iOS)
-// MARK: - Tap-outside-to-dismiss keyboard
-
-extension View {
-    /// Dismisses the keyboard when the user taps anywhere outside a text input.
-    /// SwiftUI's `List` only offers interactive drag-dismissal; this fills the
-    /// tap-outside gap for the notes keyboard on the expense editor.
-    func dismissesKeyboardOnOutsideTap() -> some View {
-        background(KeyboardDismissTap())
-    }
-}
-
-/// Installs a tap recognizer on the enclosing window that resigns the first
-/// responder. `cancelsTouchesInView = false` so it never swallows a tap (buttons
-/// and rows still work); its delegate ignores taps that land on a text field so
-/// tapping the note to reposition the cursor keeps the keyboard up.
-private struct KeyboardDismissTap: UIViewRepresentable {
-    func makeCoordinator() -> Coordinator { Coordinator() }
-
-    func makeUIView(context: Context) -> UIView {
-        let view = UIView(frame: .zero)
-        view.isUserInteractionEnabled = false
-        DispatchQueue.main.async { context.coordinator.install(from: view) }
-        return view
-    }
-
-    func updateUIView(_ uiView: UIView, context: Context) {
-        // Retry in case the window wasn't attached yet at make time.
-        context.coordinator.install(from: uiView)
-    }
-
-    static func dismantleUIView(_ uiView: UIView, coordinator: Coordinator) {
-        coordinator.uninstall()
-    }
-
-    final class Coordinator: NSObject, UIGestureRecognizerDelegate {
-        private weak var window: UIWindow?
-        private var recognizer: UITapGestureRecognizer?
-
-        func install(from view: UIView) {
-            guard recognizer == nil, let window = view.window else { return }
-            let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap))
-            tap.cancelsTouchesInView = false
-            tap.delegate = self
-            window.addGestureRecognizer(tap)
-            self.recognizer = tap
-            self.window = window
-        }
-
-        func uninstall() {
-            if let recognizer { window?.removeGestureRecognizer(recognizer) }
-            recognizer = nil
-            window = nil
-        }
-
-        @objc private func handleTap() {
-            UIApplication.shared.sendAction(
-                #selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil
-            )
-        }
-
-        // Don't dismiss when the tap lands on (or inside) a text input — let the
-        // field handle it so cursor placement doesn't drop the keyboard.
-        func gestureRecognizer(
-            _ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch
-        ) -> Bool {
-            var view = touch.view
-            while let current = view {
-                if current is UITextField || current is UITextView || current is UIControl {
-                    return false
-                }
-                view = current.superview
-            }
-            return true
-        }
-
-        // Coexist with the list's own scroll/selection gestures.
-        func gestureRecognizer(
-            _ gestureRecognizer: UIGestureRecognizer,
-            shouldRecognizeSimultaneouslyWith other: UIGestureRecognizer
-        ) -> Bool { true }
-    }
-}
-#endif

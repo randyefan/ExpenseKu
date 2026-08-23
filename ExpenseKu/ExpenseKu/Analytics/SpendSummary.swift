@@ -10,32 +10,32 @@
 import Foundation
 
 /// Total spend for one category (or the "Uncategorized" bucket).
-struct CategorySpend: Identifiable {
+nonisolated struct CategorySpend: Identifiable {
     let categoryName: String
     let total: Decimal
     var id: String { categoryName }
 }
 
 /// Total spend for one account (or the "Unassigned" bucket).
-struct AccountSpend: Identifiable {
+nonisolated struct AccountSpend: Identifiable {
     let accountName: String
     let total: Decimal
     var id: String { accountName }
 }
 
 /// Total spend within one time bucket, keyed by the bucket's start date.
-struct PeriodSpend: Identifiable {
+nonisolated struct PeriodSpend: Identifiable {
     let date: Date
     let total: Decimal
     var id: Date { date }
 }
 
-enum SpendGranularity {
+nonisolated enum SpendGranularity {
     case day
     case month
 }
 
-enum SpendSummary {
+nonisolated enum SpendSummary {
     /// Spend grouped by category, highest first. Expenses whose category was
     /// deleted fall into an "Uncategorized" bucket (ADR-0001).
     static func byCategory(

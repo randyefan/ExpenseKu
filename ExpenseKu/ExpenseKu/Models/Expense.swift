@@ -11,6 +11,11 @@ import SwiftData
 
 @Model
 final class Expense {
+    // `date` drives every read path: the cycle list's sort, the calendar grouping and
+    // all Insights range filters. Writes are rare (one per logged expense) and reads
+    // are constant, so the index's write cost pays for itself here.
+    #Index<Expense>([\.date])
+
     // All stored properties are defaulted for CloudKit mirroring (no non-optional,
     // no-default attributes allowed). Money is Decimal, never Double.
     var amount: Decimal = 0

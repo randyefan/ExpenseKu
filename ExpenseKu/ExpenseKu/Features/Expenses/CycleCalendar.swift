@@ -14,7 +14,7 @@
 import Foundation
 
 /// One cell in the grid: a calendar day, whether the cycle owns it, and its spend.
-struct CalendarDay: Identifiable, Equatable {
+nonisolated struct CalendarDay: Identifiable, Equatable {
     /// Start of the day this cell represents.
     let date: Date
     /// False for the leading/trailing filler days that only exist to square off the
@@ -31,7 +31,7 @@ struct CalendarDay: Identifiable, Equatable {
 }
 
 /// One pay cycle laid out as whole weeks.
-struct CycleCalendar {
+nonisolated struct CycleCalendar {
     /// Week rows, each exactly 7 cells, ordered by `calendar.firstWeekday`.
     let weeks: [[CalendarDay]]
     /// The largest in-cycle day total — the denominator for dot intensity.
@@ -48,7 +48,7 @@ struct CycleCalendar {
 /// How heavy a day's spend is relative to the cycle's heaviest day. Rendered as the
 /// printed total's *weight* (and tone) — meaning must never rest on color alone
 /// (revamp guardrail).
-enum DayIntensity {
+nonisolated enum DayIntensity {
     case none, light, medium, heavy, heaviest
 }
 
@@ -56,7 +56,7 @@ enum DayIntensity {
 ///
 /// `expenses` may be the whole store: everything outside the cycle is dropped first,
 /// so an expense dated on a filler day never shows up in the grid.
-func cycleCalendar(for cycle: PayCycle, expenses: [Expense], calendar: Calendar) -> CycleCalendar {
+nonisolated func cycleCalendar(for cycle: PayCycle, expenses: [Expense], calendar: Calendar) -> CycleCalendar {
     let inCycle = expenses.filter { cycle.contains($0.date) }
     let totals = Dictionary(
         uniqueKeysWithValues: expenseDayGroups(inCycle, calendar: calendar)
@@ -92,7 +92,7 @@ func cycleCalendar(for cycle: PayCycle, expenses: [Expense], calendar: Calendar)
 ///
 /// Ratio thresholds: `> 0.75` heaviest, `> 0.50` heavy, `> 0.25` medium, else light.
 /// A day with no spend — or any day when the cycle is empty — is `.none`.
-func dayIntensity(total: Decimal, max: Decimal) -> DayIntensity {
+nonisolated func dayIntensity(total: Decimal, max: Decimal) -> DayIntensity {
     guard total > 0, max > 0 else { return .none }
     let ratio = (total as NSDecimalNumber).doubleValue / (max as NSDecimalNumber).doubleValue
     switch ratio {
@@ -111,7 +111,7 @@ func dayIntensity(total: Decimal, max: Decimal) -> DayIntensity {
 /// `Rp145.000` convention inside a four-glyph budget. The authoritative figures — the day
 /// header, every row, and this cell's VoiceOver label — all still use `formattedIDR()`.
 /// A millions-scale day stays in thousands (`1_200_000` → `"1200k"`), which still fits.
-func abbreviatedDayTotal(_ total: Decimal) -> String? {
+nonisolated func abbreviatedDayTotal(_ total: Decimal) -> String? {
     guard total > 0 else { return nil }
     let thousands = (total / 1000).doubleValue.rounded()
     // Floor at 1k: any day with spending must read as spending, never as "0k".
@@ -121,7 +121,7 @@ func abbreviatedDayTotal(_ total: Decimal) -> String? {
 /// Which day to select when the calendar first appears (or after paging cycles):
 /// today when the cycle owns it, else the most recent day that has spending, else
 /// the cycle's last day. Nil only for a cycle with no days at all.
-func defaultSelectedDay(in calendarGrid: CycleCalendar, today: Date, calendar: Calendar) -> Date? {
+nonisolated func defaultSelectedDay(in calendarGrid: CycleCalendar, today: Date, calendar: Calendar) -> Date? {
     let days = calendarGrid.cycleDays
     guard !days.isEmpty else { return nil }
     let startOfToday = calendar.startOfDay(for: today)
@@ -132,7 +132,7 @@ func defaultSelectedDay(in calendarGrid: CycleCalendar, today: Date, calendar: C
 
 /// The first day of the week containing `date`, honouring `calendar.firstWeekday`
 /// so a Monday-first locale renders Monday-first.
-private func startOfWeek(containing date: Date, calendar: Calendar) -> Date {
+nonisolated private func startOfWeek(containing date: Date, calendar: Calendar) -> Date {
     let day = calendar.startOfDay(for: date)
     let weekday = calendar.component(.weekday, from: day)
     let offset = (weekday - calendar.firstWeekday + 7) % 7

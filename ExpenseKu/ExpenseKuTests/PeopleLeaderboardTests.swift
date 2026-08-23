@@ -16,7 +16,7 @@ import XCTest
 // the app module). Pin it to our model.
 private typealias Category = ExpenseKu.Category
 
-final class PeopleLeaderboardTests: XCTestCase {
+nonisolated final class PeopleLeaderboardTests: XCTestCase {
 
     /// The full amount is credited to each companion — a 100k expense with two
     /// people counts 100k toward each (not split).

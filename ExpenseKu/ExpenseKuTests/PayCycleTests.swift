@@ -12,7 +12,7 @@
 import XCTest
 @testable import ExpenseKu
 
-final class PayCycleTests: XCTestCase {
+nonisolated final class PayCycleTests: XCTestCase {
 
     private let calendar = Calendar(identifier: .gregorian)
 

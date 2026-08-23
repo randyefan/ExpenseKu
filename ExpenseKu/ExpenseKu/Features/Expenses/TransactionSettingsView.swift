@@ -37,9 +37,7 @@ struct TransactionSettingsView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Theme.bg)
             .navigationTitle("Transaction Settings")
-            #if !os(macOS)
             .navigationBarTitleDisplayMode(.inline)
-            #endif
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { dismiss() }

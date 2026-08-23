@@ -48,7 +48,7 @@ struct ManagePeopleView: View {
         }
         .sheet(item: $editor) { target in
             NavigationStack {
-                NameEditorView<Person>(
+                NameEditorView<Person, EmptyView>(
                     title: target.person == nil ? "New Person" : "Edit Person",
                     editing: target.person,
                     makeNew: { Person() }
@@ -88,6 +88,7 @@ struct ManagePeopleView: View {
         for index in offsets where !people[index].isMe {
             context.delete(people[index])
         }
+        try? context.save()
     }
 
     struct EditorTarget: Identifiable {

@@ -15,19 +15,7 @@ struct ExpenseRow: View {
 
     private var categoryName: String { expense.category?.name ?? "Uncategorized" }
 
-    private var peopleNames: String {
-        guard let people = expense.people, !people.isEmpty else { return "" }
-        let names = people.map(\.name).sorted()
-        switch names.count {
-        case 1:
-            return names[0]
-        case 2:
-            return "\(names[0]) and \(names[1])"
-        default:
-            // Oxford comma: "Anas, Beni, and Me"
-            return names.dropLast().joined(separator: ", ") + ", and " + names.last!
-        }
-    }
+    private var peopleNames: String { CompanionNames.phrase(expense.people) }
 
     var body: some View {
         HStack(spacing: 12) {
@@ -40,7 +28,7 @@ struct ExpenseRow: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text(categoryName)
                     .font(.dsBody)
-                    .fontWeight(.bold)
+                    .bold()
                     .foregroundStyle(Theme.text)
                     .lineLimit(1)
                     .padding(.bottom, 2)
@@ -52,7 +40,10 @@ struct ExpenseRow: View {
                         .lineLimit(1)
                 }
 
-                metaLine
+                ExpenseMetaLine(
+                    accountName: expense.account?.name,
+                    peopleNames: peopleNames
+                )
             }
 
             Spacer(minLength: 8)
@@ -61,26 +52,72 @@ struct ExpenseRow: View {
         }
         .padding(.vertical, 4)
     }
+}
 
-    @ViewBuilder
-    private var metaLine: some View {
-        VStack(alignment: .leading, spacing: 3) {
-            if let account = expense.account {
-                metaItem(icon: "creditcard", text: account.name)
-            }
-            if !peopleNames.isEmpty {
-                metaItem(icon: "person.2", text: peopleNames)
-            }
-        }
-        .font(.dsCaption)
-        .foregroundStyle(Theme.textSecondary)
-    }
+#Preview("Lengkap") {
+    ExpenseRow(expense: Expense(
+        amount: 120_000,
+        note: "Dinner",
+        category: Category(name: "Makan"),
+        people: [Person(name: "Tarisa"), Person(name: "Fadil")],
+        account: Account(name: "GoPay")
+    ))
+    .cardStyle()
+    .padding()
+    .warmBackground()
+}
 
-    private func metaItem(icon: String, text: String) -> some View {
-        HStack(spacing: 3) {
-            Image(systemName: icon)
-            Text(text)
-        }
-        .lineLimit(1)
-    }
+#Preview("Minimal") {
+    ExpenseRow(expense: Expense(amount: 25_000, category: Category(name: "Kopi")))
+        .cardStyle()
+        .padding()
+        .warmBackground()
+}
+
+#Preview("Uncategorized (ADR-0001)") {
+    ExpenseRow(expense: Expense(amount: 45_000, note: "Lunch"))
+        .cardStyle()
+        .padding()
+        .warmBackground()
+}
+
+#Preview("Nama panjang") {
+    ExpenseRow(expense: Expense(
+        amount: 1_250_000,
+        note: "A note long enough that it has to be truncated somewhere",
+        category: Category(name: "Entertainment and Subscriptions"),
+        people: [Person(name: "Tarisa"), Person(name: "Fadil"), Person(name: "Budi")],
+        account: Account(name: "Bank Central Asia")
+    ))
+    .cardStyle()
+    .padding()
+    .warmBackground()
+}
+
+#Preview("Aksesibilitas XXL") {
+    ExpenseRow(expense: Expense(
+        amount: 120_000,
+        note: "Dinner",
+        category: Category(name: "Makan"),
+        people: [Person(name: "Tarisa")],
+        account: Account(name: "GoPay")
+    ))
+    .cardStyle()
+    .padding()
+    .warmBackground()
+    .environment(\.dynamicTypeSize, .accessibility3)
+}
+
+#Preview("Gelap") {
+    ExpenseRow(expense: Expense(
+        amount: 120_000,
+        note: "Dinner",
+        category: Category(name: "Makan"),
+        people: [Person(name: "Tarisa")],
+        account: Account(name: "GoPay")
+    ))
+    .cardStyle()
+    .padding()
+    .warmBackground()
+    .preferredColorScheme(.dark)
 }

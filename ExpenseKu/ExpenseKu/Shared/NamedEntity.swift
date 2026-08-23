@@ -13,11 +13,22 @@ import SwiftData
 /// A SwiftData model identified to the owner by a free-text `name`.
 protocol NamedEntity: PersistentModel {
     var name: String { get set }
+    /// The lowercase noun the owner sees for this kind, e.g. "You already have a
+    /// **category** with this name."
+    nonisolated static var noun: String { get }
 }
 
-extension Category: NamedEntity {}
-extension Person: NamedEntity {}
-extension Account: NamedEntity {}
+extension Category: NamedEntity {
+    nonisolated static var noun: String { "category" }
+}
+
+extension Person: NamedEntity {
+    nonisolated static var noun: String { "person" }
+}
+
+extension Account: NamedEntity {
+    nonisolated static var noun: String { "account" }
+}
 
 enum NameKey {
     /// The comparison key for duplicate detection: trimmed + case-insensitive.
@@ -37,7 +48,9 @@ func existingEntity<T: NamedEntity>(
 ) -> T? {
     let key = NameKey.normalized(name)
     guard !key.isEmpty else { return nil }
-    let all = (try? context.fetch(FetchDescriptor<T>())) ?? []
+    var descriptor = FetchDescriptor<T>()
+    descriptor.propertiesToFetch = [\.name]
+    let all = (try? context.fetch(descriptor)) ?? []
     return all.first {
         NameKey.normalized($0.name) == key && $0.persistentModelID != excluding?.persistentModelID
     }

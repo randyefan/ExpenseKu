@@ -14,7 +14,7 @@ import XCTest
 // See AccountAnalyticsTests: pin the ambiguous `Category` name to our model.
 private typealias Category = ExpenseKu.Category
 
-final class CategoryAppearanceTests: XCTestCase {
+nonisolated final class CategoryAppearanceTests: XCTestCase {
 
     // MARK: - Resolved symbol
 

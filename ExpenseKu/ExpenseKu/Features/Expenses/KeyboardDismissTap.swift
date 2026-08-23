@@ -24,27 +24,41 @@ extension View {
 private struct KeyboardDismissTap: UIViewRepresentable {
     func makeCoordinator() -> Coordinator { Coordinator() }
 
-    func makeUIView(context: Context) -> UIView {
-        let view = UIView(frame: .zero)
+    func makeUIView(context: Context) -> WindowTrackingView {
+        let view = WindowTrackingView()
         view.isUserInteractionEnabled = false
+        view.coordinator = context.coordinator
         return view
     }
 
-    func updateUIView(_ uiView: UIView, context: Context) {
-        // Runs once the view is in a window, which `makeUIView` cannot guarantee.
-        context.coordinator.install(from: uiView)
+    func updateUIView(_ uiView: WindowTrackingView, context: Context) {}
+
+    static func dismantleUIView(_ uiView: WindowTrackingView, coordinator: Coordinator) {
+        coordinator.uninstall()
     }
 
-    static func dismantleUIView(_ uiView: UIView, coordinator: Coordinator) {
-        coordinator.uninstall()
+    /// `didMoveToWindow` is the callback for the recognizer's actual precondition:
+    /// UIKit calls it when the view enters a window and again when it leaves.
+    final class WindowTrackingView: UIView {
+        weak var coordinator: Coordinator?
+
+        override func didMoveToWindow() {
+            super.didMoveToWindow()
+            if let window {
+                coordinator?.install(on: window)
+            } else {
+                coordinator?.uninstall()
+            }
+        }
     }
 
     final class Coordinator: NSObject, UIGestureRecognizerDelegate {
         private weak var window: UIWindow?
         private var recognizer: UITapGestureRecognizer?
 
-        func install(from view: UIView) {
-            guard recognizer == nil, let window = view.window else { return }
+        func install(on window: UIWindow) {
+            guard window !== self.window else { return }
+            uninstall()
             let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap))
             tap.cancelsTouchesInView = false
             tap.delegate = self

@@ -27,5 +27,11 @@ Carthage/Build/
 .scratch/revamp/shots/
 .scratch/revamp/DerivedData/
 
+# Feature spikes — SwiftPM/Xcode build output. These contain checked-out package
+# repos, and git will treat each one as a submodule if it ever sees them: a broken
+# object store in any of them then breaks `git status` and `git checkout` outright.
+.scratch/features/*/spike/dd/
+.scratch/features/*/spike/.build/
+
 # Claude Code — per-user local settings
 .claude/settings.local.json

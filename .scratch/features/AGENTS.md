@@ -106,6 +106,8 @@ Commands:
 scripts/simdrive.sh launch [-a] [-- <launch args>]   # relaunch app fresh (e.g. -startScreen editor)
 scripts/simdrive.sh shot   <name>                    # screenshot → .scratch/revamp/shots/<name>.png
 scripts/simdrive.sh tap    <px> <py>                 # tap at SCREENSHOT-PIXEL coords
+scripts/simdrive.sh press  <px> <py> [ms]            # press-hold-release (default 140ms)
+scripts/simdrive.sh swipe  <x1> <y1> <x2> <y2>       # drag between two pixels
 scripts/simdrive.sh key    [cmd|shift|option|ctrl …] <k>   # send a key combo
 scripts/simdrive.sh bounds                           # print the pixel→screen mapping
 ```
@@ -119,9 +121,19 @@ after.png → compare. Confirm the *state changed as intended* (a row appeared, 
 the keyboard dismissed), then move to the next interaction.
 
 Gotchas (learned the hard way):
+- **A `Button` inside a `List` cannot be driven at all.** cliclick's synthetic events never
+  activate one — not with `tap`, not with `press`, not repeated, not with a long dwell. The
+  app is fine; a real finger works. This cost a full investigation on `expense-search`
+  (stashing the feature to test `main`, hardcoding state, ruling out `.sheet`) before the user
+  confirmed by hand. **Do not conclude "broken" when a List row won't respond** — gestures on
+  the same List still work (`swipe`-to-delete does), and `NavigationLink`s outside a List work.
+  Verify Button-in-List taps by hand and say so in `STATUS.md`.
+- **`key` sends whole strings**, not single keys: `key kopi` types "kopi" in one call.
 - **First tap after a `shot` (or after focus left the Simulator) can be swallowed** as window
   re-activation instead of an in-app tap. If a tap seems to do nothing, just issue it again —
-  the repeat lands. Don't conclude "broken" from a single no-op tap.
+  the repeat lands. Don't conclude "broken" from a single no-op tap. But beware the mirror
+  image: sending *two* taps at a toggle (e.g. a search field that opens on tap) opens then
+  closes it. If a repeat produces nothing, relaunch and try a single tap.
 - **Software keyboard hidden?** When a hardware keyboard is "connected," tapping a text field
   focuses it but shows no on-screen keyboard. Reveal it with `scripts/simdrive.sh key cmd k`.
   (Focus still happens without it — watch for the on-screen state change, e.g. a dock hiding.)

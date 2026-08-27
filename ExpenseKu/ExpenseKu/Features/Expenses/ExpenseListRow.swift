@@ -11,11 +11,13 @@ import SwiftUI
 
 struct ExpenseListRow: View {
     let expense: Expense
+    /// Passed through to `ExpenseRow`; only the search lens sets it.
+    var dateLabel: String? = nil
     let onSelect: () -> Void
 
     var body: some View {
         Button(action: onSelect) {
-            ExpenseRow(expense: expense)
+            ExpenseRow(expense: expense, dateLabel: dateLabel)
         }
         .buttonStyle(.plain)
         .cardStyle()

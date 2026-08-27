@@ -20,7 +20,16 @@
 #   scripts/simdrive.sh launch [-a] [-- <launch args>]   relaunch the app (fresh state)
 #   scripts/simdrive.sh shot   <name>                    screenshot → $SHOTS/<name>.png
 #   scripts/simdrive.sh tap    <px> <py>                 tap at screenshot-pixel (px,py)
+#   scripts/simdrive.sh swipe  <x1> <y1> <x2> <y2>       drag between two pixels
 #   scripts/simdrive.sh key    [cmd|shift|option|ctrl ...] <key>   send a key combo
+#
+# `key` goes through AppleScript `keystroke`, so it sends whole STRINGS, not just
+# single keys: `key kopi` types "kopi" in one call.
+#
+# `swipe` is what you need for anything gesture-driven — swipe-to-delete, sheet
+# dismissal, paging. It presses, moves through intermediate points, then releases;
+# the intermediate points are required, since a single jump reads as a teleport
+# and UIKit won't recognise it as a swipe.
 #   scripts/simdrive.sh bounds                           print the pixel→screen mapping
 #
 #   # Reveal the software keyboard (Simulator hides it when a HW keyboard is on):
@@ -132,6 +141,39 @@ case "${1:-}" in
     SY="$(printf '%.0f' "$(echo "$OY + $PY * $K" | bc -l)")"
     cliclick "c:$SX,$SY"
     echo "tapped pixel ($PX,$PY) → screen ($SX,$SY)"
+    ;;
+
+  press)
+    PX="${2:?usage: simdrive.sh press <px> <py> [ms]}"; PY="${3:?usage: simdrive.sh press <px> <py> [ms]}"
+    MS="${4:-140}"
+    frontmost; sleep 0.3
+    read OX OY K < <(read_mapping)
+    SX="$(printf '%.0f' "$(echo "$OX + $PX * $K" | bc -l)")"
+    SY="$(printf '%.0f' "$(echo "$OY + $PY * $K" | bc -l)")"
+    # Hold briefly instead of an instant click. Rows inside a List sit under a
+    # scroll-view gesture recogniser that delays touch delivery to decide
+    # tap-vs-scroll; a zero-duration click is discarded before it resolves.
+    cliclick "dd:$SX,$SY" "w:$MS" "du:$SX,$SY"
+    echo "pressed pixel ($PX,$PY) for ${MS}ms → screen ($SX,$SY)"
+    ;;
+
+  swipe)
+    X1="${2:?usage: simdrive.sh swipe <x1> <y1> <x2> <y2>}"; Y1="${3:?usage: simdrive.sh swipe <x1> <y1> <x2> <y2>}"
+    X2="${4:?usage: simdrive.sh swipe <x1> <y1> <x2> <y2>}"; Y2="${5:?usage: simdrive.sh swipe <x1> <y1> <x2> <y2>}"
+    frontmost; sleep 0.3
+    read OX OY K < <(read_mapping)
+    SX1="$(printf '%.0f' "$(echo "$OX + $X1 * $K" | bc -l)")"
+    SY1="$(printf '%.0f' "$(echo "$OY + $Y1 * $K" | bc -l)")"
+    SX2="$(printf '%.0f' "$(echo "$OX + $X2 * $K" | bc -l)")"
+    SY2="$(printf '%.0f' "$(echo "$OY + $Y2 * $K" | bc -l)")"
+    # Press, move in steps, release. The intermediate `dm:` points matter: a single
+    # jump from start to end reads as a teleport and UIKit won't recognise a swipe.
+    MIDX1="$(printf '%.0f' "$(echo "$SX1 + ($SX2 - $SX1) * 0.33" | bc -l)")"
+    MIDY1="$(printf '%.0f' "$(echo "$SY1 + ($SY2 - $SY1) * 0.33" | bc -l)")"
+    MIDX2="$(printf '%.0f' "$(echo "$SX1 + ($SX2 - $SX1) * 0.66" | bc -l)")"
+    MIDY2="$(printf '%.0f' "$(echo "$SY1 + ($SY2 - $SY1) * 0.66" | bc -l)")"
+    cliclick "dd:$SX1,$SY1" "dm:$MIDX1,$MIDY1" "dm:$MIDX2,$MIDY2" "dm:$SX2,$SY2" "du:$SX2,$SY2"
+    echo "swiped pixel ($X1,$Y1) → ($X2,$Y2)  [screen ($SX1,$SY1) → ($SX2,$SY2)]"
     ;;
 
   key)

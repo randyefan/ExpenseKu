@@ -25,12 +25,17 @@ enum DebugLaunch {
     static var startTab: String? { value(for: "-startTab") }
 
     /// -startScreen categories|people|accounts|leaderboard|person-detail|category-editor|account-editor
-    ///              |calendar|calendar-day
+    ///              |calendar|calendar-day|search|search-empty
     ///
     /// `calendar` opens the Expenses tab in the Month lens with its default day
     /// selected; `calendar-day` selects the cycle's heaviest day instead, so the
-    /// populated day-list state is screenshot-able. Both are in-tab state, so they
-    /// route through RootView → ExpensesView rather than DebugHarness.
+    /// populated day-list state is screenshot-able. `search` prefills the query
+    /// "kopi" (4 hits across 3 cycles and 2 years) and `search-empty` prefills a
+    /// query that matches nothing. All are in-tab state, so they route through
+    /// RootView → ExpensesView rather than DebugHarness.
+    ///
+    /// Note the search values render the *results*; they can't focus the search
+    /// field itself, which no launch arg can reach. Drive that with simdrive.sh.
     static var startScreen: String? { value(for: "-startScreen") }
 
     /// Inserts a small, realistic dataset once, only if the store is empty.
@@ -56,8 +61,8 @@ enum DebugLaunch {
         let gopay = Account(name: "GoPay", colorHex: AppearancePalette.swatches[7], iconName: "wallet.pass.fill")
         [cash, gopay].forEach(context.insert)
 
-        func day(_ month: Int, _ day: Int, _ hour: Int = 12, _ minute: Int = 0) -> Date {
-            Calendar.current.date(from: DateComponents(year: 2026, month: month, day: day, hour: hour, minute: minute)) ?? .now
+        func day(_ month: Int, _ day: Int, _ hour: Int = 12, _ minute: Int = 0, year: Int = 2026) -> Date {
+            Calendar.current.date(from: DateComponents(year: year, month: month, day: day, hour: hour, minute: minute)) ?? .now
         }
 
         // One expense left account-less on purpose, to exercise the "Unassigned" bucket.
@@ -70,6 +75,12 @@ enum DebugLaunch {
             Expense(amount: 30_000, date: day(8, 6, 18, 40), note: "Grab home", category: transport, people: [], account: gopay),
             Expense(amount: 25_000, date: day(7, 20, 9, 25), note: "Latte", category: kopi, people: [fadil, budi], account: cash),
             Expense(amount: 80_000, date: day(7, 28, 19, 0), note: "Ojek + makan", category: makan, people: [budi]),
+            // Last year, and matching "kopi" on its NOTE while sitting in Makan —
+            // proves note-matching is independent of category, and gives the search
+            // row's two-digit-year format something to render.
+            Expense(amount: 35_000, date: day(12, 18, 10, 0, year: 2025), note: "Kopi Tuku", category: makan, people: [tarisa], account: cash),
+            // Diacritic edge case: searching "cafe" has to find "Café".
+            Expense(amount: 55_000, date: day(6, 11, 9, 0), note: "Café Kenangan", category: kopi, people: [], account: gopay),
         ]
         expenses.forEach(context.insert)
         // The `fetchCount == 0` guard above only holds if the previous seed landed.

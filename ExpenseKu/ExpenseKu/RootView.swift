@@ -68,8 +68,9 @@ struct RootView: View {
         }
 
         switch DebugLaunch.startScreen {
-        case "calendar", "calendar-day":
-            // In-tab state, not a cover: ExpensesView's own task flips the lens.
+        case "calendar", "calendar-day", "search", "search-empty":
+            // In-tab state, not a cover: ExpensesView's own task flips the lens
+            // or prefills the query.
             selection = .expenses
         case "leaderboard", "person-detail":
             selection = .insights

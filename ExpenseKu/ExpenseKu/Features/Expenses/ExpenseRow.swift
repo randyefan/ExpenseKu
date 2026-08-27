@@ -7,11 +7,17 @@
 //  charcoal amount right-aligned with monospaced digits. Styling only — the
 //  content and list behaviour are unchanged.
 //
+//  Search results set `dateLabel` because they span years and each row has to say
+//  when it happened; the cycle list and calendar leave it nil, where a day header
+//  already answers that, and render exactly as before.
+//
 
 import SwiftUI
 
 struct ExpenseRow: View {
     let expense: Expense
+    /// When set, shown under the amount as quiet metadata. Nil in the day-grouped lenses.
+    var dateLabel: String? = nil
 
     private var categoryName: String { expense.category?.name ?? "Uncategorized" }
 
@@ -48,7 +54,19 @@ struct ExpenseRow: View {
 
             Spacer(minLength: 8)
 
-            MoneyText(expense.amount, font: .dsBody, color: Theme.text)
+            VStack(alignment: .trailing, spacing: 3) {
+                MoneyText(expense.amount, font: .dsBody, color: Theme.text)
+
+                if let dateLabel {
+                    // The day header's total treatment, so this reads as metadata
+                    // rather than as a second number on the row.
+                    Text(dateLabel)
+                        .font(.dsCaption)
+                        .monospacedDigit()
+                        .foregroundStyle(Theme.textSecondary)
+                        .lineLimit(1)
+                }
+            }
         }
         .padding(.vertical, 4)
     }

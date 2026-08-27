@@ -1,8 +1,9 @@
 //
 //  FilterChip.swift
-//  ExpenseKu
+//  ExpenseKu — DesignSystem
 //
-//  The "Label: value ⌄" pill that fronts each leaderboard filter menu.
+//  The "Label: value ⌄" pill that fronts a filter menu — the People leaderboard's
+//  filters and the Expenses tab's search filters both wear it.
 //
 
 import SwiftUI

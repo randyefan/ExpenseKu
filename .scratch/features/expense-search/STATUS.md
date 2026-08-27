@@ -1,7 +1,8 @@
 # STATUS — expense-search
 
-**Current stage:** 2 Tech spec — in progress
-**Branch:** feature/expense-search (created at stage 4)
+**Current stage:** 4 Ship — DONE. Merged to `main` as 8521337 (not pushed).
+**Branch:** feature/expense-search — 6 commits, merged --no-ff into main 2026-08-28.
+Suite green on merged main: 164 passed, 0 failed.
 
 ## Gate log
 <!-- one line per passed gate: stage · date · what was approved -->
@@ -13,6 +14,14 @@
   + **B1** (two `FilterChip` menus under the search bar); cycle header/coral total/List-Month
   toggle hide while a query is active; **swipe-to-delete kept in results** (user's amendment
   to the drawn wireframe, which had proposed omitting it).
+- Stage 2 Tech spec · 2026-08-28 · approved as written: pure `ExpenseSearchResults` layer, no
+  model change, multi-word AND matching, `FilterChip` moved to `DesignSystem/`, `simdrive.sh`
+  gains `swipe`, and the `.searchable`-drawer risk to be settled by screenshot in stage 3.
+- Stage 3 Build · 2026-08-28 · approved: 164 tests green + the interactive flow above;
+  `.searchToolbarBehavior(.minimize)` accepted (🔍 keeps the trailing toolbar slot, coral +
+  moves inboard); tap-to-edit confirmed by hand.
+- Stage 4 Ship · 2026-08-28 · 6 commits on feature/expense-search, merged --no-ff into main
+  as 8521337. Not pushed.
 
 ## Stage 3 build notes (2026-08-28)
 

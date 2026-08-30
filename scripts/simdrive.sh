@@ -6,9 +6,10 @@
 # static picture after launch (it never taps or types), so it can prove how a
 # screen *looks* but not how it *behaves*. Use this to run a feature's real flow.
 #
-# Requires `cliclick` (brew install cliclick) and macOS Accessibility permission
-# for whatever runs it (Terminal/your agent host) under System Settings →
-# Privacy & Security → Accessibility.
+# Requires `cliclick` (brew install cliclick) and two macOS permissions for whatever
+# runs it (Terminal/your agent host), both under System Settings → Privacy & Security:
+# Accessibility (for the synthetic clicks) and Automation → Simulator (for raising
+# the window before each one).
 #
 # Coordinates are SCREENSHOT PIXELS — the same numbers you read off a shot taken
 # by this script or by shot.sh (e.g. a 1206×2622 PNG). You do NOT convert to
@@ -55,13 +56,22 @@ UDID="$(xcrun simctl list devices available | grep -F "$DEVICE (" | head -1 | gr
 if ! xcrun simctl list devices | grep -F "$UDID" | grep -q "(Booted)"; then
   xcrun simctl boot "$UDID" 2>/dev/null || true; sleep 3
 fi
-open -a Simulator
-
 # Bring the Simulator window forward WITHOUT clicking it (a click would be
 # swallowed as window activation instead of registering as an in-app tap).
+#
+# `activate` is sent to the app itself, not to its process via System Events: the
+# System Events form fails with -10006 when Simulator is not already running, and
+# `activate` launches it instead. Failure is fatal on purpose — a silent no-op here
+# lands every subsequent tap on the desktop, which looks exactly like a broken app.
 frontmost() {
-  osascript -e 'tell application "System Events" to tell process "Simulator" to set frontmost to true' >/dev/null 2>&1 || true
+  osascript -e 'tell application "Simulator" to activate' >/dev/null || {
+    echo "could not bring Simulator forward — grant Automation permission under" >&2
+    echo "System Settings → Privacy & Security → Automation" >&2
+    exit 1
+  }
 }
+
+frontmost
 
 # Live pixel→screen mapping.
 #
@@ -135,7 +145,7 @@ case "${1:-}" in
 
   tap)
     PX="${2:?usage: simdrive.sh tap <px> <py>}"; PY="${3:?usage: simdrive.sh tap <px> <py>}"
-    frontmost; sleep 0.3
+    frontmost; sleep 1
     read OX OY K < <(read_mapping)
     SX="$(printf '%.0f' "$(echo "$OX + $PX * $K" | bc -l)")"
     SY="$(printf '%.0f' "$(echo "$OY + $PY * $K" | bc -l)")"
@@ -146,7 +156,7 @@ case "${1:-}" in
   press)
     PX="${2:?usage: simdrive.sh press <px> <py> [ms]}"; PY="${3:?usage: simdrive.sh press <px> <py> [ms]}"
     MS="${4:-140}"
-    frontmost; sleep 0.3
+    frontmost; sleep 1
     read OX OY K < <(read_mapping)
     SX="$(printf '%.0f' "$(echo "$OX + $PX * $K" | bc -l)")"
     SY="$(printf '%.0f' "$(echo "$OY + $PY * $K" | bc -l)")"
@@ -160,7 +170,7 @@ case "${1:-}" in
   swipe)
     X1="${2:?usage: simdrive.sh swipe <x1> <y1> <x2> <y2>}"; Y1="${3:?usage: simdrive.sh swipe <x1> <y1> <x2> <y2>}"
     X2="${4:?usage: simdrive.sh swipe <x1> <y1> <x2> <y2>}"; Y2="${5:?usage: simdrive.sh swipe <x1> <y1> <x2> <y2>}"
-    frontmost; sleep 0.3
+    frontmost; sleep 1
     read OX OY K < <(read_mapping)
     SX1="$(printf '%.0f' "$(echo "$OX + $X1 * $K" | bc -l)")"
     SY1="$(printf '%.0f' "$(echo "$OY + $Y1 * $K" | bc -l)")"
@@ -186,7 +196,7 @@ case "${1:-}" in
       option|alt) MODS+=("option down");;
       ctrl|control) MODS+=("control down");;
     esac; done
-    frontmost; sleep 0.3
+    frontmost; sleep 1
     if [[ ${#MODS[@]} -gt 0 ]]; then
       USING="using {$(IFS=,; echo "${MODS[*]}")}"
     else USING=""; fi

@@ -97,9 +97,10 @@ just an end-state), then loop on the user's notes until approved.
 `shot.sh` launches and snaps a static picture; it never taps or types. `simdrive.sh` drives
 the **booted** Simulator like a user so you can verify behaviour, not just looks.
 
-Setup (once): `brew install cliclick`, and grant Accessibility permission to whatever runs
-the script (System Settings → Privacy & Security → Accessibility). It targets the same device
-as `shot.sh` (`SHOT_DEVICE`, default "iPhone 17 Pro").
+Setup (once): `brew install cliclick`, then grant whatever runs the script both **Accessibility**
+(for the synthetic clicks) and **Automation → Simulator** (for raising the window) under System
+Settings → Privacy & Security. It targets the same device as `shot.sh` (`SHOT_DEVICE`, default
+"iPhone 17 Pro").
 
 Commands:
 ```
@@ -129,11 +130,11 @@ Gotchas (learned the hard way):
   the same List still work (`swipe`-to-delete does), and `NavigationLink`s outside a List work.
   Verify Button-in-List taps by hand and say so in `STATUS.md`.
 - **`key` sends whole strings**, not single keys: `key kopi` types "kopi" in one call.
-- **First tap after a `shot` (or after focus left the Simulator) can be swallowed** as window
-  re-activation instead of an in-app tap. If a tap seems to do nothing, just issue it again —
-  the repeat lands. Don't conclude "broken" from a single no-op tap. But beware the mirror
-  image: sending *two* taps at a toggle (e.g. a search field that opens on tap) opens then
-  closes it. If a repeat produces nothing, relaunch and try a single tap.
+- **Never tap twice to "wake up" the Simulator.** Both scripts now raise it themselves
+  (`tell application "Simulator" to activate`, then a 1s settle) before every tap, key and
+  screenshot, so the first tap lands. A blind repeat is what breaks toggles — two taps at a
+  search field that opens on tap will open then close it. If a tap really did nothing, relaunch
+  and send a *single* tap; do not double it.
 - **Software keyboard hidden?** When a hardware keyboard is "connected," tapping a text field
   focuses it but shows no on-screen keyboard. Reveal it with `scripts/simdrive.sh key cmd k`.
   (Focus still happens without it — watch for the on-screen state change, e.g. a dock hiding.)

@@ -55,9 +55,22 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+# Screenshots and tests both work headless, so this is not about correctness: it
+# is so a run is watchable when you have tabbed away to a browser or terminal.
+# Nothing holds the Simulator in front afterwards — the agent host takes focus
+# back — which is why `simdrive.sh` raises it again before every single tap.
+frontmost() {
+  osascript -e 'tell application "Simulator" to activate' >/dev/null || {
+    echo "could not bring Simulator forward — grant Automation permission under" >&2
+    echo "System Settings → Privacy & Security → Automation" >&2
+    exit 1
+  }
+}
+
 # --- test mode ---------------------------------------------------------------
 if [[ "$MODE" == "test" ]]; then
   echo "==> xcodebuild test ($DEVICE)"
+  frontmost
   xcodebuild test -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
     -destination "platform=iOS Simulator,name=$DEVICE" \
     -derivedDataPath "$DERIVED" -quiet
@@ -88,6 +101,7 @@ xcrun simctl uninstall "$UDID" "$BUNDLE_ID" >/dev/null 2>&1 || true
 xcrun simctl install "$UDID" "$APP"
 echo "==> launching ($APPEARANCE): ${LAUNCH_ARGS[*]:-<none>}"
 xcrun simctl launch "$UDID" "$BUNDLE_ID" "${LAUNCH_ARGS[@]}" >/dev/null
+frontmost
 sleep "$WAIT"
 OUT="$SHOTS/$NAME.png"
 xcrun simctl io "$UDID" screenshot "$OUT" >/dev/null

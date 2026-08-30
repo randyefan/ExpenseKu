@@ -19,7 +19,7 @@ struct InsightsView: View {
     }
 
     @Environment(\.modelContext) private var context
-    @State private var range: DateRangeFilter = .thisYear
+    @State private var range: DateRangeFilter = .payPeriod
     @State private var payday: Int = Payday.current
     @State private var path: [Destination] = []
 
@@ -37,7 +37,7 @@ struct InsightsView: View {
 
                     // Re-created whenever the window changes, because @Query fixes its
                     // predicate at init.
-                    InsightsCharts(dateRange: dateRange)
+                    InsightsCharts(dateRange: dateRange, payday: payday)
                         .id(dateRange)
 
                     LeaderboardLinkCard()

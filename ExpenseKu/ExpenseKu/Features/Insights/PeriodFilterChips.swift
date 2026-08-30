@@ -17,29 +17,37 @@ struct PeriodFilterChips: View {
 
     var body: some View {
         ScrollView(.horizontal) {
-            HStack(spacing: 8) {
-                ForEach(DateRangeFilter.allCases) { filter in
-                    let isSelected = selection == filter
-                    Button {
-                        selection = filter
-                    } label: {
-                        Text(filter.label)
-                            .font(.dsSubhead).fontWeight(.semibold)
-                            .foregroundStyle(isSelected ? .white : Theme.textSecondary)
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 8)
-                            .background {
-                                Capsule()
-                                    .fill(isSelected ? Theme.accent : Theme.card)
-                                    .overlay(Capsule().stroke(Theme.hairline, lineWidth: isSelected ? 0 : 1))
-                            }
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityAddTraits(isSelected ? [.isSelected] : [])
-                }
+            ScrollViewReader { proxy in
+                chips
+                    .onAppear { proxy.scrollTo(selection, anchor: .center) }
             }
-            .padding(.horizontal, 2)
         }
         .scrollIndicators(.hidden)
+    }
+
+    private var chips: some View {
+        HStack(spacing: 8) {
+            ForEach(DateRangeFilter.allCases) { filter in
+                let isSelected = selection == filter
+                Button {
+                    selection = filter
+                } label: {
+                    Text(filter.label)
+                        .font(.dsSubhead).fontWeight(.semibold)
+                        .foregroundStyle(isSelected ? .white : Theme.textSecondary)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .background {
+                            Capsule()
+                                .fill(isSelected ? Theme.accent : Theme.card)
+                                .overlay(Capsule().stroke(Theme.hairline, lineWidth: isSelected ? 0 : 1))
+                        }
+                }
+                .buttonStyle(.plain)
+                .accessibilityAddTraits(isSelected ? [.isSelected] : [])
+                .id(filter)
+            }
+        }
+        .padding(.horizontal, 2)
     }
 }

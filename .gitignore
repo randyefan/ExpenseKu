@@ -26,6 +26,7 @@ Carthage/Build/
 # Revamp harness — transient verify artifacts
 .scratch/revamp/shots/
 .scratch/revamp/DerivedData/
+.scratch/revamp/DerivedDataDevice/
 
 # Feature spikes — SwiftPM/Xcode build output. These contain checked-out package
 # repos, and git will treat each one as a submodule if it ever sees them: a broken

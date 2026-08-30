@@ -12,15 +12,20 @@ import Charts
 struct SpendOverTimeChart: View {
     let data: [PeriodSpend]
     let granularity: SpendGranularity
+    var currentPeriod: Date? = nil
 
     private var calendarUnit: Calendar.Component {
-        granularity == .month ? .month : .day
+        switch granularity {
+        case .day: .day
+        case .month, .payPeriod: .month
+        }
     }
 
-    private var maxTotal: Double { data.map(\.total.doubleValue).max() ?? 0 }
-
     private var labelFormat: Date.FormatStyle {
-        granularity == .month ? .dateTime.month(.abbreviated) : .dateTime.day()
+        switch granularity {
+        case .day: .dateTime.day()
+        case .month, .payPeriod: .dateTime.month(.abbreviated)
+        }
     }
 
     var body: some View {
@@ -30,9 +35,9 @@ struct SpendOverTimeChart: View {
                 y: .value("Amount", item.total.doubleValue),
                 width: .ratio(0.6)
             )
-            // The tallest month is coral; the rest charcoal. Axis labels carry
+            // The period you are in now is coral; the rest charcoal. Axis labels carry
             // the meaning, so colour is decorative only.
-            .foregroundStyle(item.total.doubleValue >= maxTotal ? Theme.accent : Theme.textSecondary.opacity(0.5))
+            .foregroundStyle(item.date == currentPeriod ? Theme.accent : Theme.textSecondary.opacity(0.5))
             .cornerRadius(6)
         }
         .chartYAxis(.hidden)

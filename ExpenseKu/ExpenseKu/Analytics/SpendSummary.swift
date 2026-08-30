@@ -33,6 +33,7 @@ nonisolated struct PeriodSpend: Identifiable {
 nonisolated enum SpendGranularity {
     case day
     case month
+    case payPeriod(payday: Int)
 }
 
 nonisolated enum SpendSummary {
@@ -88,6 +89,56 @@ nonisolated enum SpendSummary {
             .sorted { $0.date < $1.date }
     }
 
+    /// The `cycles` most recent pay cycles, oldest first, ending with the one
+    /// containing `now`.
+    static func payPeriodWindow(
+        cycles: Int,
+        payday: Int,
+        now: Date = .now,
+        calendar: Calendar = .current
+    ) -> [PayCycle] {
+        guard cycles > 0 else { return [] }
+        var window: [PayCycle] = []
+        var cycle = PayCycle.containing(now, payday: payday, calendar: calendar)
+        for _ in 0..<cycles {
+            window.append(cycle)
+            cycle = cycle.previous(payday: payday, calendar: calendar)
+        }
+        return window.reversed()
+    }
+
+    /// The bucket key a pay cycle charts under: the start of the month it *ends* in,
+    /// the same convention `PayCycle.title` names it by.
+    static func payPeriodKey(of cycle: PayCycle, calendar: Calendar = .current) -> Date {
+        let lastDay = cycle.lastDay(calendar: calendar)
+        return calendar.dateInterval(of: .month, for: lastDay)?.start ?? lastDay
+    }
+
+    /// Spend per cycle across `window`, ascending, zero-filled so the run of periods
+    /// stays continuous and the current one is always the last entry. Cycles before the
+    /// first with any spend are dropped, and an entirely empty window returns nothing so
+    /// the caller can show its empty state rather than a row of flat bars.
+    static func byPayPeriod(
+        from expenses: [Expense],
+        window: [PayCycle],
+        calendar: Calendar = .current
+    ) -> [PeriodSpend] {
+        guard !window.isEmpty else { return [] }
+
+        var totals: [Date: Decimal] = [:]
+        for expense in expenses {
+            guard let cycle = window.first(where: { $0.contains(expense.date) }) else { continue }
+            totals[payPeriodKey(of: cycle, calendar: calendar), default: 0] += expense.amount
+        }
+
+        let filled = window.map { cycle -> PeriodSpend in
+            let key = payPeriodKey(of: cycle, calendar: calendar)
+            return PeriodSpend(date: key, total: totals[key] ?? 0)
+        }
+        guard let firstWithSpend = filled.firstIndex(where: { $0.total > 0 }) else { return [] }
+        return Array(filled[firstWithSpend...])
+    }
+
     private static func bucketStart(
         for date: Date,
         granularity: SpendGranularity,
@@ -98,6 +149,11 @@ nonisolated enum SpendSummary {
             return calendar.startOfDay(for: date)
         case .month:
             return calendar.dateInterval(of: .month, for: date)?.start ?? date
+        case .payPeriod(let payday):
+            return payPeriodKey(
+                of: PayCycle.containing(date, payday: payday, calendar: calendar),
+                calendar: calendar
+            )
         }
     }
 }

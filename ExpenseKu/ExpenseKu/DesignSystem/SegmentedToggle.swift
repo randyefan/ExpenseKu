@@ -6,6 +6,10 @@
 //  track with the active segment filled coral (the reserved "selected state" use).
 //  A stock .pickerStyle(.segmented) cannot take the coral fill cleanly, hence this.
 //
+//  The coral capsule is one shared view moved between segments with
+//  matchedGeometryEffect, so it slides to the tapped segment instead of blinking
+//  out of one and into the other.
+//
 
 import SwiftUI
 
@@ -29,12 +33,17 @@ struct SegmentedToggle<Value: Hashable>: View {
     @Binding var selection: Value
     let segments: [Segment]
 
+    @Namespace private var pill
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     var body: some View {
         HStack(spacing: 4) {
             ForEach(segments) { segment in
                 let isSelected = segment.value == selection
                 Button {
-                    selection = segment.value
+                    withAnimation(reduceMotion ? Motion.reduced : Motion.snap) {
+                        selection = segment.value
+                    }
                 } label: {
                     Label(segment.title, systemImage: segment.systemImage)
                         .font(.dsSubhead)
@@ -44,11 +53,14 @@ struct SegmentedToggle<Value: Hashable>: View {
                         .padding(.vertical, 7)
                         .background {
                             if isSelected {
-                                Capsule().fill(Theme.accent)
+                                Capsule()
+                                    .fill(Theme.accent)
+                                    .matchedGeometryEffect(id: "selection", in: pill)
                             }
                         }
+                        .contentShape(.capsule)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressableCard)
                 .accessibilityLabel(segment.title)
                 .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
             }

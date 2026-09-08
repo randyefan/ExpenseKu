@@ -7,7 +7,11 @@
 //
 //  This is the one chart where amber still means something: the period you are
 //  standing in. The rest stay neutral so the current one reads at a glance, and
-//  its value is called out above the bar so the meaning is never colour-only.
+//  every period that has spend carries its own value above the bar, so a period
+//  can be read without counting gridlines and the current one is never colour-only.
+//
+//  Labels are given the width of one bar slot and allowed to shrink into it, so a
+//  full window of twelve pay periods never collides.
 //
 
 import SwiftUI
@@ -37,6 +41,14 @@ struct SpendOverTimeChart: View {
     private var maxTotal: Double { data.map(\.total.doubleValue).max() ?? 1 }
 
     var body: some View {
+        GeometryReader { proxy in
+            chart(slotWidth: proxy.size.width / CGFloat(max(data.count, 1)))
+        }
+        .frame(height: 180)
+        .growsOnAppear(growth, trigger: data.map(\.id))
+    }
+
+    private func chart(slotWidth: CGFloat) -> some View {
         Chart(data) { item in
             BarMark(
                 x: .value("Period", item.date, unit: calendarUnit),
@@ -45,15 +57,8 @@ struct SpendOverTimeChart: View {
             )
             .foregroundStyle(item.date == currentPeriod ? Theme.accent : Theme.textSecondary.opacity(0.45))
             .cornerRadius(6)
-            .annotation(position: .top, alignment: .center) {
-                if item.date == currentPeriod, item.total > 0 {
-                    Text(item.total.compactIDR())
-                        .font(.dsCaption)
-                        .fontWeight(.semibold)
-                        .monospacedDigit()
-                        .foregroundStyle(Theme.accentText)
-                        .opacity(growth.factor)
-                }
+            .annotation(position: .top, alignment: .center, spacing: 3) {
+                valueLabel(for: item, slotWidth: slotWidth)
             }
         }
         .chartYScale(domain: 0...maxTotal * 1.18)
@@ -65,7 +70,21 @@ struct SpendOverTimeChart: View {
                     .foregroundStyle(Theme.textSecondary)
             }
         }
-        .frame(height: 180)
-        .growsOnAppear(growth, trigger: data.map(\.id))
+    }
+
+    @ViewBuilder
+    private func valueLabel(for item: PeriodSpend, slotWidth: CGFloat) -> some View {
+        if item.total > 0 {
+            let isCurrent = item.date == currentPeriod
+            Text(item.total.compactIDR())
+                .font(.dsCaption)
+                .fontWeight(isCurrent ? .semibold : .regular)
+                .monospacedDigit()
+                .lineLimit(1)
+                .minimumScaleFactor(0.6)
+                .foregroundStyle(isCurrent ? Theme.accentText : Theme.textSecondary)
+                .frame(width: max(slotWidth - 2, 1))
+                .opacity(growth.factor)
+        }
     }
 }

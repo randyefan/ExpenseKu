@@ -15,6 +15,36 @@ nonisolated final class DayLabelTests: XCTestCase {
 
     private let calendar = Calendar(identifier: .gregorian)
 
+    // MARK: - spanningTitle
+
+    /// A list that crosses years qualifies an out-of-year day, so two December
+    /// headers a year apart cannot read as the same day.
+    func testSpanningTitleCarriesTheYearOnAnOlderYear() {
+        let now = DateComponents(calendar: calendar, year: 2026, month: 9, day: 8).date!
+        let lastYear = DateComponents(calendar: calendar, year: 2025, month: 12, day: 18).date!
+
+        let title = DayLabel.spanningTitle(lastYear, now: now, calendar: calendar)
+
+        XCTAssertTrue(title.contains("2025"), "expected the year in \(title)")
+        XCTAssertTrue(title.contains("December"), "expected the month in \(title)")
+    }
+
+    /// A day in the current year is named exactly as `title` names it.
+    func testSpanningTitleLeavesTheCurrentYearAlone() {
+        let now = DateComponents(calendar: calendar, year: 2026, month: 9, day: 8).date!
+        let sameYear = DateComponents(calendar: calendar, year: 2026, month: 8, day: 6).date!
+
+        XCTAssertEqual(
+            DayLabel.spanningTitle(sameYear, now: now, calendar: calendar),
+            DayLabel.title(sameYear, calendar: calendar)
+        )
+    }
+
+    /// "Today" never grows a year, even on New Year's Day reasoning.
+    func testSpanningTitleKeepsRelativeDaysRelative() {
+        XCTAssertEqual(DayLabel.spanningTitle(.now, calendar: calendar), "Today")
+    }
+
     // MARK: - title
 
     func testTitleForTodayIsRelative() {

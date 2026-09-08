@@ -27,6 +27,18 @@ nonisolated enum DateRangeFilter: String, CaseIterable, Identifiable {
         }
     }
 
+    /// The same window worded to sit inside a sentence, because the chip labels do
+    /// not: "no expenses in all time" and "no expenses in this month" both misread.
+    var phrase: String {
+        switch self {
+        case .allTime: "at all"
+        case .last30Days: "in the last 30 days"
+        case .thisMonth: "this month"
+        case .payPeriod: "this pay period"
+        case .thisYear: "this year"
+        }
+    }
+
     /// The window as a closed date range, or nil for "all time".
     ///
     /// - Parameter payday: day-of-month the pay period is anchored to (1...31),

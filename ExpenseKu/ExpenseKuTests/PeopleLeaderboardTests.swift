@@ -192,6 +192,60 @@ nonisolated final class PeopleLeaderboardTests: XCTestCase {
         XCTAssertEqual(list.reduce(Decimal(0)) { $0 + $1.amount }, row?.total)
     }
 
+    // MARK: - total (the share denominator)
+
+    /// The denominator is everything spent in the window, tagged or not — an expense
+    /// with no companion is still your spending.
+    func testTotalCountsUntaggedExpenses() {
+        let tarisa = Person(name: "Tarisa")
+        let expenses = [
+            Expense(amount: 100_000, date: date(2026, 3, 1), people: [tarisa]),
+            Expense(amount: 40_000, date: date(2026, 3, 2)),
+        ]
+
+        XCTAssertEqual(PeopleLeaderboard.total(from: expenses), 140_000)
+    }
+
+    /// It honours the same category, account and date filters as the drill-down, so a
+    /// share compares like with like.
+    func testTotalHonoursTheSameFilters() {
+        let makan = Category(name: "Makan")
+        let kopi = Category(name: "Kopi")
+        let cash = Account(name: "Cash")
+        let gopay = Account(name: "GoPay")
+        let expenses = [
+            Expense(amount: 100_000, date: date(2026, 3, 1), category: makan, account: cash),
+            Expense(amount: 40_000, date: date(2026, 3, 2), category: kopi, account: cash),
+            Expense(amount: 25_000, date: date(2026, 3, 3), category: makan, account: gopay),
+            Expense(amount: 60_000, date: date(2026, 5, 1), category: makan, account: cash),
+        ]
+        let march = date(2026, 3, 1)...date(2026, 3, 31)
+
+        XCTAssertEqual(
+            PeopleLeaderboard.total(from: expenses, category: makan, account: cash, dateRange: march),
+            100_000
+        )
+    }
+
+    /// A share is undefined rather than 0% when the window holds no spending at all.
+    func testShareIsNilWhenNothingWasSpent() {
+        XCTAssertNil(PersonExpensesView.share(of: 0, in: 0))
+        XCTAssertEqual(PersonExpensesView.share(of: 25_000, in: 100_000) ?? 0, 0.25, accuracy: 0.0001)
+    }
+
+    /// The empty message reads as a sentence for every window — the chip labels do not
+    /// ("no expenses in all time", "no expenses in this month").
+    func testEmptyMessageReadsAsASentenceForEveryWindow() {
+        for range in DateRangeFilter.allCases {
+            let message = PersonExpensesView.emptyMessage(
+                name: "Tarisa", filterSummary: nil, range: range
+            )
+            XCTAssertFalse(message.contains("in all time"), message)
+            XCTAssertFalse(message.contains("in this month"), message)
+            XCTAssertTrue(message.hasSuffix("."), message)
+        }
+    }
+
     // MARK: - Helpers
 
     private func date(_ year: Int, _ month: Int, _ day: Int) -> Date {

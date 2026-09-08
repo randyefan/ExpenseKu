@@ -103,4 +103,27 @@ nonisolated enum PeopleLeaderboard {
         }
         .sorted { $0.date > $1.date }   // newest first
     }
+
+    /// Everything spent under the same filters, whoever it was spent with — the
+    /// denominator behind "this companion is x% of what you spent in this window".
+    /// Untagged expenses count: they are still your spending.
+    static func total(
+        from expenses: [Expense],
+        category: Category? = nil,
+        account: Account? = nil,
+        dateRange: ClosedRange<Date>? = nil
+    ) -> Decimal {
+        expenses.reduce(Decimal(0)) { running, expense in
+            if let category, expense.category?.persistentModelID != category.persistentModelID {
+                return running
+            }
+            if let account, expense.account?.persistentModelID != account.persistentModelID {
+                return running
+            }
+            if let dateRange, !dateRange.contains(expense.date) {
+                return running
+            }
+            return running + expense.amount
+        }
+    }
 }

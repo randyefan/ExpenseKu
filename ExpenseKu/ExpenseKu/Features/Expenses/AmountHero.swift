@@ -19,6 +19,7 @@ struct AmountHero: View {
                     .foregroundStyle(Theme.textSecondary)
                     .lineLimit(1)
                     .minimumScaleFactor(0.6)
+                    .motionTransition(.rise)
             }
             HStack(alignment: .firstTextBaseline, spacing: 8) {
                 Text("Rp")
@@ -30,9 +31,12 @@ struct AmountHero: View {
                     .foregroundStyle(amount > 0 ? Theme.text : Theme.textSecondary)
                     .lineLimit(1)
                     .minimumScaleFactor(0.4)
+                    .contentTransition(.numericText())
+                    .motion(Motion.press, value: amount)
             }
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 8)
+        .motion(Motion.snap, value: displayExpression.isEmpty)
     }
 }

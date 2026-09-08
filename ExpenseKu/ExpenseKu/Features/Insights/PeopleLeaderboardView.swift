@@ -34,6 +34,7 @@ struct PeopleLeaderboardView: View {
                     categories: categories,
                     accounts: accounts
                 )
+                .padding(.horizontal, -Metric.screenPadding)
 
                 // Re-created whenever the window changes, because @Query fixes its
                 // predicate at init.

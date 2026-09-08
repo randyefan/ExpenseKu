@@ -38,11 +38,11 @@ struct ExpenseSearchSummary: View {
         ExpenseSearchSummary(count: 12, total: 340_000)
         ExpenseSearchSummary(count: 1, total: 22_000)
     }
-    .warmBackground()
+    .appBackground()
 }
 
 #Preview("Gelap") {
     ExpenseSearchSummary(count: 12, total: 340_000)
-        .warmBackground()
+        .appBackground()
         .preferredColorScheme(.dark)
 }

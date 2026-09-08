@@ -27,8 +27,8 @@ extension View {
         modifier(CardStyle(padding: padding))
     }
 
-    /// Paints the warm canvas edge-to-edge behind this view.
-    func warmBackground() -> some View {
+    /// Paints the app canvas edge-to-edge behind this view.
+    func appBackground() -> some View {
         background(Theme.bg.ignoresSafeArea())
     }
 }
@@ -39,5 +39,5 @@ extension View {
         Text("Tighter").frame(maxWidth: .infinity).cardStyle(padding: 8)
     }
     .padding()
-    .warmBackground()
+    .appBackground()
 }

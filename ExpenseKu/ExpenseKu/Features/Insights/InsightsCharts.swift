@@ -60,6 +60,7 @@ struct InsightsCharts: View {
                     SpendByCategoryChart(data: byCategory)
                 }
             }
+            .reveal(1, trigger: dateRange)
 
             ChartCard("Spend by Account") {
                 if byAccount.isEmpty {
@@ -68,6 +69,7 @@ struct InsightsCharts: View {
                     SpendByAccountChart(data: byAccount)
                 }
             }
+            .reveal(2, trigger: dateRange)
 
             ChartCard(title: "Spend over Time", accessory: { ByPayPeriodTag() }) {
                 if overTime.isEmpty {
@@ -80,6 +82,7 @@ struct InsightsCharts: View {
                     )
                 }
             }
+            .reveal(3, trigger: dateRange)
         }
     }
 }

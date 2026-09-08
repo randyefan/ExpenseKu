@@ -18,24 +18,27 @@ struct EmptyStateView: View {
         VStack(spacing: Metric.cardGap) {
             ZStack {
                 Circle()
-                    .fill(Theme.textSecondary.opacity(0.12))
+                    .fill(Theme.accent.opacity(0.12))
                     .frame(width: badgeSize, height: badgeSize)
                 Image(systemName: systemImage)
                     .font(.system(size: badgeSize * (40 / 96), weight: .regular))
-                    .foregroundStyle(Theme.textSecondary)
+                    .foregroundStyle(Theme.accentText)
             }
             .padding(.bottom, 4)
             Text(title)
                 .font(.dsTitle).bold()
                 .foregroundStyle(Theme.text)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
             Text(message)
                 .font(.dsSubhead)
                 .foregroundStyle(Theme.textSecondary)
                 .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(Metric.screenPadding)
-        .warmBackground()
+        .appBackground()
     }
 }
 

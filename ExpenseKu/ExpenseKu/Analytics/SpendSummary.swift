@@ -13,6 +13,11 @@ import Foundation
 nonisolated struct CategorySpend: Identifiable {
     let categoryName: String
     let total: Decimal
+    /// The category's own swatch and glyph, so a chart bar can wear the same
+    /// colours as that category's icon in the expense list. Nil for the
+    /// "Uncategorized" bucket, which has no entity behind it.
+    var colorHex: String? = nil
+    var symbol: String? = nil
     var id: String { categoryName }
 }
 
@@ -20,6 +25,9 @@ nonisolated struct CategorySpend: Identifiable {
 nonisolated struct AccountSpend: Identifiable {
     let accountName: String
     let total: Decimal
+    /// As `CategorySpend`; nil for the "Unassigned" bucket.
+    var colorHex: String? = nil
+    var symbol: String? = nil
     var id: String { accountName }
 }
 
@@ -44,13 +52,24 @@ nonisolated enum SpendSummary {
         dateRange: ClosedRange<Date>? = nil
     ) -> [CategorySpend] {
         var totals: [String: Decimal] = [:]
+        var appearance: [String: (colorHex: String?, symbol: String?)] = [:]
         for expense in expenses {
             if let dateRange, !dateRange.contains(expense.date) { continue }
             let name = expense.category?.name ?? "Uncategorized"
             totals[name, default: 0] += expense.amount
+            if appearance[name] == nil, let category = expense.category {
+                appearance[name] = (category.colorHex, category.resolvedSymbol)
+            }
         }
         return totals
-            .map { CategorySpend(categoryName: $0.key, total: $0.value) }
+            .map {
+                CategorySpend(
+                    categoryName: $0.key,
+                    total: $0.value,
+                    colorHex: appearance[$0.key]?.colorHex,
+                    symbol: appearance[$0.key]?.symbol
+                )
+            }
             .sorted { $0.total > $1.total }
     }
 
@@ -61,13 +80,24 @@ nonisolated enum SpendSummary {
         dateRange: ClosedRange<Date>? = nil
     ) -> [AccountSpend] {
         var totals: [String: Decimal] = [:]
+        var appearance: [String: (colorHex: String?, symbol: String?)] = [:]
         for expense in expenses {
             if let dateRange, !dateRange.contains(expense.date) { continue }
             let name = expense.account?.name ?? "Unassigned"
             totals[name, default: 0] += expense.amount
+            if appearance[name] == nil, let account = expense.account {
+                appearance[name] = (account.colorHex, account.resolvedSymbol)
+            }
         }
         return totals
-            .map { AccountSpend(accountName: $0.key, total: $0.value) }
+            .map {
+                AccountSpend(
+                    accountName: $0.key,
+                    total: $0.value,
+                    colorHex: appearance[$0.key]?.colorHex,
+                    symbol: appearance[$0.key]?.symbol
+                )
+            }
             .sorted { $0.total > $1.total }
     }
 

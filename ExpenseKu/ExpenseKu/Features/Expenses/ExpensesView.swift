@@ -40,6 +40,10 @@ struct ExpensesView: View {
     /// The day the calendar has selected. Nil (or stale after paging) means
     /// "fall back to the default day" — see `resolvedSelectedDay`.
     @State private var selectedDay: Date?
+    /// How the content area should replace itself. Set immediately *before* the
+    /// state it describes changes, because a transition is chosen at insertion
+    /// time — an `.onChange` observer would run a frame too late.
+    @State private var contentChange: CycleContentChange = .page(.leading)
     @State private var searchText = ""
     /// Search filters. The category is held by name, not as a `Category`, so no
     /// live model sits in view state and a deleted category can't dangle here.
@@ -103,43 +107,34 @@ struct ExpensesView: View {
                             onDelete: delete
                         )
                     } else {
-                        CycleHeader(
+                        CycleLensArea(
+                            contents: contents,
                             cycle: cycle,
-                            total: contents.total,
-                            canGoBack: CyclePaging.canGoBack(from: cycle, oldestExpense: expenses.last?.date),
-                            canGoForward: CyclePaging.canGoForward(from: cycle, now: .now),
+                            calendarGrid: calendarGrid,
                             calendar: calendar,
-                            onPrevious: { cycle = cycle.previous(payday: payday, calendar: calendar) },
-                            onNext: { cycle = cycle.next(payday: payday, calendar: calendar) }
+                            lens: lens,
+                            change: contentChange,
+                            storeIsEmpty: expenses.isEmpty,
+                            selectedDay: $selectedDay,
+                            resolvedDay: resolvedSelectedDay,
+                            onSelect: { selection = $0 },
+                            onDelete: delete,
+                            header: {
+                                CycleChrome(
+                                    cycle: cycle,
+                                    total: contents.total,
+                                    canGoBack: CyclePaging.canGoBack(from: cycle, oldestExpense: expenses.last?.date),
+                                    canGoForward: CyclePaging.canGoForward(from: cycle, now: .now),
+                                    calendar: calendar,
+                                    lens: lensBinding,
+                                    onPrevious: { page(to: cycle.previous(payday: payday, calendar: calendar), edge: .trailing) },
+                                    onNext: { page(to: cycle.next(payday: payday, calendar: calendar), edge: .leading) }
+                                )
+                            }
                         )
-
-                        SegmentedToggle(
-                            selection: $lens,
-                            segments: [
-                                .init(.list, title: "List", systemImage: "list.bullet"),
-                                .init(.calendar, title: "Month", systemImage: "calendar"),
-                            ]
-                        )
-                        .padding(.bottom, Metric.cardGap)
-
-                        switch lens {
-                        case .list:
-                            listLens(contents)
-                        case .calendar:
-                            CycleCalendarLens(
-                                calendarGrid: calendarGrid,
-                                contents: contents,
-                                cycle: cycle,
-                                storeIsEmpty: expenses.isEmpty,
-                                calendar: calendar,
-                                selectedDay: $selectedDay,
-                                resolvedDay: resolvedSelectedDay,
-                                onSelect: { selection = $0 },
-                                onDelete: delete
-                            )
-                        }
                     }
                 }
+                .motion(Motion.settle, value: cycle)
             }
             .searchableWhenThereIsSomethingToSearch(text: $searchText, enabled: !expenses.isEmpty)
             .navigationBarTitleDisplayMode(.inline)
@@ -173,6 +168,8 @@ struct ExpensesView: View {
                 }
                 .presentationDragIndicator(.visible)
             }
+            .sensoryFeedback(.selection, trigger: cycle)
+            .sensoryFeedback(.selection, trigger: lens)
             .onAppear { resetToCurrentCycle() }
             .onChange(of: payday) { _, newValue in
                 cycle = PayCycle.containing(.now, payday: newValue, calendar: calendar)
@@ -217,36 +214,6 @@ struct ExpensesView: View {
         }
     }
 
-    // MARK: - List lens (or the empty state that replaces it)
-
-    @ViewBuilder
-    private func listLens(_ contents: CycleContents) -> some View {
-        if contents.isEmpty {
-            if expenses.isEmpty {
-                // No expenses anywhere yet — the first-run empty state (home-empty.png).
-                EmptyStateView(
-                    title: "No expenses yet",
-                    systemImage: "doc.text",
-                    message: "Tap + to log your first expense."
-                )
-            } else {
-                // Data exists in other cycles; this one is just empty.
-                EmptyStateView(
-                    title: "No expenses this cycle",
-                    systemImage: "calendar",
-                    message: "Nothing logged for \(cycle.rangeText(calendar: calendar))."
-                )
-            }
-        } else {
-            CycleListLens(
-                dayGroups: contents.dayGroups,
-                calendar: calendar,
-                onSelect: { selection = $0 },
-                onDelete: delete
-            )
-        }
-    }
-
     // MARK: - Calendar state
 
     private var calendarGrid: CycleCalendar {
@@ -272,6 +239,25 @@ struct ExpensesView: View {
     private func resetToCurrentCycle() {
         payday = Payday.current
         cycle = PayCycle.containing(.now, payday: payday, calendar: calendar)
+    }
+
+    /// Pages to another cycle, first recording which way the outgoing one leaves so
+    /// the transition matches the arrow that was pressed.
+    private func page(to newCycle: PayCycle, edge: Edge) {
+        contentChange = .page(edge)
+        cycle = newCycle
+    }
+
+    /// Marks the change as a lens swap before letting the toggle write, so the
+    /// content cross-fades rather than sliding sideways: the two lenses are peers.
+    private var lensBinding: Binding<Lens> {
+        Binding(
+            get: { lens },
+            set: { newValue in
+                contentChange = .lens
+                lens = newValue
+            }
+        )
     }
 
     /// Delete by offset within one day's rows — shared by both lenses, so a swipe

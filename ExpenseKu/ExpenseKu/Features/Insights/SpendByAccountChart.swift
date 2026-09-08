@@ -2,42 +2,33 @@
 //  SpendByAccountChart.swift
 //  ExpenseKu
 //
-//  Horizontal bar chart of spend per account. Pure presentation — it's handed
-//  already-aggregated data from SpendSummary. Mirrors SpendByCategoryChart; the
-//  "Unassigned" bucket (nil account) appears as its own bar.
+//  Spend per account as proportion bars. Mirrors SpendByCategoryChart; the
+//  "Unassigned" bucket (nil account) appears as its own row with the name-derived
+//  tint, since it has no entity behind it to take a swatch from.
 //
 
 import SwiftUI
-import Charts
 
 struct SpendByAccountChart: View {
     let data: [AccountSpend]
 
-    private var maxTotal: Double { data.map(\.total.doubleValue).max() ?? 0 }
+    @State private var growth = ChartGrowth()
+
+    private var maxTotal: Double { max(data.map(\.total.doubleValue).max() ?? 1, 1) }
 
     var body: some View {
-        Chart(data) { item in
-            BarMark(
-                x: .value("Amount", item.total.doubleValue),
-                y: .value("Account", item.accountName)
-            )
-            .foregroundStyle(item.total.doubleValue >= maxTotal ? Theme.accent : Theme.textSecondary.opacity(0.5))
-            .cornerRadius(6)
-            .annotation(position: .trailing, alignment: .leading) {
-                Text(item.total.formattedIDR())
-                    .font(.dsCaption)
-                    .foregroundStyle(Theme.textSecondary)
+        VStack(spacing: 16) {
+            ForEach(data) { item in
+                ProportionRow(
+                    name: item.accountName,
+                    value: item.total,
+                    fraction: item.total.doubleValue / maxTotal,
+                    tint: Theme.categoryTint(hex: item.colorHex, seed: item.accountName),
+                    symbol: item.symbol ?? Account.defaultSymbol,
+                    growth: growth.factor
+                )
             }
         }
-        .chartLegend(.hidden)
-        .chartXAxis(.hidden)
-        .chartYAxis {
-            AxisMarks(position: .leading) { _ in
-                AxisValueLabel()
-                    .font(.dsSubhead)
-                    .foregroundStyle(Theme.text)
-            }
-        }
-        .frame(height: max(120, CGFloat(data.count) * 44))
+        .growsOnAppear(growth, trigger: data.map(\.id))
     }
 }

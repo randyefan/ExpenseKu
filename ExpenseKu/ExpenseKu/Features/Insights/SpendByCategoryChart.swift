@@ -2,43 +2,35 @@
 //  SpendByCategoryChart.swift
 //  ExpenseKu
 //
-//  Horizontal bar chart of spend per category. Pure presentation — it's handed
+//  Spend per category as proportion bars. Pure presentation — it's handed
 //  already-aggregated data from SpendSummary.
+//
+//  Each bar wears its own category's tint and glyph, the same ones that category's
+//  icon wears in the expense list, so the chart and the list decode each other.
 //
 
 import SwiftUI
-import Charts
 
 struct SpendByCategoryChart: View {
     let data: [CategorySpend]
 
-    private var maxTotal: Double { data.map(\.total.doubleValue).max() ?? 0 }
+    @State private var growth = ChartGrowth()
+
+    private var maxTotal: Double { max(data.map(\.total.doubleValue).max() ?? 1, 1) }
 
     var body: some View {
-        Chart(data) { item in
-            BarMark(
-                x: .value("Amount", item.total.doubleValue),
-                y: .value("Category", item.categoryName)
-            )
-            // Coral only highlights the biggest slice; the rest stay charcoal.
-            // Meaning is never colour-only — every bar is labelled with its value.
-            .foregroundStyle(item.total.doubleValue >= maxTotal ? Theme.accent : Theme.textSecondary.opacity(0.5))
-            .cornerRadius(6)
-            .annotation(position: .trailing, alignment: .leading) {
-                Text(item.total.formattedIDR())
-                    .font(.dsCaption)
-                    .foregroundStyle(Theme.textSecondary)
+        VStack(spacing: 16) {
+            ForEach(data) { item in
+                ProportionRow(
+                    name: item.categoryName,
+                    value: item.total,
+                    fraction: item.total.doubleValue / maxTotal,
+                    tint: Theme.categoryTint(hex: item.colorHex, seed: item.categoryName),
+                    symbol: item.symbol ?? CategoryIcon.symbol(for: item.categoryName),
+                    growth: growth.factor
+                )
             }
         }
-        .chartLegend(.hidden)
-        .chartXAxis(.hidden)
-        .chartYAxis {
-            AxisMarks(position: .leading) { _ in
-                AxisValueLabel()
-                    .font(.dsSubhead)
-                    .foregroundStyle(Theme.text)
-            }
-        }
-        .frame(height: max(120, CGFloat(data.count) * 44))
+        .growsOnAppear(growth, trigger: data.map(\.id))
     }
 }

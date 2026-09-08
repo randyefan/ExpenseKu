@@ -21,7 +21,7 @@ private struct AccentCircleButton: ViewModifier {
             content
                 .labelStyle(.iconOnly)
                 .font(.body.weight(.bold))
-                .foregroundStyle(.white)
+                .foregroundStyle(Theme.onAccent)
                 .frame(width: 26, height: 26)
                 .background(Theme.accent, in: Circle())
                 .buttonStyle(.plain)

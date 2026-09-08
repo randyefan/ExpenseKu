@@ -32,12 +32,12 @@ struct CategoryIcon: View {
 
     var body: some View {
         Circle()
-            .fill(tint)
+            .fill(tint.opacity(Theme.tintFillOpacity))
             .frame(width: size, height: size)
             .overlay(
                 Image(systemName: symbol)
                     .font(.system(size: size * 0.41, weight: .semibold))
-                    .foregroundStyle(Theme.text.opacity(0.65))
+                    .foregroundStyle(tint)
             )
     }
 
@@ -91,7 +91,7 @@ extension CategoryIcon {
         }
     }
     .padding()
-    .warmBackground()
+    .appBackground()
 }
 
 #Preview("Gelap") {
@@ -100,6 +100,6 @@ extension CategoryIcon {
         ForEach(names, id: \.self) { CategoryIcon(name: $0) }
     }
     .padding()
-    .warmBackground()
+    .appBackground()
     .preferredColorScheme(.dark)
 }

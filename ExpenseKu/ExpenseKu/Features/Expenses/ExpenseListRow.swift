@@ -2,9 +2,10 @@
 //  ExpenseListRow.swift
 //  ExpenseKu
 //
-//  One tappable expense row as both lenses of the Expenses tab draw it: the shared
-//  card chrome and list insets around `ExpenseRow`. Extracted so the list and the
-//  calendar's selected day cannot drift apart.
+//  One tappable expense row as both lenses of the Expenses tab draw it. The row no
+//  longer carries its own card — it sits inside the day's ledger card — so this
+//  supplies the list chrome only: the card fill, the hairline separator and the
+//  press wash.
 //
 
 import SwiftUI
@@ -18,14 +19,14 @@ struct ExpenseListRow: View {
     var body: some View {
         Button(action: onSelect) {
             ExpenseRow(expense: expense, dateLabel: dateLabel)
+                .contentShape(.rect)
         }
-        .buttonStyle(.plain)
-        .cardStyle()
-        .listRowBackground(Color.clear)
-        .listRowSeparator(.hidden)
+        .buttonStyle(.pressableRow)
+        .listRowBackground(Theme.card)
+        .listRowSeparatorTint(Theme.hairline)
         .listRowInsets(EdgeInsets(
-            top: 4, leading: Metric.screenPadding,
-            bottom: 4, trailing: Metric.screenPadding
+            top: 0, leading: Metric.cardPadding,
+            bottom: 0, trailing: Metric.cardPadding
         ))
     }
 }

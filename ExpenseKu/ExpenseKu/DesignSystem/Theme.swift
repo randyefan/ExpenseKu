@@ -2,14 +2,19 @@
 //  Theme.swift
 //  ExpenseKu — DesignSystem
 //
-//  "Warm Cards" color tokens (see .scratch/revamp/spec.md). Colors adapt to
-//  light/dark at resolve time so `Theme.bg` etc. can be used as plain statics.
-//  Cross-platform: UIKit on iOS/iPadOS, AppKit on macOS.
+//  "Ink & Amber" colour tokens (see .scratch/revamp2/spec.md). A near-black
+//  graphite canvas with soft off-white cards and one warm amber accent, replacing
+//  the earlier cream/coral "Warm Cards" palette.
+//
+//  Dark is the designed theme and light is the faithful alternate, so every pair
+//  below is authored dark-first. The app still follows the system setting.
+//
+//  Colours adapt at resolve time, so `Theme.bg` etc. can be used as plain statics.
 //
 
 import SwiftUI
 
-extension Color {
+nonisolated extension Color {
     /// 0xRRGGBB literal → Color.
     init(hex: UInt) {
         self.init(
@@ -76,22 +81,36 @@ nonisolated enum HexColor {
 }
 
 enum Theme {
-    /// The single reserved accent. Same in light + dark.
-    static let accent = Color(hex: 0xE8735C)
+    /// The single reserved accent, used for fills: the + button, the active tab,
+    /// selected chips, the current period's bar. Identical in both themes so the
+    /// brand colour never shifts.
+    static let accent = Color(hex: 0xF2A93B)
 
-    static let bg             = adaptive(light: 0xFBF7F3, dark: 0x17130F)
+    /// The accent as *text or a glyph*. Amber on a white card is around 2:1, which
+    /// fails contrast, so light mode uses a deepened amber while dark mode keeps
+    /// the brand value.
+    static let accentText = adaptive(light: 0xA1660A, dark: 0xF2A93B)
+
+    /// What sits on top of an accent fill. Amber is a light colour: ink reads on it
+    /// at roughly 9:1 where white manages under 2:1.
+    static let onAccent = Color(hex: 0x14161A)
+
+    static let bg             = adaptive(light: 0xF7F6F4, dark: 0x0E0F11)
+    static let card           = adaptive(light: 0xFFFFFF, dark: 0x191B1F)
+    /// One step above `card`, for a control track or an inset well.
+    static let surface        = adaptive(light: 0xF0EEEB, dark: 0x22252A)
+    static let hairline       = adaptive(light: 0xE7E4E0, dark: 0x2A2E34)
+    static let text           = adaptive(light: 0x16181C, dark: 0xF2F3F5)
+    static let textSecondary  = adaptive(light: 0x6E737A, dark: 0x9AA0A8)
 
     /// The `bg` token as an adaptive `UIColor`, for UIKit appearance proxies
-    /// (e.g. painting nav bars cream — see `configureBarAppearance()`).
-    static let bgUIColor = UIColor { traits in
-        UIColor(traits.userInterfaceStyle == .dark ? Color(hex: 0x17130F) : Color(hex: 0xFBF7F3))
-    }
+    /// (e.g. painting nav bars — see `configureBarAppearance()`).
+    static let bgUIColor = dynamicUIColor(light: Color(hex: 0xF7F6F4), dark: Color(hex: 0x0E0F11))
 
-    /// Paint navigation bars with the cream `bg` and no hairline shadow, so the
-    /// bar blends into the surface on every platform. On a Designed-for-iPad Mac
-    /// build the `NavigationSplitView` sidebar bar ignores SwiftUI's
-    /// `.toolbarBackground`, so this proxy is the reliable path. Call once at
-    /// launch (ExpenseKuApp.init).
+    /// Paint navigation bars with `bg` and no hairline shadow, so the bar blends
+    /// into the surface on every platform. On a Designed-for-iPad Mac build the
+    /// `NavigationSplitView` sidebar bar ignores SwiftUI's `.toolbarBackground`, so
+    /// this proxy is the reliable path. Call once at launch (ExpenseKuApp.init).
     static func configureBarAppearance() {
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
@@ -102,15 +121,10 @@ enum Theme {
         UINavigationBar.appearance().compactAppearance = appearance
     }
 
-    static let card           = adaptive(light: 0xFFFFFF, dark: 0x211C1A)
-    static let hairline       = adaptive(light: 0xEFE8E1, dark: 0x2E2825)
-    static let text           = adaptive(light: 0x2A2320, dark: 0xF5F0EC)
-    static let textSecondary  = adaptive(light: 0x8A817C, dark: 0xA79E98)
-
     /// A muted tint fill for a category icon, derived deterministically from its
     /// name. Adapts to the interface style so the glyph on top keeps its contrast:
-    /// a light pastel in light mode, a deep muted tone in dark mode.
-    static func categoryTint(_ seed: String) -> Color {
+    /// a light pastel on paper, a deep saturated tone on ink.
+    nonisolated static func categoryTint(_ seed: String) -> Color {
         let hues: [Double] = [0.03, 0.09, 0.13, 0.33, 0.55, 0.72, 0.85]
         return tint(hue: hues[stableIndex(seed, upperBound: hues.count)])
     }
@@ -124,33 +138,50 @@ enum Theme {
         return Int(hash % UInt64(upperBound))
     }
 
-    /// The tint for an entity: its owner-chosen swatch when set (an "RRGGBB" hex),
-    /// otherwise the name-derived `categoryTint`. A stored hex is shown verbatim in
-    /// light mode and rebuilt as a deep tone from the same hue in dark mode, so the
-    /// glyph keeps its contrast in both — matching the auto tints.
-    static func categoryTint(hex: String?, seed: String) -> Color {
-        guard let hex, let light = Color(hexString: hex), let hue = HexColor.hue(hex) else {
+    /// The tint for an entity: the hue of its owner-chosen swatch when set (an
+    /// "RRGGBB" hex), otherwise the name-derived hue. Only the *hue* is taken from
+    /// storage — the saturation and brightness come from `tint(hue:)` — so the
+    /// stored pastels written by the older palette still resolve correctly.
+    nonisolated static func categoryTint(hex: String?, seed: String) -> Color {
+        guard let hex, let hue = HexColor.hue(hex) else {
             return categoryTint(seed)
         }
-        return adaptive(light: light, dark: Color(hue: hue, saturation: 0.32, brightness: 0.30))
+        return tint(hue: hue)
     }
 
-    /// The pastel(light)/deep(dark) adaptive pair for a hue — the shared recipe
-    /// behind both the auto tints and the swatch palette.
-    static func tint(hue: Double) -> Color {
+    /// An entity's identity colour, at full chroma in both themes.
+    ///
+    /// The earlier cream palette made these a pastel *fill* with a dark glyph on
+    /// top. On an ink canvas that recipe goes muddy — a 40%-brightness circle on a
+    /// near-black card is just a brown smudge — so a tint is now the chromatic
+    /// colour itself, and `CategoryIcon` washes it back to a fill.
+    nonisolated static func tint(hue: Double) -> Color {
         adaptive(
-            light: Color(hue: hue, saturation: 0.28, brightness: 0.96),
-            dark:  Color(hue: hue, saturation: 0.32, brightness: 0.30)
+            light: Color(hue: hue, saturation: 0.70, brightness: 0.70),
+            dark:  Color(hue: hue, saturation: 0.55, brightness: 0.90)
         )
     }
 
-    private static func adaptive(light: UInt, dark: UInt) -> Color {
+    /// How much of a tint a filled surface (an icon's circle, a chip) takes.
+    static let tintFillOpacity: Double = 0.18
+
+    nonisolated private static func adaptive(light: UInt, dark: UInt) -> Color {
         adaptive(light: Color(hex: light), dark: Color(hex: dark))
     }
 
-    private static func adaptive(light: Color, dark: Color) -> Color {
-        Color(uiColor: UIColor { traits in
+    nonisolated private static func adaptive(light: Color, dark: Color) -> Color {
+        Color(uiColor: dynamicUIColor(light: light, dark: dark))
+    }
+
+    /// The trait-resolving closure must be `nonisolated`: UIKit resolves dynamic
+    /// colours on whichever thread is rendering, and SwiftUI renders off the main
+    /// thread once a screen is animating. A main-actor-isolated closure traps there
+    /// under Swift 6 (`_swift_task_checkIsolatedSwift`), which is a crash rather than
+    /// a warning — the project sets SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor, so
+    /// this has to be opted out of explicitly.
+    nonisolated private static func dynamicUIColor(light: Color, dark: Color) -> UIColor {
+        UIColor { traits in
             UIColor(traits.userInterfaceStyle == .dark ? dark : light)
-        })
+        }
     }
 }

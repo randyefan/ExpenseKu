@@ -15,8 +15,8 @@ struct LeaderboardFilters: View {
     let accounts: [Account]
 
     var body: some View {
-        ScrollView(.horizontal) {
-            HStack(spacing: 8) {
+        ChipRail {
+            Group {
                 Menu {
                     Picker("Period", selection: $range) {
                         ForEach(DateRangeFilter.allCases) { filter in
@@ -47,8 +47,7 @@ struct LeaderboardFilters: View {
                     FilterChip(label: "Account", value: account?.name ?? "All")
                 }
             }
-            .padding(.horizontal, 2)
         }
-        .scrollIndicators(.hidden)
+        .sensoryFeedback(.selection, trigger: range)
     }
 }

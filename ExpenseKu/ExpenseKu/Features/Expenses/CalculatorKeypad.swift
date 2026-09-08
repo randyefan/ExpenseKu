@@ -102,7 +102,7 @@ struct CalculatorKeypad: View {
         Button {
             tap(); onBackspace()
         } label: {
-            keyShape(fill: Theme.card)
+            keyShape(fill: Theme.surface)
                 .overlay {
                     Image(systemName: "delete.left")
                         .font(.system(size: 22, weight: .regular))
@@ -110,7 +110,7 @@ struct CalculatorKeypad: View {
                 }
                 .frame(width: width, height: tallHeight)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressableCard)
         .accessibilityLabel("Delete")
         .accessibilityHint("Double tap and hold to clear the amount")
         .simultaneousGesture(
@@ -122,17 +122,17 @@ struct CalculatorKeypad: View {
         Button {
             tap(); onSave()
         } label: {
-            keyShape(fill: Theme.accent)
+            keyShape(fill: canSave ? Theme.accent : Theme.surface)
                 .overlay(
                     Image(systemName: "checkmark")
                         .font(.system(size: 22, weight: .semibold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(canSave ? Theme.onAccent : Theme.textSecondary.opacity(0.45))
                 )
                 .frame(width: width, height: tallHeight)
+                .motion(Motion.reveal, value: canSave)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressableCard)
         .disabled(!canSave)
-        .opacity(canSave ? 1 : 0.4)
         .accessibilityLabel("Save expense")
     }
 
@@ -147,11 +147,11 @@ struct CalculatorKeypad: View {
         Button {
             tap(); action()
         } label: {
-            keyShape(fill: Theme.card)
+            keyShape(fill: Theme.surface)
                 .overlay(label())
                 .frame(width: width, height: height)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressableCard)
     }
 
     private func keyShape(fill: Color) -> some View {

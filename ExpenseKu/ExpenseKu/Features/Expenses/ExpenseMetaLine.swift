@@ -2,38 +2,44 @@
 //  ExpenseMetaLine.swift
 //  ExpenseKu
 //
-//  The quiet grey line under an expense's category: which account it came from and
-//  who was there. Either half is omitted when unset.
+//  The quiet grey line under an expense's category: the note, which account it came
+//  from and who was there, on one line separated by middots. One line rather than
+//  three, so a day's worth of expenses fits on screen together.
 //
 
 import SwiftUI
 
 struct ExpenseMetaLine: View {
+    let note: String
     let accountName: String?
     let peopleNames: String
 
+    private var parts: [String] {
+        var parts: [String] = []
+        if !note.isEmpty { parts.append(note) }
+        if let accountName, !accountName.isEmpty { parts.append(accountName) }
+        if !peopleNames.isEmpty { parts.append(peopleNames) }
+        return parts
+    }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 3) {
-            if let accountName {
-                Label(accountName, systemImage: "creditcard")
-                    .lineLimit(1)
-            }
-            if !peopleNames.isEmpty {
-                Label(peopleNames, systemImage: "person.2")
-                    .lineLimit(1)
-            }
+        if !parts.isEmpty {
+            Text(parts.joined(separator: " · "))
+                .font(.dsCaption)
+                .foregroundStyle(Theme.textSecondary)
+                .lineLimit(1)
+                .truncationMode(.tail)
         }
-        .labelStyle(MetaLabelStyle())
-        .font(.dsCaption)
-        .foregroundStyle(Theme.textSecondary)
     }
 }
 
-private struct MetaLabelStyle: LabelStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        HStack(spacing: 3) {
-            configuration.icon
-            configuration.title
-        }
+#Preview {
+    VStack(alignment: .leading, spacing: 8) {
+        ExpenseMetaLine(note: "Dinner", accountName: "GoPay", peopleNames: "Tarisa & Fadil")
+        ExpenseMetaLine(note: "", accountName: "Cash", peopleNames: "")
+        ExpenseMetaLine(note: "A note long enough that it has to be truncated somewhere",
+                        accountName: "Bank Central Asia", peopleNames: "Tarisa, Fadil & Budi")
     }
+    .padding()
+    .appBackground()
 }

@@ -59,5 +59,5 @@ struct ExpenseSearchFilters: View {
         )
         Spacer()
     }
-    .warmBackground()
+    .appBackground()
 }

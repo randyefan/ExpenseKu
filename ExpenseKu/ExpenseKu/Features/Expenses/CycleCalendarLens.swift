@@ -9,7 +9,7 @@
 
 import SwiftUI
 
-struct CycleCalendarLens: View {
+struct CycleCalendarLens<Header: View>: View {
     let calendarGrid: CycleCalendar
     let contents: CycleContents
     let cycle: PayCycle
@@ -19,9 +19,18 @@ struct CycleCalendarLens: View {
     let resolvedDay: Date?
     let onSelect: (Expense) -> Void
     let onDelete: (IndexSet, [Expense]) -> Void
+    /// See CycleListLens: the chrome scrolls with the content.
+    @ViewBuilder let header: Header
 
     var body: some View {
         List {
+            Section {
+                header
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
+                    .listRowInsets(EdgeInsets())
+            }
+
             Section {
                 CycleCalendarGrid(
                     calendarGrid: calendarGrid,
@@ -31,8 +40,7 @@ struct CycleCalendarLens: View {
                 .listRowBackground(Color.clear)
                 .listRowSeparator(.hidden)
                 .listRowInsets(EdgeInsets(
-                    top: 0, leading: Metric.screenPadding,
-                    bottom: Metric.cardGap, trailing: Metric.screenPadding
+                    top: 0, leading: 0, bottom: Metric.cardGap, trailing: 0
                 ))
             }
 
@@ -63,11 +71,14 @@ struct CycleCalendarLens: View {
                         title: DayLabel.title(day, calendar: calendar),
                         total: contents.group(for: day)?.total ?? 0
                     )
+                    .textCase(nil)
+                    .listRowInsets(EdgeInsets(top: 14, leading: 4, bottom: 6, trailing: 4))
                 }
             }
         }
-        .listStyle(.plain)
+        .listStyle(.insetGrouped)
         .listSectionSpacing(.compact)
+        .contentMargins(.horizontal, Metric.screenPadding, for: .scrollContent)
         .scrollContentBackground(.hidden)
         .background(Theme.bg)
     }

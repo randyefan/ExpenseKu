@@ -28,11 +28,13 @@ struct InsightsView: View {
 
         NavigationStack(path: $path) {
             ScrollView {
-                VStack {
+                VStack(spacing: Metric.cardGap) {
                     PeriodFilterChips(selection: $range)
+                        .padding(.horizontal, -Metric.screenPadding)
 
                     if range == .payPeriod {
                         PaydayRow(payday: $payday)
+                            .motionTransition(.rise)
                     }
 
                     // Re-created whenever the window changes, because @Query fixes its
@@ -41,8 +43,10 @@ struct InsightsView: View {
                         .id(dateRange)
 
                     LeaderboardLinkCard()
+                        .reveal(4, trigger: dateRange)
                 }
                 .padding(Metric.screenPadding)
+                .motion(Motion.snap, value: range)
             }
             .navigationBarTitleDisplayMode(.inline)
             .background(Theme.bg)

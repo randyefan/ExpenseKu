@@ -27,7 +27,9 @@ struct ManageCategoriesView: View {
                         Spacer()
                     }
                 }
+                .buttonStyle(.pressableRow)
                 .listRowBackground(Theme.card)
+                .listRowSeparatorTint(Theme.hairline)
             }
             .onDelete(perform: delete)
         }

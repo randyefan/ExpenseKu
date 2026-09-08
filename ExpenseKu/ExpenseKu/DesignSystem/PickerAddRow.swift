@@ -30,5 +30,5 @@ struct PickerAddRow: View {
 #Preview {
     PickerAddRow(title: "New Category")
         .padding()
-        .warmBackground()
+        .appBackground()
 }

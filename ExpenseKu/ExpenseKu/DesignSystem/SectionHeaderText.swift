@@ -25,5 +25,5 @@ struct SectionHeaderText: View {
         SectionHeaderText("Thu, 6 August")
     }
     .padding()
-    .warmBackground()
+    .appBackground()
 }

@@ -76,7 +76,7 @@ struct SpendOverTimeChart: View {
     private func valueLabel(for item: PeriodSpend, slotWidth: CGFloat) -> some View {
         if item.total > 0 {
             let isCurrent = item.date == currentPeriod
-            Text(item.total.compactIDR())
+            Text(item.total.compactAmount())
                 .font(.dsCaption)
                 .fontWeight(isCurrent ? .semibold : .regular)
                 .monospacedDigit()

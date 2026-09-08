@@ -165,6 +165,13 @@ enum Theme {
     /// How much of a tint a filled surface (an icon's circle, a chip) takes.
     static let tintFillOpacity: Double = 0.18
 
+    /// What reads *on top of* a solid tint — the one place a glyph sits on the
+    /// chromatic colour itself rather than on a wash of it. `tint(hue:)` inverts
+    /// between the themes (dark and saturated in light mode, bright in dark mode),
+    /// so this has to invert with it: a fixed ink glyph vanishes on a light-mode
+    /// swatch, and a fixed white one vanishes on a dark-mode swatch.
+    static let onTint = adaptive(light: 0xFFFFFF, dark: 0x14161A)
+
     nonisolated private static func adaptive(light: UInt, dark: UInt) -> Color {
         adaptive(light: Color(hex: light), dark: Color(hex: dark))
     }

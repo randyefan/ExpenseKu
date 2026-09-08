@@ -19,14 +19,20 @@ final class Person {
     // leaderboard (which ranks *companions*, not the owner). Defaulted for CloudKit.
     var isMe: Bool = false
 
+    // The owner's chosen avatar tint, as a palette hex. nil means "auto" — the
+    // tint is derived from the name, which is how every person looked before this
+    // was addable. Optional and defaulted for CloudKit (ADR-0001).
+    var colorHex: String? = nil
+
     // Deleting a Person removes them from each expense's `people` — the expenses
     // themselves survive. ADR-0001.
     @Relationship(deleteRule: .nullify, inverse: \Expense.people)
     var expenses: [Expense]? = []
 
-    init(name: String = "", isMe: Bool = false) {
+    init(name: String = "", isMe: Bool = false, colorHex: String? = nil) {
         self.name = name
         self.isMe = isMe
+        self.colorHex = colorHex
     }
 }
 

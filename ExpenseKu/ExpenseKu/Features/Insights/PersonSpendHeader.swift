@@ -10,6 +10,8 @@ import SwiftUI
 
 struct PersonSpendHeader: View {
     let name: String
+    /// The companion's chosen tint; nil derives one from the name.
+    var colorHex: String?
     let total: Decimal
     let count: Int
     let rangeLabel: String
@@ -17,7 +19,7 @@ struct PersonSpendHeader: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 12) {
-                PersonAvatar(name: name, size: Metric.iconSize)
+                PersonAvatar(name: name, colorHex: colorHex, size: Metric.iconSize)
                 Text(name)
                     .font(.dsTitle).bold()
                     .foregroundStyle(Theme.text)

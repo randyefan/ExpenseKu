@@ -18,17 +18,21 @@ struct ManageAccountsView: View {
 
     var body: some View {
         List {
-            ForEach(accounts) { account in
+            ForEach(Array(accounts.enumerated()), id: \.element.id) { index, account in
                 Button { editor = EditorTarget(account: account) } label: {
                     HStack(spacing: 12) {
-                        CategoryIcon(account: account, size: 36)
+                        CategoryIcon(account: account, size: Metric.rowIconSize)
                         Text(account.name)
                             .font(.dsBody)
                             .foregroundStyle(Theme.text)
                         Spacer()
                     }
+                    .contentShape(.rect)
                 }
+                .buttonStyle(.pressableRow)
                 .listRowBackground(Theme.card)
+                .listRowSeparatorTint(Theme.hairline)
+                .reveal(index)
             }
             .onDelete(perform: delete)
         }

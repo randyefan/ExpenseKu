@@ -27,7 +27,7 @@ struct PeoplePicker: View {
                         toggle(person)
                     } label: {
                         HStack(spacing: 12) {
-                            PersonAvatar(name: person.name, size: 36)
+                            PersonAvatar(person: person, size: Metric.rowIconSize)
                             Text(person.name)
                                 .font(.dsBody)
                                 .foregroundStyle(Theme.text)
@@ -58,7 +58,7 @@ struct PeoplePicker: View {
         }
         .sheet(isPresented: $showingNew) {
             NavigationStack {
-                NameEditorView<Person, EmptyView>(title: "New Person", makeNew: { Person() }, onCommit: { created in
+                PersonEditorView(title: "New Person", onCommit: { created in
                     if !isSelected(created) { selection.append(created) }
                 })
             }

@@ -57,6 +57,7 @@ struct PersonExpensesView: View {
                 if let person {
                     PersonSpendHeader(
                         name: person.name,
+                        colorHex: person.colorHex,
                         total: listed.reduce(0) { $0 + $1.amount },
                         count: listed.count,
                         rangeLabel: route.range.label

@@ -95,7 +95,7 @@ struct DebugScreen: Identifiable, Hashable {
 
     static let coverScreens: Set<String> = [
         "editor", "picker-category", "picker-people", "picker-account", "name-duplicate",
-        "settings", "category-editor", "account-editor",
+        "settings", "category-editor", "account-editor", "person-editor",
     ]
 }
 #endif

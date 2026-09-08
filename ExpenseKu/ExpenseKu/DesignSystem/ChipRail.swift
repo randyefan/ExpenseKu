@@ -18,7 +18,13 @@ struct ChipRail<Content: View>: View {
     var spacing: CGFloat = 8
     /// Fixed-width, not a fraction of the rail: a proportional fade dims a whole
     /// chip on a narrow screen and does nothing on a wide one.
-    private let fade: CGFloat = 44
+    ///
+    /// A wide fade only survives because a filter chip is a long pill whose left
+    /// few points carry no meaning. Over small, round cells it dims the whole
+    /// first one, so those rails narrow it to the margin — the fade then covers
+    /// exactly the gutter, leaving the first cell at full strength until it is
+    /// actually scrolled under it.
+    var fade: CGFloat = 44
     @ViewBuilder var content: Content
 
     var body: some View {

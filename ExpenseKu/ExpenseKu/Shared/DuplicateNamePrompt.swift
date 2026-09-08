@@ -6,6 +6,10 @@
 //  enforce uniqueness, so rather than silently reusing or blindly duplicating, the
 //  owner is asked: reuse the existing entity, create a duplicate anyway, or back out.
 //
+//  It arrives on `.rise` rather than appearing outright — the prompt is an answer
+//  to the Save the owner just pressed, and pushing the rest of the form down with
+//  no travel reads as a layout glitch rather than a response.
+//
 
 import SwiftUI
 
@@ -19,16 +23,18 @@ struct DuplicateNamePrompt: View {
     var body: some View {
         VStack(spacing: Metric.cardGap) {
             HStack(alignment: .top, spacing: 12) {
-                Image(systemName: "info.circle")
+                Image(systemName: "exclamationmark.triangle.fill")
                     .font(.title3)
-                    .foregroundStyle(Theme.textSecondary)
+                    .foregroundStyle(Theme.accentText)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("“\(existingName)” already exists")
                         .font(.dsBody).bold()
                         .foregroundStyle(Theme.text)
+                        .fixedSize(horizontal: false, vertical: true)
                     Text("You already have a \(noun) with this name.")
                         .font(.dsSubhead)
                         .foregroundStyle(Theme.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 Spacer(minLength: 0)
             }
@@ -44,6 +50,7 @@ struct DuplicateNamePrompt: View {
                 .font(.dsBody)
                 .foregroundStyle(Theme.textSecondary)
                 .padding(.top, 2)
+                .buttonStyle(.pressableCard)
         }
     }
 }
@@ -56,7 +63,8 @@ private struct FilledPromptButton: ButtonStyle {
             .frame(maxWidth: .infinity)
             .padding(.vertical, 14)
             .background(Theme.accent, in: RoundedRectangle(cornerRadius: Metric.cardRadius))
-            .opacity(configuration.isPressed ? 0.85 : 1)
+            .scaleEffect(configuration.isPressed ? 0.97 : 1)
+            .motion(Motion.press, value: configuration.isPressed)
     }
 }
 
@@ -72,7 +80,8 @@ private struct OutlinedPromptButton: ButtonStyle {
                     .fill(Theme.card)
                     .stroke(Theme.accent.opacity(0.5), lineWidth: 1)
             }
-            .opacity(configuration.isPressed ? 0.85 : 1)
+            .scaleEffect(configuration.isPressed ? 0.97 : 1)
+            .motion(Motion.press, value: configuration.isPressed)
     }
 }
 

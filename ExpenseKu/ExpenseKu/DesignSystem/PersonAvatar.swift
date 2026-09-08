@@ -11,13 +11,29 @@ import SwiftUI
 
 struct PersonAvatar: View {
     let name: String
+    /// The owner's chosen tint; nil derives one from the name.
+    var colorHex: String?
     var size: CGFloat = Metric.iconSize
 
-    private var initial: String {
+    init(name: String, colorHex: String? = nil, size: CGFloat = Metric.iconSize) {
+        self.name = name
+        self.colorHex = colorHex
+        self.size = size
+    }
+
+    init(person: Person, size: CGFloat = Metric.iconSize) {
+        self.init(name: person.name, colorHex: person.colorHex, size: size)
+    }
+
+    /// The letter the avatar wears. Shared with the person editor's hero, so a
+    /// companion looks the same while being named as they will in every list.
+    nonisolated static func initial(for name: String) -> String {
         name.trimmingCharacters(in: .whitespaces).first.map { String($0).uppercased() } ?? "?"
     }
 
-    private var tint: Color { Theme.categoryTint(name) }
+    private var initial: String { PersonAvatar.initial(for: name) }
+
+    private var tint: Color { Theme.categoryTint(hex: colorHex, seed: name) }
 
     var body: some View {
         Circle()

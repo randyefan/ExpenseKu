@@ -7,8 +7,8 @@
 //  pickers, and the inline name-duplicate prompt. Never compiled into release.
 //
 //  Reached via `-startScreen editor|picker-category|picker-people|
-//  picker-account|name-duplicate|category-editor|account-editor` (see
-//  DebugLaunch + RootView).
+//  picker-account|name-duplicate|category-editor|account-editor|person-editor`
+//  (see DebugLaunch + RootView).
 //
 
 #if DEBUG
@@ -67,10 +67,17 @@ struct DebugHarness: View {
         case "settings":
             // Brings its own NavigationStack.
             TransactionSettingsView(payday: $payday)
+        case "person-editor":
+            NavigationStack {
+                PersonEditorView(
+                    title: people.first == nil ? "New Person" : "Edit Person",
+                    editing: people.first
+                )
+            }
         case "name-duplicate":
             // Prefill with a seeded category name so the dedup prompt shows.
             NavigationStack {
-                NameEditorView<Category, EmptyView>(
+                AppearanceEntityEditor<Category>(
                     title: "New Category",
                     makeNew: { Category() },
                     debugPrefill: categories.first?.name ?? "Makan"

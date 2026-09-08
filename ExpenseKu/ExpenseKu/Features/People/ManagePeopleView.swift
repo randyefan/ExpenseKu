@@ -21,10 +21,12 @@ struct ManagePeopleView: View {
 
     var body: some View {
         List {
-            ForEach(people) { person in
+            ForEach(Array(people.enumerated()), id: \.element.id) { index, person in
                 row(for: person)
                     .listRowBackground(Theme.card)
+                    .listRowSeparatorTint(Theme.hairline)
                     .deleteDisabled(person.isMe)
+                    .reveal(index)
             }
             .onDelete(perform: delete)
         }
@@ -48,10 +50,9 @@ struct ManagePeopleView: View {
         }
         .sheet(item: $editor) { target in
             NavigationStack {
-                NameEditorView<Person, EmptyView>(
+                PersonEditorView(
                     title: target.person == nil ? "New Person" : "Edit Person",
-                    editing: target.person,
-                    makeNew: { Person() }
+                    editing: target.person
                 )
             }
         }
@@ -62,7 +63,7 @@ struct ManagePeopleView: View {
     @ViewBuilder private func row(for person: Person) -> some View {
         if person.isMe {
             HStack(spacing: 12) {
-                PersonAvatar(name: person.name, size: 36)
+                PersonAvatar(person: person, size: Metric.rowIconSize)
                 Text(person.name)
                     .font(.dsBody)
                     .foregroundStyle(Theme.text)
@@ -74,13 +75,15 @@ struct ManagePeopleView: View {
         } else {
             Button { editor = EditorTarget(person: person) } label: {
                 HStack(spacing: 12) {
-                    PersonAvatar(name: person.name, size: 36)
+                    PersonAvatar(person: person, size: Metric.rowIconSize)
                     Text(person.name)
                         .font(.dsBody)
                         .foregroundStyle(Theme.text)
                     Spacer()
                 }
+                .contentShape(.rect)
             }
+            .buttonStyle(.pressableRow)
         }
     }
 

@@ -25,7 +25,7 @@ enum DebugLaunch {
     static var startTab: String? { value(for: "-startTab") }
 
     /// -startScreen categories|people|accounts|leaderboard|person-detail|category-editor|account-editor
-    ///              |calendar|calendar-day|search|search-empty
+    ///              |person-editor|calendar|calendar-day|search|search-empty
     ///
     /// `calendar` opens the Expenses tab in the Month lens with its default day
     /// selected; `calendar-day` selects the cycle's heaviest day instead, so the

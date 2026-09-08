@@ -29,7 +29,7 @@ struct LeaderboardRankRow: View {
                     .foregroundStyle(rank == 1 ? Theme.accentText : Theme.textSecondary)
                     .frame(minWidth: 20, alignment: .center)
 
-                PersonAvatar(name: entry.person.name, size: 40)
+                PersonAvatar(person: entry.person, size: 40)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(entry.person.name)

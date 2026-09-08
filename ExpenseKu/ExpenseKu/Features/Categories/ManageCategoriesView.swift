@@ -17,19 +17,21 @@ struct ManageCategoriesView: View {
 
     var body: some View {
         List {
-            ForEach(categories) { category in
+            ForEach(Array(categories.enumerated()), id: \.element.id) { index, category in
                 Button { editor = EditorTarget(category: category) } label: {
                     HStack(spacing: 12) {
-                        CategoryIcon(category: category, size: 36)
+                        CategoryIcon(category: category, size: Metric.rowIconSize)
                         Text(category.name)
                             .font(.dsBody)
                             .foregroundStyle(Theme.text)
                         Spacer()
                     }
+                    .contentShape(.rect)
                 }
                 .buttonStyle(.pressableRow)
                 .listRowBackground(Theme.card)
                 .listRowSeparatorTint(Theme.hairline)
+                .reveal(index)
             }
             .onDelete(perform: delete)
         }

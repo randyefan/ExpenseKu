@@ -9,7 +9,7 @@
 
 import SwiftUI
 
-extension Color {
+nonisolated extension Color {
     /// 0xRRGGBB literal → Color.
     init(hex: UInt) {
         self.init(
@@ -83,9 +83,7 @@ enum Theme {
 
     /// The `bg` token as an adaptive `UIColor`, for UIKit appearance proxies
     /// (e.g. painting nav bars cream — see `configureBarAppearance()`).
-    static let bgUIColor = UIColor { traits in
-        UIColor(traits.userInterfaceStyle == .dark ? Color(hex: 0x17130F) : Color(hex: 0xFBF7F3))
-    }
+    static let bgUIColor = dynamicUIColor(light: Color(hex: 0xFBF7F3), dark: Color(hex: 0x17130F))
 
     /// Paint navigation bars with the cream `bg` and no hairline shadow, so the
     /// bar blends into the surface on every platform. On a Designed-for-iPad Mac
@@ -110,7 +108,7 @@ enum Theme {
     /// A muted tint fill for a category icon, derived deterministically from its
     /// name. Adapts to the interface style so the glyph on top keeps its contrast:
     /// a light pastel in light mode, a deep muted tone in dark mode.
-    static func categoryTint(_ seed: String) -> Color {
+    nonisolated static func categoryTint(_ seed: String) -> Color {
         let hues: [Double] = [0.03, 0.09, 0.13, 0.33, 0.55, 0.72, 0.85]
         return tint(hue: hues[stableIndex(seed, upperBound: hues.count)])
     }
@@ -128,7 +126,7 @@ enum Theme {
     /// otherwise the name-derived `categoryTint`. A stored hex is shown verbatim in
     /// light mode and rebuilt as a deep tone from the same hue in dark mode, so the
     /// glyph keeps its contrast in both — matching the auto tints.
-    static func categoryTint(hex: String?, seed: String) -> Color {
+    nonisolated static func categoryTint(hex: String?, seed: String) -> Color {
         guard let hex, let light = Color(hexString: hex), let hue = HexColor.hue(hex) else {
             return categoryTint(seed)
         }
@@ -137,20 +135,30 @@ enum Theme {
 
     /// The pastel(light)/deep(dark) adaptive pair for a hue — the shared recipe
     /// behind both the auto tints and the swatch palette.
-    static func tint(hue: Double) -> Color {
+    nonisolated static func tint(hue: Double) -> Color {
         adaptive(
             light: Color(hue: hue, saturation: 0.28, brightness: 0.96),
             dark:  Color(hue: hue, saturation: 0.32, brightness: 0.30)
         )
     }
 
-    private static func adaptive(light: UInt, dark: UInt) -> Color {
+    nonisolated private static func adaptive(light: UInt, dark: UInt) -> Color {
         adaptive(light: Color(hex: light), dark: Color(hex: dark))
     }
 
-    private static func adaptive(light: Color, dark: Color) -> Color {
-        Color(uiColor: UIColor { traits in
+    nonisolated private static func adaptive(light: Color, dark: Color) -> Color {
+        Color(uiColor: dynamicUIColor(light: light, dark: dark))
+    }
+
+    /// The trait-resolving closure must be `nonisolated`: UIKit resolves dynamic
+    /// colours on whichever thread is rendering, and SwiftUI renders off the main
+    /// thread once a screen is animating. A main-actor-isolated closure traps there
+    /// under Swift 6 (`_swift_task_checkIsolatedSwift`), which is a crash rather than
+    /// a warning — the project sets SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor, so
+    /// this has to be opted out of explicitly.
+    nonisolated private static func dynamicUIColor(light: Color, dark: Color) -> UIColor {
+        UIColor { traits in
             UIColor(traits.userInterfaceStyle == .dark ? dark : light)
-        })
+        }
     }
 }

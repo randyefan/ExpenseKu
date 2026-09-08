@@ -36,3 +36,8 @@ Carthage/Build/
 
 # Claude Code — per-user local settings
 .claude/settings.local.json
+
+# Agent skills — vendored payload and the symlinks into it. skills-lock.json
+# stays tracked: it pins source repo + hash per skill, so this is restorable.
+.agents/
+.claude/skills/

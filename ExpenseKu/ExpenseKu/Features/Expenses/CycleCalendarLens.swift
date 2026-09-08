@@ -9,7 +9,7 @@
 
 import SwiftUI
 
-struct CycleCalendarLens: View {
+struct CycleCalendarLens<Header: View>: View {
     let calendarGrid: CycleCalendar
     let contents: CycleContents
     let cycle: PayCycle
@@ -19,9 +19,18 @@ struct CycleCalendarLens: View {
     let resolvedDay: Date?
     let onSelect: (Expense) -> Void
     let onDelete: (IndexSet, [Expense]) -> Void
+    /// See CycleListLens: the chrome scrolls with the content.
+    @ViewBuilder let header: Header
 
     var body: some View {
         List {
+            Section {
+                header
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
+                    .listRowInsets(EdgeInsets())
+            }
+
             Section {
                 CycleCalendarGrid(
                     calendarGrid: calendarGrid,

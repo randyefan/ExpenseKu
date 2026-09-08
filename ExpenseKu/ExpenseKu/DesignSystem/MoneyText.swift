@@ -4,6 +4,9 @@
 //
 //  An amount, bold and monospaced so columns of figures line up.
 //
+//  A figure never wraps: at accessibility text sizes "Rp 120.000" was breaking
+//  across lines mid-number, and a smaller figure reads better than a broken one.
+//
 //  Set `rolls` where the figure answers a question the owner just changed — the
 //  cycle total after paging, a filtered sum. The digits then count to the new value
 //  instead of cutting. Figures that only ever appear (a row's amount) leave it off:
@@ -31,6 +34,8 @@ struct MoneyText: View {
             .bold()
             .monospacedDigit()
             .foregroundStyle(color)
+            .lineLimit(1)
+            .minimumScaleFactor(0.6)
             .contentTransition(rolls ? .numericText(value: (amount as NSDecimalNumber).doubleValue) : .identity)
             .motion(Motion.number, value: rolls ? amount : 0)
     }

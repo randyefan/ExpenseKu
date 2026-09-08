@@ -3,45 +3,78 @@
 //  ExpenseKu
 //
 //  The Expenses tab's content area below the header: whichever lens is selected, or
-//  the empty state that stands in for it. Split out of ExpensesView so the lens
-//  swap has a single place to cross-fade from, and so the cycle-paging transition
-//  can wrap the whole area rather than each lens separately.
+//  the empty state that stands in for it.
+//
+//  One child with one composite identity, and the transition is chosen by the
+//  caller from *what* changed. An earlier version declared `.opacity` on each lens
+//  branch and the page transition on the container; a child that declares its own
+//  transition wins when the whole subtree is replaced, so paging silently
+//  cross-faded instead of travelling. Only one transition may be declared on this
+//  path.
 //
 
 import SwiftUI
 
-struct CycleLensArea: View {
+/// What the last change to the Expenses content area was, which decides how that
+/// content is replaced. A standalone type rather than a member of the generic
+/// `CycleLensArea`, so state can name it without pinning down a header type.
+enum CycleContentChange {
+    /// The owner paged to another cycle: the content travels the way the arrow
+    /// pointed.
+    case page(Edge)
+    /// The owner switched lens. Lenses are peers, so they cross-fade.
+    case lens
+
+    var transition: AnyTransition {
+        switch self {
+        case .page(let edge): .page(towards: edge)
+        case .lens: .opacity
+        }
+    }
+}
+
+struct CycleLensArea<Header: View>: View {
     let contents: CycleContents
     let cycle: PayCycle
     let calendarGrid: CycleCalendar
     let calendar: Calendar
     let lens: ExpensesView.Lens
+    let change: CycleContentChange
     let storeIsEmpty: Bool
     @Binding var selectedDay: Date?
     let resolvedDay: Date?
     let onSelect: (Expense) -> Void
     let onDelete: (IndexSet, [Expense]) -> Void
+    /// The cycle header and lens toggle, handed to whichever lens is showing so
+    /// they scroll with its content instead of being pinned above it.
+    @ViewBuilder let header: Header
 
     var body: some View {
         Group {
             switch lens {
             case .list:
                 if contents.isEmpty {
-                    CycleEmptyState(
-                        storeIsEmpty: storeIsEmpty,
-                        cycle: cycle,
-                        calendar: calendar
-                    )
-                    .motionTransition(.opacity)
+                    ScrollView {
+                        VStack(spacing: 0) {
+                            header
+                            CycleEmptyState(
+                                storeIsEmpty: storeIsEmpty,
+                                cycle: cycle,
+                                calendar: calendar
+                            )
+                        }
+                        .padding(.horizontal, Metric.screenPadding)
+                    }
+                    .scrollBounceBehavior(.basedOnSize)
                 } else {
                     CycleListLens(
                         dayGroups: contents.dayGroups,
                         calendar: calendar,
                         revealTrigger: AnyHashable(cycle),
                         onSelect: onSelect,
-                        onDelete: onDelete
+                        onDelete: onDelete,
+                        header: { header }
                     )
-                    .motionTransition(.opacity)
                 }
             case .calendar:
                 CycleCalendarLens(
@@ -53,13 +86,19 @@ struct CycleLensArea: View {
                     selectedDay: $selectedDay,
                     resolvedDay: resolvedDay,
                     onSelect: onSelect,
-                    onDelete: onDelete
+                    onDelete: onDelete,
+                    header: { header }
                 )
-                .motionTransition(.opacity)
             }
         }
-        .motion(Motion.reveal, value: lens)
+        .id(LensKey(cycle: cycle, lens: lens))
+        .motionTransition(change.transition)
     }
+}
+
+private struct LensKey: Hashable {
+    let cycle: PayCycle
+    let lens: ExpensesView.Lens
 }
 
 /// The two ways a cycle can show nothing: the store is empty everywhere, or this

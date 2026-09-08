@@ -14,16 +14,27 @@
 
 import SwiftUI
 
-struct CycleListLens: View {
+struct CycleListLens<Header: View>: View {
     let dayGroups: [ExpenseDayGroup]
     let calendar: Calendar
     /// Re-runs the reveal cascade when the owner pages to another cycle.
     var revealTrigger: AnyHashable = 0
     let onSelect: (Expense) -> Void
     let onDelete: (IndexSet, [Expense]) -> Void
+    /// The cycle header and lens toggle. They ride inside the list rather than
+    /// being pinned above it: at accessibility text sizes a pinned header plus a
+    /// wrapped title overflows the screen and gets clipped at both ends.
+    @ViewBuilder let header: Header
 
     var body: some View {
         List {
+            Section {
+                header
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
+                    .listRowInsets(EdgeInsets())
+            }
+
             ForEach(dayGroups.enumerated(), id: \.element.id) { index, group in
                 Section {
                     ForEach(group.expenses) { expense in
@@ -43,6 +54,7 @@ struct CycleListLens: View {
         }
         .listStyle(.insetGrouped)
         .listSectionSpacing(.compact)
+        .environment(\.defaultMinListHeaderHeight, 0)
         .contentMargins(.horizontal, Metric.screenPadding, for: .scrollContent)
         .scrollContentBackground(.hidden)
         .background(Theme.bg)

@@ -43,7 +43,10 @@ struct CycleHeader: View {
                     Text(cycle.rangeText(calendar: calendar))
                         .font(.dsCaption)
                         .foregroundStyle(Theme.textSecondary)
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
+                .multilineTextAlignment(.center)
                 .motion(Motion.reveal, value: cycle)
 
                 Spacer(minLength: 8)
@@ -75,7 +78,6 @@ struct CycleHeader: View {
                         .stroke(Theme.hairline, lineWidth: 1)
                 }
         }
-        .padding(.horizontal, Metric.screenPadding)
         .padding(.top, 8)
         .padding(.bottom, Metric.cardGap)
     }
@@ -110,5 +112,6 @@ private struct CyclePageButton: View {
         onPrevious: {},
         onNext: {}
     )
+    .padding(.horizontal, Metric.screenPadding)
     .appBackground()
 }

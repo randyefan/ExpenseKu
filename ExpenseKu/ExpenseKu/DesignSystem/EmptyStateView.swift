@@ -28,10 +28,13 @@ struct EmptyStateView: View {
             Text(title)
                 .font(.dsTitle).bold()
                 .foregroundStyle(Theme.text)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
             Text(message)
                 .font(.dsSubhead)
                 .foregroundStyle(Theme.textSecondary)
                 .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(Metric.screenPadding)

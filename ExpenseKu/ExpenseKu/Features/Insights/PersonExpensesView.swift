@@ -2,12 +2,14 @@
 //  PersonExpensesView.swift
 //  ExpenseKu
 //
-//  The drill-down behind a People-leaderboard row: "which expenses make up my
-//  total with this person." Pushed onto the Insights nav stack, carrying the
-//  leaderboard's active Period / Category / Account filters so the numbers match
-//  the row you tapped. Display-only; aggregation lives in the pure
-//  PeopleLeaderboard layer. Warm Cards styling, behaviour unchanged (full amount
-//  credited to each companion, so the total mirrors the row exactly).
+//  The drill-down behind a People-leaderboard row: "which expenses make up my total
+//  with this person." Pushed onto the Insights nav stack, seeded with the filters
+//  that were active when the row was tapped — and then free to re-scope, because the
+//  question "how much with them lately?" is asked here, not back on the leaderboard.
+//
+//  Display-only; aggregation lives in the pure PeopleLeaderboard layer. Attribution
+//  is unchanged: the full amount is credited to each companion, so an unfiltered
+//  total still mirrors the row exactly.
 //
 
 import SwiftUI
@@ -17,39 +19,42 @@ struct PersonExpensesView: View {
     let route: PersonExpensesRoute
 
     @Environment(\.modelContext) private var context
+    @Environment(\.calendar) private var calendar
 
-    /// Bounded by the route's date range so the store returns only rows this screen can
-    /// show. Category and person narrowing stays in the pure PeopleLeaderboard layer —
-    /// only the date bound is cheap and safe to express as a predicate.
-    @Query private var expenses: [Expense]
+    /// Unbounded on purpose. `@Query` fixes its predicate at init, so a window the
+    /// owner can change on this screen cannot also bound the fetch; the window is
+    /// sliced in memory instead. Arriving from an All-time leaderboard already cost
+    /// this much, and in exchange changing the window needs no remount — the total
+    /// rolls to its new value rather than blinking.
+    @Query(sort: \Expense.date, order: .reverse) private var expenses: [Expense]
+
+    @State private var range: DateRangeFilter
+    @State private var editing: Expense?
+    @State private var growth = ChartGrowth()
 
     init(route: PersonExpensesRoute) {
         self.route = route
-        // Bound to plain values before the macro sees them: a predicate that evaluates
-        // an optional or a computed property compiles clean and traps at runtime.
-        let range = route.range.range(payday: Payday.current)
-        let lower = range?.lowerBound ?? .distantPast
-        let upper = range?.upperBound ?? .distantFuture
-        _expenses = Query(
-            filter: #Predicate<Expense> { $0.date >= lower && $0.date <= upper },
-            sort: \Expense.date,
-            order: .reverse
-        )
+        _range = State(initialValue: route.range)
     }
 
     var body: some View {
         let person = route.person(in: context)
         let category = route.category(in: context)
         let account = route.account(in: context)
+        let dateRange = range.range(payday: Payday.current)
         let listed = person.map {
             PeopleLeaderboard.expenses(
                 for: $0,
                 from: expenses,
                 category: category,
                 account: account,
-                dateRange: route.range.range(payday: Payday.current)
+                dateRange: dateRange
             )
         } ?? []
+        let total = listed.reduce(Decimal(0)) { $0 + $1.amount }
+        let windowTotal = PeopleLeaderboard.total(
+            from: expenses, category: category, account: account, dateRange: dateRange
+        )
         let filterSummary = Self.filterSummary(category: category, account: account)
 
         ScrollView {
@@ -58,32 +63,46 @@ struct PersonExpensesView: View {
                     PersonSpendHeader(
                         name: person.name,
                         colorHex: person.colorHex,
-                        total: listed.reduce(0) { $0 + $1.amount },
+                        total: total,
                         count: listed.count,
-                        rangeLabel: route.range.label
+                        rangeLabel: range.label,
+                        share: Self.share(of: total, in: windowTotal),
+                        growth: growth.factor
                     )
+                    .padding(.horizontal, Metric.screenPadding)
+                    .reveal(0)
+
+                    PeriodFilterChips(selection: $range)
+                        .reveal(1)
 
                     if let filterSummary {
-                        Text("Filtered by \(filterSummary)")
+                        Text("Also filtered by \(filterSummary)")
                             .font(.dsCaption)
                             .foregroundStyle(Theme.textSecondary)
-                            .padding(.horizontal, 2)
+                            .padding(.horizontal, Metric.screenPadding + 2)
+                            .reveal(2)
                     }
 
                     if listed.isEmpty {
                         EmptyStateView(
-                            title: "No Expenses in Range",
+                            title: "Nothing in This Window",
                             systemImage: "person.2.slash",
                             message: Self.emptyMessage(
                                 name: person.name,
                                 filterSummary: filterSummary,
-                                range: route.range
+                                range: range
                             )
                         )
-                        .frame(minHeight: 320)
+                        .frame(minHeight: 300)
+                        .motionTransition(.rise)
                     } else {
-                        ForEach(listed) { expense in
-                            PersonExpenseCard(expense: expense)
+                        ForEach(Array(expenseDayGroups(listed, calendar: calendar).enumerated()),
+                                id: \.element.id) { index, group in
+                            PersonDayCard(group: group, calendar: calendar) { expense in
+                                editing = expense
+                            }
+                            .padding(.horizontal, Metric.screenPadding)
+                            .reveal(index + 3, trigger: range)
                         }
 
                         Text("Each shared expense credits \(person.name) the full amount.")
@@ -91,6 +110,7 @@ struct PersonExpensesView: View {
                             .foregroundStyle(Theme.textSecondary)
                             .multilineTextAlignment(.center)
                             .frame(maxWidth: .infinity)
+                            .padding(.horizontal, Metric.screenPadding)
                             .padding(.top, 4)
                     }
                 } else {
@@ -102,11 +122,27 @@ struct PersonExpensesView: View {
                     .frame(minHeight: 320)
                 }
             }
-            .padding(Metric.screenPadding)
+            .padding(.vertical, Metric.screenPadding)
+            .motion(Motion.settle, value: listed.count)
         }
         .background(Theme.bg)
         .navigationTitle(person?.name ?? "Person")
         .navigationBarTitleDisplayMode(.inline)
+        .growsOnAppear(growth, trigger: range)
+        .sensoryFeedback(.selection, trigger: range)
+        .sheet(item: $editing) { expense in
+            NavigationStack {
+                ExpenseEditorView(editing: expense, onFinish: { editing = nil })
+            }
+            .presentationDragIndicator(.visible)
+        }
+    }
+
+    /// This companion's slice of the window, or nil when nothing was spent in it —
+    /// a share of zero is undefined, not 0%.
+    static func share(of total: Decimal, in windowTotal: Decimal) -> Double? {
+        guard windowTotal > 0 else { return nil }
+        return (total as NSDecimalNumber).doubleValue / (windowTotal as NSDecimalNumber).doubleValue
     }
 
     /// "Food · Cash" when narrowed, nil when neither category nor account is set.
@@ -117,8 +153,8 @@ struct PersonExpensesView: View {
 
     static func emptyMessage(name: String, filterSummary: String?, range: DateRangeFilter) -> String {
         if let filterSummary {
-            return "\(name) has no expenses matching \(filterSummary) in \(range.label.lowercased())."
+            return "\(name) has no expenses matching \(filterSummary) \(range.phrase)."
         }
-        return "\(name) has no expenses in \(range.label.lowercased())."
+        return "\(name) has no expenses \(range.phrase)."
     }
 }

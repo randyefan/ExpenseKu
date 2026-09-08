@@ -50,7 +50,9 @@ struct ExpenseSearchLens: View {
                     }
                     .onDelete { onDelete($0, results.expenses) }
                 }
-                .listStyle(.plain)
+                .listStyle(.insetGrouped)
+                .listSectionSpacing(.compact)
+                .contentMargins(.horizontal, Metric.screenPadding, for: .scrollContent)
                 .scrollContentBackground(.hidden)
                 .background(Theme.bg)
             }

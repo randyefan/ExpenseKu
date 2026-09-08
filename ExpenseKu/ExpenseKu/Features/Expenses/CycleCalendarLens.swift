@@ -31,8 +31,7 @@ struct CycleCalendarLens: View {
                 .listRowBackground(Color.clear)
                 .listRowSeparator(.hidden)
                 .listRowInsets(EdgeInsets(
-                    top: 0, leading: Metric.screenPadding,
-                    bottom: Metric.cardGap, trailing: Metric.screenPadding
+                    top: 0, leading: 0, bottom: Metric.cardGap, trailing: 0
                 ))
             }
 
@@ -63,11 +62,14 @@ struct CycleCalendarLens: View {
                         title: DayLabel.title(day, calendar: calendar),
                         total: contents.group(for: day)?.total ?? 0
                     )
+                    .textCase(nil)
+                    .listRowInsets(EdgeInsets(top: 14, leading: 4, bottom: 6, trailing: 4))
                 }
             }
         }
-        .listStyle(.plain)
+        .listStyle(.insetGrouped)
         .listSectionSpacing(.compact)
+        .contentMargins(.horizontal, Metric.screenPadding, for: .scrollContent)
         .scrollContentBackground(.hidden)
         .background(Theme.bg)
     }

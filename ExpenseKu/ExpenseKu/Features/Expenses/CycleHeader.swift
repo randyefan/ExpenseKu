@@ -4,7 +4,12 @@
 //
 //  The Expenses tab's header card: ‹ › to page between pay cycles, the cycle's title
 //  and date span, and the cycle's spending total. Spending only — the domain has no
-//  income concept (Q6) — and this is the one place the coral accent lands on money.
+//  income concept (Q6).
+//
+//  The total is charcoal, not coral: the accent is reserved for actions and selected
+//  states, and a figure this large in coral reads as an alarm. The card carries a
+//  faint coral wash instead, which marks it as the hero without spending the accent.
+//  Paging rolls the figure to its new value so the change is legible.
 //
 
 import SwiftUI
@@ -19,40 +24,91 @@ struct CycleHeader: View {
     let onNext: () -> Void
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 14) {
             HStack {
-                Button("Previous cycle", systemImage: "chevron.left", action: onPrevious)
-                    .labelStyle(.iconOnly)
-                    .font(.body.weight(.semibold))
-                    .disabled(!canGoBack)
+                CyclePageButton(
+                    label: "Previous cycle",
+                    systemImage: "chevron.left",
+                    enabled: canGoBack,
+                    action: onPrevious
+                )
 
-                Spacer()
+                Spacer(minLength: 8)
 
                 VStack(spacing: 2) {
                     Text(cycle.title(calendar: calendar))
                         .font(.dsHeadline).bold()
                         .foregroundStyle(Theme.text)
+                        .contentTransition(.numericText())
                     Text(cycle.rangeText(calendar: calendar))
                         .font(.dsCaption)
                         .foregroundStyle(Theme.textSecondary)
                 }
+                .motion(Motion.reveal, value: cycle)
 
-                Spacer()
+                Spacer(minLength: 8)
 
-                Button("Next cycle", systemImage: "chevron.right", action: onNext)
-                    .labelStyle(.iconOnly)
-                    .font(.body.weight(.semibold))
-                    .disabled(!canGoForward)
+                CyclePageButton(
+                    label: "Next cycle",
+                    systemImage: "chevron.right",
+                    enabled: canGoForward,
+                    action: onNext
+                )
             }
 
-            VStack(spacing: 4) {
+            VStack(spacing: 2) {
                 SectionHeaderText("Spending")
-                MoneyText(total, font: .dsHero, color: Theme.accent)
+                MoneyText(total, font: .dsHero, color: Theme.text, rolls: true)
             }
         }
-        .cardStyle()
+        .padding(Metric.cardPadding)
+        .frame(maxWidth: .infinity)
+        .background {
+            RoundedRectangle(cornerRadius: Metric.cardRadius)
+                .fill(Theme.card)
+                .overlay {
+                    RoundedRectangle(cornerRadius: Metric.cardRadius)
+                        .fill(Theme.accent.opacity(0.05))
+                }
+                .overlay {
+                    RoundedRectangle(cornerRadius: Metric.cardRadius)
+                        .stroke(Theme.hairline, lineWidth: 1)
+                }
+        }
         .padding(.horizontal, Metric.screenPadding)
         .padding(.top, 8)
         .padding(.bottom, Metric.cardGap)
     }
+}
+
+private struct CyclePageButton: View {
+    let label: String
+    let systemImage: String
+    let enabled: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(label, systemImage: systemImage, action: action)
+            .labelStyle(.iconOnly)
+            .font(.dsBody.weight(.semibold))
+            .foregroundStyle(enabled ? Theme.accent : Theme.textSecondary.opacity(0.4))
+            .frame(width: 44, height: 44)
+            .contentShape(.circle)
+            .buttonStyle(.pressableCard)
+            .disabled(!enabled)
+            .motion(Motion.press, value: enabled)
+    }
+}
+
+#Preview {
+    CycleHeader(
+        cycle: PayCycle.containing(.now, payday: 1),
+        total: 220_000,
+        canGoBack: true,
+        canGoForward: false,
+        calendar: .current,
+        onPrevious: {},
+        onNext: {}
+    )
+    .warmBackground()
 }

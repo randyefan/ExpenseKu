@@ -2,9 +2,9 @@
 //  DayGroupHeader.swift
 //  ExpenseKu
 //
-//  A day's section header: the day's name on the left, its total on the right. The
-//  total stays quiet, secondary and monospaced — the coral hero accent is reserved for
-//  the cycle total (Variant A).
+//  A day ledger card's header: the day on the left, its total on the right, joined
+//  by the app's dotted leader rule. The total stays secondary and monospaced — the
+//  coral accent is reserved for actions and selected states.
 //
 
 import SwiftUI
@@ -14,15 +14,31 @@ struct DayGroupHeader: View {
     let total: Decimal
 
     var body: some View {
-        HStack {
-            SectionHeaderText(title)
-            Spacer()
+        HStack(spacing: 8) {
+            Text(title)
+                .font(.dsSubhead).bold()
+                .foregroundStyle(Theme.text)
+                .lineLimit(1)
+                .layoutPriority(1)
+
+            LeaderLine()
+
             Text(total.formattedIDR())
-                .font(.dsCaption)
+                .font(.dsSubhead)
                 .fontWeight(.semibold)
                 .monospacedDigit()
                 .foregroundStyle(Theme.textSecondary)
+                .layoutPriority(1)
         }
-        .padding(.horizontal, 4)
+        .accessibilityElement(children: .combine)
     }
+}
+
+#Preview {
+    VStack(spacing: Metric.cardGap) {
+        DayGroupHeader(title: "Thu, 6 August", total: 30_000)
+        DayGroupHeader(title: "Sun, 2 August", total: 1_450_000)
+    }
+    .padding()
+    .warmBackground()
 }

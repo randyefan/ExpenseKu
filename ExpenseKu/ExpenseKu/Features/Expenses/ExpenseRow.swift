@@ -2,14 +2,13 @@
 //  ExpenseRow.swift
 //  ExpenseKu
 //
-//  One expense as a "Warm Cards" row: pastel category icon, bold category name,
-//  a gray meta line (account + companions), an optional note, and the bold
-//  charcoal amount right-aligned with monospaced digits. Styling only — the
-//  content and list behaviour are unchanged.
+//  One expense inside a day's ledger card: pastel category icon, bold category name,
+//  a single grey meta line (note · account · companions), and the bold amount
+//  right-aligned with monospaced digits.
 //
 //  Search results set `dateLabel` because they span years and each row has to say
-//  when it happened; the cycle list and calendar leave it nil, where a day header
-//  already answers that, and render exactly as before.
+//  when it happened; the cycle list and calendar leave it nil, where the day card's
+//  own header already answers that.
 //
 
 import SwiftUI
@@ -26,27 +25,20 @@ struct ExpenseRow: View {
     var body: some View {
         HStack(spacing: 12) {
             if let category = expense.category {
-                CategoryIcon(category: category)
+                CategoryIcon(category: category, size: Metric.rowIconSize)
             } else {
-                CategoryIcon(name: categoryName)
+                CategoryIcon(name: categoryName, size: Metric.rowIconSize)
             }
 
-            VStack(alignment: .leading, spacing: 3) {
+            VStack(alignment: .leading, spacing: 2) {
                 Text(categoryName)
                     .font(.dsBody)
                     .bold()
                     .foregroundStyle(Theme.text)
                     .lineLimit(1)
-                    .padding(.bottom, 2)
-
-                if !expense.note.isEmpty {
-                    Text(expense.note)
-                        .font(.dsCaption)
-                        .foregroundStyle(Theme.textSecondary)
-                        .lineLimit(1)
-                }
 
                 ExpenseMetaLine(
+                    note: expense.note,
                     accountName: expense.account?.name,
                     peopleNames: peopleNames
                 )
@@ -54,12 +46,10 @@ struct ExpenseRow: View {
 
             Spacer(minLength: 8)
 
-            VStack(alignment: .trailing, spacing: 3) {
+            VStack(alignment: .trailing, spacing: 2) {
                 MoneyText(expense.amount, font: .dsBody, color: Theme.text)
 
                 if let dateLabel {
-                    // The day header's total treatment, so this reads as metadata
-                    // rather than as a second number on the row.
                     Text(dateLabel)
                         .font(.dsCaption)
                         .monospacedDigit()
@@ -68,7 +58,7 @@ struct ExpenseRow: View {
                 }
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 10)
     }
 }
 
@@ -80,21 +70,24 @@ struct ExpenseRow: View {
         people: [Person(name: "Tarisa"), Person(name: "Fadil")],
         account: Account(name: "GoPay")
     ))
-    .cardStyle()
+    .padding(.horizontal, Metric.cardPadding)
+    .cardStyle(padding: 0)
     .padding()
     .warmBackground()
 }
 
 #Preview("Minimal") {
     ExpenseRow(expense: Expense(amount: 25_000, category: Category(name: "Kopi")))
-        .cardStyle()
+        .padding(.horizontal, Metric.cardPadding)
+        .cardStyle(padding: 0)
         .padding()
         .warmBackground()
 }
 
 #Preview("Uncategorized (ADR-0001)") {
     ExpenseRow(expense: Expense(amount: 45_000, note: "Lunch"))
-        .cardStyle()
+        .padding(.horizontal, Metric.cardPadding)
+        .cardStyle(padding: 0)
         .padding()
         .warmBackground()
 }
@@ -107,20 +100,19 @@ struct ExpenseRow: View {
         people: [Person(name: "Tarisa"), Person(name: "Fadil"), Person(name: "Budi")],
         account: Account(name: "Bank Central Asia")
     ))
-    .cardStyle()
+    .padding(.horizontal, Metric.cardPadding)
+    .cardStyle(padding: 0)
     .padding()
     .warmBackground()
 }
 
 #Preview("Aksesibilitas XXL") {
     ExpenseRow(expense: Expense(
-        amount: 120_000,
-        note: "Dinner",
-        category: Category(name: "Makan"),
-        people: [Person(name: "Tarisa")],
-        account: Account(name: "GoPay")
+        amount: 120_000, note: "Dinner", category: Category(name: "Makan"),
+        people: [Person(name: "Tarisa")], account: Account(name: "GoPay")
     ))
-    .cardStyle()
+    .padding(.horizontal, Metric.cardPadding)
+    .cardStyle(padding: 0)
     .padding()
     .warmBackground()
     .environment(\.dynamicTypeSize, .accessibility3)
@@ -128,13 +120,11 @@ struct ExpenseRow: View {
 
 #Preview("Gelap") {
     ExpenseRow(expense: Expense(
-        amount: 120_000,
-        note: "Dinner",
-        category: Category(name: "Makan"),
-        people: [Person(name: "Tarisa")],
-        account: Account(name: "GoPay")
+        amount: 120_000, note: "Dinner", category: Category(name: "Makan"),
+        people: [Person(name: "Tarisa")], account: Account(name: "GoPay")
     ))
-    .cardStyle()
+    .padding(.horizontal, Metric.cardPadding)
+    .cardStyle(padding: 0)
     .padding()
     .warmBackground()
     .preferredColorScheme(.dark)

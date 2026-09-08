@@ -14,10 +14,18 @@ nonisolated extension Decimal {
         formatted(.currency(code: "IDR").precision(.fractionLength(0)))
     }
 
-    /// A short form for tight spots such as a chart callout, e.g. "Rp 220RB".
+    /// A short form for tight spots such as a chart callout, e.g. "220RB" or
+    /// "11,3JT". One optional decimal, so millions keep a useful digit while
+    /// round thousands stay clean, and no currency mark: a bar label has one
+    /// slot's width to live in, and every amount in the app is rupiah.
     /// Locale decides the suffix, so this stays correct outside id-ID.
-    func compactIDR() -> String {
-        formatted(.currency(code: "IDR").precision(.fractionLength(0)).notation(.compactName))
+    func compactAmount() -> String {
+        formatted(
+            .number
+                .precision(.fractionLength(0...1))
+                .rounded(rule: .toNearestOrAwayFromZero)
+                .notation(.compactName)
+        )
     }
 
     /// Lossy Double for charting only (Swift Charts requires a Plottable value).

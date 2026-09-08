@@ -40,5 +40,5 @@ struct PersonSpendHeader: View {
         PersonSpendHeader(name: "Budi", total: 0, count: 0, rangeLabel: "This month")
     }
     .padding()
-    .warmBackground()
+    .appBackground()
 }

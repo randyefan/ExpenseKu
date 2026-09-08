@@ -40,5 +40,5 @@ struct DayGroupHeader: View {
         DayGroupHeader(title: "Sun, 2 August", total: 1_450_000)
     }
     .padding()
-    .warmBackground()
+    .appBackground()
 }

@@ -110,5 +110,5 @@ private struct CyclePageButton: View {
         onPrevious: {},
         onNext: {}
     )
-    .warmBackground()
+    .appBackground()
 }

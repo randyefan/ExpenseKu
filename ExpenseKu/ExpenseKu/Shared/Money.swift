@@ -14,6 +14,12 @@ nonisolated extension Decimal {
         formatted(.currency(code: "IDR").precision(.fractionLength(0)))
     }
 
+    /// A short form for tight spots such as a chart callout, e.g. "Rp 220RB".
+    /// Locale decides the suffix, so this stays correct outside id-ID.
+    func compactIDR() -> String {
+        formatted(.currency(code: "IDR").precision(.fractionLength(0)).notation(.compactName))
+    }
+
     /// Lossy Double for charting only (Swift Charts requires a Plottable value).
     /// Never use this in the money path — Decimal remains the source of truth.
     var doubleValue: Double {

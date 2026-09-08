@@ -46,5 +46,5 @@ struct MoneyText: View {
         Button("Roll") { amount = Decimal(Int.random(in: 10_000...9_000_000)) }
     }
     .padding()
-    .warmBackground()
+    .appBackground()
 }

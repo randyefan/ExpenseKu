@@ -39,5 +39,5 @@ struct LeaderLine: View {
         Text("Rp 30.000").font(.dsSubhead).monospacedDigit()
     }
     .padding()
-    .warmBackground()
+    .appBackground()
 }

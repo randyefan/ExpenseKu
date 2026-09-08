@@ -48,7 +48,7 @@ struct SegmentedToggle<Value: Hashable>: View {
                     Label(segment.title, systemImage: segment.systemImage)
                         .font(.dsSubhead)
                         .fontWeight(.semibold)
-                        .foregroundStyle(isSelected ? Color.white : Theme.textSecondary)
+                        .foregroundStyle(isSelected ? Theme.onAccent : Theme.textSecondary)
                         .padding(.horizontal, 14)
                         .padding(.vertical, 7)
                         .background {
@@ -82,5 +82,5 @@ private enum PreviewLens: Hashable { case list, calendar }
         ]
     )
     .padding()
-    .warmBackground()
+    .appBackground()
 }

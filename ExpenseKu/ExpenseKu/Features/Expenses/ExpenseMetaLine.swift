@@ -41,5 +41,5 @@ struct ExpenseMetaLine: View {
                         accountName: "Bank Central Asia", peopleNames: "Tarisa, Fadil & Budi")
     }
     .padding()
-    .warmBackground()
+    .appBackground()
 }

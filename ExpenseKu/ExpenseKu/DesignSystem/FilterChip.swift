@@ -38,5 +38,5 @@ struct FilterChip: View {
         FilterChip(label: "Account", value: "Bank Central Asia")
     }
     .padding()
-    .warmBackground()
+    .appBackground()
 }

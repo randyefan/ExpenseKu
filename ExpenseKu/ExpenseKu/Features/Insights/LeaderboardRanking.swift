@@ -8,6 +8,10 @@
 //
 //  Category and account narrowing stays in the pure PeopleLeaderboard layer.
 //
+//  The rows share one card, separated by hairlines, rather than each being its own
+//  floating card: a ranking is one table, and the gaps between separate cards broke
+//  the column of figures the eye is trying to run down.
+//
 
 import SwiftUI
 import SwiftData
@@ -18,6 +22,7 @@ struct LeaderboardRanking: View {
     let account: Account?
 
     @Query private var expenses: [Expense]
+    @State private var growth = ChartGrowth()
 
     init(range: DateRangeFilter, category: Category?, account: Account?) {
         self.range = range
@@ -38,6 +43,7 @@ struct LeaderboardRanking: View {
             account: account,
             dateRange: range.range(payday: Payday.current)
         )
+        let leader = max(ranked.first?.total.doubleValue ?? 1, 1)
 
         if ranked.isEmpty {
             EmptyStateView(
@@ -47,19 +53,33 @@ struct LeaderboardRanking: View {
             )
             .frame(minHeight: 360)
         } else {
-            ForEach(ranked.enumerated(), id: \.element.id) { index, entry in
-                NavigationLink(value: InsightsView.Destination.personExpenses(
-                    PersonExpensesRoute(
-                        person: entry.person,
-                        category: category,
-                        account: account,
-                        range: range
-                    )
-                )) {
-                    LeaderboardRankRow(rank: index + 1, entry: entry)
+            VStack(spacing: 0) {
+                ForEach(ranked.enumerated(), id: \.element.id) { index, entry in
+                    NavigationLink(value: InsightsView.Destination.personExpenses(
+                        PersonExpensesRoute(
+                            person: entry.person,
+                            category: category,
+                            account: account,
+                            range: range
+                        )
+                    )) {
+                        LeaderboardRankRow(
+                            rank: index + 1,
+                            entry: entry,
+                            fraction: entry.total.doubleValue / leader,
+                            growth: growth.factor
+                        )
+                        .contentShape(.rect)
+                    }
+                    .buttonStyle(.pressableRow)
+
+                    if index < ranked.count - 1 {
+                        Divider().overlay(Theme.hairline)
+                    }
                 }
-                .buttonStyle(.plain)
             }
+            .cardStyle(padding: Metric.cardPadding)
+            .growsOnAppear(growth, trigger: ranked.map(\.id))
 
             Text("Totals may exceed your grand total as each companion is credited the full shared amount.")
                 .font(.dsCaption)

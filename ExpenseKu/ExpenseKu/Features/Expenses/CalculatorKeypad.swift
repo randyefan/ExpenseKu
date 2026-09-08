@@ -126,7 +126,7 @@ struct CalculatorKeypad: View {
                 .overlay(
                     Image(systemName: "checkmark")
                         .font(.system(size: 22, weight: .semibold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Theme.onAccent)
                 )
                 .frame(width: width, height: tallHeight)
         }

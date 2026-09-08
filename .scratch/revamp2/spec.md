@@ -32,12 +32,40 @@ Plus Jakarta Sans, cream, and the single coral accent.
    from meaning "this is the action".
 6. Empty state is a generic grey circle.
 
+## Palette: "Ink & Amber" (chosen 2026-09-08, replacing Warm Cards)
+
+The owner rejected the cream/coral palette mid-revamp and picked **Ink & Amber,
+dark-first**. Dark is the designed theme; light is the faithful alternate, and the
+app still follows the system setting.
+
+| Token | Dark (primary) | Light |
+|---|---|---|
+| canvas | `#0E0F11` | `#F7F6F4` |
+| card | `#191B1F` | `#FFFFFF` |
+| surface | `#22252A` | `#F0EEEB` |
+| hairline | `#2A2E34` | `#E7E4E0` |
+| text | `#F2F3F5` | `#16181C` |
+| textSecondary | `#9AA0A8` | `#6E737A` |
+| accent (fills) | `#F2A93B` | `#F2A93B` |
+| accent as text | `#F2A93B` | `#A1660A` |
+| on-accent | `#14161A` | `#14161A` |
+
+Two consequences the coral palette did not have:
+
+- **Ink, not white, sits on the accent.** Amber is a light colour: white on it is
+  under 2:1, ink is about 9:1. Every white-on-accent call site was changed.
+- **Category tints are chromatic, not pastel fills.** The old recipe painted a
+  pastel circle with a dark glyph; at 40% brightness on a near-black card that is a
+  brown smudge. A tint is now the identity colour itself, and filled surfaces wash
+  it back to 18%. Only the *hue* is read from a stored swatch, so the pastel hexes
+  the old palette persisted still resolve correctly — no data migration.
+
 ## Guardrails (unchanged from the original brief — do not violate)
 
 - No income, balance, budget, or net anywhere. Spending only.
 - Pay-cycle model (ADR-0004) and the 3-tab structure stay.
-- One accent: coral `#E8735C`. One grey family (warm). Radius scale: cards 16,
-  controls/pills capsule, inner rows 12.
+- One accent: amber `#F2A93B`. One grey family (neutral-cool). Radius scale: cards
+  16, controls/pills capsule, inner rows 12.
 - Plus Jakarta Sans throughout; amounts bold + tabular.
 - No emoji in chrome. No gradients. No glassmorphism beyond the system tab bar.
 

@@ -40,5 +40,5 @@ struct ManageMenuRow: View {
                       subtitle: "^[1 person](inflect: true)")
     }
     .padding()
-    .warmBackground()
+    .appBackground()
 }

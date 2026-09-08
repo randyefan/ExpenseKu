@@ -73,7 +73,7 @@ struct ExpenseRow: View {
     .padding(.horizontal, Metric.cardPadding)
     .cardStyle(padding: 0)
     .padding()
-    .warmBackground()
+    .appBackground()
 }
 
 #Preview("Minimal") {
@@ -81,7 +81,7 @@ struct ExpenseRow: View {
         .padding(.horizontal, Metric.cardPadding)
         .cardStyle(padding: 0)
         .padding()
-        .warmBackground()
+        .appBackground()
 }
 
 #Preview("Uncategorized (ADR-0001)") {
@@ -89,7 +89,7 @@ struct ExpenseRow: View {
         .padding(.horizontal, Metric.cardPadding)
         .cardStyle(padding: 0)
         .padding()
-        .warmBackground()
+        .appBackground()
 }
 
 #Preview("Nama panjang") {
@@ -103,7 +103,7 @@ struct ExpenseRow: View {
     .padding(.horizontal, Metric.cardPadding)
     .cardStyle(padding: 0)
     .padding()
-    .warmBackground()
+    .appBackground()
 }
 
 #Preview("Aksesibilitas XXL") {
@@ -114,7 +114,7 @@ struct ExpenseRow: View {
     .padding(.horizontal, Metric.cardPadding)
     .cardStyle(padding: 0)
     .padding()
-    .warmBackground()
+    .appBackground()
     .environment(\.dynamicTypeSize, .accessibility3)
 }
 
@@ -126,6 +126,6 @@ struct ExpenseRow: View {
     .padding(.horizontal, Metric.cardPadding)
     .cardStyle(padding: 0)
     .padding()
-    .warmBackground()
+    .appBackground()
     .preferredColorScheme(.dark)
 }

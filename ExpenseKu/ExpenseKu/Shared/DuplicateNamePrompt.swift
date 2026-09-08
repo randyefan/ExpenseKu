@@ -52,7 +52,7 @@ private struct FilledPromptButton: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.dsBody).fontWeight(.semibold)
-            .foregroundStyle(.white)
+            .foregroundStyle(Theme.onAccent)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 14)
             .background(Theme.accent, in: RoundedRectangle(cornerRadius: Metric.cardRadius))
@@ -83,5 +83,5 @@ private struct OutlinedPromptButton: ButtonStyle {
         onUseExisting: {}, onCreateAnyway: {}, onCancel: {}
     )
     .padding()
-    .warmBackground()
+    .appBackground()
 }

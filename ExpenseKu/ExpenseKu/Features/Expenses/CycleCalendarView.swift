@@ -121,7 +121,7 @@ private struct DayCell: View {
     // MARK: Appearance
 
     private var numberColor: Color {
-        if isSelected { return Theme.card }          // knocked out of the coral fill
+        if isSelected { return Theme.onAccent }      // knocked out of the amber fill
         if !day.inCycle { return Theme.textSecondary.opacity(0.4) }
         return Theme.text
     }

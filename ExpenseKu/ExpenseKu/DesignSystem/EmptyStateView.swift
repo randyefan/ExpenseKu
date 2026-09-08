@@ -35,7 +35,7 @@ struct EmptyStateView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(Metric.screenPadding)
-        .warmBackground()
+        .appBackground()
     }
 }
 

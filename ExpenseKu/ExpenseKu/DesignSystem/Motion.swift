@@ -32,6 +32,10 @@ enum Motion {
     /// A figure counting to a new value.
     static let number = Animation.timingCurve(0.23, 1, 0.32, 1, duration: 0.50)
 
+    /// Chart marks rising out of their axis. Slower than `reveal` because the eye
+    /// is reading proportions, not just noticing arrival.
+    static let chartGrow = Animation.timingCurve(0.23, 1, 0.32, 1, duration: 0.62)
+
     /// What every spatial animation becomes under Reduce Motion.
     static let reduced = Animation.easeOut(duration: 0.20)
 

@@ -60,5 +60,5 @@ struct PaydayStepper: View {
         Text("payday = \(payday)").font(.dsCaption)
     }
     .padding()
-    .warmBackground()
+    .appBackground()
 }

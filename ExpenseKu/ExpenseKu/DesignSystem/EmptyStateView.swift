@@ -18,11 +18,11 @@ struct EmptyStateView: View {
         VStack(spacing: Metric.cardGap) {
             ZStack {
                 Circle()
-                    .fill(Theme.textSecondary.opacity(0.12))
+                    .fill(Theme.accent.opacity(0.12))
                     .frame(width: badgeSize, height: badgeSize)
                 Image(systemName: systemImage)
                     .font(.system(size: badgeSize * (40 / 96), weight: .regular))
-                    .foregroundStyle(Theme.textSecondary)
+                    .foregroundStyle(Theme.accentText)
             }
             .padding(.bottom, 4)
             Text(title)

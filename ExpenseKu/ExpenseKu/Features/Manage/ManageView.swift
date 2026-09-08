@@ -21,22 +21,30 @@ struct ManageView: View {
         NavigationStack(path: $path) {
             ScrollView {
                 VStack(spacing: Metric.cardGap) {
-                    NavigationLink(value: Destination.categories) {
-                        ManageMenuRow(title: "Categories", systemImage: "folder.fill",
-                                      subtitle: "^[\(categories.count) category](inflect: true)")
+                    VStack(spacing: 0) {
+                        NavigationLink(value: Destination.categories) {
+                            ManageMenuRow(title: "Categories", systemImage: "folder.fill",
+                                          subtitle: "^[\(categories.count) category](inflect: true)")
+                        }
+                        .buttonStyle(.pressableRow)
+                        Divider().overlay(Theme.hairline)
+                        NavigationLink(value: Destination.people) {
+                            ManageMenuRow(title: "People", systemImage: "person.2.fill",
+                                          subtitle: "^[\(people.count) person](inflect: true)")
+                        }
+                        .buttonStyle(.pressableRow)
+                        Divider().overlay(Theme.hairline)
+                        NavigationLink(value: Destination.accounts) {
+                            ManageMenuRow(title: "Accounts", systemImage: "creditcard.fill",
+                                          subtitle: "^[\(accounts.count) account](inflect: true)")
+                        }
+                        .buttonStyle(.pressableRow)
                     }
-                    .buttonStyle(.plain)
-                    NavigationLink(value: Destination.people) {
-                        ManageMenuRow(title: "People", systemImage: "person.2.fill",
-                                      subtitle: "^[\(people.count) person](inflect: true)")
-                    }
-                    .buttonStyle(.plain)
-                    NavigationLink(value: Destination.accounts) {
-                        ManageMenuRow(title: "Accounts", systemImage: "creditcard.fill",
-                                      subtitle: "^[\(accounts.count) account](inflect: true)")
-                    }
-                    .buttonStyle(.plain)
+                    .cardStyle()
+                    .reveal(0)
+
                     AppVersionFooter()
+                        .reveal(1)
                 }
                 .padding(Metric.screenPadding)
             }

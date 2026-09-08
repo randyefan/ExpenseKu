@@ -18,7 +18,7 @@ struct ChipRail<Content: View>: View {
     var spacing: CGFloat = 8
     /// Fixed-width, not a fraction of the rail: a proportional fade dims a whole
     /// chip on a narrow screen and does nothing on a wide one.
-    private let fade: CGFloat = 28
+    private let fade: CGFloat = 44
     @ViewBuilder var content: Content
 
     var body: some View {

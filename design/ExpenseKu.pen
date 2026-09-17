@@ -19978,6 +19978,516 @@
           ]
         }
       ]
+    },
+    {
+      "type": "frame",
+      "id": "Sfqn4",
+      "x": 0,
+      "y": 8100,
+      "name": "04 · App Icon",
+      "fill": "#08090A",
+      "layout": "vertical",
+      "gap": 48,
+      "padding": 96,
+      "children": [
+        {
+          "type": "frame",
+          "id": "LuTMc",
+          "name": "Header",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "text",
+              "id": "gsxAf",
+              "name": "Eyebrow",
+              "fill": "#F2A93B",
+              "content": "EXPENSEKU · APP ICON · INK & AMBER",
+              "fontFamily": "Plus Jakarta Sans",
+              "fontSize": 14,
+              "fontWeight": "600",
+              "letterSpacing": 1.5
+            },
+            {
+              "type": "text",
+              "id": "qFqE8",
+              "name": "Title",
+              "fill": "#F2F3F5",
+              "content": "App icon options",
+              "fontFamily": "Plus Jakarta Sans",
+              "fontSize": 64,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "j94Yj0",
+              "name": "Subtitle",
+              "fill": "#9AA0A8",
+              "textGrowth": "fixed-width",
+              "width": 1400,
+              "content": "The shipped icon is still the round-1 “Warm Cards” coral wallet on cream. These redraw it in the current palette: graphite ink canvas, one amber accent, ink on amber (never white). Artboards are 1024 × 1024, full-bleed and opaque — iOS applies the squircle mask.",
+              "lineHeight": 1.5,
+              "fontFamily": "Plus Jakarta Sans",
+              "fontSize": 18,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "POs5u",
+          "name": "Options",
+          "gap": 64,
+          "children": [
+            {
+              "type": "frame",
+              "id": "NusPF",
+              "name": "Option · A · Amber Wallet",
+              "layout": "vertical",
+              "gap": 20,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "XduUl",
+                  "name": "Label",
+                  "fill": "#F2F3F5",
+                  "content": "A · Amber Wallet",
+                  "fontFamily": "Plus Jakarta Sans",
+                  "fontSize": 24,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "frame",
+                  "id": "dHTdi",
+                  "name": "Icon · A · Amber Wallet",
+                  "clip": true,
+                  "width": 1024,
+                  "height": 1024,
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 180,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#262A30",
+                        "position": 0
+                      },
+                      {
+                        "color": "#0E0F11",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 52,
+                      "id": "tX4eS",
+                      "x": 310,
+                      "y": 240,
+                      "name": "Card",
+                      "rotation": 14,
+                      "fill": "#F2F3F5",
+                      "width": 420,
+                      "height": 280
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "M481l",
+                      "x": 328,
+                      "y": 310,
+                      "name": "Card Stripe",
+                      "rotation": 14,
+                      "fill": "#C9CDD3",
+                      "width": 400,
+                      "height": 46
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 104,
+                      "id": "q9P7NK",
+                      "x": 180,
+                      "y": 370,
+                      "name": "Wallet",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 180,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#F7BC55",
+                            "position": 0
+                          },
+                          {
+                            "color": "#EA9A28",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 624,
+                      "height": 444
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 104,
+                      "id": "nZzku",
+                      "x": 180,
+                      "y": 370,
+                      "name": "Wallet Flap Line",
+                      "fill": "#00000000",
+                      "width": 624,
+                      "height": 444,
+                      "stroke": "#FFFFFF33",
+                      "strokeWidth": 4
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 76,
+                      "id": "NozIT",
+                      "x": 580,
+                      "y": 516,
+                      "name": "Clasp",
+                      "fill": "#14161A",
+                      "width": 264,
+                      "height": 152
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "PGyZy",
+                      "x": 646,
+                      "y": 564,
+                      "name": "Clasp Dot",
+                      "fill": "#F2A93B",
+                      "width": 56,
+                      "height": 56
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "PALB5",
+              "name": "Option · B · Rp Coin",
+              "layout": "vertical",
+              "gap": 20,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "cGRuh",
+                  "name": "Label",
+                  "fill": "#F2F3F5",
+                  "content": "B · Rp Coin",
+                  "fontFamily": "Plus Jakarta Sans",
+                  "fontSize": 24,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "frame",
+                  "id": "Yi8o2",
+                  "name": "Icon · B · Rp Coin",
+                  "clip": true,
+                  "width": 1024,
+                  "height": 1024,
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 180,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#262A30",
+                        "position": 0
+                      },
+                      {
+                        "color": "#0E0F11",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "ellipse",
+                      "id": "E4ukO",
+                      "x": 212,
+                      "y": 236,
+                      "name": "Coin Shadow",
+                      "fill": "#00000059",
+                      "width": 600,
+                      "height": 600,
+                      "effect": {
+                        "type": "blur",
+                        "radius": 40
+                      }
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "N8ERBc",
+                      "x": 212,
+                      "y": 212,
+                      "name": "Coin",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 180,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#F7BC55",
+                            "position": 0
+                          },
+                          {
+                            "color": "#EA9A28",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 600,
+                      "height": 600
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "nqbzz",
+                      "x": 262,
+                      "y": 262,
+                      "name": "Coin Ring",
+                      "fill": "#00000000",
+                      "width": 500,
+                      "height": 500,
+                      "stroke": "#14161A2E",
+                      "strokeWidth": 14
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Ivbkp",
+                      "x": 212,
+                      "y": 212,
+                      "name": "Glyph Box",
+                      "width": 600,
+                      "height": 600,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "QFwkf",
+                          "name": "Rp",
+                          "fill": "#14161A",
+                          "content": "Rp",
+                          "fontFamily": "Plus Jakarta Sans",
+                          "fontSize": 260,
+                          "fontWeight": "800",
+                          "letterSpacing": -8
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "uIQgK",
+              "name": "Option · C · Ledger Card",
+              "layout": "vertical",
+              "gap": 20,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "vla7q",
+                  "name": "Label",
+                  "fill": "#F2F3F5",
+                  "content": "C · Ledger Card",
+                  "fontFamily": "Plus Jakarta Sans",
+                  "fontSize": 24,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "frame",
+                  "id": "rBHsb",
+                  "name": "Icon · C · Ledger Card",
+                  "clip": true,
+                  "width": 1024,
+                  "height": 1024,
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 180,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#262A30",
+                        "position": 0
+                      },
+                      {
+                        "color": "#0E0F11",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 112,
+                      "id": "h90lCh",
+                      "x": 192,
+                      "y": 172,
+                      "name": "Card",
+                      "fill": "#1C1F24",
+                      "width": 640,
+                      "height": 680,
+                      "stroke": "#343941",
+                      "strokeWidth": 6
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 60,
+                      "id": "cea88",
+                      "x": 272,
+                      "y": 262,
+                      "name": "Total Bar",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 180,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#F7BC55",
+                            "position": 0
+                          },
+                          {
+                            "color": "#EA9A28",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 480,
+                      "height": 120
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "MnCNJ",
+                      "x": 272,
+                      "y": 408,
+                      "name": "Row Icon",
+                      "fill": "#E6866740",
+                      "width": 88,
+                      "height": 88
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "G9TKKd",
+                      "x": 298,
+                      "y": 434,
+                      "name": "Row Dot",
+                      "fill": "#E68667",
+                      "width": 36,
+                      "height": 36
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 16,
+                      "id": "I9DTS",
+                      "x": 400,
+                      "y": 436,
+                      "name": "Row Line",
+                      "fill": "#454A53",
+                      "width": 352,
+                      "height": 32
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "xfkG4",
+                      "x": 272,
+                      "y": 538,
+                      "name": "Row Icon",
+                      "fill": "#E6C26740",
+                      "width": 88,
+                      "height": 88
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "Q2pHQ",
+                      "x": 298,
+                      "y": 564,
+                      "name": "Row Dot",
+                      "fill": "#E6C267",
+                      "width": 36,
+                      "height": 36
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 16,
+                      "id": "fFeZf",
+                      "x": 400,
+                      "y": 566,
+                      "name": "Row Line",
+                      "fill": "#454A53",
+                      "width": 352,
+                      "height": 32
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "CkCfX",
+                      "x": 272,
+                      "y": 668,
+                      "name": "Row Icon",
+                      "fill": "#67B8E640",
+                      "width": 88,
+                      "height": 88
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "gbkKQ",
+                      "x": 298,
+                      "y": 694,
+                      "name": "Row Dot",
+                      "fill": "#67B8E6",
+                      "width": 36,
+                      "height": 36
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 16,
+                      "id": "aIG8C",
+                      "x": 400,
+                      "y": 696,
+                      "name": "Row Line",
+                      "fill": "#454A53",
+                      "width": 352,
+                      "height": 32
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "themes": {

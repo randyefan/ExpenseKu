@@ -7,7 +7,8 @@
 //  the earlier cream/coral "Warm Cards" palette.
 //
 //  Dark is the designed theme and light is the faithful alternate, so every pair
-//  below is authored dark-first. The app still follows the system setting.
+//  below is authored dark-first. The app is locked to dark (UIUserInterfaceStyle
+//  in Info.plist); the light values are kept, unused, for a future light theme.
 //
 //  Colours adapt at resolve time, so `Theme.bg` etc. can be used as plain statics.
 //

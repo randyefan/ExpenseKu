@@ -298,12 +298,19 @@ a cycle containing only a plan would be unreachable.
 A new cycle's plan starts as a **full copy** of the previous cycle's — every PlanItem
 and every IncomeLine, amounts included. `[→ E5]`
 
-Rows that were Rp 0 or never completed last cycle arrive **dormant**: collapsed into a
+Rows that were Rp 0 **and** never completed last cycle arrive **dormant**: collapsed into a
 "From last cycle" section, one tap to activate. This is the one place the app should
 beat the spreadsheet rather than copy it. In the sheet those rows are kept deliberately
 — they are reminders (*"don't forget Liburan Saving"*) — but they accumulate: 11 dead
 rows in January, 18 by September, including `New year occasion`. On a phone that is the
 whole screen. Folding them keeps the reminder and drops the clutter. `[→ F2]`
+
+*Corrected during implementation (2026-09-20).* This clause originally read "Rp 0 **or**
+never completed", which cannot be meant literally: a freshly copied row is by definition
+never completed, so the OR reading folds `Cicilan Rumah BNI` at Rp 7.706.000 into the
+collapsed section the instant the owner pages forward. `CONTEXT.md`'s AND reading is the
+ubiquitous language and is what ships. A row must also have been **carried over** to be
+dormant, so a Rp 0 row the owner is midway through typing stays where they can see it.
 
 ### 7.3 Completing an item
 
@@ -524,10 +531,21 @@ as an omission:
 | Item | Status |
 |---|---|
 | **iPad / Mac two-column layout** (§6.2) | Deferred by the owner, 2026-09-20 — the design is still iterating on iPhone |
-| Does a Fixed item's **name become the created Expense's note**? | `G3` assumes yes. Without it the ledger shows five rows called only "Cicilan"/"Hiburan". Not yet a PRD decision |
-| Should a **needs-review** Expense be marked in the `List` lens too? | `G3` leaves `ExpenseRow` untouched per §6.1. A dismissed notice then hides a wrong amount permanently — the risk ADR-0007 accepts |
+| Does a Fixed item's **name become the created Expense's note**? | **Decided yes**, 2026-09-20, as `G3` assumed. Both the manual path and the Auto path write it. Without it the ledger shows several rows called only "Cicilan"/"Hiburan" — a feature meant to improve the ledger would have made it worse |
+| Should a **needs-review** Expense be marked in the `List` lens too? | **Decided no**, 2026-09-20. `ExpenseRow` stays untouched per §6.1 and `G3`. A dismissed notice then hides a wrong amount permanently — the risk ADR-0007 already accepts and names |
 | `Month` lens in a cycle with a plan | Unchanged and symmetric with `G3`; drawn only for `List` |
 | **Unbudgeted spending is invisible to the plan** (§5.2) | Neither annotation strip reports it. An expense in no envelope and no Fixed item moves the `List` total only — Sisa and both strips stay silent. Closing it would mean a third strip; not yet a PRD decision |
+
+### 11.5 Closed during implementation
+
+Three gaps this document does not address, found while building and answered in code.
+Each is argued in the header of the file that implements it.
+
+| Gap | Answer | Where |
+|---|---|---|
+| Changing the Monthly Start Date would orphan **every** plan, since a plan stores its cycle's start and no stored start would equal any current one | An exact match wins; failing that, a plan whose start falls *inside* the cycle is adopted. Nothing is rewritten, so restoring the old payday restores the old pairing | `PlanLookup` |
+| An **Envelope's category set can span two Groups**, and §5 says only "Σ per Group" | It attributes wholly to the group most of its categories belong to, ties on name. Splitting the amount would invent a division the owner never made | `GroupShares` |
+| A due day can be **genuinely unreachable**: on a walking payday-31 cycle (31 Jan → 28 Feb), day 29 clamps to 28 February, which is the cycle's exclusive end | It resolves to nothing rather than to a date outside the cycle | `DueDay` |
 
 ### 11.4 Components added by this feature
 

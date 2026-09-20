@@ -47,6 +47,13 @@ final class PlanItem {
     /// The `cycleStart` of the last plan in which this item was actually in use.
     /// Carried forward so a dormant row can say when it was last used.
     var lastUsedCycleStart: Date?
+    /// This row arrived by carry-over rather than being typed. Dormancy only ever
+    /// applies to a copied row, so a Rp 0 item the owner is midway through adding
+    /// does not fold itself away as they type.
+    var carriedOver: Bool = false
+    /// Insertion order. The stable tiebreak under the amount-descending sort, and the
+    /// reason two devices render the same plan in the same order.
+    var createdAt: Date = Date.now
 
     var plan: CyclePlan?
 
@@ -77,6 +84,8 @@ final class PlanItem {
         dueDay: Int? = nil,
         isAuto: Bool = false,
         lastUsedCycleStart: Date? = nil,
+        carriedOver: Bool = false,
+        createdAt: Date = .now,
         plan: CyclePlan? = nil,
         category: Category? = nil,
         account: Account? = nil,
@@ -89,6 +98,8 @@ final class PlanItem {
         self.dueDay = dueDay
         self.isAuto = isAuto
         self.lastUsedCycleStart = lastUsedCycleStart
+        self.carriedOver = carriedOver
+        self.createdAt = createdAt
         self.plan = plan
         self.category = category
         self.account = account

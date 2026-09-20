@@ -36,7 +36,7 @@ extension CategoryGroup: NamedEntity {
     nonisolated static var noun: String { "group" }
 }
 
-enum NameKey {
+nonisolated enum NameKey {
     /// The comparison key for duplicate detection: trimmed + case-insensitive.
     static func normalized(_ raw: String) -> String {
         raw.trimmingCharacters(in: .whitespacesAndNewlines).localizedLowercase

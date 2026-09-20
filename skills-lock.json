@@ -12,6 +12,12 @@
       "sourceType": "github",
       "skillPath": "skills/appllama-usage/SKILL.md",
       "computedHash": "9b9ecf34e1585ad0e77d749e5e5178270ea1b73147459ef53db7340aa16eb4e2"
+    },
+    "to-spec": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/to-spec/SKILL.md",
+      "computedHash": "3fa1a0695d4ea242fae9e569e4d22aa1788623197abb33bfadafae7315789bbf"
     }
   }
 }

@@ -2,10 +2,10 @@
 //  KeyboardDismissTap.swift
 //  ExpenseKu
 //
-//  Tap-outside-to-dismiss for the expense editor's notes keyboard. SwiftUI's `List`
-//  offers interactive drag-dismissal but no tap-outside dismissal, so this installs a
-//  recognizer on the enclosing window. Kept as its own file because it is the app's
-//  only UIKit shim on this screen.
+//  Tap-outside-to-dismiss for the editors that type free text over a List. SwiftUI's
+//  `List` offers interactive drag-dismissal but no tap-outside dismissal, so this
+//  installs a recognizer on the enclosing window. Kept as its own file because it is
+//  the app's only UIKit shim of this kind.
 //
 
 import SwiftUI

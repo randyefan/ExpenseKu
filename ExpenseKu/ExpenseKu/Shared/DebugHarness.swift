@@ -19,6 +19,7 @@ struct DebugHarness: View {
     let screen: String
 
     @Query(sort: \Category.name) private var categories: [Category]
+    @Query(sort: \CategoryGroup.name) private var groups: [CategoryGroup]
     @Query(sort: \Person.name) private var people: [Person]
     @Query(sort: \Account.name) private var accounts: [Account]
 
@@ -50,15 +51,15 @@ struct DebugHarness: View {
         case "category-editor":
             // Edit a seeded category so the appearance picker shows a live preview.
             NavigationStack {
-                AppearanceEntityEditor<Category>(
-                    title: categories.first == nil ? "New Category" : "Edit Category",
-                    editing: categories.first,
-                    makeNew: { Category() }
-                )
+                CategoryEditorView(editing: categories.first)
+            }
+        case "group-editor":
+            NavigationStack {
+                GroupEditorView(editing: groups.first)
             }
         case "account-editor":
             NavigationStack {
-                AppearanceEntityEditor<Account>(
+                AppearanceEntityEditor(
                     title: accounts.first == nil ? "New Account" : "Edit Account",
                     editing: accounts.first,
                     makeNew: { Account() }
@@ -77,7 +78,7 @@ struct DebugHarness: View {
         case "name-duplicate":
             // Prefill with a seeded category name so the dedup prompt shows.
             NavigationStack {
-                AppearanceEntityEditor<Category>(
+                AppearanceEntityEditor(
                     title: "New Category",
                     makeNew: { Category() },
                     debugPrefill: categories.first?.name ?? "Makan"

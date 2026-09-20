@@ -81,6 +81,27 @@ struct CyclePlanLens<Header: View>: View {
                 detail: contents.review.detail,
                 onTap: { onAction(.openReview) }
             )
+        } else if let plan = contents.plan,
+                  let source = plan.copiedFromCycleStart,
+                  !plan.carryOverNoticeSeen {
+            PlanNotice(
+                kind: .carriedOver,
+                title: "Copied from last cycle",
+                detail: PlanCopy.carriedOver(from: source, payday: payday,
+                                             items: plan.copiedItemCount,
+                                             incomeLines: plan.copiedIncomeCount,
+                                             calendar: calendar)
+            )
+        } else if contents.transfers.contains(where: { !$0.hasTransferred }),
+                  contents.incomeLines.contains(where: \.hasArrived),
+                  contents.doneCount == 0 {
+            PlanNotice(
+                kind: .payday,
+                title: "Payday — " + PlanCopy.counted(
+                    contents.transfers.count(where: { !$0.hasTransferred }), "transfer"
+                ) + " to make",
+                detail: "Work down the checklist at the foot."
+            )
         }
     }
 

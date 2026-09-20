@@ -73,7 +73,7 @@ struct AccountPicker: View {
         .navigationTitle("Account")
         .sheet(isPresented: $showingNew) {
             NavigationStack {
-                AppearanceEntityEditor<Account>(title: "New Account", makeNew: { Account() }) { created in
+                AppearanceEntityEditor(title: "New Account", makeNew: { Account() }) { created in
                     selection = created
                 }
             }

@@ -15,6 +15,7 @@ import SwiftData
 
 extension ExpensesView {
     func perform(_ action: PlanAction, in contents: PlanContents) {
+        markCarryOverSeen(contents)
         switch action {
         case .startPlan:
             startPlan()
@@ -51,6 +52,27 @@ extension ExpensesView {
         case .openReview:
             planSheet = .review
         }
+    }
+
+    /// Fills a forward cycle's plan from the previous one, on arrival (PRD §7.2).
+    ///
+    /// Only ever **forward**, never for a cycle older than the newest plan. Carry-over
+    /// is a write, and paging back through history to look at what happened must not
+    /// silently manufacture plans for cycles the owner never planned.
+    func carryOverIfNeeded() {
+        guard lens == .plan,
+              PlanLookup.plan(for: cycle, in: plans) == nil,
+              let newest = plans.map(\.cycleStart).max(),
+              cycle.start > newest else { return }
+        PlanCarryOver.makePlan(for: cycle, from: plans, in: context)
+    }
+
+    /// The carry-over notice has done its job once the owner starts adjusting, which
+    /// is what it asks them to do.
+    private func markCarryOverSeen(_ contents: PlanContents) {
+        guard let plan = contents.plan, !plan.carryOverNoticeSeen,
+              plan.copiedFromCycleStart != nil else { return }
+        plan.carryOverNoticeSeen = true
     }
 
     // MARK: - Writes

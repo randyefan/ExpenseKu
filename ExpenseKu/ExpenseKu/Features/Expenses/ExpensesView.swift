@@ -40,14 +40,14 @@ struct ExpensesView: View {
     /// how far back the ‹ arrow reaches, and a plan item's amount history — rather
     /// than a `@Query(filter:)` keyed on the visible cycle, whose predicate is fixed
     /// at init and would become a second source of truth about which cycle is showing.
-    @Query(sort: \CyclePlan.cycleStart) private var plans: [CyclePlan]
+    @Query(sort: \CyclePlan.cycleStart) var plans: [CyclePlan]
 
     @State private var selection: Expense?
     @State private var showingNew = false
     @State private var showingSettings = false
     @State private var payday: Int = Payday.current
     @State var cycle: PayCycle = PayCycle.containing(.now, payday: Payday.current)
-    @State private var lens: Lens = .list
+    @State var lens: Lens = .list
     /// The day the calendar has selected. Nil (or stale after paging) means
     /// "fall back to the default day" — see `resolvedSelectedDay`.
     @State private var selectedDay: Date?
@@ -210,6 +210,7 @@ struct ExpensesView: View {
             .sensoryFeedback(.selection, trigger: cycle)
             .sensoryFeedback(.selection, trigger: lens)
             .onAppear { resetToCurrentCycle() }
+            .task(id: CarryOverKey(cycle: cycle, isPlan: lens == .plan)) { carryOverIfNeeded() }
             .onChange(of: payday) { _, newValue in
                 cycle = PayCycle.containing(.now, payday: newValue, calendar: calendar)
             }
@@ -323,6 +324,14 @@ struct ExpensesView: View {
         // Outside the loop: one transaction for the whole swipe batch.
         try? context.save()
     }
+}
+
+/// What a carry-over check depends on: which cycle is showing, and whether the Plan
+/// lens is the one asking. A `.task(id:)` over this re-runs on exactly those changes
+/// and on nothing else.
+private struct CarryOverKey: Hashable {
+    let cycle: PayCycle
+    let isPlan: Bool
 }
 
 private extension View {

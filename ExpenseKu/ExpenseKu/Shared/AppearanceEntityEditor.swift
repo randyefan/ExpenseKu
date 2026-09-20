@@ -35,11 +35,15 @@ extension CategoryGroup: AppearanceEntity {
     nonisolated static func autoSymbol(forName name: String) -> String { CategoryGroup.defaultSymbol }
 }
 
-struct AppearanceEntityEditor<T: AppearanceEntity>: View {
+struct AppearanceEntityEditor<T: AppearanceEntity, Extras: View>: View {
     let title: String
     let editing: T?
     let makeNew: () -> T
     var onCommit: (T) -> Void
+    /// Fields only one kind of entity has, rendered above the colour/icon workbench.
+    /// Category uses it for its optional Group row (frame H4) and CategoryGroup for a
+    /// read-only list of its members (H3); Account passes nothing and is unaffected.
+    @ViewBuilder let extras: Extras
 
     @State private var colorHex: String?
     @State private var iconName: String?
@@ -52,12 +56,14 @@ struct AppearanceEntityEditor<T: AppearanceEntity>: View {
         editing: T? = nil,
         makeNew: @escaping () -> T,
         debugPrefill: String? = nil,
-        onCommit: @escaping (T) -> Void = { _ in }
+        onCommit: @escaping (T) -> Void = { _ in },
+        @ViewBuilder extras: () -> Extras = { EmptyView() }
     ) {
         self.title = title
         self.editing = editing
         self.makeNew = makeNew
         self.onCommit = onCommit
+        self.extras = extras()
         self.debugPrefill = debugPrefill
         _colorHex = State(initialValue: editing?.colorHex)
         _iconName = State(initialValue: editing?.iconName)
@@ -80,6 +86,7 @@ struct AppearanceEntityEditor<T: AppearanceEntity>: View {
                 )
             },
             workbench: { name in
+                extras
                 AppearanceWorkbench(
                     colorHex: $colorHex,
                     iconName: $iconName,

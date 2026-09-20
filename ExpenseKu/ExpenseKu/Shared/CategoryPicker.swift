@@ -52,7 +52,7 @@ struct CategoryPicker: View {
         .navigationTitle("Category")
         .sheet(isPresented: $showingNew) {
             NavigationStack {
-                AppearanceEntityEditor<Category>(title: "New Category", makeNew: { Category() }) { created in
+                CategoryEditorView { created in
                     selection = created
                 }
             }

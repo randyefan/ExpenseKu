@@ -43,6 +43,10 @@ struct RootView: View {
         #endif
         .task {
             Person.reconcileMe(in: modelContext)
+            // Auto items materialise here, lazily: iOS does not run this in the
+            // background, so an Auto expense appears the first time the app is
+            // opened after its due day passes (ADR-0007).
+            PlanMaintenance.run(in: modelContext)
             #if DEBUG
             applyDebugLaunch()
             #endif
@@ -53,6 +57,7 @@ struct RootView: View {
             let changes = NotificationCenter.default.notifications(named: .NSPersistentStoreRemoteChange)
             for await _ in changes {
                 Person.reconcileMe(in: modelContext)
+                PlanMaintenance.run(in: modelContext)
             }
         }
     }
@@ -97,7 +102,7 @@ struct DebugScreen: Identifiable, Hashable {
 
     static let coverScreens: Set<String> = [
         "editor", "picker-category", "picker-people", "picker-account", "name-duplicate",
-        "settings", "category-editor", "account-editor", "person-editor",
+        "settings", "category-editor", "account-editor", "person-editor", "group-editor",
     ]
 }
 #endif

@@ -24,6 +24,16 @@ final class CyclePlan {
     /// The owning cycle's `PayCycle.start`, at the start of that day.
     var cycleStart: Date = Date.now
 
+    /// Where this plan was copied from, and how much arrived — frozen at copy time,
+    /// because E5's notice is about the copy, not about what the plan holds now.
+    /// Nil on a plan the owner started by hand (frame I5).
+    var copiedFromCycleStart: Date?
+    var copiedItemCount: Int = 0
+    var copiedIncomeCount: Int = 0
+    /// Cleared once the owner has seen the carry-over notice, so it does not follow
+    /// them around for the rest of the cycle.
+    var carryOverNoticeSeen: Bool = false
+
     @Relationship(deleteRule: .cascade, inverse: \IncomeLine.plan)
     var incomeLines: [IncomeLine]? = []
 

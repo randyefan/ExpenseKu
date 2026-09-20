@@ -62,12 +62,7 @@ struct CyclePlanLens<Header: View>: View {
                 }
             }
         }
-        .listStyle(.insetGrouped)
-        .listSectionSpacing(.compact)
-        .environment(\.defaultMinListHeaderHeight, 0)
-        .contentMargins(.horizontal, Metric.screenPadding, for: .scrollContent)
-        .scrollContentBackground(.hidden)
-        .background(Theme.bg)
+        .cycleLensList()
     }
 
     // MARK: - Sections

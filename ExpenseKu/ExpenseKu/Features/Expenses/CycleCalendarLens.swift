@@ -76,10 +76,6 @@ struct CycleCalendarLens<Header: View>: View {
                 }
             }
         }
-        .listStyle(.insetGrouped)
-        .listSectionSpacing(.compact)
-        .contentMargins(.horizontal, Metric.screenPadding, for: .scrollContent)
-        .scrollContentBackground(.hidden)
-        .background(Theme.bg)
+        .cycleLensList()
     }
 }

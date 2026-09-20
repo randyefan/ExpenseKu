@@ -33,6 +33,12 @@ final class Category {
     /// percentage table. Inverse lives on the Group side.
     var group: CategoryGroup?
 
+    // Fixed plan items that name this Category. Every relationship needs a declared
+    // inverse for CloudKit, even one nothing reads — a missing one fails the store at
+    // launch, not at compile time (see PlanSchemaTests).
+    @Relationship(deleteRule: .nullify, inverse: \PlanItem.category)
+    var planItems: [PlanItem]? = []
+
     // The envelopes that count this Category. At most one per plan, enforced in the
     // picker (PRD §5.2) rather than by a constraint the store cannot carry (ADR-0002).
     // Deleting a Category drops it out of each envelope's set; the envelope survives.

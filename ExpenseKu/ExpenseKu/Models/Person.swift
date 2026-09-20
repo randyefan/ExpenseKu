@@ -29,6 +29,11 @@ final class Person {
     @Relationship(deleteRule: .nullify, inverse: \Expense.people)
     var expenses: [Expense]? = []
 
+    // Plan items this person is tagged on, passed to the Expense the item creates
+    // (ADR-0006). Declared for CloudKit's sake; nothing reads it from this side.
+    @Relationship(deleteRule: .nullify, inverse: \PlanItem.people)
+    var planItems: [PlanItem]? = []
+
     init(name: String = "", isMe: Bool = false, colorHex: String? = nil) {
         self.name = name
         self.isMe = isMe

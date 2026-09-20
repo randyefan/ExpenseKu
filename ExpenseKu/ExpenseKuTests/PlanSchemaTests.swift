@@ -13,6 +13,13 @@
 //     accepts that when each has its own explicit inverse.
 //  2. Every delete rule behaves as ADR-0001 and PRD §9.4/§9.5 require, including the
 //     one place this feature cascades.
+//  3. **Every relationship declares an inverse.** ADR-0002's CloudKit rules are usually
+//     stated as "optional or defaulted, no unique constraints"; this third one is
+//     easier to miss and fails harder. Four relationships shipped without one and the
+//     app died at launch with "Store failed to load" — while these tests stayed green,
+//     because an in-memory container is built with `cloudKitDatabase: .none` and never
+//     applies the rule. The test below reads it off the schema instead, so it fails in
+//     CI rather than on a device.
 //
 
 import XCTest
@@ -150,6 +157,22 @@ nonisolated final class PlanSchemaTests: XCTestCase {
         try context.save()
         XCTAssertEqual(try context.fetchCount(FetchDescriptor<Category>()), 1)
         XCTAssertNil(kos.group)
+    }
+
+    /// **Every relationship in the shipping schema declares an inverse.**
+    ///
+    /// CloudKit refuses a store where one does not, and the refusal arrives at launch
+    /// as a fatal error — not at compile time, and not in a `.none` test container.
+    /// Reading it off `Schema` catches it here instead.
+    @MainActor
+    func testEveryRelationshipHasAnInverse() {
+        let schema = Schema(versionedSchema: ExpenseKuSchemaV2.self)
+        let missing = schema.entities.flatMap { entity in
+            entity.relationships
+                .filter { $0.inverseName == nil }
+                .map { "\(entity.name): \($0.name)" }
+        }
+        XCTAssertEqual(missing, [], "CloudKit requires an inverse on every relationship")
     }
 
     /// An unrecognised kind — a value a future version wrote and synced down — reads

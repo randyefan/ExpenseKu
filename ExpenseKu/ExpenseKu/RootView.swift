@@ -8,6 +8,7 @@
 
 import SwiftUI
 import CoreData
+import SwiftData
 
 struct RootView: View {
     enum AppTab: Hashable { case expenses, insights, manage }
@@ -68,13 +69,14 @@ struct RootView: View {
         }
 
         switch DebugLaunch.startScreen {
-        case "calendar", "calendar-day", "search", "search-empty":
+        case "calendar", "calendar-day", "search", "search-empty",
+             "plan", "plan-next", "plan-dormant", "plan-list":
             // In-tab state, not a cover: ExpensesView's own task flips the lens
             // or prefills the query.
             selection = .expenses
         case "leaderboard", "person-detail":
             selection = .insights
-        case "categories", "people", "accounts":
+        case "categories", "people", "accounts", "groups":
             selection = .manage
         default:
             break

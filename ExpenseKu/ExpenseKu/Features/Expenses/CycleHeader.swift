@@ -3,8 +3,12 @@
 //  ExpenseKu
 //
 //  The Expenses tab's header card: ‹ › to page between pay cycles, the cycle's title
-//  and date span, and the cycle's spending total. Spending only — the domain has no
-//  income concept (Q6).
+//  and date span, and one labelled figure about it.
+//
+//  The figure is whatever the active lens is about — SPENDING in List and Month, SISA
+//  in Plan (PRD §6.2) — and the card keeps its shape across all three. The label
+//  always names the number, which is what lets one header serve three lenses without
+//  a figure ever silently changing meaning.
 //
 //  The total is charcoal, not coral: the accent is reserved for actions and selected
 //  states, and a figure this large in coral reads as an alarm. The card carries a
@@ -16,7 +20,7 @@ import SwiftUI
 
 struct CycleHeader: View {
     let cycle: PayCycle
-    let total: Decimal
+    let headline: CycleHeadline
     let canGoBack: Bool
     let canGoForward: Bool
     let calendar: Calendar
@@ -60,8 +64,8 @@ struct CycleHeader: View {
             }
 
             VStack(spacing: 2) {
-                SectionHeaderText("Spending")
-                MoneyText(total, font: .dsHero, color: Theme.text, rolls: true)
+                SectionHeaderText(headline.label)
+                MoneyText(headline.amount, font: .dsHero, color: headlineColor, rolls: true)
             }
         }
         .padding(Metric.cardPadding)
@@ -80,6 +84,16 @@ struct CycleHeader: View {
         }
         .padding(.top, 8)
         .padding(.bottom, Metric.cardGap)
+    }
+
+    /// Charcoal for the ordinary case: a figure this large in accent reads as an
+    /// alarm, and the accent is reserved for actions and selected states. A plan that
+    /// allocates past its income is the one thing worth alarming about (frame I6).
+    private var headlineColor: Color {
+        switch headline.tint {
+        case .neutral: Theme.text
+        case .negative: Theme.negative
+        }
     }
 }
 
@@ -105,7 +119,7 @@ private struct CyclePageButton: View {
 #Preview {
     CycleHeader(
         cycle: PayCycle.containing(.now, payday: 1),
-        total: 220_000,
+        headline: .spending(220_000),
         canGoBack: true,
         canGoForward: false,
         calendar: .current,

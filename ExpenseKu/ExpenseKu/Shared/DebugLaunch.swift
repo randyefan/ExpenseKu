@@ -26,6 +26,7 @@ enum DebugLaunch {
 
     /// -startScreen categories|people|accounts|leaderboard|person-detail|category-editor|account-editor
     ///              |person-editor|calendar|calendar-day|search|search-empty
+    ///              |plan|plan-next|plan-dormant|plan-list|groups
     ///
     /// `calendar` opens the Expenses tab in the Month lens with its default day
     /// selected; `calendar-day` selects the cycle's heaviest day instead, so the
@@ -85,6 +86,10 @@ enum DebugLaunch {
         expenses.forEach(context.insert)
         // The `fetchCount == 0` guard above only holds if the previous seed landed.
         try? context.save()
+
+        // The cycle plan is seeded separately and only on request, so every existing
+        // screenshot of List / Month / Insights / Manage stays byte-identical.
+        DebugPlanSeed.seedIfNeeded(context)
     }
 }
 #endif

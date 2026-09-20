@@ -8,9 +8,15 @@
 //  per device (design.md §1): list + detail-pane editing on iPad/Mac, a collapsed
 //  push on iPhone. Add is always a sheet for the fast logging flow (design.md §2).
 //
-//  Within the cycle the owner picks one of two lenses with the List/Month toggle:
-//  the day-grouped list (default) or the calendar grid (see CycleCalendar.swift).
-//  Both read the same `CycleContents`, so they can never disagree.
+//  Within the cycle the owner picks one of three lenses with the List/Month/Plan
+//  toggle: the day-grouped list (default), the calendar grid (CycleCalendar.swift), or
+//  the cycle plan (Features/Plan). The first two read the same `CycleContents`, so they
+//  can never disagree; the Plan lens reads `PlanContents`, which is handed that same
+//  filtered expense array so the plan and the ledger agree about what fell in the cycle.
+//
+//  This view owns every piece of plan state as well, above the `.id()` that rebuilds
+//  the lens on each page — a sheet or an expanded section owned by the lens itself
+//  would be torn down mid-interaction.
 //
 //  Search is the one thing here that escapes the cycle: a non-empty query replaces
 //  the whole cycle view — header, total and toggle included — with all-time results
@@ -23,19 +29,24 @@ import SwiftData
 struct ExpensesView: View {
     /// How the cycle's expenses are laid out. Session state — the tab opens on
     /// `.list` every launch, and the choice sticks while the app runs.
-    enum Lens: Hashable { case list, calendar }
+    enum Lens: Hashable { case list, calendar, plan }
 
-    @Environment(\.modelContext) private var context
+    @Environment(\.modelContext) var context
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Query(sort: \Expense.date, order: .reverse) private var expenses: [Expense]
     /// Feeds the search Category chip. Sorted by name so the menu is stable.
     @Query(sort: \Category.name) private var categories: [Category]
+    /// Every plan, ascending. One array doing three jobs — which plan the lens shows,
+    /// how far back the ‹ arrow reaches, and a plan item's amount history — rather
+    /// than a `@Query(filter:)` keyed on the visible cycle, whose predicate is fixed
+    /// at init and would become a second source of truth about which cycle is showing.
+    @Query(sort: \CyclePlan.cycleStart) private var plans: [CyclePlan]
 
     @State private var selection: Expense?
     @State private var showingNew = false
     @State private var showingSettings = false
     @State private var payday: Int = Payday.current
-    @State private var cycle: PayCycle = PayCycle.containing(.now, payday: Payday.current)
+    @State var cycle: PayCycle = PayCycle.containing(.now, payday: Payday.current)
     @State private var lens: Lens = .list
     /// The day the calendar has selected. Nil (or stale after paging) means
     /// "fall back to the default day" — see `resolvedSelectedDay`.
@@ -44,6 +55,10 @@ struct ExpensesView: View {
     /// state it describes changes, because a transition is chosen at insertion
     /// time — an `.onChange` observer would run a frame too late.
     @State private var contentChange: CycleContentChange = .page(.leading)
+    /// Lives here, not in the lens: the lens is rebuilt on every page and lens switch.
+    @State var dormantExpanded = false
+    @State var planSheet: PlanSheet?
+    @State var planConfirmation: PlanConfirmation?
     @State private var searchText = ""
     /// Search filters. The category is held by name, not as a `Category`, so no
     /// live model sits in view state and a deleted category can't dangle here.
@@ -86,6 +101,11 @@ struct ExpensesView: View {
         // Derived once per pass and shared by both lenses, rather than each of the
         // header, list, calendar and day sections re-filtering the whole table.
         let contents = CycleContents(cycle: cycle, allExpenses: expenses, calendar: calendar)
+        let planContents = PlanContents(
+            plan: PlanLookup.plan(for: cycle, in: plans),
+            cycle: cycle,
+            cycleExpenses: contents.expenses
+        )
 
         NavigationSplitView {
             ZStack {
@@ -115,6 +135,11 @@ struct ExpensesView: View {
                             lens: lens,
                             change: contentChange,
                             storeIsEmpty: expenses.isEmpty,
+                            planContents: planContents,
+                            payday: payday,
+                            today: .now,
+                            dormantExpanded: dormantExpanded,
+                            onPlanAction: { perform($0, in: planContents) },
                             selectedDay: $selectedDay,
                             resolvedDay: resolvedSelectedDay,
                             onSelect: { selection = $0 },
@@ -122,9 +147,15 @@ struct ExpensesView: View {
                             header: {
                                 CycleChrome(
                                     cycle: cycle,
-                                    total: contents.total,
-                                    canGoBack: CyclePaging.canGoBack(from: cycle, oldestExpense: expenses.last?.date),
-                                    canGoForward: CyclePaging.canGoForward(from: cycle, now: .now),
+                                    headline: lens == .plan
+                                        ? .sisa(planContents.totals.sisa)
+                                        : .spending(contents.total),
+                                    canGoBack: CyclePaging.canGoBack(
+                                        from: cycle,
+                                        oldestExpense: expenses.last?.date,
+                                        oldestPlanStart: PlanLookup.oldestStart(in: plans)
+                                    ),
+                                    canGoForward: CyclePaging.canGoForward(from: cycle),
                                     calendar: calendar,
                                     lens: lensBinding,
                                     onPrevious: { page(to: cycle.previous(payday: payday, calendar: calendar), edge: .trailing) },
@@ -168,6 +199,14 @@ struct ExpensesView: View {
                 }
                 .presentationDragIndicator(.visible)
             }
+            .planSheet(
+                $planSheet,
+                confirmation: $planConfirmation,
+                contents: planContents,
+                plans: plans,
+                today: .now,
+                onOpenExpense: { selection = $0 }
+            )
             .sensoryFeedback(.selection, trigger: cycle)
             .sensoryFeedback(.selection, trigger: lens)
             .onAppear { resetToCurrentCycle() }
@@ -195,6 +234,16 @@ struct ExpensesView: View {
                     searchText = "kopi"
                 case "search-empty":
                     searchText = "xyzzy"
+                case "plan", "plan-next":
+                    lens = .plan
+                    if DebugLaunch.startScreen == "plan-next" {
+                        page(to: cycle.next(payday: payday, calendar: calendar), edge: .leading)
+                    }
+                case "plan-dormant":
+                    lens = .plan
+                    dormantExpanded = true
+                case "plan-list":
+                    lens = .list
                 default:
                     break
                 }
@@ -212,6 +261,9 @@ struct ExpensesView: View {
                 )
             }
         }
+        // A level above the editors: stacked presentation modifiers do not all fire,
+        // and this one was swallowed behind them.
+        .planConfirmation($planConfirmation, onUntick: confirmUntick, onDeleteItem: confirmDeleteItem)
     }
 
     // MARK: - Calendar state

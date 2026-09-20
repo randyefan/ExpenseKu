@@ -77,6 +77,8 @@ struct IncomeLineEditorView: View {
                 }
                 .listStyle(.insetGrouped)
                 .scrollContentBackground(.hidden)
+                .scrollDismissesKeyboard(.interactively)
+                .dismissesKeyboardOnOutsideTap()
 
                 if !nameFocused {
                     EditorKeypadDock(

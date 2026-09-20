@@ -118,6 +118,8 @@ struct PlanItemEditorView: View {
                 }
                 .listStyle(.insetGrouped)
                 .scrollContentBackground(.hidden)
+                .scrollDismissesKeyboard(.interactively)
+                .dismissesKeyboardOnOutsideTap()
 
                 if !nameFocused {
                     EditorKeypadDock(
@@ -193,15 +195,16 @@ struct PlanItemEditorView: View {
         }
         .listRowBackground(Theme.card)
 
-        LabeledContent {
-            DueDayStepper(day: $dueDay)
-        } label: {
+        HStack(spacing: 8) {
             VStack(alignment: .leading, spacing: 2) {
                 Text("Due day").font(.dsBody)
                 Text("Day-of-month, not a date. 29–31 clamp to short months.")
                     .font(.dsCaption)
                     .foregroundStyle(Theme.textSecondary)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            DueDayStepper(day: $dueDay)
         }
         .listRowBackground(Theme.card)
 

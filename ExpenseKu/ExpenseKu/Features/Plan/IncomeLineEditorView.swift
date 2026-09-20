@@ -81,6 +81,7 @@ struct IncomeLineEditorView: View {
                 if !nameFocused {
                     EditorKeypadDock(
                         expr: $expr,
+                        saveLabel: "Save income line",
                         canSave: canSave,
                         showsDelete: false,
                         onSave: save,

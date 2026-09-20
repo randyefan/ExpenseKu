@@ -73,6 +73,7 @@ struct PlanDoneSheet: View {
 
                 EditorKeypadDock(
                     expr: $expr,
+                    saveLabel: "Log this expense",
                     canSave: resolvedAmount > 0,
                     showsDelete: false,
                     onSave: logExpense,

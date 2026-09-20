@@ -12,6 +12,11 @@
 import SwiftUI
 
 struct CalculatorKeypad: View {
+    /// What the ✓ key is about to save. The keypad is shared with the plan editors,
+    /// where announcing "Save expense" would say the one thing this feature works
+    /// hardest not to confuse: a plan item is not an expense (ADR-0005).
+    var saveLabel: String = "Save expense"
+
     /// Enables the ✓ (save) key. When false it's dimmed and inert.
     var canSave: Bool
 
@@ -133,7 +138,7 @@ struct CalculatorKeypad: View {
         }
         .buttonStyle(.pressableCard)
         .disabled(!canSave)
-        .accessibilityLabel("Save expense")
+        .accessibilityLabel(saveLabel)
     }
 
     // MARK: - Key builder

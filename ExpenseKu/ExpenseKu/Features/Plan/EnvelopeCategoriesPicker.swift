@@ -78,6 +78,7 @@ struct EnvelopeCategoriesPicker: View {
                                 .foregroundStyle(Theme.textSecondary.opacity(0.5))
                         }
                         .listRowBackground(Theme.card)
+                        .accessibilityElement(children: .ignore)
                         .accessibilityLabel(category.name)
                         .accessibilityValue("Already in \(claims[category.persistentModelID] ?? "another envelope")")
                     }

@@ -122,6 +122,7 @@ struct PlanItemEditorView: View {
                 if !nameFocused {
                     EditorKeypadDock(
                         expr: $expr,
+                        saveLabel: "Save plan item",
                         canSave: canSave,
                         showsDelete: false,
                         onSave: save,

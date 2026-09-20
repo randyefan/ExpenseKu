@@ -104,6 +104,12 @@ struct AutoReviewSheet: View {
         .contentShape(.rect)
     }
 
+    /// Clears the flags on the items this sheet was showing, and only those.
+    ///
+    /// An Auto item that materialises while the sheet is open — the pass runs on every
+    /// CloudKit remote change — keeps its flag, and the notice reappears for it. That
+    /// is deliberate: clearing a flag on an amount the owner never saw is precisely
+    /// the failure ADR-0007 names as its own worst case.
     private func clearAll() {
         for item in items {
             item.linkedExpense?.needsReview = false

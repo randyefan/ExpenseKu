@@ -114,7 +114,9 @@ nonisolated final class PlanCarryOverTests: XCTestCase {
         let copy = try XCTUnwrap(PlanCarryOver.makePlan(for: cycle(2026, 10, 10),
                                                         from: [source], in: context))
         XCTAssertEqual(copy.copiedFromCycleStart, september.start)
-        XCTAssertEqual(copy.copiedItemCount, 2)
+        XCTAssertEqual(copy.copiedItemCount, 1,
+                       "the notice counts live rows only — the dormant one is folded away, "
+                       + "and the sentence sits directly above a list headed with the live count")
 
         let inUse = try XCTUnwrap((copy.items ?? []).first { $0.name == "Kos" })
         XCTAssertEqual(inUse.lastUsedCycleStart, september.start)

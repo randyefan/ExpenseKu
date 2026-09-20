@@ -36,7 +36,11 @@ enum PlanCarryOver {
 
         let plan = CyclePlan(cycleStart: cycle.start)
         plan.copiedFromCycleStart = source.cycleStart
-        plan.copiedItemCount = (source.items ?? []).count
+        // Only the rows that arrive *live*. Counting the dormant ones too would put
+        // "25 items" in the notice directly above a list headed "PLAN · 14 ITEMS",
+        // and the sentence is about what the owner is being asked to adjust. A copied
+        // row is dormant exactly when its amount is zero, since doneness never travels.
+        plan.copiedItemCount = (source.items ?? []).count { $0.amount > 0 }
         plan.copiedIncomeCount = (source.incomeLines ?? []).count
         context.insert(plan)
 

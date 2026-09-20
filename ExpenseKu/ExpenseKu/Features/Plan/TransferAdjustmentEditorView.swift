@@ -79,6 +79,7 @@ struct TransferAdjustmentEditorView: View {
 
                 EditorKeypadDock(
                     expr: $expr,
+                    saveLabel: "Save adjustment",
                     canSave: true,
                     showsDelete: false,
                     onSave: save,

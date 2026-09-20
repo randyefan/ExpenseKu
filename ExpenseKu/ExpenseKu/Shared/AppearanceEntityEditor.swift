@@ -3,7 +3,7 @@
 //  ExpenseKu
 //
 //  Add/rename editor for the entities that carry a customizable appearance
-//  (Category, Account). Wraps the shared `NameEditorView` — inheriting its
+//  (Category, Account, CategoryGroup). Wraps the shared `NameEditorView` — inheriting its
 //  ADR-0002 duplicate handling — and layers the colour + icon workbench on top,
 //  stamping the owner's choices onto the entity on save.
 //
@@ -29,6 +29,10 @@ extension Category: AppearanceEntity {
 
 extension Account: AppearanceEntity {
     nonisolated static func autoSymbol(forName name: String) -> String { Account.defaultSymbol }
+}
+
+extension CategoryGroup: AppearanceEntity {
+    nonisolated static func autoSymbol(forName name: String) -> String { CategoryGroup.defaultSymbol }
 }
 
 struct AppearanceEntityEditor<T: AppearanceEntity>: View {

@@ -23,7 +23,7 @@ struct StoreBootstrap {
     static func make() -> StoreBootstrap {
         // Declared through the versioned schema so the store always records which version
         // it is; see Models/ExpenseKuSchema.swift.
-        let schema = Schema(versionedSchema: ExpenseKuSchemaV1.self)
+        let schema = Schema(versionedSchema: ExpenseKuSchemaV2.self)
 
         // Primary store: persistent, CloudKit-mirrored via the container in
         // ExpenseKu.entitlements (cloudKitDatabase defaults to .automatic).

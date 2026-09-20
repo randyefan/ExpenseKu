@@ -104,6 +104,23 @@ enum Theme {
     static let text           = adaptive(light: 0x16181C, dark: 0xF2F3F5)
     static let textSecondary  = adaptive(light: 0x6E737A, dark: 0x9AA0A8)
 
+    /// Money that has run past where it was meant to: envelope overspend, a plan
+    /// that allocates more than it earns, a negative transfer adjustment, and the
+    /// destructive confirmations that delete an expense.
+    ///
+    /// Added for the cycle plan. Until then the app had nothing but the accent, and
+    /// the accent is reserved for actions and selected states — a figure in amber
+    /// reads as "tap me", not as "this is over". The values are `tint-red` from
+    /// design/ExpenseKu.pen; light mode deepens it because the pen value is authored
+    /// for ink and manages about 2.4:1 on paper.
+    static let negative     = adaptive(light: 0xB23636, dark: 0xE66767)
+    /// `negative` at the 18% the design system uses for every tinted fill.
+    static var negativeWash: Color { negative.opacity(0.18) }
+
+    /// The counterpart, for an envelope still inside its allowance. Used sparingly —
+    /// being on plan is the ordinary case and mostly reads as `textSecondary`.
+    static let positive     = adaptive(light: 0x40B236, dark: 0x71E667)
+
     /// The `bg` token as an adaptive `UIColor`, for UIKit appearance proxies
     /// (e.g. painting nav bars — see `configureBarAppearance()`).
     static let bgUIColor = dynamicUIColor(light: Color(hex: 0xF7F6F4), dark: Color(hex: 0x0E0F11))

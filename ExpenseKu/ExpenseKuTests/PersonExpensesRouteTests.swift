@@ -17,10 +17,7 @@ nonisolated final class PersonExpensesRouteTests: XCTestCase {
 
     @MainActor
     private func makeContext() throws -> ModelContext {
-        let schema = Schema([Expense.self, Category.self, Person.self, Account.self])
-        let config = ModelConfiguration(
-            schema: schema, isStoredInMemoryOnly: true, cloudKitDatabase: .none)
-        return ModelContext(try ModelContainer(for: schema, configurations: [config]))
+        try makeInMemoryContext()
     }
 
     @MainActor

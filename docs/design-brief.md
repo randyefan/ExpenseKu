@@ -1,5 +1,10 @@
 # Design Brief — ExpenseKu visual & view revamp
 
+> **Superseded in part (2026-09-20).** This brief describes the app as it stood
+> before the **cycle plan** feature. Two statements below are now wrong and are
+> marked inline. For anything to do with planning, income, or the Plan lens, read
+> `docs/prd/payday-planning.md` — it wins over this document.
+
 You are a senior product designer. I want you to redesign the **look and feel** of an
 existing, working iOS/iPadOS/macOS app called **ExpenseKu** — new visual language and
 refreshed screen layouts — **without changing what the screens do or how the user moves
@@ -10,7 +15,10 @@ A **personal, single-user expense tracker** — one owner, their own money, no a
 no sharing, no server. Native Apple app (iPhone, iPad, Mac) built in SwiftUI. Its whole
 job: log what I spent, and let me look back at it by pay cycle and by who/what/where.
 
-It is NOT a bank app, NOT a budget app, and has NO income. Money only ever goes out.
+It is NOT a bank app. ~~NOT a budget app, and has NO income. Money only ever goes
+out.~~ **Outdated:** a **cycle plan** now holds expected income and per-cycle
+allowances, both confined to the plan itself — see `docs/prd/payday-planning.md`.
+Accounts still carry no balance, and the ledger still only records money going out.
 
 ## 2. Hard platform constraints (cannot change)
 - **SwiftUI**, one codebase for **iPhone + iPad + Mac**. Any design must degrade
@@ -39,7 +47,9 @@ Assume there is currently **no custom design system** — you are creating one.
 - A **cycle navigator header**: `‹` and `›` arrows, a title naming the cycle by the month
   it *ends* in (e.g. “August 2026”), the exact date span below it
   (e.g. “25/07/2026 ~ 24/08/2026”), and a **“Spending” total** for that cycle. Back arrow
-  disables at the oldest data; forward arrow disables at the current cycle.
+  disables at the oldest data; ~~forward arrow disables at the current cycle~~ —
+  **outdated:** forward paging now runs past the current cycle in every lens, so a
+  plan can be built before its cycle begins.
 - Toolbar: **“+” add expense**, and a **calendar/settings button**.
 - Below the header: expenses for that cycle, **grouped by day** with headers
   “Today” / “Yesterday” / “Thu, 6 August”.

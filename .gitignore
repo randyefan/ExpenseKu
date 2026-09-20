@@ -23,10 +23,23 @@ DerivedData/
 Pods/
 Carthage/Build/
 
-# Revamp harness — transient verify artifacts
-.scratch/revamp/shots/
-.scratch/revamp/DerivedData/
-.scratch/revamp/DerivedDataDevice/
+# Revamp harness — transient verify artifacts. Every round gets its own .scratch/revampN/,
+# and each one dumps recordings and thousands of extracted frames under ad-hoc names
+# (rail/, dense/, jf/, …), so listing the dirs one by one never keeps up. Ignore each
+# round wholesale and add back the three things worth keeping: the specs, the curated
+# refs, and the before/after pairs — those are already tracked in revamp and revamp2, so
+# a rule that swallowed them would make every later addition need `git add -f`.
+# Directories must be re-included explicitly, or git never descends far enough to see
+# the negations under them.
+.scratch/revamp*/**
+!.scratch/revamp*/**/
+!.scratch/revamp*/**/*.md
+!.scratch/revamp*/refs/**
+!.scratch/revamp*/before/**
+!.scratch/revamp*/after/**
+
+# Design snapshots — regenerated from the app, never edited by hand.
+.scratch/pen/shots/
 
 # Feature spikes — SwiftPM/Xcode build output. These contain checked-out package
 # repos, and git will treat each one as a submodule if it ever sees them: a broken

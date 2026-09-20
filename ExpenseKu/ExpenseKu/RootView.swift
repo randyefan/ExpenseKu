@@ -8,6 +8,7 @@
 
 import SwiftUI
 import CoreData
+import SwiftData
 
 struct RootView: View {
     enum AppTab: Hashable { case expenses, insights, manage }
@@ -42,6 +43,10 @@ struct RootView: View {
         #endif
         .task {
             Person.reconcileMe(in: modelContext)
+            // Auto items materialise here, lazily: iOS does not run this in the
+            // background, so an Auto expense appears the first time the app is
+            // opened after its due day passes (ADR-0007).
+            PlanMaintenance.run(in: modelContext)
             #if DEBUG
             applyDebugLaunch()
             #endif
@@ -52,6 +57,7 @@ struct RootView: View {
             let changes = NotificationCenter.default.notifications(named: .NSPersistentStoreRemoteChange)
             for await _ in changes {
                 Person.reconcileMe(in: modelContext)
+                PlanMaintenance.run(in: modelContext)
             }
         }
     }
@@ -68,13 +74,14 @@ struct RootView: View {
         }
 
         switch DebugLaunch.startScreen {
-        case "calendar", "calendar-day", "search", "search-empty":
+        case "calendar", "calendar-day", "search", "search-empty",
+             "plan", "plan-next", "plan-dormant", "plan-list":
             // In-tab state, not a cover: ExpensesView's own task flips the lens
             // or prefills the query.
             selection = .expenses
         case "leaderboard", "person-detail":
             selection = .insights
-        case "categories", "people", "accounts":
+        case "categories", "people", "accounts", "groups":
             selection = .manage
         default:
             break
@@ -95,7 +102,7 @@ struct DebugScreen: Identifiable, Hashable {
 
     static let coverScreens: Set<String> = [
         "editor", "picker-category", "picker-people", "picker-account", "name-duplicate",
-        "settings", "category-editor", "account-editor", "person-editor",
+        "settings", "category-editor", "account-editor", "person-editor", "group-editor",
     ]
 }
 #endif

@@ -55,11 +55,7 @@ struct ManageCategoriesView: View {
         }
         .sheet(item: $editor) { target in
             NavigationStack {
-                AppearanceEntityEditor<Category>(
-                    title: target.category == nil ? "New Category" : "Edit Category",
-                    editing: target.category,
-                    makeNew: { Category() }
-                )
+                CategoryEditorView(editing: target.category)
             }
         }
     }

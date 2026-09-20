@@ -56,7 +56,7 @@ struct ManageAccountsView: View {
         }
         .sheet(item: $editor) { target in
             NavigationStack {
-                AppearanceEntityEditor<Account>(
+                AppearanceEntityEditor(
                     title: target.account == nil ? "New Account" : "Edit Account",
                     editing: target.account,
                     makeNew: { Account() }

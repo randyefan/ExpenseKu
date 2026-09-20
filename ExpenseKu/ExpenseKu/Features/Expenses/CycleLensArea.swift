@@ -41,6 +41,11 @@ struct CycleLensArea<Header: View>: View {
     let lens: ExpensesView.Lens
     let change: CycleContentChange
     let storeIsEmpty: Bool
+    let planContents: PlanContents
+    let payday: Int
+    let today: Date
+    let dormantExpanded: Bool
+    let onPlanAction: (PlanAction) -> Void
     @Binding var selectedDay: Date?
     let resolvedDay: Date?
     let onSelect: (Expense) -> Void
@@ -76,6 +81,17 @@ struct CycleLensArea<Header: View>: View {
                         header: { header }
                     )
                 }
+            case .plan:
+                CyclePlanLens(
+                    contents: planContents,
+                    payday: payday,
+                    today: today,
+                    calendar: calendar,
+                    dormantExpanded: dormantExpanded,
+                    revealTrigger: AnyHashable(cycle),
+                    onAction: onPlanAction,
+                    header: { header }
+                )
             case .calendar:
                 CycleCalendarLens(
                     calendarGrid: calendarGrid,

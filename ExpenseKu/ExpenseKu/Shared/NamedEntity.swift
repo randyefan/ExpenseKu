@@ -2,7 +2,8 @@
 //  NamedEntity.swift
 //  ExpenseKu
 //
-//  Shared de-duplication for the name-based entities (Category, Person).
+//  Shared de-duplication for the name-based entities (Category, Person,
+//  Account, CategoryGroup).
 //  CloudKit can't enforce unique constraints, so uniqueness is guarded here at
 //  the point of creation — see ADR-0002.
 //
@@ -30,7 +31,12 @@ extension Account: NamedEntity {
     nonisolated static var noun: String { "account" }
 }
 
-enum NameKey {
+// The owner reads "group" everywhere; only the type avoids shadowing SwiftUI.Group.
+extension CategoryGroup: NamedEntity {
+    nonisolated static var noun: String { "group" }
+}
+
+nonisolated enum NameKey {
     /// The comparison key for duplicate detection: trimmed + case-insensitive.
     static func normalized(_ raw: String) -> String {
         raw.trimmingCharacters(in: .whitespacesAndNewlines).localizedLowercase

@@ -10,6 +10,8 @@ import SwiftUI
 
 struct EditorKeypadDock: View {
     @Binding var expr: ExpressionEvaluator
+    /// Passed through to the keypad's ✓ key — see `CalculatorKeypad.saveLabel`.
+    var saveLabel: String = "Save expense"
     let canSave: Bool
     let showsDelete: Bool
     let onSave: () -> Void
@@ -19,6 +21,7 @@ struct EditorKeypadDock: View {
     var body: some View {
         VStack(spacing: 12) {
             CalculatorKeypad(
+                saveLabel: saveLabel,
                 canSave: canSave,
                 onDigit: { expr.appendDigit($0) },
                 onDecimal: { expr.appendDecimal() },

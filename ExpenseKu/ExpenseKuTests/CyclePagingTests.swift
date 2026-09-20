@@ -2,77 +2,100 @@
 //  CyclePagingTests.swift
 //  ExpenseKuTests
 //
-//  The ‹ › arrows on the Expenses tab. Back is enabled only when data exists before
-//  the visible cycle; forward stops at the present cycle (Q7). Both are boundary
-//  checks, so the cases that matter are the ones sitting exactly on the boundary.
+//  When the ‹ › cycle arrows are enabled.
+//
+//  This file used to pin the opposite rule for the forward arrow: it stopped at the
+//  present cycle, so paging never landed on an empty future one (Q7). The cycle plan
+//  reverses that — the next cycle is precisely where planning happens (PRD §7.1,
+//  decision 15) — and the tests are rewritten rather than deleted, so a future reader
+//  finds out the old behaviour went deliberately.
+//
+//  Back learned about plans at the same time: a cycle holding only a plan and no
+//  expenses has to stay reachable, which is exactly what a plan built a cycle ahead is.
 //
 
 import XCTest
 @testable import ExpenseKu
 
 nonisolated final class CyclePagingTests: XCTestCase {
-
     private let calendar = Calendar(identifier: .gregorian)
 
-    private var cycle: PayCycle {
-        PayCycle.containing(date(2026, 8, 10), payday: 1, calendar: calendar)
+    private func date(_ y: Int, _ m: Int, _ d: Int) -> Date {
+        calendar.date(from: DateComponents(year: y, month: m, day: d)) ?? .distantPast
+    }
+
+    private func cycle(_ y: Int, _ m: Int, _ d: Int, payday: Int = 1) -> PayCycle {
+        PayCycle.containing(date(y, m, d), payday: payday, calendar: calendar)
     }
 
     // MARK: - Back
 
-    /// An empty store has nothing to page back to.
-    func testCannotGoBackWithNoExpenses() {
-        XCTAssertFalse(CyclePaging.canGoBack(from: cycle, oldestExpense: nil))
+    /// An empty store has nowhere to go back to.
+    func testCannotGoBackWithNothingAtAll() {
+        XCTAssertFalse(CyclePaging.canGoBack(from: cycle(2026, 8, 10),
+                                             oldestExpense: nil, oldestPlanStart: nil))
     }
 
-    /// Data in an earlier cycle enables the back arrow.
-    func testCanGoBackWithOlderData() {
-        XCTAssertTrue(CyclePaging.canGoBack(from: cycle, oldestExpense: date(2026, 7, 15)))
+    /// An older expense enables it.
+    func testAnOlderExpenseEnablesBack() {
+        XCTAssertTrue(CyclePaging.canGoBack(from: cycle(2026, 8, 10),
+                                            oldestExpense: date(2026, 7, 20),
+                                            oldestPlanStart: nil))
     }
 
-    /// Data inside the visible cycle is not "older" — there is still nowhere to go.
-    func testCannotGoBackWhenOldestIsInsideCycle() {
-        XCTAssertFalse(CyclePaging.canGoBack(from: cycle, oldestExpense: date(2026, 8, 5)))
+    /// An expense inside the visible cycle is not older than it.
+    func testAnExpenseInThisCycleDoesNotEnableBack() {
+        XCTAssertFalse(CyclePaging.canGoBack(from: cycle(2026, 8, 10),
+                                             oldestExpense: date(2026, 8, 3),
+                                             oldestPlanStart: nil))
     }
 
-    /// The oldest expense sitting exactly on `cycle.start` belongs to this cycle,
-    /// so it must not enable the arrow.
-    func testCannotGoBackWhenOldestIsExactlyCycleStart() {
-        XCTAssertFalse(CyclePaging.canGoBack(from: cycle, oldestExpense: cycle.start))
+    /// The boundary is exclusive: an expense exactly at the cycle's start belongs to
+    /// this cycle, not to an earlier one.
+    func testAnExpenseExactlyAtTheStartDoesNotEnableBack() {
+        let august = cycle(2026, 8, 10)
+        XCTAssertFalse(CyclePaging.canGoBack(from: august,
+                                             oldestExpense: august.start,
+                                             oldestPlanStart: nil))
     }
 
-    /// One second before the boundary is a different cycle, and does enable it.
-    func testCanGoBackOneSecondBeforeCycleStart() {
-        let justBefore = cycle.start.addingTimeInterval(-1)
-        XCTAssertTrue(CyclePaging.canGoBack(from: cycle, oldestExpense: justBefore))
+    /// **A cycle holding only a plan stays reachable.** Without this a plan built
+    /// before its cycle became unreachable the moment the owner paged past it — the
+    /// very cycle they built it for.
+    func testAPlanAloneEnablesBack() {
+        XCTAssertTrue(CyclePaging.canGoBack(from: cycle(2026, 8, 10),
+                                            oldestExpense: nil,
+                                            oldestPlanStart: date(2026, 7, 1)))
+    }
+
+    /// Whichever is older wins, in both directions.
+    func testTheOlderOfTheTwoWins() {
+        let august = cycle(2026, 8, 10)
+        XCTAssertTrue(CyclePaging.canGoBack(from: august,
+                                            oldestExpense: date(2026, 8, 3),
+                                            oldestPlanStart: date(2026, 6, 1)))
+        XCTAssertTrue(CyclePaging.canGoBack(from: august,
+                                            oldestExpense: date(2026, 6, 1),
+                                            oldestPlanStart: date(2026, 8, 1)))
+    }
+
+    /// A plan for the visible cycle is not a reason to go back.
+    func testAPlanForThisCycleDoesNotEnableBack() {
+        let august = cycle(2026, 8, 10)
+        XCTAssertFalse(CyclePaging.canGoBack(from: august,
+                                             oldestExpense: nil,
+                                             oldestPlanStart: august.start))
     }
 
     // MARK: - Forward
 
-    /// A cycle that has already ended can be paged forward out of.
-    func testCanGoForwardFromAPastCycle() {
-        XCTAssertTrue(CyclePaging.canGoForward(from: cycle, now: date(2026, 10, 1)))
-    }
-
-    /// The cycle containing "now" is the last one — forward is disabled.
-    func testCannotGoForwardFromTheCurrentCycle() {
-        XCTAssertFalse(CyclePaging.canGoForward(from: cycle, now: date(2026, 8, 10)))
-    }
-
-    /// `end` is exclusive: the instant the cycle ends, the next one has begun and
-    /// forward is allowed.
-    func testCanGoForwardExactlyAtCycleEnd() {
-        XCTAssertTrue(CyclePaging.canGoForward(from: cycle, now: cycle.end))
-    }
-
-    /// One second earlier is still inside the cycle.
-    func testCannotGoForwardOneSecondBeforeCycleEnd() {
-        XCTAssertFalse(CyclePaging.canGoForward(from: cycle, now: cycle.end.addingTimeInterval(-1)))
-    }
-
-    // MARK: - Helpers
-
-    private func date(_ y: Int, _ m: Int, _ d: Int) -> Date {
-        calendar.date(from: DateComponents(year: y, month: m, day: d, hour: 12))!
+    /// **Forward always opens.** It used to stop at the present cycle; planning
+    /// happens in the cycle that has not started yet, and an arrow that enables and
+    /// disables depending on which lens is selected reads as a bug — so it opens in
+    /// every lens, and List and Month show their existing empty state there.
+    func testForwardIsAlwaysEnabled() {
+        XCTAssertTrue(CyclePaging.canGoForward(from: cycle(2026, 8, 10)))
+        XCTAssertTrue(CyclePaging.canGoForward(from: cycle(2026, 1, 1)))
+        XCTAssertTrue(CyclePaging.canGoForward(from: cycle(2030, 12, 31)))
     }
 }

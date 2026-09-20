@@ -24,6 +24,15 @@ final class Account {
     @Relationship(deleteRule: .nullify, inverse: \Expense.account)
     var expenses: [Expense]? = []
 
+    // Plan items paid from this account, and the transfer lines that sum them.
+    // Neither is read from this side; both exist because CloudKit requires every
+    // relationship to carry a declared inverse.
+    @Relationship(deleteRule: .nullify, inverse: \PlanItem.account)
+    var planItems: [PlanItem]? = []
+
+    @Relationship(deleteRule: .nullify, inverse: \TransferLine.account)
+    var transferLines: [TransferLine]? = []
+
     init(name: String = "", colorHex: String? = nil, iconName: String? = nil) {
         self.name = name
         self.colorHex = colorHex

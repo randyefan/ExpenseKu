@@ -3,7 +3,11 @@
 //  ExpenseKu
 //
 //  A single record of money the owner spent. Amount + when + one Category +
-//  zero-or-more People (companions). See CONTEXT.md for the ubiquitous language.
+//  zero-or-more People. See CONTEXT.md for the ubiquitous language.
+//
+//  An Expense may now have been created by a Fixed PlanItem, but it is still only
+//  ever money that already left: the plan's own figures live on PlanItem and never
+//  reach a spending total (ADR-0005).
 //
 
 import Foundation
@@ -35,13 +39,26 @@ final class Expense {
     // on the Account side.
     var account: Account?
 
+    // The Fixed PlanItem that created this expense, if any. Deleting that item drops
+    // the link and leaves the expense as history (PRD §9.4); deleting this expense
+    // returns the item to not-done (§9.5), which costs nothing because `isDone` is
+    // derived from the link. Inverse lives on the PlanItem side.
+    var planItem: PlanItem?
+
+    // Written by an Auto item without confirmation (ADR-0007), and unconfirmed until
+    // the owner clears it. The Plan lens's review notice is the only prompt, and the
+    // only defence against a failed autodebit being recorded as fact.
+    var needsReview: Bool = false
+
     init(
         amount: Decimal = 0,
         date: Date = .now,
         note: String = "",
         category: Category? = nil,
         people: [Person] = [],
-        account: Account? = nil
+        account: Account? = nil,
+        planItem: PlanItem? = nil,
+        needsReview: Bool = false
     ) {
         self.amount = amount
         self.date = date
@@ -49,5 +66,7 @@ final class Expense {
         self.category = category
         self.people = people
         self.account = account
+        self.planItem = planItem
+        self.needsReview = needsReview
     }
 }

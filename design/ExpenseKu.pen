@@ -37385,6 +37385,3150 @@
               ]
             }
           ]
+        },
+        {
+          "type": "frame",
+          "id": "WHIpv",
+          "name": "Flow J · List total — daily vs plan",
+          "layout": "vertical",
+          "gap": 28,
+          "children": [
+            {
+              "type": "frame",
+              "id": "K3mz28",
+              "name": "Flow Header",
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Tnjer",
+                  "name": "Title",
+                  "fill": "$color/text",
+                  "content": "J · List total — daily vs from plan (exploration)",
+                  "fontFamily": "$font/family",
+                  "fontSize": 30,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "NyJoL",
+                  "name": "Desc",
+                  "fill": "$color/text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": 1100,
+                  "content": "List lens only — Month and Plan keep today's header. From plan = expenses a Fixed PlanItem created (planItem != nil) + expenses whose category sits in an envelope of that cycle's plan. Outside plan = everything else. Plan is violet everywhere: header segment and every row tag (filled ☑ Plan = Fixed, outlined 📥 <envelope> = envelope). Rows outside the plan carry no tag. Sample: outside Rp 55.000 (Transport + Kopi) + from plan Rp 4.515.000 = Rp 4.570.000.",
+                  "lineHeight": 1.4,
+                  "fontFamily": "$font/family",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "v0si2E",
+              "name": "Screens",
+              "gap": 64,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "oLXDi",
+                  "name": "Column A",
+                  "width": 402,
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "K7cAz",
+                      "name": "Option Label",
+                      "fill": "$color/accent-text",
+                      "content": "J1 · Option A (chosen) — total stays hero, split bar + legend",
+                      "fontFamily": "$font/family",
+                      "fontSize": 16,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "q4YxM",
+                      "name": "J1 · Option A — total stays hero, split bar + legend",
+                      "theme": {
+                        "mode": "dark"
+                      },
+                      "clip": true,
+                      "width": 402,
+                      "height": 874,
+                      "fill": "$color/bg",
+                      "cornerRadius": 44,
+                      "stroke": "$color/hairline",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "id": "MBYns",
+                          "type": "ref",
+                          "ref": "tYwsf",
+                          "name": "Status Bar"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "UYNr7",
+                          "name": "Toolbar",
+                          "width": "fill_container",
+                          "height": 54,
+                          "padding": [
+                            0,
+                            16
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "G3gHC",
+                              "name": "Leading",
+                              "width": 120,
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "id": "F4CnYw",
+                                  "type": "ref",
+                                  "ref": "in3fy",
+                                  "name": "Button calendar-days",
+                                  "descendants": {
+                                    "lqy1O": {
+                                      "icon": "calendar-days",
+                                      "context": "SF Symbol: calendar"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "lzxUg",
+                              "name": "Title Box",
+                              "width": "fill_container",
+                              "height": "fill_container",
+                              "justifyContent": "center"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "k8BCM",
+                              "name": "Trailing",
+                              "width": 120,
+                              "gap": 12,
+                              "justifyContent": "end",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "id": "sDrpY",
+                                  "type": "ref",
+                                  "ref": "EaC1x",
+                                  "name": "Add"
+                                },
+                                {
+                                  "id": "T2zs1I",
+                                  "type": "ref",
+                                  "ref": "in3fy",
+                                  "name": "Button search",
+                                  "descendants": {
+                                    "lqy1O": {
+                                      "icon": "search",
+                                      "context": "SF Symbol: magnifyingglass"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Xd0Qn",
+                          "name": "Content",
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "layout": "vertical",
+                          "padding": [
+                            8,
+                            16,
+                            0,
+                            16
+                          ],
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "kMSp6",
+                              "name": "Cycle Header Wrap",
+                              "width": "fill_container",
+                              "padding": [
+                                8,
+                                0,
+                                12,
+                                0
+                              ],
+                              "children": [
+                                {
+                                  "id": "urH5g",
+                                  "type": "ref",
+                                  "ref": "oTQdj",
+                                  "name": "CycleHeader",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "qmF6K": {
+                                      "content": "August 2026"
+                                    },
+                                    "LxP7i": {
+                                      "content": "31/07/2026 ~ 30/08/2026"
+                                    },
+                                    "ZU72e/V62MY": {
+                                      "fill": "$color/accent"
+                                    },
+                                    "ONp4t": {
+                                      "type": "frame",
+                                      "id": "f8gik",
+                                      "name": "Total Block",
+                                      "width": "fill_container",
+                                      "layout": "vertical",
+                                      "gap": 2,
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "id": "Q9Es3",
+                                          "type": "ref",
+                                          "ref": "d1voA",
+                                          "name": "Spending Label",
+                                          "descendants": {
+                                            "lKyH1": {
+                                              "content": "SPENDING"
+                                            }
+                                          }
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "HMjnx",
+                                          "name": "Total",
+                                          "fill": "$color/text",
+                                          "content": "Rp 4.570.000",
+                                          "fontFamily": "$font/family",
+                                          "fontSize": "$type/hero",
+                                          "fontWeight": "700"
+                                        },
+                                        {
+                                          "type": "frame",
+                                          "id": "TKFHG",
+                                          "name": "Split",
+                                          "width": "fill_container",
+                                          "layout": "vertical",
+                                          "gap": 10,
+                                          "padding": [
+                                            14,
+                                            0,
+                                            0,
+                                            0
+                                          ],
+                                          "children": [
+                                            {
+                                              "type": "frame",
+                                              "id": "lPQDg",
+                                              "name": "Split Bar",
+                                              "clip": true,
+                                              "width": "fill_container",
+                                              "height": 8,
+                                              "cornerRadius": 4,
+                                              "gap": 2,
+                                              "children": [
+                                                {
+                                                  "type": "rectangle",
+                                                  "id": "XSWVK",
+                                                  "name": "Daily",
+                                                  "fill": "$color/accent",
+                                                  "width": 5,
+                                                  "height": 8
+                                                },
+                                                {
+                                                  "type": "rectangle",
+                                                  "id": "eIjoQ",
+                                                  "name": "From Plan",
+                                                  "fill": "$color/tint-violet",
+                                                  "width": "fill_container",
+                                                  "height": 8
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "type": "frame",
+                                              "id": "haI0O",
+                                              "name": "Legend",
+                                              "width": "fill_container",
+                                              "justifyContent": "space_between",
+                                              "children": [
+                                                {
+                                                  "type": "frame",
+                                                  "id": "gccb8",
+                                                  "name": "Daily",
+                                                  "layout": "vertical",
+                                                  "gap": 3,
+                                                  "children": [
+                                                    {
+                                                      "type": "frame",
+                                                      "id": "p7rpI",
+                                                      "name": "Key",
+                                                      "gap": 6,
+                                                      "alignItems": "center",
+                                                      "children": [
+                                                        {
+                                                          "type": "ellipse",
+                                                          "id": "p0COZd",
+                                                          "name": "Dot",
+                                                          "fill": "$color/accent",
+                                                          "width": 8,
+                                                          "height": 8
+                                                        },
+                                                        {
+                                                          "type": "text",
+                                                          "id": "hWIyj",
+                                                          "name": "Key Label",
+                                                          "fill": "$color/text-secondary",
+                                                          "content": "Outside plan",
+                                                          "fontFamily": "$font/family",
+                                                          "fontSize": 12,
+                                                          "fontWeight": "600"
+                                                        }
+                                                      ]
+                                                    },
+                                                    {
+                                                      "type": "text",
+                                                      "id": "onz7D",
+                                                      "name": "Amount",
+                                                      "fill": "$color/text",
+                                                      "content": "Rp 55.000",
+                                                      "fontFamily": "$font/family",
+                                                      "fontSize": 15,
+                                                      "fontWeight": "600"
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "type": "frame",
+                                                  "id": "ZABv3",
+                                                  "name": "From Plan",
+                                                  "layout": "vertical",
+                                                  "gap": 3,
+                                                  "alignItems": "end",
+                                                  "children": [
+                                                    {
+                                                      "type": "frame",
+                                                      "id": "pNS1A",
+                                                      "name": "Key",
+                                                      "gap": 6,
+                                                      "alignItems": "center",
+                                                      "children": [
+                                                        {
+                                                          "type": "ellipse",
+                                                          "id": "Z2bRGt",
+                                                          "name": "Dot",
+                                                          "fill": "$color/tint-violet",
+                                                          "width": 8,
+                                                          "height": 8
+                                                        },
+                                                        {
+                                                          "type": "text",
+                                                          "id": "M9cfu",
+                                                          "name": "Key Label",
+                                                          "fill": "$color/text-secondary",
+                                                          "content": "From plan",
+                                                          "fontFamily": "$font/family",
+                                                          "fontSize": 12,
+                                                          "fontWeight": "600"
+                                                        }
+                                                      ]
+                                                    },
+                                                    {
+                                                      "type": "text",
+                                                      "id": "BRoWJ",
+                                                      "name": "Amount",
+                                                      "fill": "$color/text",
+                                                      "content": "Rp 4.515.000",
+                                                      "fontFamily": "$font/family",
+                                                      "fontSize": 15,
+                                                      "fontWeight": "600"
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "X6SNu",
+                              "name": "Lens Toggle",
+                              "width": "fill_container",
+                              "padding": [
+                                0,
+                                0,
+                                12,
+                                0
+                              ],
+                              "justifyContent": "center",
+                              "children": [
+                                {
+                                  "id": "vxCFs",
+                                  "type": "ref",
+                                  "ref": "ri6uR",
+                                  "name": "SegmentedToggle"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "rwHnW",
+                              "name": "Day · Thu, 6 August",
+                              "width": "fill_container",
+                              "padding": [
+                                14,
+                                0,
+                                6,
+                                0
+                              ],
+                              "children": [
+                                {
+                                  "id": "Umg0a",
+                                  "type": "ref",
+                                  "ref": "REK7A",
+                                  "name": "DayGroupHeader",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "G9exR": {
+                                      "content": "Thu, 6 August"
+                                    },
+                                    "lvEIS": {
+                                      "content": "Rp 30.000"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "IhoZ6",
+                              "name": "List Section",
+                              "width": "fill_container",
+                              "fill": "$color/card",
+                              "cornerRadius": 26,
+                              "layout": "vertical",
+                              "padding": [
+                                0,
+                                16
+                              ],
+                              "children": [
+                                {
+                                  "id": "TwFk6",
+                                  "type": "ref",
+                                  "ref": "FkAqb",
+                                  "name": "Row Transport",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "iMjeF": {
+                                      "fill": "$color/tint-sky-wash"
+                                    },
+                                    "iMjeF/XMAo3": {
+                                      "icon": "car",
+                                      "fill": "$color/tint-sky",
+                                      "context": "SF Symbol: car.fill"
+                                    },
+                                    "oorQn": {
+                                      "content": "Transport"
+                                    },
+                                    "TWtTu": {
+                                      "content": "Grab home · GoPay"
+                                    },
+                                    "GbL0H": {
+                                      "content": "Rp 30.000"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "BLU9a",
+                              "name": "Day · Wed, 5 August",
+                              "width": "fill_container",
+                              "padding": [
+                                14,
+                                0,
+                                6,
+                                0
+                              ],
+                              "children": [
+                                {
+                                  "id": "v6eZkO",
+                                  "type": "ref",
+                                  "ref": "REK7A",
+                                  "name": "DayGroupHeader",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "G9exR": {
+                                      "content": "Wed, 5 August"
+                                    },
+                                    "lvEIS": {
+                                      "content": "Rp 45.000"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "PfJzi",
+                              "name": "List Section",
+                              "width": "fill_container",
+                              "fill": "$color/card",
+                              "cornerRadius": 26,
+                              "layout": "vertical",
+                              "padding": [
+                                0,
+                                16
+                              ],
+                              "children": [
+                                {
+                                  "id": "Ddph1",
+                                  "type": "ref",
+                                  "ref": "FkAqb",
+                                  "name": "Row Makan",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "iMjeF": {
+                                      "fill": "$color/tint-coral-wash"
+                                    },
+                                    "iMjeF/XMAo3": {
+                                      "icon": "utensils",
+                                      "fill": "$color/tint-coral",
+                                      "context": "SF Symbol: fork.knife"
+                                    },
+                                    "oorQn": {
+                                      "content": "Makan"
+                                    },
+                                    "TWtTu": {
+                                      "type": "frame",
+                                      "id": "QGYbn",
+                                      "name": "Meta",
+                                      "width": "fill_container",
+                                      "gap": 6,
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "frame",
+                                          "id": "atKtr",
+                                          "name": "Plan Tag · Envelope",
+                                          "cornerRadius": 999,
+                                          "stroke": "$color/tint-violet",
+                                          "strokeWidth": 1,
+                                          "gap": 4,
+                                          "padding": [
+                                            2,
+                                            7
+                                          ],
+                                          "alignItems": "center",
+                                          "children": [
+                                            {
+                                              "type": "icon",
+                                              "id": "JDEvK",
+                                              "name": "Symbol",
+                                              "context": "SF Symbol: tray",
+                                              "width": 11,
+                                              "height": 11,
+                                              "icon": "inbox",
+                                              "library": "lucide",
+                                              "fill": "$color/tint-violet"
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "FHucc",
+                                              "name": "Tag Label",
+                                              "fill": "$color/tint-violet",
+                                              "content": "Hidup",
+                                              "fontFamily": "$font/family",
+                                              "fontSize": 11,
+                                              "fontWeight": "600"
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "k9MZE",
+                                          "name": "Meta Text",
+                                          "fill": "$color/text-secondary",
+                                          "content": "Lunch · Cash · Tarisa",
+                                          "fontFamily": "$font/family",
+                                          "fontSize": 12,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
+                                    },
+                                    "GbL0H": {
+                                      "content": "Rp 45.000"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "p6aNa",
+                              "name": "Day · Sun, 2 August",
+                              "width": "fill_container",
+                              "padding": [
+                                14,
+                                0,
+                                6,
+                                0
+                              ],
+                              "children": [
+                                {
+                                  "id": "DYioC",
+                                  "type": "ref",
+                                  "ref": "REK7A",
+                                  "name": "DayGroupHeader",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "G9exR": {
+                                      "content": "Sun, 2 August"
+                                    },
+                                    "lvEIS": {
+                                      "content": "Rp 145.000"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "Xu2Dv",
+                              "name": "List Section",
+                              "width": "fill_container",
+                              "fill": "$color/card",
+                              "cornerRadius": 26,
+                              "layout": "vertical",
+                              "padding": [
+                                0,
+                                16
+                              ],
+                              "children": [
+                                {
+                                  "id": "wfO5e",
+                                  "type": "ref",
+                                  "ref": "FkAqb",
+                                  "name": "Row Makan",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "iMjeF": {
+                                      "fill": "$color/tint-coral-wash"
+                                    },
+                                    "iMjeF/XMAo3": {
+                                      "icon": "utensils",
+                                      "fill": "$color/tint-coral",
+                                      "context": "SF Symbol: fork.knife"
+                                    },
+                                    "oorQn": {
+                                      "content": "Makan"
+                                    },
+                                    "TWtTu": {
+                                      "type": "frame",
+                                      "id": "nbCIb",
+                                      "name": "Meta",
+                                      "width": "fill_container",
+                                      "gap": 6,
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "frame",
+                                          "id": "E8h674",
+                                          "name": "Plan Tag · Envelope",
+                                          "cornerRadius": 999,
+                                          "stroke": "$color/tint-violet",
+                                          "strokeWidth": 1,
+                                          "gap": 4,
+                                          "padding": [
+                                            2,
+                                            7
+                                          ],
+                                          "alignItems": "center",
+                                          "children": [
+                                            {
+                                              "type": "icon",
+                                              "id": "x36e7H",
+                                              "name": "Symbol",
+                                              "context": "SF Symbol: tray",
+                                              "width": 11,
+                                              "height": 11,
+                                              "icon": "inbox",
+                                              "library": "lucide",
+                                              "fill": "$color/tint-violet"
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "xR18q",
+                                              "name": "Tag Label",
+                                              "fill": "$color/tint-violet",
+                                              "content": "Hidup",
+                                              "fontFamily": "$font/family",
+                                              "fontSize": 11,
+                                              "fontWeight": "600"
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "lq1Uv",
+                                          "name": "Meta Text",
+                                          "fill": "$color/text-secondary",
+                                          "content": "Dinner · GoPay · Fadil…",
+                                          "fontFamily": "$font/family",
+                                          "fontSize": 12,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
+                                    },
+                                    "GbL0H": {
+                                      "content": "Rp 120.000"
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "geilA",
+                                  "name": "Separator",
+                                  "width": "fill_container",
+                                  "padding": [
+                                    0,
+                                    0,
+                                    0,
+                                    50
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "rectangle",
+                                      "id": "qClSj",
+                                      "name": "Hairline",
+                                      "fill": "$color/hairline",
+                                      "width": "fill_container",
+                                      "height": 1
+                                    }
+                                  ]
+                                },
+                                {
+                                  "id": "VBMuf",
+                                  "type": "ref",
+                                  "ref": "FkAqb",
+                                  "name": "Row Kopi",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "iMjeF": {
+                                      "fill": "$color/tint-amber-wash"
+                                    },
+                                    "iMjeF/XMAo3": {
+                                      "icon": "coffee",
+                                      "fill": "$color/tint-amber",
+                                      "context": "SF Symbol: cup.and.saucer.fill"
+                                    },
+                                    "oorQn": {
+                                      "content": "Kopi"
+                                    },
+                                    "TWtTu": {
+                                      "content": "Morning coffee · Cash"
+                                    },
+                                    "GbL0H": {
+                                      "content": "Rp 25.000"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "YWMK0",
+                          "name": "Tab Bar Wrap",
+                          "width": "fill_container",
+                          "padding": [
+                            12,
+                            0,
+                            22,
+                            0
+                          ],
+                          "justifyContent": "center",
+                          "children": [
+                            {
+                              "id": "rjVD0",
+                              "type": "ref",
+                              "ref": "vPz64",
+                              "name": "Tab Bar"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Zw6m4",
+                  "name": "Column C",
+                  "width": 402,
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "w4poX",
+                      "name": "Option Label",
+                      "fill": "$color/text-tertiary",
+                      "content": "J2 · Option C — not chosen",
+                      "fontFamily": "$font/family",
+                      "fontSize": 16,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "q30yJo",
+                      "name": "J2 · Option C — daily is hero, plan as a caption",
+                      "theme": {
+                        "mode": "dark"
+                      },
+                      "clip": true,
+                      "width": 402,
+                      "height": 874,
+                      "fill": "$color/bg",
+                      "cornerRadius": 44,
+                      "stroke": "$color/hairline",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "id": "I4pwFH",
+                          "type": "ref",
+                          "ref": "tYwsf",
+                          "name": "Status Bar"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "DA6ba",
+                          "name": "Toolbar",
+                          "width": "fill_container",
+                          "height": 54,
+                          "padding": [
+                            0,
+                            16
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "zocem",
+                              "name": "Leading",
+                              "width": 120,
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "id": "o95Igh",
+                                  "type": "ref",
+                                  "ref": "in3fy",
+                                  "name": "Button calendar-days",
+                                  "descendants": {
+                                    "lqy1O": {
+                                      "icon": "calendar-days",
+                                      "context": "SF Symbol: calendar"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "ekNzc",
+                              "name": "Title Box",
+                              "width": "fill_container",
+                              "height": "fill_container",
+                              "justifyContent": "center"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "htiAv",
+                              "name": "Trailing",
+                              "width": 120,
+                              "gap": 12,
+                              "justifyContent": "end",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "id": "PZnNU",
+                                  "type": "ref",
+                                  "ref": "EaC1x",
+                                  "name": "Add"
+                                },
+                                {
+                                  "id": "Ibc0t",
+                                  "type": "ref",
+                                  "ref": "in3fy",
+                                  "name": "Button search",
+                                  "descendants": {
+                                    "lqy1O": {
+                                      "icon": "search",
+                                      "context": "SF Symbol: magnifyingglass"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "rAHUM",
+                          "name": "Content",
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "layout": "vertical",
+                          "padding": [
+                            8,
+                            16,
+                            0,
+                            16
+                          ],
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "qmRr5",
+                              "name": "Cycle Header Wrap",
+                              "width": "fill_container",
+                              "padding": [
+                                8,
+                                0,
+                                12,
+                                0
+                              ],
+                              "children": [
+                                {
+                                  "id": "E1acuo",
+                                  "type": "ref",
+                                  "ref": "oTQdj",
+                                  "name": "CycleHeader",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "qmF6K": {
+                                      "content": "August 2026"
+                                    },
+                                    "LxP7i": {
+                                      "content": "31/07/2026 ~ 30/08/2026"
+                                    },
+                                    "ZU72e/V62MY": {
+                                      "fill": "$color/accent"
+                                    },
+                                    "ONp4t": {
+                                      "type": "frame",
+                                      "id": "t1C4lE",
+                                      "name": "Total Block",
+                                      "layout": "vertical",
+                                      "gap": 6,
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "id": "tV3f7",
+                                          "type": "ref",
+                                          "ref": "d1voA",
+                                          "name": "Spending Label",
+                                          "descendants": {
+                                            "lKyH1": {
+                                              "content": "DAILY SPENDING"
+                                            }
+                                          }
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "xUGnb",
+                                          "name": "Total",
+                                          "fill": "$color/text",
+                                          "content": "Rp 220.000",
+                                          "fontFamily": "$font/family",
+                                          "fontSize": "$type/hero",
+                                          "fontWeight": "700"
+                                        },
+                                        {
+                                          "type": "frame",
+                                          "id": "pBNsc",
+                                          "name": "Plan Caption",
+                                          "fill": "$color/surface",
+                                          "cornerRadius": 999,
+                                          "gap": 6,
+                                          "padding": [
+                                            6,
+                                            12
+                                          ],
+                                          "alignItems": "center",
+                                          "children": [
+                                            {
+                                              "type": "icon",
+                                              "id": "gsVdk",
+                                              "name": "Symbol",
+                                              "context": "SF Symbol: checklist",
+                                              "width": 14,
+                                              "height": 14,
+                                              "icon": "list-checks",
+                                              "library": "lucide",
+                                              "fill": "$color/text-secondary"
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "iMuUq",
+                                              "name": "Caption",
+                                              "fill": "$color/text-secondary",
+                                              "content": "+ Rp 4.350.000 from plan",
+                                              "fontFamily": "$font/family",
+                                              "fontSize": 13,
+                                              "fontWeight": "600"
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "g4IRO",
+                              "name": "Lens Toggle",
+                              "width": "fill_container",
+                              "padding": [
+                                0,
+                                0,
+                                12,
+                                0
+                              ],
+                              "justifyContent": "center",
+                              "children": [
+                                {
+                                  "id": "dfET7",
+                                  "type": "ref",
+                                  "ref": "ri6uR",
+                                  "name": "SegmentedToggle"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "GFtps",
+                              "name": "Day · Thu, 6 August",
+                              "width": "fill_container",
+                              "padding": [
+                                14,
+                                0,
+                                6,
+                                0
+                              ],
+                              "children": [
+                                {
+                                  "id": "nnqbs",
+                                  "type": "ref",
+                                  "ref": "REK7A",
+                                  "name": "DayGroupHeader",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "G9exR": {
+                                      "content": "Thu, 6 August"
+                                    },
+                                    "lvEIS": {
+                                      "content": "Rp 30.000"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "lANdb",
+                              "name": "List Section",
+                              "width": "fill_container",
+                              "fill": "$color/card",
+                              "cornerRadius": 26,
+                              "layout": "vertical",
+                              "padding": [
+                                0,
+                                16
+                              ],
+                              "children": [
+                                {
+                                  "id": "n1PE0W",
+                                  "type": "ref",
+                                  "ref": "FkAqb",
+                                  "name": "Row Transport",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "iMjeF": {
+                                      "fill": "$color/tint-sky-wash"
+                                    },
+                                    "iMjeF/XMAo3": {
+                                      "icon": "car",
+                                      "fill": "$color/tint-sky",
+                                      "context": "SF Symbol: car.fill"
+                                    },
+                                    "oorQn": {
+                                      "content": "Transport"
+                                    },
+                                    "TWtTu": {
+                                      "content": "Grab home · GoPay"
+                                    },
+                                    "GbL0H": {
+                                      "content": "Rp 30.000"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "gq4tp",
+                              "name": "Day · Wed, 5 August",
+                              "width": "fill_container",
+                              "padding": [
+                                14,
+                                0,
+                                6,
+                                0
+                              ],
+                              "children": [
+                                {
+                                  "id": "U4Rv2p",
+                                  "type": "ref",
+                                  "ref": "REK7A",
+                                  "name": "DayGroupHeader",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "G9exR": {
+                                      "content": "Wed, 5 August"
+                                    },
+                                    "lvEIS": {
+                                      "content": "Rp 45.000"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "M1Loe",
+                              "name": "List Section",
+                              "width": "fill_container",
+                              "fill": "$color/card",
+                              "cornerRadius": 26,
+                              "layout": "vertical",
+                              "padding": [
+                                0,
+                                16
+                              ],
+                              "children": [
+                                {
+                                  "id": "VYtZA",
+                                  "type": "ref",
+                                  "ref": "FkAqb",
+                                  "name": "Row Makan",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "iMjeF": {
+                                      "fill": "$color/tint-coral-wash"
+                                    },
+                                    "iMjeF/XMAo3": {
+                                      "icon": "utensils",
+                                      "fill": "$color/tint-coral",
+                                      "context": "SF Symbol: fork.knife"
+                                    },
+                                    "oorQn": {
+                                      "content": "Makan"
+                                    },
+                                    "TWtTu": {
+                                      "content": "Lunch · Cash · Tarisa"
+                                    },
+                                    "GbL0H": {
+                                      "content": "Rp 45.000"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "z1mCko",
+                              "name": "Day · Sun, 2 August",
+                              "width": "fill_container",
+                              "padding": [
+                                14,
+                                0,
+                                6,
+                                0
+                              ],
+                              "children": [
+                                {
+                                  "id": "D3rBi",
+                                  "type": "ref",
+                                  "ref": "REK7A",
+                                  "name": "DayGroupHeader",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "G9exR": {
+                                      "content": "Sun, 2 August"
+                                    },
+                                    "lvEIS": {
+                                      "content": "Rp 145.000"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "SfKam",
+                              "name": "List Section",
+                              "width": "fill_container",
+                              "fill": "$color/card",
+                              "cornerRadius": 26,
+                              "layout": "vertical",
+                              "padding": [
+                                0,
+                                16
+                              ],
+                              "children": [
+                                {
+                                  "id": "UA4eC",
+                                  "type": "ref",
+                                  "ref": "FkAqb",
+                                  "name": "Row Makan",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "iMjeF": {
+                                      "fill": "$color/tint-coral-wash"
+                                    },
+                                    "iMjeF/XMAo3": {
+                                      "icon": "utensils",
+                                      "fill": "$color/tint-coral",
+                                      "context": "SF Symbol: fork.knife"
+                                    },
+                                    "oorQn": {
+                                      "content": "Makan"
+                                    },
+                                    "TWtTu": {
+                                      "content": "Dinner · GoPay · Fadil and Tarisa"
+                                    },
+                                    "GbL0H": {
+                                      "content": "Rp 120.000"
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "d57nAn",
+                                  "name": "Separator",
+                                  "width": "fill_container",
+                                  "padding": [
+                                    0,
+                                    0,
+                                    0,
+                                    50
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "rectangle",
+                                      "id": "f128W",
+                                      "name": "Hairline",
+                                      "fill": "$color/hairline",
+                                      "width": "fill_container",
+                                      "height": 1
+                                    }
+                                  ]
+                                },
+                                {
+                                  "id": "RTxiR",
+                                  "type": "ref",
+                                  "ref": "FkAqb",
+                                  "name": "Row Kopi",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "iMjeF": {
+                                      "fill": "$color/tint-amber-wash"
+                                    },
+                                    "iMjeF/XMAo3": {
+                                      "icon": "coffee",
+                                      "fill": "$color/tint-amber",
+                                      "context": "SF Symbol: cup.and.saucer.fill"
+                                    },
+                                    "oorQn": {
+                                      "content": "Kopi"
+                                    },
+                                    "TWtTu": {
+                                      "content": "Morning coffee · Cash"
+                                    },
+                                    "GbL0H": {
+                                      "content": "Rp 25.000"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "uIHPA",
+                          "name": "Tab Bar Wrap",
+                          "width": "fill_container",
+                          "padding": [
+                            12,
+                            0,
+                            22,
+                            0
+                          ],
+                          "justifyContent": "center",
+                          "children": [
+                            {
+                              "id": "Nh4dB",
+                              "type": "ref",
+                              "ref": "vPz64",
+                              "name": "Tab Bar"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "dn8SN",
+                  "name": "Column A · rows",
+                  "width": 402,
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "XUDub",
+                      "name": "Option Label",
+                      "fill": "$color/accent-text",
+                      "content": "J3 · Option A — scrolled to payday, plan rows tagged",
+                      "fontFamily": "$font/family",
+                      "fontSize": 16,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "cIKiH",
+                      "name": "J3 · Option A — scrolled to payday, plan rows tagged",
+                      "theme": {
+                        "mode": "dark"
+                      },
+                      "clip": true,
+                      "width": 402,
+                      "height": 874,
+                      "fill": "$color/bg",
+                      "cornerRadius": 44,
+                      "stroke": "$color/hairline",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "id": "u3H87",
+                          "type": "ref",
+                          "ref": "tYwsf",
+                          "name": "Status Bar"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "i7tBlI",
+                          "name": "Toolbar",
+                          "width": "fill_container",
+                          "height": 54,
+                          "padding": [
+                            0,
+                            16
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "lLjIK",
+                              "name": "Leading",
+                              "width": 120,
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "id": "g4vMQM",
+                                  "type": "ref",
+                                  "ref": "in3fy",
+                                  "name": "Button calendar-days",
+                                  "descendants": {
+                                    "lqy1O": {
+                                      "icon": "calendar-days",
+                                      "context": "SF Symbol: calendar"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "er51n",
+                              "name": "Title Box",
+                              "width": "fill_container",
+                              "height": "fill_container",
+                              "justifyContent": "center"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "V1Ucfn",
+                              "name": "Trailing",
+                              "width": 120,
+                              "gap": 12,
+                              "justifyContent": "end",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "id": "tPj5T",
+                                  "type": "ref",
+                                  "ref": "EaC1x",
+                                  "name": "Add"
+                                },
+                                {
+                                  "id": "jg1Hg",
+                                  "type": "ref",
+                                  "ref": "in3fy",
+                                  "name": "Button search",
+                                  "descendants": {
+                                    "lqy1O": {
+                                      "icon": "search",
+                                      "context": "SF Symbol: magnifyingglass"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "rnJhy",
+                          "name": "Content",
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "layout": "vertical",
+                          "padding": [
+                            8,
+                            16,
+                            0,
+                            16
+                          ],
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "v5aed",
+                              "name": "Day · Wed, 5 August",
+                              "width": "fill_container",
+                              "padding": [
+                                14,
+                                0,
+                                6,
+                                0
+                              ],
+                              "children": [
+                                {
+                                  "id": "hI4BF",
+                                  "type": "ref",
+                                  "ref": "REK7A",
+                                  "name": "DayGroupHeader",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "G9exR": {
+                                      "content": "Wed, 5 August"
+                                    },
+                                    "lvEIS": {
+                                      "content": "Rp 45.000"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "wvTzG",
+                              "name": "List Section",
+                              "width": "fill_container",
+                              "fill": "$color/card",
+                              "cornerRadius": 26,
+                              "layout": "vertical",
+                              "padding": [
+                                0,
+                                16
+                              ],
+                              "children": [
+                                {
+                                  "id": "lXdYc",
+                                  "type": "ref",
+                                  "ref": "FkAqb",
+                                  "name": "Row Makan",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "iMjeF": {
+                                      "fill": "$color/tint-coral-wash"
+                                    },
+                                    "iMjeF/XMAo3": {
+                                      "icon": "utensils",
+                                      "fill": "$color/tint-coral",
+                                      "context": "SF Symbol: fork.knife"
+                                    },
+                                    "oorQn": {
+                                      "content": "Makan"
+                                    },
+                                    "TWtTu": {
+                                      "type": "frame",
+                                      "id": "oOsSB",
+                                      "name": "Meta",
+                                      "width": "fill_container",
+                                      "gap": 6,
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "frame",
+                                          "id": "w35lnS",
+                                          "name": "Plan Tag · Envelope",
+                                          "cornerRadius": 999,
+                                          "stroke": "$color/tint-violet",
+                                          "strokeWidth": 1,
+                                          "gap": 4,
+                                          "padding": [
+                                            2,
+                                            7
+                                          ],
+                                          "alignItems": "center",
+                                          "children": [
+                                            {
+                                              "type": "icon",
+                                              "id": "A8WpIt",
+                                              "name": "Symbol",
+                                              "context": "SF Symbol: tray",
+                                              "width": 11,
+                                              "height": 11,
+                                              "icon": "inbox",
+                                              "library": "lucide",
+                                              "fill": "$color/tint-violet"
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "AoJNs",
+                                              "name": "Tag Label",
+                                              "fill": "$color/tint-violet",
+                                              "content": "Hidup",
+                                              "fontFamily": "$font/family",
+                                              "fontSize": 11,
+                                              "fontWeight": "600"
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "EVQ7G",
+                                          "name": "Meta Text",
+                                          "fill": "$color/text-secondary",
+                                          "content": "Lunch · Cash · Tarisa",
+                                          "fontFamily": "$font/family",
+                                          "fontSize": 12,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
+                                    },
+                                    "GbL0H": {
+                                      "content": "Rp 45.000"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "d5XJPW",
+                              "name": "Day · Sun, 2 August",
+                              "width": "fill_container",
+                              "padding": [
+                                14,
+                                0,
+                                6,
+                                0
+                              ],
+                              "children": [
+                                {
+                                  "id": "K1BXXU",
+                                  "type": "ref",
+                                  "ref": "REK7A",
+                                  "name": "DayGroupHeader",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "G9exR": {
+                                      "content": "Sun, 2 August"
+                                    },
+                                    "lvEIS": {
+                                      "content": "Rp 145.000"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "g41P0",
+                              "name": "List Section",
+                              "width": "fill_container",
+                              "fill": "$color/card",
+                              "cornerRadius": 26,
+                              "layout": "vertical",
+                              "padding": [
+                                0,
+                                16
+                              ],
+                              "children": [
+                                {
+                                  "id": "ei4MT",
+                                  "type": "ref",
+                                  "ref": "FkAqb",
+                                  "name": "Row Makan",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "iMjeF": {
+                                      "fill": "$color/tint-coral-wash"
+                                    },
+                                    "iMjeF/XMAo3": {
+                                      "icon": "utensils",
+                                      "fill": "$color/tint-coral",
+                                      "context": "SF Symbol: fork.knife"
+                                    },
+                                    "oorQn": {
+                                      "content": "Makan"
+                                    },
+                                    "TWtTu": {
+                                      "type": "frame",
+                                      "id": "xFqcb",
+                                      "name": "Meta",
+                                      "width": "fill_container",
+                                      "gap": 6,
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "frame",
+                                          "id": "V0hSNe",
+                                          "name": "Plan Tag · Envelope",
+                                          "cornerRadius": 999,
+                                          "stroke": "$color/tint-violet",
+                                          "strokeWidth": 1,
+                                          "gap": 4,
+                                          "padding": [
+                                            2,
+                                            7
+                                          ],
+                                          "alignItems": "center",
+                                          "children": [
+                                            {
+                                              "type": "icon",
+                                              "id": "K0Wav",
+                                              "name": "Symbol",
+                                              "context": "SF Symbol: tray",
+                                              "width": 11,
+                                              "height": 11,
+                                              "icon": "inbox",
+                                              "library": "lucide",
+                                              "fill": "$color/tint-violet"
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "z60Mh",
+                                              "name": "Tag Label",
+                                              "fill": "$color/tint-violet",
+                                              "content": "Hidup",
+                                              "fontFamily": "$font/family",
+                                              "fontSize": 11,
+                                              "fontWeight": "600"
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "TqvQd",
+                                          "name": "Meta Text",
+                                          "fill": "$color/text-secondary",
+                                          "content": "Dinner · GoPay · Fadil…",
+                                          "fontFamily": "$font/family",
+                                          "fontSize": 12,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
+                                    },
+                                    "GbL0H": {
+                                      "content": "Rp 120.000"
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "tUZCy",
+                                  "name": "Separator",
+                                  "width": "fill_container",
+                                  "padding": [
+                                    0,
+                                    0,
+                                    0,
+                                    50
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "rectangle",
+                                      "id": "ZUCmH",
+                                      "name": "Hairline",
+                                      "fill": "$color/hairline",
+                                      "width": "fill_container",
+                                      "height": 1
+                                    }
+                                  ]
+                                },
+                                {
+                                  "id": "SwZqb",
+                                  "type": "ref",
+                                  "ref": "FkAqb",
+                                  "name": "Row Kopi",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "iMjeF": {
+                                      "fill": "$color/tint-amber-wash"
+                                    },
+                                    "iMjeF/XMAo3": {
+                                      "icon": "coffee",
+                                      "fill": "$color/tint-amber",
+                                      "context": "SF Symbol: cup.and.saucer.fill"
+                                    },
+                                    "oorQn": {
+                                      "content": "Kopi"
+                                    },
+                                    "TWtTu": {
+                                      "content": "Morning coffee · Cash"
+                                    },
+                                    "GbL0H": {
+                                      "content": "Rp 25.000"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "qOiSK",
+                              "name": "Day · Fri, 31 July",
+                              "width": "fill_container",
+                              "padding": [
+                                14,
+                                0,
+                                6,
+                                0
+                              ],
+                              "children": [
+                                {
+                                  "id": "T3jm2",
+                                  "type": "ref",
+                                  "ref": "REK7A",
+                                  "name": "DayGroupHeader",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "G9exR": {
+                                      "content": "Fri, 31 July"
+                                    },
+                                    "lvEIS": {
+                                      "content": "Rp 4.350.000"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "zqNgJ",
+                              "name": "List Section",
+                              "width": "fill_container",
+                              "fill": "$color/card",
+                              "cornerRadius": 26,
+                              "layout": "vertical",
+                              "padding": [
+                                0,
+                                16
+                              ],
+                              "children": [
+                                {
+                                  "id": "dWEpc",
+                                  "type": "ref",
+                                  "ref": "FkAqb",
+                                  "name": "Row Kos · from plan",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "iMjeF": {
+                                      "fill": "$color/tint-orange-wash"
+                                    },
+                                    "iMjeF/XMAo3": {
+                                      "icon": "house",
+                                      "fill": "$color/tint-orange"
+                                    },
+                                    "oorQn": {
+                                      "content": "Kos"
+                                    },
+                                    "TWtTu": {
+                                      "type": "frame",
+                                      "id": "oHSmt",
+                                      "name": "Meta",
+                                      "width": "fill_container",
+                                      "gap": 6,
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "frame",
+                                          "id": "u45Ilz",
+                                          "name": "Plan Tag · Fixed",
+                                          "fill": "$color/tint-violet-wash",
+                                          "cornerRadius": 999,
+                                          "gap": 4,
+                                          "padding": [
+                                            2,
+                                            7
+                                          ],
+                                          "alignItems": "center",
+                                          "children": [
+                                            {
+                                              "type": "icon",
+                                              "id": "TeIQT",
+                                              "name": "Symbol",
+                                              "context": "SF Symbol: checklist",
+                                              "width": 11,
+                                              "height": 11,
+                                              "icon": "list-checks",
+                                              "library": "lucide",
+                                              "fill": "$color/tint-violet"
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "CuPFP",
+                                              "name": "Tag Label",
+                                              "fill": "$color/tint-violet",
+                                              "content": "Plan",
+                                              "fontFamily": "$font/family",
+                                              "fontSize": 11,
+                                              "fontWeight": "600"
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "N5iobd",
+                                          "name": "Meta Text",
+                                          "fill": "$color/text-secondary",
+                                          "content": "Kos · BCA",
+                                          "fontFamily": "$font/family",
+                                          "fontSize": 12,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
+                                    },
+                                    "GbL0H": {
+                                      "content": "Rp 2.500.000"
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "s6bUxR",
+                                  "name": "Separator",
+                                  "width": "fill_container",
+                                  "padding": [
+                                    0,
+                                    0,
+                                    0,
+                                    50
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "rectangle",
+                                      "id": "TsHVN",
+                                      "name": "Hairline",
+                                      "fill": "$color/hairline",
+                                      "width": "fill_container",
+                                      "height": 1
+                                    }
+                                  ]
+                                },
+                                {
+                                  "id": "End8C",
+                                  "type": "ref",
+                                  "ref": "FkAqb",
+                                  "name": "Row Cicilan · from plan",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "iMjeF": {
+                                      "fill": "$color/tint-sky-wash"
+                                    },
+                                    "iMjeF/XMAo3": {
+                                      "icon": "landmark",
+                                      "fill": "$color/tint-sky"
+                                    },
+                                    "oorQn": {
+                                      "content": "Cicilan"
+                                    },
+                                    "TWtTu": {
+                                      "type": "frame",
+                                      "id": "WW8lV",
+                                      "name": "Meta",
+                                      "width": "fill_container",
+                                      "gap": 6,
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "frame",
+                                          "id": "K3ICkx",
+                                          "name": "Plan Tag · Fixed",
+                                          "fill": "$color/tint-violet-wash",
+                                          "cornerRadius": 999,
+                                          "gap": 4,
+                                          "padding": [
+                                            2,
+                                            7
+                                          ],
+                                          "alignItems": "center",
+                                          "children": [
+                                            {
+                                              "type": "icon",
+                                              "id": "aWBAh",
+                                              "name": "Symbol",
+                                              "context": "SF Symbol: checklist",
+                                              "width": 11,
+                                              "height": 11,
+                                              "icon": "list-checks",
+                                              "library": "lucide",
+                                              "fill": "$color/tint-violet"
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "R8rVzV",
+                                              "name": "Tag Label",
+                                              "fill": "$color/tint-violet",
+                                              "content": "Plan",
+                                              "fontFamily": "$font/family",
+                                              "fontSize": 11,
+                                              "fontWeight": "600"
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "W98eLa",
+                                          "name": "Meta Text",
+                                          "fill": "$color/text-secondary",
+                                          "content": "Cicilan Rumah BNI…",
+                                          "fontFamily": "$font/family",
+                                          "fontSize": 12,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
+                                    },
+                                    "GbL0H": {
+                                      "content": "Rp 1.500.000"
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "nW5p5",
+                                  "name": "Separator",
+                                  "width": "fill_container",
+                                  "padding": [
+                                    0,
+                                    0,
+                                    0,
+                                    50
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "rectangle",
+                                      "id": "UTQA7",
+                                      "name": "Hairline",
+                                      "fill": "$color/hairline",
+                                      "width": "fill_container",
+                                      "height": 1
+                                    }
+                                  ]
+                                },
+                                {
+                                  "id": "X6ehC",
+                                  "type": "ref",
+                                  "ref": "FkAqb",
+                                  "name": "Row Internet · from plan",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "iMjeF": {
+                                      "fill": "$color/tint-teal-wash"
+                                    },
+                                    "iMjeF/XMAo3": {
+                                      "icon": "wifi",
+                                      "fill": "$color/tint-teal"
+                                    },
+                                    "oorQn": {
+                                      "content": "Internet"
+                                    },
+                                    "TWtTu": {
+                                      "type": "frame",
+                                      "id": "nostV",
+                                      "name": "Meta",
+                                      "width": "fill_container",
+                                      "gap": 6,
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "frame",
+                                          "id": "BQXNs",
+                                          "name": "Plan Tag · Fixed",
+                                          "fill": "$color/tint-violet-wash",
+                                          "cornerRadius": 999,
+                                          "gap": 4,
+                                          "padding": [
+                                            2,
+                                            7
+                                          ],
+                                          "alignItems": "center",
+                                          "children": [
+                                            {
+                                              "type": "icon",
+                                              "id": "lbYyW",
+                                              "name": "Symbol",
+                                              "context": "SF Symbol: checklist",
+                                              "width": 11,
+                                              "height": 11,
+                                              "icon": "list-checks",
+                                              "library": "lucide",
+                                              "fill": "$color/tint-violet"
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "GY7Wv",
+                                              "name": "Tag Label",
+                                              "fill": "$color/tint-violet",
+                                              "content": "Plan",
+                                              "fontFamily": "$font/family",
+                                              "fontSize": 11,
+                                              "fontWeight": "600"
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "v1A41A",
+                                          "name": "Meta Text",
+                                          "fill": "$color/text-secondary",
+                                          "content": "IndiHome · BCA",
+                                          "fontFamily": "$font/family",
+                                          "fontSize": 12,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
+                                    },
+                                    "GbL0H": {
+                                      "content": "Rp 350.000"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "K4Yzw",
+                          "name": "Tab Bar Wrap",
+                          "width": "fill_container",
+                          "padding": [
+                            12,
+                            0,
+                            22,
+                            0
+                          ],
+                          "justifyContent": "center",
+                          "children": [
+                            {
+                              "id": "Zuha5",
+                              "type": "ref",
+                              "ref": "vPz64",
+                              "name": "Tab Bar"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "IjVif",
+                  "name": "Column Search",
+                  "width": 402,
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "e8hQF",
+                      "name": "Option Label",
+                      "fill": "$color/accent-text",
+                      "content": "J4 · Search “bca” — tags travel with the expense",
+                      "fontFamily": "$font/family",
+                      "fontSize": 16,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "lNe7n",
+                      "name": "J4 · Search “bca” — tags travel with the expense",
+                      "clip": true,
+                      "width": 402,
+                      "height": 874,
+                      "fill": "$color/bg",
+                      "cornerRadius": 44,
+                      "stroke": "$color/hairline",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "id": "m1Z7oZ",
+                          "type": "ref",
+                          "ref": "tYwsf",
+                          "name": "Status Bar"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "ulTe1",
+                          "name": "Toolbar",
+                          "width": "fill_container",
+                          "height": 54,
+                          "padding": [
+                            0,
+                            16
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "Jhf42",
+                              "name": "Leading",
+                              "width": 120,
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "id": "fYWlT",
+                                  "type": "ref",
+                                  "ref": "in3fy",
+                                  "name": "Button calendar-days",
+                                  "descendants": {
+                                    "lqy1O": {
+                                      "icon": "calendar-days",
+                                      "context": "SF Symbol: calendar"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "f1FnEx",
+                              "name": "Title Box",
+                              "width": "fill_container",
+                              "height": "fill_container",
+                              "justifyContent": "center",
+                              "alignItems": "center"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "FuOrF",
+                              "name": "Trailing",
+                              "width": 120,
+                              "gap": 12,
+                              "justifyContent": "end",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "id": "mtWx0",
+                                  "type": "ref",
+                                  "ref": "EaC1x",
+                                  "name": "Add"
+                                },
+                                {
+                                  "id": "HQLmo",
+                                  "type": "ref",
+                                  "ref": "in3fy",
+                                  "name": "Button search",
+                                  "descendants": {
+                                    "lqy1O": {
+                                      "icon": "search",
+                                      "context": "SF Symbol: magnifyingglass"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "r50pwl",
+                          "name": "Content",
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "layout": "vertical",
+                          "padding": [
+                            4,
+                            0,
+                            0,
+                            0
+                          ],
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "QLcpE",
+                              "name": "ExpenseSearchFilters",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "padding": [
+                                0,
+                                16,
+                                12,
+                                16
+                              ],
+                              "children": [
+                                {
+                                  "id": "taHQT",
+                                  "type": "ref",
+                                  "ref": "Q9Pw4y",
+                                  "name": "Category Chip"
+                                },
+                                {
+                                  "id": "Eo8wl",
+                                  "type": "ref",
+                                  "ref": "Q9Pw4y",
+                                  "name": "Period Chip",
+                                  "descendants": {
+                                    "l9hRv": {
+                                      "content": "Period: This pay period"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "dqdd4",
+                              "name": "Summary Wrap",
+                              "width": "fill_container",
+                              "padding": [
+                                12,
+                                16,
+                                24,
+                                16
+                              ],
+                              "children": [
+                                {
+                                  "id": "DkPcI",
+                                  "type": "ref",
+                                  "ref": "SjEOn",
+                                  "name": "ExpenseSearchSummary",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "RzIz7": {
+                                      "content": "Rp 2.925.000"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "yyFPn",
+                              "name": "Results",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "padding": [
+                                0,
+                                16
+                              ],
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "hxjCt",
+                                  "name": "List Section",
+                                  "width": "fill_container",
+                                  "fill": "$color/card",
+                                  "cornerRadius": 26,
+                                  "layout": "vertical",
+                                  "padding": [
+                                    0,
+                                    16
+                                  ],
+                                  "children": [
+                                    {
+                                      "id": "g4JDQ5",
+                                      "type": "ref",
+                                      "ref": "FkAqb",
+                                      "name": "Row Makan",
+                                      "width": "fill_container",
+                                      "descendants": {
+                                        "iMjeF": {
+                                          "fill": "$color/tint-coral-wash"
+                                        },
+                                        "iMjeF/XMAo3": {
+                                          "icon": "utensils",
+                                          "fill": "$color/tint-coral",
+                                          "context": "SF Symbol: cup.and.saucer.fill"
+                                        },
+                                        "oorQn": {
+                                          "content": "Makan"
+                                        },
+                                        "TWtTu": {
+                                          "type": "frame",
+                                          "id": "croGd",
+                                          "name": "Meta",
+                                          "width": "fill_container",
+                                          "gap": 6,
+                                          "alignItems": "center",
+                                          "children": [
+                                            {
+                                              "type": "frame",
+                                              "id": "EBogW",
+                                              "name": "Plan Tag · Envelope",
+                                              "cornerRadius": 999,
+                                              "stroke": "$color/tint-violet",
+                                              "strokeWidth": 1,
+                                              "gap": 4,
+                                              "padding": [
+                                                2,
+                                                7
+                                              ],
+                                              "alignItems": "center",
+                                              "children": [
+                                                {
+                                                  "type": "icon",
+                                                  "id": "Q6cBzF",
+                                                  "name": "Symbol",
+                                                  "context": "SF Symbol: tray",
+                                                  "width": 11,
+                                                  "height": 11,
+                                                  "icon": "inbox",
+                                                  "library": "lucide",
+                                                  "fill": "$color/tint-violet"
+                                                },
+                                                {
+                                                  "type": "text",
+                                                  "id": "jwHO8",
+                                                  "name": "Tag Label",
+                                                  "fill": "$color/tint-violet",
+                                                  "content": "Hidup",
+                                                  "fontFamily": "$font/family",
+                                                  "fontSize": 11,
+                                                  "fontWeight": "600"
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "jB27E",
+                                              "name": "Meta Text",
+                                              "fill": "$color/text-secondary",
+                                              "content": "Nasi padang · BCA",
+                                              "fontFamily": "$font/family",
+                                              "fontSize": 12,
+                                              "fontWeight": "normal"
+                                            }
+                                          ]
+                                        },
+                                        "GbL0H": {
+                                          "content": "Rp 60.000"
+                                        },
+                                        "FxblN": {
+                                          "enabled": true,
+                                          "content": "3 Aug"
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "f70yR",
+                                      "name": "Separator",
+                                      "width": "fill_container",
+                                      "padding": [
+                                        0,
+                                        0,
+                                        0,
+                                        50
+                                      ],
+                                      "children": [
+                                        {
+                                          "type": "rectangle",
+                                          "id": "O6zrqd",
+                                          "name": "Hairline",
+                                          "fill": "$color/hairline",
+                                          "width": "fill_container",
+                                          "height": 1
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "id": "N0SGgq",
+                                      "type": "ref",
+                                      "ref": "FkAqb",
+                                      "name": "Row Transport",
+                                      "width": "fill_container",
+                                      "descendants": {
+                                        "iMjeF": {
+                                          "fill": "$color/tint-sky-wash"
+                                        },
+                                        "iMjeF/XMAo3": {
+                                          "icon": "car",
+                                          "fill": "$color/tint-sky",
+                                          "context": "SF Symbol: cup.and.saucer.fill"
+                                        },
+                                        "oorQn": {
+                                          "content": "Transport"
+                                        },
+                                        "TWtTu": {
+                                          "content": "Parkir · BCA"
+                                        },
+                                        "GbL0H": {
+                                          "content": "Rp 15.000"
+                                        },
+                                        "FxblN": {
+                                          "enabled": true,
+                                          "content": "1 Aug"
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "j3W8tG",
+                                      "name": "Separator",
+                                      "width": "fill_container",
+                                      "padding": [
+                                        0,
+                                        0,
+                                        0,
+                                        50
+                                      ],
+                                      "children": [
+                                        {
+                                          "type": "rectangle",
+                                          "id": "FjA34",
+                                          "name": "Hairline",
+                                          "fill": "$color/hairline",
+                                          "width": "fill_container",
+                                          "height": 1
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "id": "yy9UG",
+                                      "type": "ref",
+                                      "ref": "FkAqb",
+                                      "name": "Row Kos",
+                                      "width": "fill_container",
+                                      "descendants": {
+                                        "iMjeF": {
+                                          "fill": "$color/tint-orange-wash"
+                                        },
+                                        "iMjeF/XMAo3": {
+                                          "icon": "house",
+                                          "fill": "$color/tint-orange",
+                                          "context": "SF Symbol: cup.and.saucer.fill"
+                                        },
+                                        "oorQn": {
+                                          "content": "Kos"
+                                        },
+                                        "TWtTu": {
+                                          "type": "frame",
+                                          "id": "P0scp",
+                                          "name": "Meta",
+                                          "width": "fill_container",
+                                          "gap": 6,
+                                          "alignItems": "center",
+                                          "children": [
+                                            {
+                                              "type": "frame",
+                                              "id": "KNGpY",
+                                              "name": "Plan Tag · Fixed",
+                                              "fill": "$color/tint-violet-wash",
+                                              "cornerRadius": 999,
+                                              "gap": 4,
+                                              "padding": [
+                                                2,
+                                                7
+                                              ],
+                                              "alignItems": "center",
+                                              "children": [
+                                                {
+                                                  "type": "icon",
+                                                  "id": "vYbMg",
+                                                  "name": "Symbol",
+                                                  "context": "SF Symbol: checklist",
+                                                  "width": 11,
+                                                  "height": 11,
+                                                  "icon": "list-checks",
+                                                  "library": "lucide",
+                                                  "fill": "$color/tint-violet"
+                                                },
+                                                {
+                                                  "type": "text",
+                                                  "id": "fMsXy",
+                                                  "name": "Tag Label",
+                                                  "fill": "$color/tint-violet",
+                                                  "content": "Plan",
+                                                  "fontFamily": "$font/family",
+                                                  "fontSize": 11,
+                                                  "fontWeight": "600"
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "t6Xhh",
+                                              "name": "Meta Text",
+                                              "fill": "$color/text-secondary",
+                                              "content": "Kos · BCA",
+                                              "fontFamily": "$font/family",
+                                              "fontSize": 12,
+                                              "fontWeight": "normal"
+                                            }
+                                          ]
+                                        },
+                                        "GbL0H": {
+                                          "content": "Rp 2.500.000"
+                                        },
+                                        "FxblN": {
+                                          "enabled": true,
+                                          "content": "31 Jul"
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "saTqU",
+                                      "name": "Separator",
+                                      "width": "fill_container",
+                                      "padding": [
+                                        0,
+                                        0,
+                                        0,
+                                        50
+                                      ],
+                                      "children": [
+                                        {
+                                          "type": "rectangle",
+                                          "id": "NwXi0",
+                                          "name": "Hairline",
+                                          "fill": "$color/hairline",
+                                          "width": "fill_container",
+                                          "height": 1
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "id": "EnFDF",
+                                      "type": "ref",
+                                      "ref": "FkAqb",
+                                      "name": "Row Internet",
+                                      "width": "fill_container",
+                                      "descendants": {
+                                        "iMjeF": {
+                                          "fill": "$color/tint-teal-wash"
+                                        },
+                                        "iMjeF/XMAo3": {
+                                          "icon": "wifi",
+                                          "fill": "$color/tint-teal",
+                                          "context": "SF Symbol: fork.knife"
+                                        },
+                                        "oorQn": {
+                                          "content": "Internet"
+                                        },
+                                        "TWtTu": {
+                                          "type": "frame",
+                                          "id": "ObOaB",
+                                          "name": "Meta",
+                                          "width": "fill_container",
+                                          "gap": 6,
+                                          "alignItems": "center",
+                                          "children": [
+                                            {
+                                              "type": "frame",
+                                              "id": "GaRKU",
+                                              "name": "Plan Tag · Fixed",
+                                              "fill": "$color/tint-violet-wash",
+                                              "cornerRadius": 999,
+                                              "gap": 4,
+                                              "padding": [
+                                                2,
+                                                7
+                                              ],
+                                              "alignItems": "center",
+                                              "children": [
+                                                {
+                                                  "type": "icon",
+                                                  "id": "insH2",
+                                                  "name": "Symbol",
+                                                  "context": "SF Symbol: checklist",
+                                                  "width": 11,
+                                                  "height": 11,
+                                                  "icon": "list-checks",
+                                                  "library": "lucide",
+                                                  "fill": "$color/tint-violet"
+                                                },
+                                                {
+                                                  "type": "text",
+                                                  "id": "B0GWJw",
+                                                  "name": "Tag Label",
+                                                  "fill": "$color/tint-violet",
+                                                  "content": "Plan",
+                                                  "fontFamily": "$font/family",
+                                                  "fontSize": 11,
+                                                  "fontWeight": "600"
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "q0pn9n",
+                                              "name": "Meta Text",
+                                              "fill": "$color/text-secondary",
+                                              "content": "IndiHome · BCA",
+                                              "fontFamily": "$font/family",
+                                              "fontSize": 12,
+                                              "fontWeight": "normal"
+                                            }
+                                          ]
+                                        },
+                                        "GbL0H": {
+                                          "content": "Rp 350.000"
+                                        },
+                                        "FxblN": {
+                                          "enabled": true,
+                                          "content": "31 Jul"
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "vmGV7",
+                          "name": "Tab Bar Wrap",
+                          "width": "fill_container",
+                          "padding": [
+                            12,
+                            0,
+                            22,
+                            0
+                          ],
+                          "justifyContent": "center",
+                          "children": [
+                            {
+                              "id": "r75AJk",
+                              "type": "ref",
+                              "ref": "vPz64",
+                              "name": "Tab Bar"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "q42VBM",
+                  "name": "Column Person",
+                  "width": 402,
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "ucDoB",
+                      "name": "Option Label",
+                      "fill": "$color/accent-text",
+                      "content": "J5 · Person detail — same tags",
+                      "fontFamily": "$font/family",
+                      "fontSize": 16,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "X9A9uz",
+                      "name": "J5 · Person detail — same tags",
+                      "clip": true,
+                      "width": 402,
+                      "height": 874,
+                      "fill": "$color/bg",
+                      "cornerRadius": 44,
+                      "stroke": "$color/hairline",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "id": "YPJwT",
+                          "type": "ref",
+                          "ref": "tYwsf",
+                          "name": "Status Bar"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "O9DgM",
+                          "name": "Toolbar",
+                          "width": "fill_container",
+                          "height": 54,
+                          "padding": [
+                            0,
+                            16
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "duKC8",
+                              "name": "Leading",
+                              "width": 88,
+                              "height": 44,
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "id": "riD2Y",
+                                  "type": "ref",
+                                  "ref": "in3fy",
+                                  "name": "Button chevron-left",
+                                  "descendants": {
+                                    "lqy1O": {
+                                      "icon": "chevron-left",
+                                      "context": "SF Symbol: chevron.left"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "vkOB3",
+                              "name": "Title Box",
+                              "width": "fill_container",
+                              "height": "fill_container",
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "vOG7K",
+                                  "name": "Title",
+                                  "fill": "$color/text",
+                                  "content": "Tarisa",
+                                  "fontFamily": "$font/family",
+                                  "fontSize": 17,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "RM8GM",
+                              "name": "Trailing",
+                              "width": 88,
+                              "height": 44,
+                              "gap": 12,
+                              "justifyContent": "end",
+                              "alignItems": "center"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "AfVWE",
+                          "name": "Content",
+                          "clip": true,
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "layout": "vertical",
+                          "gap": 12,
+                          "padding": [
+                            16,
+                            0,
+                            0,
+                            0
+                          ],
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "j21aF",
+                              "name": "Header Wrap",
+                              "width": "fill_container",
+                              "padding": [
+                                0,
+                                16
+                              ],
+                              "children": [
+                                {
+                                  "id": "i2venT",
+                                  "type": "ref",
+                                  "ref": "H7VI4e",
+                                  "name": "PersonSpendHeader",
+                                  "width": "fill_container"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "zvlQh",
+                              "name": "PeriodFilterChips",
+                              "clip": true,
+                              "width": "fill_container",
+                              "height": 38,
+                              "layout": "none",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "Njl88",
+                                  "x": 0,
+                                  "y": 1,
+                                  "name": "Rail",
+                                  "gap": 8,
+                                  "padding": [
+                                    0,
+                                    16
+                                  ],
+                                  "children": [
+                                    {
+                                      "id": "KUfaK",
+                                      "type": "ref",
+                                      "ref": "oGinq",
+                                      "name": "All time",
+                                      "descendants": {
+                                        "ZY0q7": {
+                                          "content": "All time"
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "id": "PZbFA",
+                                      "type": "ref",
+                                      "ref": "x2YKLu",
+                                      "name": "Last 30 days",
+                                      "descendants": {
+                                        "m294Uq": {
+                                          "content": "Last 30 days"
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "id": "VaVwQ",
+                                      "type": "ref",
+                                      "ref": "x2YKLu",
+                                      "name": "This month",
+                                      "descendants": {
+                                        "m294Uq": {
+                                          "content": "This month"
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "id": "aaapL",
+                                      "type": "ref",
+                                      "ref": "x2YKLu",
+                                      "name": "This pay period",
+                                      "descendants": {
+                                        "m294Uq": {
+                                          "content": "This pay period"
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "h14jxh",
+                              "name": "Days",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 12,
+                              "padding": [
+                                0,
+                                16
+                              ],
+                              "children": [
+                                {
+                                  "id": "kfMgH",
+                                  "type": "ref",
+                                  "ref": "LDqif",
+                                  "name": "PersonDayCard Wed, 5 August",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "oayZA/G9exR": {
+                                      "content": "Wed, 5 August"
+                                    },
+                                    "oayZA/lvEIS": {
+                                      "content": "Rp 45.000"
+                                    },
+                                    "p49hIe/TWtTu": {
+                                      "type": "frame",
+                                      "id": "O0pqqK",
+                                      "name": "Meta",
+                                      "width": "fill_container",
+                                      "gap": 6,
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "frame",
+                                          "id": "FxvXq",
+                                          "name": "Plan Tag · Envelope",
+                                          "cornerRadius": 999,
+                                          "stroke": "$color/tint-violet",
+                                          "strokeWidth": 1,
+                                          "gap": 4,
+                                          "padding": [
+                                            2,
+                                            7
+                                          ],
+                                          "alignItems": "center",
+                                          "children": [
+                                            {
+                                              "type": "icon",
+                                              "id": "WZ1Uz",
+                                              "name": "Symbol",
+                                              "context": "SF Symbol: tray",
+                                              "width": 11,
+                                              "height": 11,
+                                              "icon": "inbox",
+                                              "library": "lucide",
+                                              "fill": "$color/tint-violet"
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "eofHr",
+                                              "name": "Tag Label",
+                                              "fill": "$color/tint-violet",
+                                              "content": "Hidup",
+                                              "fontFamily": "$font/family",
+                                              "fontSize": 11,
+                                              "fontWeight": "600"
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "RQtgC",
+                                          "name": "Meta Text",
+                                          "fill": "$color/text-secondary",
+                                          "content": "Lunch · Cash · Tarisa",
+                                          "fontFamily": "$font/family",
+                                          "fontSize": 12,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
+                                    },
+                                    "p49hIe/GbL0H": {
+                                      "content": "Rp 45.000"
+                                    }
+                                  }
+                                },
+                                {
+                                  "id": "EOLo8",
+                                  "type": "ref",
+                                  "ref": "LDqif",
+                                  "name": "PersonDayCard Sun, 2 August",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "oayZA/G9exR": {
+                                      "content": "Sun, 2 August"
+                                    },
+                                    "oayZA/lvEIS": {
+                                      "content": "Rp 120.000"
+                                    },
+                                    "p49hIe/TWtTu": {
+                                      "type": "frame",
+                                      "id": "HGjdm",
+                                      "name": "Meta",
+                                      "width": "fill_container",
+                                      "gap": 6,
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "frame",
+                                          "id": "u2L2i",
+                                          "name": "Plan Tag · Envelope",
+                                          "cornerRadius": 999,
+                                          "stroke": "$color/tint-violet",
+                                          "strokeWidth": 1,
+                                          "gap": 4,
+                                          "padding": [
+                                            2,
+                                            7
+                                          ],
+                                          "alignItems": "center",
+                                          "children": [
+                                            {
+                                              "type": "icon",
+                                              "id": "oyeuc",
+                                              "name": "Symbol",
+                                              "context": "SF Symbol: tray",
+                                              "width": 11,
+                                              "height": 11,
+                                              "icon": "inbox",
+                                              "library": "lucide",
+                                              "fill": "$color/tint-violet"
+                                            },
+                                            {
+                                              "type": "text",
+                                              "id": "HZi5M",
+                                              "name": "Tag Label",
+                                              "fill": "$color/tint-violet",
+                                              "content": "Hidup",
+                                              "fontFamily": "$font/family",
+                                              "fontSize": 11,
+                                              "fontWeight": "600"
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "oa1yg",
+                                          "name": "Meta Text",
+                                          "fill": "$color/text-secondary",
+                                          "content": "Dinner · GoPay · Fadil…",
+                                          "fontFamily": "$font/family",
+                                          "fontSize": 12,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
+                                    },
+                                    "p49hIe/GbL0H": {
+                                      "content": "Rp 120.000"
+                                    }
+                                  }
+                                },
+                                {
+                                  "id": "OMUfP",
+                                  "type": "ref",
+                                  "ref": "LDqif",
+                                  "name": "PersonDayCard Thu, 18 December 2025",
+                                  "width": "fill_container",
+                                  "descendants": {
+                                    "oayZA/G9exR": {
+                                      "content": "Thu, 18 December 2025"
+                                    },
+                                    "oayZA/lvEIS": {
+                                      "content": "Rp 35.000"
+                                    },
+                                    "p49hIe/TWtTu": {
+                                      "content": "Kopi Tuku · Cash · Tarisa"
+                                    },
+                                    "p49hIe/GbL0H": {
+                                      "content": "Rp 35.000"
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "kwJBk",
+                                  "name": "Footnote",
+                                  "fill": "$color/text-secondary",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "Each shared expense credits Tarisa the full amount.",
+                                  "textAlign": "center",
+                                  "fontFamily": "$font/family",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "IOeWc",
+                          "name": "Tab Bar Wrap",
+                          "width": "fill_container",
+                          "padding": [
+                            12,
+                            0,
+                            22,
+                            0
+                          ],
+                          "justifyContent": "center",
+                          "children": [
+                            {
+                              "id": "jShsy",
+                              "type": "ref",
+                              "ref": "vPz64",
+                              "name": "Tab Bar",
+                              "descendants": {
+                                "L6CzbD": {
+                                  "fill": "#00000000"
+                                },
+                                "L6CzbD/JQj8r": {
+                                  "fill": "$color/text"
+                                },
+                                "L6CzbD/xD51J": {
+                                  "fill": "$color/text",
+                                  "fontWeight": "500"
+                                },
+                                "Onfcn": {
+                                  "fill": "$color/glass-selected"
+                                },
+                                "Onfcn/AVpER": {
+                                  "fill": "$color/accent"
+                                },
+                                "Onfcn/qWCD6": {
+                                  "fill": "$color/accent",
+                                  "fontWeight": "600"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
     },

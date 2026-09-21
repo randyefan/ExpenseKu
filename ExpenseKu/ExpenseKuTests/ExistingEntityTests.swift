@@ -2,10 +2,9 @@
 //  ExistingEntityTests.swift
 //  ExpenseKuTests
 //
-//  The ADR-0002 duplicate check. Exercised against all three named entities because
-//  `existingEntity` is generic over the protocol, and the fetch it builds narrows to
-//  `\.name` — a key path to a protocol requirement, not to a concrete stored property.
-//  Whether SwiftData can map that is the open question this file answers.
+//  The ADR-0002 duplicate check, exercised against every NamedEntity type.
+//  Run under Release too: `propertiesToFetch = [\.name]` on the generic `T` passes in
+//  Debug but traps inside SwiftData once optimized.
 //
 
 import XCTest
@@ -68,6 +67,16 @@ nonisolated final class ExistingEntityTests: XCTestCase {
         XCTAssertNil(existingEntity(Account.self, matching: "Cash", in: context))
     }
 
+    @MainActor
+    func testFindsGroupIgnoringCase() throws {
+        let context = try makeContext()
+        context.insert(CategoryGroup(name: "Needs"))
+        try context.save()
+
+        XCTAssertNotNil(existingEntity(CategoryGroup.self, matching: "needs", in: context))
+        XCTAssertNil(existingEntity(CategoryGroup.self, matching: "Wants", in: context))
+    }
+
     // MARK: - Edges
 
     @MainActor
@@ -80,7 +89,7 @@ nonisolated final class ExistingEntityTests: XCTestCase {
         XCTAssertNil(existingEntity(Category.self, matching: "   ", in: context))
     }
 
-    /// The returned entity is live: fields the fetch did not load must still fault in.
+    /// The returned entity is live: every field is readable, not just the name.
     @MainActor
     func testUnfetchedPropertiesStillReadable() throws {
         let context = try makeContext()

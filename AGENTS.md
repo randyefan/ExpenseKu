@@ -85,6 +85,7 @@ If SwiftData is configured to use CloudKit:
 - Follow strict naming conventions for types, properties, methods, and SwiftData models.
 - Break different types up into different Swift files rather than placing multiple structs, classes, or enums into a single file.
 - Write unit tests for core application logic.
+- Before archiving for TestFlight/App Store, run `scripts/test-release.sh`: the suite under the Release configuration. SwiftData can pass in Debug and trap once optimized.
 - Only write UI tests if unit tests are not possible.
 - Add code comments and documentation comments as needed.
 - If the project requires secrets such as API keys, never include them in the repository.

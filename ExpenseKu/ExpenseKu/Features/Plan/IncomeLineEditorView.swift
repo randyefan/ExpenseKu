@@ -23,6 +23,7 @@ struct IncomeLineEditorView: View {
     @State private var name: String
     @State private var hasArrived: Bool
     @FocusState private var nameFocused: Bool
+    private let pristine: Draft
 
     init(plan: CyclePlan, editing: IncomeLine?, onFinish: @escaping () -> Void) {
         self.plan = plan
@@ -31,6 +32,21 @@ struct IncomeLineEditorView: View {
         _expr = State(initialValue: ExpressionEvaluator(amount: editing?.amount ?? 0))
         _name = State(initialValue: editing?.name ?? "")
         _hasArrived = State(initialValue: editing?.hasArrived ?? false)
+        pristine = Draft(
+            expression: ExpressionEvaluator(amount: editing?.amount ?? 0).raw,
+            name: editing?.name ?? "",
+            hasArrived: editing?.hasArrived ?? false
+        )
+    }
+
+    private struct Draft: Equatable {
+        var expression: String
+        var name: String
+        var hasArrived: Bool
+    }
+
+    private var draft: Draft {
+        Draft(expression: expr.raw, name: name, hasArrived: hasArrived)
     }
 
     private var resolvedAmount: Decimal { expr.committedAmount }
@@ -105,6 +121,7 @@ struct IncomeLineEditorView: View {
                 }
             }
         }
+        .confirmsDiscard(when: draft != pristine, onDiscard: onFinish)
     }
 
     private func save() {

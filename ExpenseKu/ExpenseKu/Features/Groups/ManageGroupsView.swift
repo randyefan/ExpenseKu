@@ -68,7 +68,10 @@ struct ManageGroupsView: View {
             }
         }
         .overlay {
-            if groups.isEmpty { emptyState }
+            if groups.isEmpty {
+                emptyState
+                    .padding(.vertical, 16)
+            }
         }
         .sheet(item: $editor) { target in
             NavigationStack {

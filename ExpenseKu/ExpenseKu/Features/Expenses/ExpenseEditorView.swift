@@ -33,9 +33,11 @@ struct ExpenseEditorView: View {
     /// The protected owner entry, auto-selected on a new expense (design: "Me by
     /// default"). Empty until `reconcileMe` has run, but that happens at app launch.
     @Query(filter: #Predicate<Person> { $0.isMe }) private var me: [Person]
-    /// Guards the one-shot default so re-appearing (e.g. returning from the People
-    /// picker after the user unselected "Me") doesn't re-add it.
-    @State private var didApplyDefaults = false
+    /// Taken right after the "Me" default is applied, so that default alone does not
+    /// count as a change. Also guards the one-shot default so re-appearing (e.g.
+    /// returning from the People picker after the user unselected "Me") doesn't
+    /// re-add it.
+    @State private var pristine: Draft?
 
     @FocusState private var notesFocused: Bool
     @State private var scrollPosition = ScrollPosition()
@@ -56,20 +58,43 @@ struct ExpenseEditorView: View {
 
     private var canSave: Bool { resolvedAmount > 0 && category != nil }
 
+    private struct Draft: Equatable {
+        var expression: String
+        var date: Date
+        var note: String
+        var category: PersistentIdentifier?
+        var account: PersistentIdentifier?
+        var people: Set<PersistentIdentifier>
+    }
+
+    private var draft: Draft {
+        Draft(
+            expression: expr.raw,
+            date: date,
+            note: note,
+            category: category?.persistentModelID,
+            account: account?.persistentModelID,
+            people: Set(people.map(\.persistentModelID))
+        )
+    }
+
+    private var hasChanges: Bool { pristine.map { $0 != draft } ?? false }
+
     var body: some View {
         editorBody
             .onAppear(perform: applyDefaultsIfNeeded)
+            .confirmsDiscard(when: hasChanges, onDiscard: finish)
     }
 
     /// On a brand-new expense, pre-select the protected "Me" so logging a solo
     /// expense is one tap. Runs once; the user can still unselect it.
     private func applyDefaultsIfNeeded() {
-        guard !didApplyDefaults else { return }
-        didApplyDefaults = true
-        guard editing == nil, let me = me.first,
-              !people.contains(where: { $0.persistentModelID == me.persistentModelID })
-        else { return }
-        people.insert(me, at: 0)
+        guard pristine == nil else { return }
+        if editing == nil, let me = me.first,
+           !people.contains(where: { $0.persistentModelID == me.persistentModelID }) {
+            people.insert(me, at: 0)
+        }
+        pristine = draft
     }
 
     // MARK: - Big amount hero + scrolling rows + sticky keypad dock

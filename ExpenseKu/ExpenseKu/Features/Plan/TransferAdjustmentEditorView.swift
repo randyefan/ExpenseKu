@@ -25,6 +25,7 @@ struct TransferAdjustmentEditorView: View {
     @Environment(\.modelContext) private var context
     @State private var expr: ExpressionEvaluator
     @State private var isNegative: Bool
+    private let pristineAdjustment: Decimal
 
     init(plan: CyclePlan, row: TransferRow, account: Account?, onFinish: @escaping () -> Void) {
         self.plan = plan
@@ -33,6 +34,7 @@ struct TransferAdjustmentEditorView: View {
         self.onFinish = onFinish
         _expr = State(initialValue: ExpressionEvaluator(amount: abs(row.adjustment)))
         _isNegative = State(initialValue: row.adjustment < 0)
+        pristineAdjustment = row.adjustment
     }
 
     private var adjustment: Decimal {
@@ -99,6 +101,7 @@ struct TransferAdjustmentEditorView: View {
                 }
             }
         }
+        .confirmsDiscard(when: adjustment != pristineAdjustment, onDiscard: onFinish)
     }
 
     private func figureRow(_ title: String, _ amount: Decimal, color: Color) -> some View {

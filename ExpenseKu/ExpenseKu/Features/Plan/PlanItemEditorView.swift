@@ -35,6 +35,7 @@ struct PlanItemEditorView: View {
     @State private var dueDay: Int?
     @State private var isAuto: Bool
     @FocusState private var nameFocused: Bool
+    private let pristine: Draft
 
     init(plan: CyclePlan, editing: PlanItem?, plans: [CyclePlan],
          onFinish: @escaping () -> Void, onDelete: @escaping (PlanItem) -> Void) {
@@ -52,6 +53,43 @@ struct PlanItemEditorView: View {
         _envelopeCategories = State(initialValue: editing?.envelopeCategories ?? [])
         _dueDay = State(initialValue: editing?.dueDay)
         _isAuto = State(initialValue: editing?.isAuto ?? false)
+        pristine = Draft(
+            expression: ExpressionEvaluator(amount: editing?.amount ?? 0).raw,
+            name: editing?.name ?? "",
+            kind: editing?.kind ?? .fixed,
+            category: editing?.category?.persistentModelID,
+            account: editing?.account?.persistentModelID,
+            people: Set((editing?.people ?? []).map(\.persistentModelID)),
+            envelopeCategories: Set((editing?.envelopeCategories ?? []).map(\.persistentModelID)),
+            dueDay: editing?.dueDay,
+            isAuto: editing?.isAuto ?? false
+        )
+    }
+
+    private struct Draft: Equatable {
+        var expression: String
+        var name: String
+        var kind: PlanItemKind
+        var category: PersistentIdentifier?
+        var account: PersistentIdentifier?
+        var people: Set<PersistentIdentifier>
+        var envelopeCategories: Set<PersistentIdentifier>
+        var dueDay: Int?
+        var isAuto: Bool
+    }
+
+    private var draft: Draft {
+        Draft(
+            expression: expr.raw,
+            name: name,
+            kind: kind,
+            category: category?.persistentModelID,
+            account: account?.persistentModelID,
+            people: Set(people.map(\.persistentModelID)),
+            envelopeCategories: Set(envelopeCategories.map(\.persistentModelID)),
+            dueDay: dueDay,
+            isAuto: isAuto
+        )
     }
 
     private var resolvedAmount: Decimal { expr.committedAmount }
@@ -146,6 +184,7 @@ struct PlanItemEditorView: View {
                 }
             }
         }
+        .confirmsDiscard(when: draft != pristine, onDiscard: onFinish)
     }
 
     private var kindToggle: some View {

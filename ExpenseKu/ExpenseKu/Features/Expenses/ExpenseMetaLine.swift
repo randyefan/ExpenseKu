@@ -41,7 +41,7 @@ struct ExpenseMetaLine: View {
             Text(parts.joined(separator: " · "))
                 .font(.dsCaption)
                 .foregroundStyle(Theme.textSecondary)
-                .lineLimit(1)
+                .lineLimit(6)
                 .truncationMode(.tail)
         }
     }

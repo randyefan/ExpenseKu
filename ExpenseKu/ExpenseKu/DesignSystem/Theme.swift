@@ -121,6 +121,9 @@ enum Theme {
     /// being on plan is the ordinary case and mostly reads as `textSecondary`.
     static let positive     = adaptive(light: 0x40B236, dark: 0x71E667)
 
+    static let plan         = adaptive(light: 0x5E36B2, dark: 0x9067E6)
+    static var planWash: Color { plan.opacity(tintFillOpacity) }
+
     /// The `bg` token as an adaptive `UIColor`, for UIKit appearance proxies
     /// (e.g. painting nav bars — see `configureBarAppearance()`).
     static let bgUIColor = dynamicUIColor(light: Color(hex: 0xF7F6F4), dark: Color(hex: 0x0E0F11))

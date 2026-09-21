@@ -18,6 +18,8 @@ struct ExpenseRow: View {
     /// When set, shown under the amount as quiet metadata. Nil in the day-grouped lenses.
     var dateLabel: String? = nil
 
+    @Environment(\.planOrigins) private var planOrigins
+
     private var categoryName: String { expense.category?.name ?? "Uncategorized" }
 
     private var peopleNames: String { CompanionNames.phrase(expense.people) }
@@ -40,7 +42,8 @@ struct ExpenseRow: View {
                 ExpenseMetaLine(
                     note: expense.note,
                     accountName: expense.account?.name,
-                    peopleNames: peopleNames
+                    peopleNames: peopleNames,
+                    origin: planOrigins.origin(of: expense)
                 )
             }
 
@@ -57,6 +60,7 @@ struct ExpenseRow: View {
                         .lineLimit(1)
                 }
             }
+            .layoutPriority(1)
         }
         .padding(.vertical, 10)
     }

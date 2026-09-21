@@ -27,6 +27,7 @@ struct PersonExpensesView: View {
     /// this much, and in exchange changing the window needs no remount — the total
     /// rolls to its new value rather than blinking.
     @Query(sort: \Expense.date, order: .reverse) private var expenses: [Expense]
+    @Query(sort: \CyclePlan.cycleStart) private var plans: [CyclePlan]
 
     @State private var range: DateRangeFilter
     @State private var editing: Expense?
@@ -125,6 +126,7 @@ struct PersonExpensesView: View {
             .padding(.vertical, Metric.screenPadding)
             .motion(Motion.settle, value: listed.count)
         }
+        .environment(\.planOrigins, PlanOrigins(plans: plans, payday: Payday.current, calendar: calendar))
         .background(Theme.bg)
         .navigationTitle(person?.name ?? "Person")
         .navigationBarTitleDisplayMode(.inline)

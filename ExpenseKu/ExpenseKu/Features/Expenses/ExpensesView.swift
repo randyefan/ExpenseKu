@@ -106,6 +106,7 @@ struct ExpensesView: View {
             cycle: cycle,
             cycleExpenses: contents.expenses
         )
+        let planOrigins = PlanOrigins(plans: plans, payday: payday, calendar: calendar)
 
         NavigationSplitView {
             ZStack {
@@ -150,6 +151,9 @@ struct ExpensesView: View {
                                     headline: lens == .plan
                                         ? .sisa(planContents.totals.sisa)
                                         : .spending(contents.total),
+                                    split: lens == .list
+                                        ? planOrigins.split(contents.expenses, in: cycle)
+                                        : nil,
                                     canGoBack: CyclePaging.canGoBack(
                                         from: cycle,
                                         oldestExpense: expenses.last?.date,
@@ -166,6 +170,7 @@ struct ExpensesView: View {
                     }
                 }
                 .motion(Motion.settle, value: cycle)
+                .environment(\.planOrigins, planOrigins)
             }
             .searchableWhenThereIsSomethingToSearch(text: $searchText, enabled: !expenses.isEmpty)
             .navigationBarTitleDisplayMode(.inline)

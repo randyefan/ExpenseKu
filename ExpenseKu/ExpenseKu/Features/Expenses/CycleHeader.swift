@@ -21,6 +21,7 @@ import SwiftUI
 struct CycleHeader: View {
     let cycle: PayCycle
     let headline: CycleHeadline
+    var split: SpendingSplit? = nil
     let canGoBack: Bool
     let canGoForward: Bool
     let calendar: Calendar
@@ -66,6 +67,10 @@ struct CycleHeader: View {
             VStack(spacing: 2) {
                 SectionHeaderText(headline.label)
                 MoneyText(headline.amount, font: .dsHero, color: headlineColor, rolls: true)
+            }
+
+            if let split, split.fromPlan > 0 {
+                SpendingSplitView(split: split)
             }
         }
         .padding(Metric.cardPadding)
@@ -114,6 +119,105 @@ private struct CyclePageButton: View {
             .disabled(!enabled)
             .motion(Motion.press, value: enabled)
     }
+}
+
+private struct SpendingSplitView: View {
+    let split: SpendingSplit
+
+    var body: some View {
+        VStack(spacing: 10) {
+            SpendingSplitBar(split: split)
+
+            ViewThatFits(in: .horizontal) {
+                HStack(alignment: .top) {
+                    outsideLegend(alignment: .leading)
+                    Spacer(minLength: 12)
+                    fromPlanLegend(alignment: .trailing)
+                }
+                VStack(alignment: .leading, spacing: 8) {
+                    outsideLegend(alignment: .leading)
+                    fromPlanLegend(alignment: .leading)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        }
+    }
+
+    private func outsideLegend(alignment: HorizontalAlignment) -> some View {
+        SpendingSplitLegend(title: "Outside plan", amount: split.outsidePlan,
+                            color: Theme.accent, alignment: alignment)
+    }
+
+    private func fromPlanLegend(alignment: HorizontalAlignment) -> some View {
+        SpendingSplitLegend(title: "From plan", amount: split.fromPlan,
+                            color: Theme.plan, alignment: alignment)
+    }
+}
+
+private struct SpendingSplitBar: View {
+    let split: SpendingSplit
+
+    var body: some View {
+        GeometryReader { proxy in
+            let hasOutside = split.outsidePlan > 0
+            let gap: CGFloat = hasOutside ? 2 : 0
+            let outsideWidth = hasOutside
+                ? max(4, (proxy.size.width - gap) * split.outsideFraction)
+                : 0
+            HStack(spacing: gap) {
+                Rectangle()
+                    .fill(Theme.accent)
+                    .frame(width: outsideWidth)
+                Rectangle()
+                    .fill(Theme.plan)
+            }
+        }
+        .frame(height: 8)
+        .clipShape(.capsule)
+        .motion(Motion.number, value: split)
+        .accessibilityHidden(true)
+    }
+}
+
+private struct SpendingSplitLegend: View {
+    let title: String
+    let amount: Decimal
+    let color: Color
+    let alignment: HorizontalAlignment
+
+    var body: some View {
+        VStack(alignment: alignment, spacing: 3) {
+            HStack(spacing: 6) {
+                Circle()
+                    .fill(color)
+                    .frame(width: 8, height: 8)
+                Text(title)
+                    .font(.dsCaption)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(Theme.textSecondary)
+                    .lineLimit(1)
+            }
+            MoneyText(amount, font: .dsSubhead, color: Theme.text, rolls: true)
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(title)
+        .accessibilityValue(amount.formattedIDR())
+    }
+}
+
+#Preview("Split") {
+    CycleHeader(
+        cycle: PayCycle.containing(.now, payday: 1),
+        headline: .spending(4_570_000),
+        split: SpendingSplit(outsidePlan: 55_000, fromPlan: 4_515_000),
+        canGoBack: true,
+        canGoForward: false,
+        calendar: .current,
+        onPrevious: {},
+        onNext: {}
+    )
+    .padding(.horizontal, Metric.screenPadding)
+    .appBackground()
 }
 
 #Preview {

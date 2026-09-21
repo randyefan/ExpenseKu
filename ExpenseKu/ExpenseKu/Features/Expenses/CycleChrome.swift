@@ -13,6 +13,7 @@ import SwiftUI
 struct CycleChrome: View {
     let cycle: PayCycle
     let headline: CycleHeadline
+    var split: SpendingSplit? = nil
     let canGoBack: Bool
     let canGoForward: Bool
     let calendar: Calendar
@@ -25,6 +26,7 @@ struct CycleChrome: View {
             CycleHeader(
                 cycle: cycle,
                 headline: headline,
+                split: split,
                 canGoBack: canGoBack,
                 canGoForward: canGoForward,
                 calendar: calendar,

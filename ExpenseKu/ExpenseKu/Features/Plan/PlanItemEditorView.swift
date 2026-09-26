@@ -2,11 +2,13 @@
 //  PlanItemEditorView.swift
 //  ExpenseKu
 //
-//  Adding or editing one plan item (frames F1, F3, I8).
+//  Adding or editing one plan item (frames F1, F3, I8, L5).
 //
 //  One editor for both kinds, with the field set changing under the toggle. An
-//  Envelope has no Account, no due day and no Auto, because it never creates an
-//  Expense — showing those fields greyed would imply they could be filled in.
+//  Envelope has no Category, People, due day or Auto, because it never creates an
+//  Expense — showing those fields greyed would imply they could be filled in. It does
+//  take an optional Account (§7.6): where its allowance is kept, which puts it on that
+//  transfer line and lets it be marked as moved.
 //
 //  The `Auto` switch stays inert until a due day is set: an Auto item without one
 //  never fires (PRD §7.4), so an enabled switch would be a promise the app cannot
@@ -135,12 +137,13 @@ struct PlanItemEditorView: View {
 
                         if kind == .envelope {
                             envelopeCategoriesRow
+                            PlanAccountRow(account: $account)
                         } else {
                             fixedFields
                         }
                     } footer: {
                         if kind == .envelope {
-                            Text("An envelope never creates an expense. It has no account, no due day and no Auto — its spent total comes from expenses you have already logged.")
+                            Text("An envelope never creates an expense, so it has no due day and no Auto. Its Account is optional: set it and the allowance joins that account's transfer line and can be marked as moved.")
                                 .font(.dsCaption)
                                 .foregroundStyle(Theme.textSecondary)
                         }
@@ -211,16 +214,7 @@ struct PlanItemEditorView: View {
         }
         .listRowBackground(Theme.card)
 
-        NavigationLink {
-            AccountPicker(selection: $account)
-        } label: {
-            LabeledContent("Account") {
-                Text(account?.name ?? "None")
-                    .foregroundStyle(account == nil ? Theme.textSecondary : Theme.text)
-            }
-            .font(.dsBody)
-        }
-        .listRowBackground(Theme.card)
+        PlanAccountRow(account: $account)
 
         NavigationLink {
             PeoplePicker(selection: $people)
@@ -302,7 +296,7 @@ struct PlanItemEditorView: View {
         if kind == .envelope {
             target.envelopeCategories = envelopeCategories
             target.category = nil
-            target.account = nil
+            target.account = account
             target.people = []
             target.dueDay = nil
             target.isAuto = false

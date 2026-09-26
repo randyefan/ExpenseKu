@@ -25,6 +25,8 @@ enum PlanAction {
     /// The owner tapped a row's Done control. What that means depends on the row's
     /// state, which is `DoneCheckState`'s job, not the lens's.
     case tapDoneCheck(PlanItem)
+    /// A line of a Funded menu (§7.6): set or clear Funded, or "Paid…" into E4.
+    case chooseFunding(PlanItem, FundMenuEntry)
     case activateDormant(PlanItem)
     case toggleDormantSection
 
@@ -32,4 +34,7 @@ enum PlanAction {
     case editAdjustment(TransferRow)
 
     case openReview
+    /// L6: narrow the plan to its Funded Fixed items, or widen it back.
+    case showFunded
+    case clearFundedFilter
 }

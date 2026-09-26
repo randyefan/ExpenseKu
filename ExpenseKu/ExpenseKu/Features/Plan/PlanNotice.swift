@@ -4,7 +4,8 @@
 //
 //  The one line above the plan that says what has changed since the owner last looked:
 //  Auto items that posted themselves (E1, G2), the transfers waiting on payday morning
-//  (G1), or a plan that has just been copied forward (E5).
+//  (G1), a plan that has just been copied forward (E5), or items whose money is in
+//  their account but not yet paid (L1, §7.6).
 //
 //  The review variant is tappable, and that is a decision rather than a detail
 //  (decision 21). Without a route to the amount the flag could only be dismissed,
@@ -19,6 +20,7 @@ struct PlanNotice: View {
         case review
         case payday
         case carriedOver
+        case funded
     }
 
     let kind: Kind
@@ -49,7 +51,7 @@ struct PlanNotice: View {
         if let onTap {
             Button(action: onTap) { label.contentShape(.rect) }
                 .buttonStyle(.pressableCard)
-                .accessibilityHint("Opens the posted expenses")
+                .accessibilityHint(hint)
         } else {
             label
         }
@@ -87,6 +89,11 @@ struct PlanNotice: View {
         case .review: "bolt.badge.clock.fill"
         case .payday: "arrow.left.arrow.right"
         case .carriedOver: "arrow.turn.down.right"
+        case .funded: "arrow.down.to.line"
         }
+    }
+
+    private var hint: String {
+        kind == .funded ? "Shows only these items" : "Opens the posted expenses"
     }
 }

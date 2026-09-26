@@ -79,6 +79,7 @@ enum PlanMaintenance {
                     needsReview: true
                 )
                 context.insert(expense)
+                item.recordPaid()
             }
         }
     }

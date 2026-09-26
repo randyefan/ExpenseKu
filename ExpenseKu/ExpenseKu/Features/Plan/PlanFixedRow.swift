@@ -28,6 +28,7 @@ struct PlanFixedRow: View {
     let today: Date
     let calendar: Calendar
     let onTapCheck: () -> Void
+    let onChooseFunding: (FundMenuEntry) -> Void
     let onSelect: () -> Void
 
     private var state: DoneCheckState { .state(for: item) }
@@ -41,7 +42,9 @@ struct PlanFixedRow: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            DoneCheck(state: state, itemName: item.name, onTap: onTapCheck)
+            DoneCheck(state: state, tap: .of(item), itemName: item.name,
+                      accountName: item.account?.name,
+                      onTap: onTapCheck, onChoose: onChooseFunding)
                 .padding(.top, 1)
 
             Button(action: onSelect) {
@@ -99,6 +102,9 @@ struct PlanFixedRow: View {
                 PlanChip(kind: .review, text: "Review")
             }
             Spacer(minLength: 0)
+            if PlanItemState.of(item) == .funded, let account = item.account {
+                FundedPlace(account: account.name)
+            }
         }
         .lineLimit(1)
     }

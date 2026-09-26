@@ -57,6 +57,9 @@ struct ExpensesView: View {
     @State private var contentChange: CycleContentChange = .page(.leading)
     /// Lives here, not in the lens: the lens is rebuilt on every page and lens switch.
     @State var dormantExpanded = false
+    /// The cycle whose plan is filtered to its Funded items (L6), if any. Keyed by
+    /// cycle so paging away drops the filter instead of carrying it to another plan.
+    @State var fundedFilterCycle: PayCycle?
     @State var planSheet: PlanSheet?
     @State var planConfirmation: PlanConfirmation?
     @State private var searchText = ""
@@ -140,6 +143,7 @@ struct ExpensesView: View {
                             payday: payday,
                             today: .now,
                             dormantExpanded: dormantExpanded,
+                            isFundedFiltered: isFundedFilterOn(planContents),
                             onPlanAction: { perform($0, in: planContents) },
                             selectedDay: $selectedDay,
                             resolvedDay: resolvedSelectedDay,
@@ -216,6 +220,9 @@ struct ExpensesView: View {
             .sensoryFeedback(.selection, trigger: lens)
             .onAppear { resetToCurrentCycle() }
             .task(id: CarryOverKey(cycle: cycle, isPlan: lens == .plan)) { carryOverIfNeeded() }
+            .onChange(of: planContents.funded.isEmpty) { _, isEmpty in
+                if isEmpty { fundedFilterCycle = nil }
+            }
             .onChange(of: payday) { _, newValue in
                 cycle = PayCycle.containing(.now, payday: newValue, calendar: calendar)
             }

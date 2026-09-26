@@ -8,8 +8,9 @@
 //  cycle after it.
 //
 //  What is *not* copied is the point. Doneness, the Expense link, needs-review,
-//  "sudah masuk" and the transfer ticks are all facts about the cycle that just ended;
-//  copying any of them would open the new cycle with work already claimed as finished.
+//  "sudah masuk", the transfer ticks and Funded (§7.6) are all facts about the cycle
+//  that just ended; copying any of them would open the new cycle with work already
+//  claimed as finished. The old plan keeps its own — only the copy starts clear.
 //
 //  Rows that were Rp 0 or never completed arrive dormant, folded into "From last
 //  cycle". The spreadsheet keeps them deliberately — they are reminders — but they

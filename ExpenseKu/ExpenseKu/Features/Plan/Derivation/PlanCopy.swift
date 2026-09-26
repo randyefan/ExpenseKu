@@ -29,6 +29,22 @@ nonisolated enum PlanCopy {
         return "\(items) · none done yet"
     }
 
+    /// E4's line under the item name. L7 names a missing Account, because that is why
+    /// this item came straight here with no ◐ in between.
+    static func doneSheetSubtitle(planned: Decimal, hasAccount: Bool) -> String {
+        "Fixed plan item · " + (hasAccount ? "" : "no account · ") + "planned \(planned.formattedIDR())"
+    }
+
+    /// L6's header while the plan is filtered to Funded items: "PLAN · 3 OF 14 ITEMS".
+    static func filteredSectionTitle(shown: Int, of total: Int) -> String {
+        "Plan · \(shown) of " + counted(total, "item")
+    }
+
+    /// The trailing slot of a Funded row (L1): where the money is waiting.
+    static func inAccount(_ account: String) -> String {
+        "in \(account)"
+    }
+
     /// E5's notice, naming where the plan came from and how much arrived. The source
     /// is named by the month its cycle *ended* in, exactly as the cycle header names a
     /// cycle (Q4) — "Copied from September" has to mean the September the owner just

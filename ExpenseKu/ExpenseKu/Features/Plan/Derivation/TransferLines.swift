@@ -28,15 +28,15 @@ import Foundation
 import SwiftData
 
 nonisolated enum TransferLines {
-    /// One row per account with money against it, largest first. Envelopes have no
-    /// account and never contribute; dormant items are not in this cycle's plan and
-    /// never contribute.
+    /// One row per account with money against it, largest first. An Envelope
+    /// contributes through its optional Account like any Fixed item (PRD §7.6);
+    /// dormant items are not in this cycle's plan and never contribute.
     static func rows(activeItems: [PlanItem], lines: [TransferLine]) -> [TransferRow] {
         var planned: [PersistentIdentifier: Decimal] = [:]
         var names: [PersistentIdentifier: String] = [:]
         var allAuto: [PersistentIdentifier: Bool] = [:]
 
-        for item in activeItems where item.kind == .fixed {
+        for item in activeItems {
             guard let account = item.account else { continue }
             let id = account.persistentModelID
             planned[id, default: 0] += item.amount
@@ -84,7 +84,7 @@ nonisolated struct TransferRow: Identifiable, Equatable {
     let adjustment: Decimal
     let hasTransferred: Bool
     /// Every contributing item is Auto, so the row reads "keep this covered" rather
-    /// than "send this".
+    /// than "send this". An Envelope is never Auto, so one on the line makes it "send".
     let allAuto: Bool
 
     var id: PersistentIdentifier { accountID }

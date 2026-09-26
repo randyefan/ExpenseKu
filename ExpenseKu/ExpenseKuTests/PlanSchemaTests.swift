@@ -2,7 +2,7 @@
 //  PlanSchemaTests.swift
 //  ExpenseKuTests
 //
-//  That the V2 schema actually opens, and that its two riskiest shapes hold.
+//  That the shipping schema actually opens, and that its two riskiest shapes hold.
 //
 //  A model layer can compile perfectly and still fail at ModelContainer construction,
 //  so "it builds" proves nothing here. Two things in particular were worth pinning
@@ -30,10 +30,10 @@ private typealias Category = ExpenseKu.Category
 
 nonisolated final class PlanSchemaTests: XCTestCase {
 
-    /// The V2 container opens with all nine models, both PlanItem→Category
+    /// The container opens with all nine models, both PlanItem→Category
     /// relationships included.
     @MainActor
-    func testV2ContainerOpens() throws {
+    func testContainerOpens() throws {
         let context = try makeInMemoryContext()
         XCTAssertEqual(try context.fetchCount(FetchDescriptor<PlanItem>()), 0)
         XCTAssertEqual(try context.fetchCount(FetchDescriptor<CyclePlan>()), 0)
@@ -166,13 +166,36 @@ nonisolated final class PlanSchemaTests: XCTestCase {
     /// Reading it off `Schema` catches it here instead.
     @MainActor
     func testEveryRelationshipHasAnInverse() {
-        let schema = Schema(versionedSchema: ExpenseKuSchemaV2.self)
+        let schema = Schema(versionedSchema: ExpenseKuSchemaV3.self)
         let missing = schema.entities.flatMap { entity in
             entity.relationships
                 .filter { $0.inverseName == nil }
                 .map { "\(entity.name): \($0.name)" }
         }
         XCTAssertEqual(missing, [], "CloudKit requires an inverse on every relationship")
+    }
+
+    /// **Every attribute is optional or has a default** — the other half of ADR-0002's
+    /// CloudKit rule. A record synced down from a build that predates an attribute
+    /// arrives without it, and a non-optional attribute with no default cannot hold
+    /// that. `PlanItem.isFunded` is the newest case: older builds never write it.
+    @MainActor
+    func testEveryAttributeIsOptionalOrDefaulted() {
+        let schema = Schema(versionedSchema: ExpenseKuSchemaV3.self)
+        let bare = schema.entities.flatMap { entity in
+            entity.attributes
+                .filter { !$0.isOptional && $0.defaultValue == nil }
+                .map { "\(entity.name).\($0.name)" }
+        }
+        XCTAssertEqual(bare, [], "CloudKit requires every attribute to be optional or defaulted")
+    }
+
+    @MainActor
+    func testIsFundedDefaultsToFalse() throws {
+        let schema = Schema(versionedSchema: ExpenseKuSchemaV3.self)
+        let entity = try XCTUnwrap(schema.entities.first { $0.name == "PlanItem" })
+        let attribute = try XCTUnwrap(entity.attributes.first { $0.name == "isFunded" })
+        XCTAssertEqual(attribute.defaultValue as? Bool, false)
     }
 
     /// An unrecognised kind — a value a future version wrote and synced down — reads

@@ -43,6 +43,10 @@ final class PlanItem {
     /// The money leaves by itself (autodebit, a subscription). With a due day this
     /// item materialises its own Expense (ADR-0007); without one it never fires.
     var isAuto: Bool = false
+    /// The owner has moved this item's money into its Account but not paid it yet
+    /// (PRD §7.6). Only half the fact: an item with no Account is never Funded,
+    /// whatever this says — read it through `PlanItemState`, never directly.
+    var isFunded: Bool = false
 
     /// The `cycleStart` of the last plan in which this item was actually in use.
     /// Carried forward so a dormant row can say when it was last used.
@@ -57,9 +61,10 @@ final class PlanItem {
 
     var plan: CyclePlan?
 
-    // Fixed only. An Envelope names a set of Categories instead (below) and has no
-    // Account at all, because it never produces a transaction to pay from.
+    // Fixed only. An Envelope names a set of Categories instead (below).
     var category: Category?
+    /// Where a Fixed item is paid from, or where an Envelope's allowance is kept.
+    /// Optional for both; without one an item cannot be Funded (§7.6).
     var account: Account?
     /// Passed to the Expense this item creates. Person covers recipients as well as
     /// companions since ADR-0006 — "Kirim buat Ibu" is a Person, not a Category.
@@ -137,4 +142,11 @@ extension PlanItem {
     /// Carried over but not in use this cycle: no money against it and never
     /// completed. Folded into the "From last cycle" section (PRD §7.2).
     var isDormant: Bool { amount == 0 && !isDone }
+
+    /// Confirming Done or an Auto posting means the money went through the Account,
+    /// so undoing that Done — by un-ticking, or by deleting the Expense from the
+    /// ledger — lands on Funded rather than Todo, with no code outside the plan (§7.6).
+    func recordPaid() {
+        if account != nil, !isFunded { isFunded = true }
+    }
 }

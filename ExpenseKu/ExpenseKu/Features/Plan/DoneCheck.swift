@@ -6,49 +6,60 @@
 //  would, deliberately: a plan is a checklist and must not read as the ledger
 //  (PRD §6.2). Conflating the two is this feature's cardinal sin (ADR-0005).
 //
-//  Five faces, one at a time — see DoneCheckState. Two of them are inert: an envelope
-//  has no transaction to complete, and an Auto item that has not fired yet has nothing
-//  to confirm.
+//  One face at a time — see DoneCheckState — and one behaviour, from DoneCheckTap:
+//  a Button when tapping opens a sheet, a Menu when it changes Funded (§7.6), inert
+//  when there is nothing to do. The Menu keeps its order fixed: iOS otherwise reverses
+//  a menu that opens upward, and L2 draws "Moved to …" above "Paid…" either way.
 //
 
 import SwiftUI
 
 struct DoneCheck: View {
     let state: DoneCheckState
+    let tap: DoneCheckTap
     let itemName: String
+    var accountName: String?
     let onTap: () -> Void
+    let onChoose: (FundMenuEntry) -> Void
 
     var body: some View {
-        Button(action: onTap) {
-            Image(systemName: symbol)
-                .font(.system(size: 22))
-                .foregroundStyle(tint)
-                .frame(width: 30, height: 30)
-                .contentShape(.circle)
-        }
-        .buttonStyle(.pressableCard)
-        .disabled(!state.isActionable)
-        .accessibilityLabel(itemName)
-        .accessibilityValue(accessibilityValue)
-        .accessibilityAddTraits(isTicked ? [.isButton, .isSelected] : .isButton)
+        control
+            .accessibilityLabel(itemName)
+            .accessibilityValue(accessibilityValue)
+            .accessibilityAddTraits(isTicked ? [.isButton, .isSelected] : .isButton)
     }
 
-    private var symbol: String {
-        switch state {
-        case .todo: "circle"
-        case .done: "checkmark.circle.fill"
-        case .auto: "bolt.circle"
-        case .autoPosted: "bolt.circle.fill"
-        case .envelope: "tray.fill"
+    @ViewBuilder
+    private var control: some View {
+        switch tap {
+        case .menu(let entries):
+            Menu {
+                ForEach(entries, id: \.self) { entry in
+                    Button { onChoose(entry) } label: {
+                        Text(entry.title)
+                        Text(entry.subtitle)
+                        Image(systemName: entry.systemImage)
+                    }
+                }
+            } label: {
+                face
+            }
+            .menuOrder(.fixed)
+            .buttonStyle(.pressableCard)
+        case .confirmDone, .untick:
+            Button(action: onTap) { face }
+                .buttonStyle(.pressableCard)
+        case .none:
+            Button(action: {}) { face }
+                .buttonStyle(.pressableCard)
+                .disabled(true)
         }
     }
 
-    private var tint: Color {
-        switch state {
-        case .todo: Theme.textSecondary.opacity(0.6)
-        case .done, .auto, .autoPosted: Theme.accent
-        case .envelope: Theme.textSecondary.opacity(0.7)
-        }
+    private var face: some View {
+        DoneCheckFace(state: state)
+            .frame(width: 30, height: 30)
+            .contentShape(.circle)
     }
 
     private var isTicked: Bool {
@@ -58,12 +69,16 @@ struct DoneCheck: View {
     /// Spoken by VoiceOver and read by `idb ui describe-all`, which is how the flows
     /// get verified — a control with no value is invisible to both.
     private var accessibilityValue: String {
-        switch state {
+        let account = accountName ?? "the account"
+        return switch state {
         case .todo: "Not done"
+        case .funded: "In \(account), not paid yet"
         case .done: "Done"
         case .auto: "Auto — posts on its due day"
+        case .autoFunded: "Auto — covered in \(account)"
         case .autoPosted: "Auto — posted, needs review"
         case .envelope: "Envelope — fills from your expenses"
+        case .envelopeFunded: "Envelope — moved to \(account)"
         }
     }
 }

@@ -46,7 +46,7 @@ struct PlanDoneSheet: View {
                                 .font(.dsTitle).bold()
                                 .foregroundStyle(Theme.text)
                                 .multilineTextAlignment(.center)
-                            Text("Fixed plan item · planned \(item.amount.formattedIDR())")
+                            Text(PlanCopy.doneSheetSubtitle(planned: item.amount, hasAccount: item.account != nil))
                                 .font(.dsCaption)
                                 .foregroundStyle(Theme.textSecondary)
                             AmountHero(displayExpression: expr.displayExpression, amount: resolvedAmount)
@@ -113,6 +113,7 @@ struct PlanDoneSheet: View {
             planItem: item
         )
         context.insert(expense)
+        item.recordPaid()
         try? context.save()
         onFinish()
     }

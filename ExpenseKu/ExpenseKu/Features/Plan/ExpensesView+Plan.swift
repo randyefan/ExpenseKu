@@ -34,6 +34,8 @@ extension ExpensesView {
             planSheet = .editPlanItem(item)
         case .tapDoneCheck(let item):
             tapDoneCheck(item)
+        case .chooseFunding(let item, let entry):
+            chooseFunding(entry, for: item)
         case .activateDormant(let item):
             // Waking a row is the same act as editing its amount, and the amount is
             // the only thing that makes it dormant — so it opens the editor rather
@@ -51,7 +53,17 @@ extension ExpensesView {
 
         case .openReview:
             planSheet = .review
+        case .showFunded:
+            fundedFilterCycle = cycle
+        case .clearFundedFilter:
+            fundedFilterCycle = nil
         }
+    }
+
+    /// L6's filter, only while it applies to the cycle on screen and has something
+    /// to show. Paging away or paying the last Funded item ends it.
+    func isFundedFilterOn(_ contents: PlanContents) -> Bool {
+        fundedFilterCycle == cycle && !contents.funded.isEmpty
     }
 
     /// Fills a forward cycle's plan from the previous one, on arrival (PRD §7.2).
@@ -86,17 +98,29 @@ extension ExpensesView {
     }
 
     /// What the lead control means depends on the row's state, which is
-    /// DoneCheckState's job. Ticking opens the confirmation sheet; un-ticking asks
-    /// before deleting the expense it created.
+    /// DoneCheckTap's job. Ticking opens the confirmation sheet; un-ticking asks
+    /// before deleting the expense it created. A Menu reports through
+    /// `chooseFunding` instead and never lands here.
     private func tapDoneCheck(_ item: PlanItem) {
-        switch DoneCheckState.state(for: item) {
-        case .todo:
+        switch DoneCheckTap.of(item) {
+        case .confirmDone:
             planSheet = .confirmDone(item)
-        case .done, .autoPosted:
+        case .untick:
             planConfirmation = .untick(item)
-        case .auto, .envelope:
+        case .menu, .none:
             break
         }
+    }
+
+    /// Funded is the owner's report, never a balance, and it leaves the transfer
+    /// tick alone either way (§7.6, decision 25).
+    private func chooseFunding(_ entry: FundMenuEntry, for item: PlanItem) {
+        guard let funded = entry.fundedValue else {
+            planSheet = .confirmDone(item)
+            return
+        }
+        item.isFunded = funded
+        try? context.save()
     }
 
     /// The TransferLine is created on first use — until the owner ticks or adjusts

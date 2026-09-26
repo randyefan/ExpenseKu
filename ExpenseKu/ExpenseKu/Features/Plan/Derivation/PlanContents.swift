@@ -28,6 +28,7 @@ nonisolated struct PlanContents {
     let transfers: [TransferRow]
     let groupShares: [GroupShare]
     let review: ReviewState
+    let funded: FundedSummary
 
     private let envelopesByItem: [PersistentIdentifier: EnvelopeProgress]
 
@@ -50,6 +51,7 @@ nonisolated struct PlanContents {
         transfers = TransferLines.rows(activeItems: split.active, lines: plan?.transferLines ?? [])
         groupShares = GroupShares.rows(activeItems: split.active, totalIncome: totals.totalIncome)
         review = ReviewState(cycleItems: split.active)
+        funded = FundedSummary(activeItems: split.active)
     }
 
     /// No plan exists for this cycle at all — only reachable for the first one, since

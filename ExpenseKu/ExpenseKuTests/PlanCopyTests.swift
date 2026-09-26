@@ -3,7 +3,7 @@
 //  ExpenseKuTests
 //
 //  The small derived pieces the Plan lens renders but that are not money arithmetic:
-//  the header's labelled pair, the section title, the check control's five states, the
+//  the header's labelled pair, the section title, the check control's states, the
 //  review notice, and the two confirmation bodies.
 //
 //  The confirmations earn a test because each is a promise about what a destructive
@@ -65,7 +65,7 @@ nonisolated final class PlanCopyTests: XCTestCase {
 
     // MARK: - DoneCheck
 
-    /// Five states, one of them at a time, derived rather than read as five booleans.
+    /// One state at a time, derived rather than read as a handful of booleans.
     @MainActor
     func testTheCheckControlHasOneStateAtATime() throws {
         let context = try makeInMemoryContext()
@@ -84,14 +84,26 @@ nonisolated final class PlanCopyTests: XCTestCase {
         XCTAssertEqual(DoneCheckState.state(for: auto), .autoPosted)
     }
 
-    /// An envelope's control is inert: it has no transaction to complete. So is an
-    /// Auto item that has not fired — there is nothing to confirm yet.
-    func testOnlySomeStatesAreTappable() {
-        XCTAssertTrue(DoneCheckState.todo.isActionable)
-        XCTAssertTrue(DoneCheckState.done.isActionable)
-        XCTAssertTrue(DoneCheckState.autoPosted.isActionable)
-        XCTAssertFalse(DoneCheckState.auto.isActionable)
-        XCTAssertFalse(DoneCheckState.envelope.isActionable)
+    /// Without an Account, an envelope's control is inert: it has no transaction to
+    /// complete. So is an Auto item that has not fired — there is nothing to confirm yet.
+    @MainActor
+    func testOnlySomeStatesAreTappable() throws {
+        let context = try makeInMemoryContext()
+        let todo = PlanItem(name: "Kos", amount: 1)
+        let done = PlanItem(name: "Listrik", amount: 1)
+        let auto = PlanItem(name: "Netflix", amount: 1, dueDay: 2, isAuto: true)
+        let posted = PlanItem(name: "Vidio", amount: 1, dueDay: 2, isAuto: true)
+        let envelope = PlanItem(name: "Hidup", amount: 1, kind: .envelope)
+        [todo, done, auto, posted, envelope].forEach(context.insert)
+        context.insert(Expense(amount: 1, planItem: done))
+        context.insert(Expense(amount: 1, planItem: posted))
+        try context.save()
+
+        XCTAssertEqual(DoneCheckTap.of(todo), .confirmDone)
+        XCTAssertEqual(DoneCheckTap.of(done), .untick)
+        XCTAssertEqual(DoneCheckTap.of(posted), .untick)
+        XCTAssertEqual(DoneCheckTap.of(auto), .none)
+        XCTAssertEqual(DoneCheckTap.of(envelope), .none)
     }
 
     // MARK: - Review notice

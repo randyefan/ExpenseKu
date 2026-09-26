@@ -45,6 +45,7 @@ struct CycleLensArea<Header: View>: View {
     let payday: Int
     let today: Date
     let dormantExpanded: Bool
+    let isFundedFiltered: Bool
     let onPlanAction: (PlanAction) -> Void
     @Binding var selectedDay: Date?
     let resolvedDay: Date?
@@ -88,6 +89,7 @@ struct CycleLensArea<Header: View>: View {
                     today: today,
                     calendar: calendar,
                     dormantExpanded: dormantExpanded,
+                    isFundedFiltered: isFundedFiltered,
                     revealTrigger: AnyHashable(cycle),
                     onAction: onPlanAction,
                     header: { header }

@@ -50,21 +50,22 @@ nonisolated final class TransferLinesTests: XCTestCase {
         XCTAssertTrue(rows.first?.allAuto == true, "an all-Auto account reads 'keep this covered'")
     }
 
-    /// An envelope has no account and never reaches the checklist.
+    /// An envelope reaches the checklist only through its optional Account (PRD §7.6);
+    /// without one it has nowhere to be transferred to.
     @MainActor
-    func testEnvelopesNeverContribute() throws {
+    func testAnEnvelopeContributesOnlyThroughItsAccount() throws {
         let context = try makeInMemoryContext()
         let bca = Account(name: "BCA")
         context.insert(bca)
         let fixed = PlanItem(name: "Kos", amount: 2_200_000, account: bca)
         let envelope = PlanItem(name: "Hidup", amount: 938_300, kind: .envelope, account: bca)
-        context.insert(fixed)
-        context.insert(envelope)
+        let unaccounted = PlanItem(name: "Jajan", amount: 100_000, kind: .envelope)
+        [fixed, envelope, unaccounted].forEach(context.insert)
         try context.save()
 
-        let rows = TransferLines.rows(activeItems: [fixed, envelope], lines: [])
+        let rows = TransferLines.rows(activeItems: [fixed, envelope, unaccounted], lines: [])
         XCTAssertEqual(rows.count, 1)
-        XCTAssertEqual(rows.first?.planned, 2_200_000)
+        XCTAssertEqual(rows.first?.planned, 3_138_300)
     }
 
     /// The manual adjustment is signed, and the transfer figure is what the owner

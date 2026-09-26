@@ -1,7 +1,7 @@
 # PRD — Payday Planning
 
 Status: Accepted
-Date: 2026-09-20
+Date: 2026-09-20 · amended 2026-09-27 (§7.6 Funded, flow L)
 Owner: Randy Efan
 
 Companion documents: `CONTEXT.md` (ubiquitous language), `docs/adr/0005`–`0007`
@@ -77,9 +77,9 @@ chart, and the People leaderboard.
 CyclePlan  ── exactly one per PayCycle, keyed by the existing Payday anchor
 ├── IncomeLine[]    name · amount · hasArrived
 ├── PlanItem[]
-│   ├─ Fixed        amount · Category · Account · People · dueDay? · isAuto · isDone
+│   ├─ Fixed        amount · Category · Account · People · dueDay? · isAuto · isFunded · isDone
 │   │                └─ isDone ──▶ Expense  (1:1 link)
-│   └─ Envelope     amount · Category set
+│   └─ Envelope     amount · Category set · Account? · isFunded
 │                    └─ spent = Σ Expense in this cycle whose Category is in the set
 │                       AND which is not linked to any Fixed PlanItem
 └── TransferLine[]  per Account: derived Σ · manual adjustment · hasTransferred
@@ -97,7 +97,8 @@ Where each part is drawn:
 | `IncomeLine` · name · amount · hasArrived | row `IncomeRow` in `E1`; editor `I1`; ticked in `G1` |
 | `PlanItem` · Fixed — all seven fields | row `PlanFixedRow` in `E2`; editor `F1`; `I8` for Auto without a due day |
 | `isDone ──▶ Expense` (1:1) | created in `E4`; undone in `I4`; link dropped in `I7` |
-| `PlanItem` · Envelope · amount · Category set | row `PlanEnvelopeRow` in `E2`; editor `F3`; Category set `F4` |
+| `PlanItem` · Envelope · amount · Category set | row `PlanEnvelopeRow` in `E2`; editor `F3`; Category set `F4`; optional Account `L5` |
+| `PlanItem` · `isFunded` (§7.6) | `DoneCheck · Funded` in `L1`; set in `L2`, `L4`; cleared in `L3`; filtered in `L6` |
 | Envelope `spent` | the bar in `E2` (under and over), filling in `G2` |
 | `TransferLine` · Σ · adjustment · hasTransferred | `E3`; adjustment editor `I2` |
 | `Group` | `H2` list, `H3` editor, `H4` assignment |
@@ -197,6 +198,8 @@ Top to bottom:
    review sheet listing each posted `Expense` with its amount and whether that amount
    matches the plan. Any line opens that `Expense` in the existing expense editor; a
    footer button clears every needs-review flag at once. `[→ E1, G2, I3]`
+   The **funded notice** sits in the same place under the same rule — present only
+   while a Fixed item is Funded and not Done (§7.6). `[→ L1, L6]`
 3. **Plan items** — sorted by **amount descending**, matching the spreadsheet. Dormant
    rows (§7.2) are collapsed into a section at the bottom. `[→ E2, F2]`
    - A **Fixed** row carries: name, amount, Category chip, Account chip, People avatars,
@@ -232,8 +235,9 @@ Three sheets, none of which is the expense editor:
 
 - **Plan item editor** — amount, kind (§5.1), name, Category, Account, People, and for
   Fixed only: due day and `Auto`. The field set changes with the kind, because an
-  Envelope has no Account, no due day and no `Auto`. Reached by tapping a plan row.
-  `[→ F1 Fixed, F3 Envelope, I8 Auto without a due day]`
+  Envelope has no due day and no `Auto`. An Envelope's Account is **optional** (§7.6);
+  it was absent until 2026-09-27. Reached by tapping a plan row.
+  `[→ F1 Fixed, F3 Envelope, L5 Envelope with an Account, I8 Auto without a due day]`
 - **Income line editor** — name, amount, *has arrived*. Free-typed; no Category, no
   Account. Reached from an `Add income line` row at the foot of the plan. `[→ I1]`
 - **Transfer adjustment editor** — shows the derived total, takes the signed
@@ -296,7 +300,9 @@ a cycle containing only a plan would be unreachable.
 ### 7.2 Carry-over
 
 A new cycle's plan starts as a **full copy** of the previous cycle's — every PlanItem
-and every IncomeLine, amounts included. `[→ E5]`
+and every IncomeLine, amounts included. `[→ E5]` What is copied is the plan, not its
+progress: *has arrived*, the transfer ticks and **Funded** (§7.6) all start clear. An item
+still Funded when its cycle closed stays Funded in that closed plan.
 
 Rows that were Rp 0 **and** never completed last cycle arrive **dormant**: collapsed into a
 "From last cycle" section, one tap to activate. This is the one place the app should
@@ -352,7 +358,9 @@ Two consequences the design must carry:
 **Un-ticking.** Ticking Done creates an `Expense`; un-ticking **deletes it**, behind a
 confirmation that names the amount and date. `[→ I4]` This is symmetric with §9.5, where deleting
 the `Expense` returns the item to not-done. Unlinking without deleting was rejected: the
-orphan would keep counting in its envelope and in every cycle total.
+orphan would keep counting in its envelope and in every cycle total. An item with an
+Account lands on **Funded**, not Todo: the money was in the account before it was paid,
+and still is once the payment is undone (§7.6).
 
 `Auto` also carries a meaning in the transfer checklist: an Auto item still contributes
 to its account's line. Verified — `ke BNI Rp 7.706.000` is `Cicilan Rumah BNI`, an Auto
@@ -380,6 +388,59 @@ the amount and a checkbox. `[→ G1 payday morning, E3 the checklist, I2 the adj
 
 The adjustment is a number inside one plan. The app never claims to know a balance —
 it could not, since money moves without passing through this app.
+
+### 7.6 Funded — in the account, not yet paid
+
+*Added 2026-09-27.* On payday the owner often moves money into an account first and pays
+the bill later — `Kirim buat Ibu` sits in Mandiri for days before it is sent. The transfer
+tick is per **account**, so it cannot say which of Mandiri's three items is still unpaid.
+A PlanItem therefore gains a middle state, **per item**: `[→ L1]`
+
+```
+◯ Todo  ──▶  ◐ Funded  ──▶  ✓ Done
+   └──────────────────────────▲   (Done may skip Funded)
+```
+
+- **Only an item with an Account can be Funded** — there is nowhere else for the money
+  to be. Without one, the item keeps today's two states and ◯ opens `E4` directly. `[→ L7]`
+- **All three kinds take part.** A Fixed manual item goes on to Done. A Fixed `Auto` item
+  is Funded when its account covers the debit, and still posts itself on the due day
+  (ADR-0007) whatever its funded state. An **Envelope** gains an optional Account for
+  this; Funded is its last state, since it is never paid. `[→ L1, L4, L5]`
+- **The transfer line's tick stays independent.** Neither sets the other. With an
+  Account, an Envelope now adds its planned amount to that account's line, which it
+  never did before — `Transfer line = Σ PlanItem.amount for that Account` already
+  covers it.
+- **Every change goes through a Menu**, never a bare toggle, so a stray tap while
+  scrolling changes nothing: `[→ L2, L3, L4]`
+
+  | Control | Menu |
+  |---|---|
+  | ◯ Fixed manual | *Moved to ‹Account›* · *Paid…* (→ `E4`) |
+  | ◐ Fixed manual | *Paid…* (→ `E4`) · *Not moved yet* |
+  | Auto bolt | *Covered in ‹Account›* / *Not covered yet* |
+  | Envelope tray | *Moved to ‹Account›* / *Not moved yet* |
+
+- **A Funded row names where** — *"in Mandiri"* in the chip row's trailing slot, the slot
+  a done row uses for *"planned Rp …"*. A Funded item is never Done, so they never clash.
+- **The funded notice** reads *"In the account, not yet paid · 3 items · Rp 10.706.000"*
+  and counts **Fixed items only**: an Envelope has nothing left to pay. Tapping it
+  filters the plan to those items behind a `FocusChip`; ✕ or paying the last one clears
+  the filter. Sisa, income and totals are untouched — it is a view filter. `[→ L6]`
+
+The effective state is derived, so no combination of edits can contradict itself:
+
+```
+Done    if a linked Expense exists
+Funded  else if isFunded and Account ≠ nil
+Todo    otherwise
+```
+
+Clearing an item's Account therefore returns it to Todo without touching `isFunded`.
+Confirming Done — or an Auto item posting — sets `isFunded` when the item has an Account,
+so undoing Done by **either** route (un-ticking in `I4`, or deleting the Expense in the
+expense editor, §9.5) lands on Funded with no code outside the plan (§7.3). Funded is a fact the
+owner reports, not a balance the app knows — §4's "Accounts stay labels" still holds.
 
 ---
 
@@ -467,17 +528,32 @@ not overlooked.
 | 21 | The review notice is **tappable** — it opens a review sheet over the posted expenses | `I3` |
 | 22 | Un-ticking Done **deletes** the linked Expense, behind a confirmation | `I4` |
 | 23 | The due badge is **absolute, turning relative within three days** | `I8` · `PlanChip · Due soon` |
+| 24 | A PlanItem gains **Funded** — in its account, not yet paid — tracked **per item** (§7.6) | `L1` |
+| 25 | The transfer line's tick stays **independent** of Funded — *owner override* | — no link to draw |
+| 26 | Fixed manual, Fixed `Auto` **and Envelope** take part; an Envelope gains an **optional Account** | `L4`, `L5` |
+| 27 | Done may **skip** Funded; un-ticking Done lands on **Funded** | `L2`, §7.3 |
+| 28 | **No Account, no Funded** — ◯ opens `E4` directly, as before — *owner override* | `L7` |
+| 29 | Every state change is a **Menu**, including ◐ and the one-action bolt and tray | `L2`, `L3`, `L4` |
+| 30 | The funded notice counts **Fixed only** and **filters** the plan when tapped | `L6` |
+| 31 | Carry-over starts every item at **Todo** | §7.2 |
+
 Entries 20–23 were settled on 2026-09-20 during the design pass, when drawing the
 screens surfaced questions §§6–9 had not answered. See `design/ExpenseKu.pen`,
-flows E–I.
+flows E–I. Entries 24–31 were settled in a grilling session on 2026-09-27; four layouts
+were drawn (flow L: a three-state check, an account chip with a swipe, a sheet per
+transfer line, sections by state) and the **three-state check** was chosen. Entry 25 went
+against the recommendation to derive the account tick from its items; entry 28 against
+letting an account-less item be "set aside"; and ◐ opening a Menu (29) against a one-tap
+path to `E4` with the menu on long-press.
 
 ---
 
 ## 11. Design traceability
 
 Every screen is a top-level frame in **`design/ExpenseKu.pen`**, page `02 · Pages · iPhone`.
-Flows A–D are the app as it already ships; **E–I are this feature** and are unbuilt design.
-Components live on page `01 · Design System`, group **`Cycle plan`** (25 components).
+Flows A–D are the app as it already ships; **E–I are this feature**, now built, and so
+is **L**, the §7.6 amendment.
+Components live on page `01 · Design System`, group **`Cycle plan`** (29 components).
 
 ### 11.1 Screen → what it settles
 
@@ -509,6 +585,13 @@ Components live on page `01 · Design System`, group **`Cycle plan`** (25 compon
 | **I6** · Negative Sisa | §6.1.2, §9.3, `Row · Over income` |
 | **I7** · Delete a plan item | §9.4 the Expense survives (ADR-0001 nullify) |
 | **I8** · Auto needs a due day | §7.4 due day required for Auto |
+| **L1** · The plan with every state | §7.6 the three states, "in ‹Account›", the funded notice |
+| **L2** · Tap ◯ — fund it or pay it | §7.6 the ◯ menu, decision 27 skip to Done |
+| **L3** · Tap ◐ — pay it or take it back | §7.6 the ◐ menu, decision 29 |
+| **L4** · Tap an Auto bolt — cover the debit | §7.6 Auto takes part; one-item menus |
+| **L5** · An envelope can name its account | §6.1.1, decision 26 optional Account |
+| **L6** · Tap the notice — filter to Funded | §7.6 the notice filters, decision 30 |
+| **L7** · No Account — no middle state | §7.6, decision 28 |
 
 ### 11.2 Requirements with no screen, by design
 
@@ -538,14 +621,18 @@ as an omission:
 
 ### 11.5 Closed during implementation
 
-Three gaps this document does not address, found while building and answered in code.
-Each is argued in the header of the file that implements it.
+Gaps this document does not address, found while building and answered in code. Each
+is argued in the header of the file that implements it.
 
 | Gap | Answer | Where |
 |---|---|---|
 | Changing the Monthly Start Date would orphan **every** plan, since a plan stores its cycle's start and no stored start would equal any current one | An exact match wins; failing that, a plan whose start falls *inside* the cycle is adopted. Nothing is rewritten, so restoring the old payday restores the old pairing | `PlanLookup` |
 | An **Envelope's category set can span two Groups**, and §5 says only "Σ per Group" | It attributes wholly to the group most of its categories belong to, ties on name. Splitting the amount would invent a division the owner never made | `GroupShares` |
 | A due day can be **genuinely unreachable**: on a walking payday-31 cycle (31 Jan → 28 Feb), day 29 clamps to 28 February, which is the cycle's exclusive end | It resolves to nothing rather than to a date outside the cycle | `DueDay` |
+| §7.6 puts the funded notice "in the same place" as the others, but only one notice shows at a time | Review first (ADR-0007's only defence), then carried-over, then funded, then payday | `CyclePlanLens` |
+| L6 draws the filtered plan with nothing below the items | While filtered, the dormant section, the add rows, the transfer checklist and the group shares step aside; the header and totals stay, untouched | `CyclePlanLens` |
+| The shipped Envelope row shows its bar, not category chips, so there is no chip row for an Account to join as "the last chip" | An Envelope with an Account gains one chip line naming it, with "in ‹Account›" once Funded; without one the row is unchanged | `PlanEnvelopeRow` |
+| The shipped Auto face was a ringed bolt, which is what `DoneCheck · Auto funded` now means | Auto takes the design system's washed, unringed bolt, so the ring alone says "covered" | `DoneCheckFace` |
 
 ### 11.4 Components added by this feature
 
@@ -553,11 +640,14 @@ Each is argued in the header of the file that implements it.
 
 - **Rows** — `PlanFixedRow`, `PlanEnvelopeRow`, `IncomeRow`, `TransferRow`,
   `GroupShareRow`, `DormantRow`
-- **Controls** — `DoneCheck` (Todo / Done / Auto / Auto posted / Envelope),
-  `SegmentedToggle · 3-lens`, `PlanKindToggle` (+ `· Envelope`), `FormRow · Toggle`
+- **Controls** — `DoneCheck` (Todo / Done / Auto / Auto posted / Envelope, and since §7.6
+  Funded / Auto funded / Envelope funded), `SegmentedToggle · 3-lens`, `PlanKindToggle`
+  (+ `· Envelope`), `FormRow · Toggle`
 - **Chips** — `PlanChip` (Category / Account / Due / Due soon / Auto / Review)
 - **Blocks** — `PlanTotals` (incl. `Row · Drift` and `Row · Over income`),
-  `ReviewNotice`, `DormantHeader`
+  `ReviewNotice`, `FundedNotice`, `DormantHeader`
+
+The filter in `L6` reuses `FocusChip` from flow K unchanged.
 - **Pickers** — `PickerRow · Category Multi`, `PickerRow · Claimed`
 
 Everything else is reused unchanged from the shipping design system.

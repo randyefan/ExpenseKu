@@ -19,6 +19,9 @@
 //  this view sits under .id(LensKey(cycle:lens:)) and is rebuilt whenever the owner
 //  pages or switches lens.
 //
+//  Filtered to Funded items (L6), it shows only what that filter is about: the header
+//  and the totals stay, untouched, and the rest of the list steps aside until ✕.
+//
 
 import SwiftUI
 
@@ -28,6 +31,7 @@ struct CyclePlanLens<Header: View>: View {
     let today: Date
     let calendar: Calendar
     let dormantExpanded: Bool
+    var isFundedFiltered = false
     var revealTrigger: AnyHashable = 0
     let onAction: (PlanAction) -> Void
     @ViewBuilder let header: Header
@@ -49,10 +53,12 @@ struct CyclePlanLens<Header: View>: View {
 
             if contents.hasPlan {
                 planItems
-                dormantSection
-                addRows
-                transferChecklist
-                groupShares
+                if !isFundedFiltered {
+                    dormantSection
+                    addRows
+                    transferChecklist
+                    groupShares
+                }
             } else {
                 Section {
                     PlanEmptyState { onAction(.startPlan) }
@@ -67,9 +73,15 @@ struct CyclePlanLens<Header: View>: View {
 
     // MARK: - Sections
 
+    /// One notice at a time. Review comes first: ADR-0007 accepts it as the only
+    /// defence against a wrong autodebit, so nothing may push it off the screen.
     @ViewBuilder
     private var notice: some View {
-        if !contents.review.isEmpty {
+        if isFundedFiltered {
+            FundedFilterBar(total: contents.funded.total) {
+                onAction(.clearFundedFilter)
+            }
+        } else if !contents.review.isEmpty {
             PlanNotice(
                 kind: .review,
                 title: contents.review.title,
@@ -87,6 +99,13 @@ struct CyclePlanLens<Header: View>: View {
                                              incomeLines: plan.copiedIncomeCount,
                                              calendar: calendar)
             )
+        } else if !contents.funded.isEmpty {
+            PlanNotice(
+                kind: .funded,
+                title: contents.funded.title,
+                detail: contents.funded.detail,
+                onTap: { onAction(.showFunded) }
+            )
         } else if contents.transfers.contains(where: { !$0.hasTransferred }),
                   contents.incomeLines.contains(where: \.hasArrived),
                   contents.doneCount == 0 {
@@ -100,16 +119,27 @@ struct CyclePlanLens<Header: View>: View {
         }
     }
 
+    private var shownItems: [PlanItem] {
+        isFundedFiltered ? contents.funded.items : contents.activeItems
+    }
+
+    private var sectionTitle: String {
+        isFundedFiltered
+            ? PlanCopy.filteredSectionTitle(shown: shownItems.count, of: contents.activeItems.count)
+            : contents.sectionTitle
+    }
+
     @ViewBuilder
     private var planItems: some View {
-        if !contents.activeItems.isEmpty {
+        if !shownItems.isEmpty {
             Section {
-                ForEach(contents.activeItems) { item in
+                ForEach(shownItems) { item in
                     PlanListRow {
                         if item.isEnvelope {
                             PlanEnvelopeRow(
                                 item: item,
                                 progress: contents.envelope(for: item),
+                                onChooseFunding: { onAction(.chooseFunding(item, $0)) },
                                 onSelect: { onAction(.editPlanItem(item)) }
                             )
                         } else {
@@ -119,13 +149,14 @@ struct CyclePlanLens<Header: View>: View {
                                 today: today,
                                 calendar: calendar,
                                 onTapCheck: { onAction(.tapDoneCheck(item)) },
+                                onChooseFunding: { onAction(.chooseFunding(item, $0)) },
                                 onSelect: { onAction(.editPlanItem(item)) }
                             )
                         }
                     }
                 }
             } header: {
-                SectionHeaderText(contents.sectionTitle)
+                SectionHeaderText(sectionTitle)
                     .textCase(nil)
                     .listRowInsets(EdgeInsets(top: 14, leading: 4, bottom: 6, trailing: 4))
             }

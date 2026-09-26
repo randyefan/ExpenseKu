@@ -551,8 +551,8 @@ path to `E4` with the menu on long-press.
 ## 11. Design traceability
 
 Every screen is a top-level frame in **`design/ExpenseKu.pen`**, page `02 · Pages · iPhone`.
-Flows A–D are the app as it already ships; **E–I are this feature**, now built. **L** is
-the §7.6 amendment and is unbuilt design.
+Flows A–D are the app as it already ships; **E–I are this feature**, now built, and so
+is **L**, the §7.6 amendment.
 Components live on page `01 · Design System`, group **`Cycle plan`** (29 components).
 
 ### 11.1 Screen → what it settles
@@ -621,14 +621,18 @@ as an omission:
 
 ### 11.5 Closed during implementation
 
-Three gaps this document does not address, found while building and answered in code.
-Each is argued in the header of the file that implements it.
+Gaps this document does not address, found while building and answered in code. Each
+is argued in the header of the file that implements it.
 
 | Gap | Answer | Where |
 |---|---|---|
 | Changing the Monthly Start Date would orphan **every** plan, since a plan stores its cycle's start and no stored start would equal any current one | An exact match wins; failing that, a plan whose start falls *inside* the cycle is adopted. Nothing is rewritten, so restoring the old payday restores the old pairing | `PlanLookup` |
 | An **Envelope's category set can span two Groups**, and §5 says only "Σ per Group" | It attributes wholly to the group most of its categories belong to, ties on name. Splitting the amount would invent a division the owner never made | `GroupShares` |
 | A due day can be **genuinely unreachable**: on a walking payday-31 cycle (31 Jan → 28 Feb), day 29 clamps to 28 February, which is the cycle's exclusive end | It resolves to nothing rather than to a date outside the cycle | `DueDay` |
+| §7.6 puts the funded notice "in the same place" as the others, but only one notice shows at a time | Review first (ADR-0007's only defence), then carried-over, then funded, then payday | `CyclePlanLens` |
+| L6 draws the filtered plan with nothing below the items | While filtered, the dormant section, the add rows, the transfer checklist and the group shares step aside; the header and totals stay, untouched | `CyclePlanLens` |
+| The shipped Envelope row shows its bar, not category chips, so there is no chip row for an Account to join as "the last chip" | An Envelope with an Account gains one chip line naming it, with "in ‹Account›" once Funded; without one the row is unchanged | `PlanEnvelopeRow` |
+| The shipped Auto face was a ringed bolt, which is what `DoneCheck · Auto funded` now means | Auto takes the design system's washed, unringed bolt, so the ring alone says "covered" | `DoneCheckFace` |
 
 ### 11.4 Components added by this feature
 

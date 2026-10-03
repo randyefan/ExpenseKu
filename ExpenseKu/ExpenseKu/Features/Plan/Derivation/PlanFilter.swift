@@ -53,7 +53,9 @@ nonisolated enum PlanFilter: Hashable, CaseIterable {
 
     var emptyDayDetail: String { "Tap \(title) again to show every expense." }
 
-    private var phrase: String {
+    var emptyPeriodMessage: String { "Nothing \(phrase) in this period." }
+
+    var phrase: String {
         switch self {
         case .outsidePlan: "outside the plan"
         case .fromPlan: "from the plan"

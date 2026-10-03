@@ -22,6 +22,8 @@ struct CycleHeader: View {
     let cycle: PayCycle
     let headline: CycleHeadline
     var split: SpendingSplit? = nil
+    var planFilter: PlanFilter? = nil
+    var onPlanFilter: (PlanFilter) -> Void = { _ in }
     let canGoBack: Bool
     let canGoForward: Bool
     let calendar: Calendar
@@ -69,8 +71,8 @@ struct CycleHeader: View {
                 MoneyText(headline.amount, font: .dsHero, color: headlineColor, rolls: true)
             }
 
-            if let split, split.fromPlan > 0 {
-                SpendingSplitView(split: split)
+            if let split, PlanFilter.showsLegend(for: split, filter: planFilter) {
+                SpendingSplitView(split: split, filter: planFilter, onTap: onPlanFilter)
             }
         }
         .padding(Metric.cardPadding)
@@ -123,6 +125,8 @@ private struct CyclePageButton: View {
 
 private struct SpendingSplitView: View {
     let split: SpendingSplit
+    let filter: PlanFilter?
+    let onTap: (PlanFilter) -> Void
 
     var body: some View {
         VStack(spacing: 10) {
@@ -130,27 +134,28 @@ private struct SpendingSplitView: View {
 
             ViewThatFits(in: .horizontal) {
                 HStack(alignment: .top) {
-                    outsideLegend(alignment: .leading)
+                    chip(.outsidePlan, alignment: .leading)
                     Spacer(minLength: 12)
-                    fromPlanLegend(alignment: .trailing)
+                    chip(.fromPlan, alignment: .trailing)
                 }
                 VStack(alignment: .leading, spacing: 8) {
-                    outsideLegend(alignment: .leading)
-                    fromPlanLegend(alignment: .leading)
+                    chip(.outsidePlan, alignment: .leading)
+                    chip(.fromPlan, alignment: .leading)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
     }
 
-    private func outsideLegend(alignment: HorizontalAlignment) -> some View {
-        SpendingSplitLegend(title: "Outside plan", amount: split.outsidePlan,
-                            color: Theme.accent, alignment: alignment)
-    }
-
-    private func fromPlanLegend(alignment: HorizontalAlignment) -> some View {
-        SpendingSplitLegend(title: "From plan", amount: split.fromPlan,
-                            color: Theme.plan, alignment: alignment)
+    private func chip(_ half: PlanFilter, alignment: HorizontalAlignment) -> some View {
+        SpendingSplitChip(
+            half: half,
+            amount: half == .outsidePlan ? split.outsidePlan : split.fromPlan,
+            isLit: filter == half,
+            alignment: alignment
+        ) {
+            onTap(half)
+        }
     }
 }
 
@@ -179,29 +184,58 @@ private struct SpendingSplitBar: View {
     }
 }
 
-private struct SpendingSplitLegend: View {
-    let title: String
+/// One half of the split legend, and the switch that filters the lens to it. Outlined
+/// whether lit or not, so lighting one moves nothing (plan-filter.md §4.1).
+private struct SpendingSplitChip: View {
+    let half: PlanFilter
     let amount: Decimal
-    let color: Color
+    let isLit: Bool
     let alignment: HorizontalAlignment
+    let action: () -> Void
 
     var body: some View {
-        VStack(alignment: alignment, spacing: 3) {
-            HStack(spacing: 6) {
-                Circle()
-                    .fill(color)
-                    .frame(width: 8, height: 8)
-                Text(title)
-                    .font(.dsCaption)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(Theme.textSecondary)
-                    .lineLimit(1)
+        Button(action: action) {
+            VStack(alignment: alignment, spacing: 3) {
+                HStack(spacing: 6) {
+                    marker
+                    Text(half.title)
+                        .font(.dsCaption)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(Theme.textSecondary)
+                        .lineLimit(1)
+                }
+                MoneyText(amount, font: .dsSubhead, color: Theme.text, rolls: true)
             }
-            MoneyText(amount, font: .dsSubhead, color: Theme.text, rolls: true)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background {
+                Capsule()
+                    .fill(isLit ? half.tint.opacity(Theme.tintFillOpacity) : .clear)
+                    .strokeBorder(isLit ? half.tint : Theme.hairline, lineWidth: isLit ? 1.5 : 1)
+            }
+            .contentShape(.capsule)
         }
+        .buttonStyle(.pressableCard)
+        .motion(Motion.press, value: isLit)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(title)
+        .accessibilityLabel(half.title)
         .accessibilityValue(amount.formattedIDR())
+        .accessibilityAddTraits(isLit ? [.isButton, .isSelected] : .isButton)
+    }
+
+    @ViewBuilder
+    private var marker: some View {
+        if isLit {
+            Image(systemName: "checkmark")
+                .font(.dsCaption.weight(.bold))
+                .imageScale(.small)
+                .foregroundStyle(half.tint)
+                .frame(width: 8, height: 8)
+        } else {
+            Circle()
+                .fill(half.tint)
+                .frame(width: 8, height: 8)
+        }
     }
 }
 

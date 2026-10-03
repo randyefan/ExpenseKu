@@ -458,6 +458,9 @@ owner reports, not a balance the app knows — §4's "Accounts stay labels" stil
 | `Expense` | Gains an optional link back to the Fixed `PlanItem` that created it. | stored, not surfaced — see §11.3 |
 | `docs/design-brief.md` | Its "has NO income / NOT a budget app" claim is now wrong. | — document, already annotated |
 
+The List lens's Outside plan / From plan split (Flow J) and the filter built on it are
+specified in `docs/prd/plan-filter.md`.
+
 Unchanged, deliberately: the ＋ add-expense flow, the expense editor, Insights, Search,
 and every existing chart. **Manage is the one exception** to its own earlier listing: it
 gains a Groups section and a Group row inside the Category editor, because §9.6 requires

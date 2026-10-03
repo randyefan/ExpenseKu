@@ -14,6 +14,7 @@ struct CycleCalendarLens<Header: View>: View {
     let contents: CycleContents
     let cycle: PayCycle
     let storeIsEmpty: Bool
+    var planFilter: PlanFilter? = nil
     let calendar: Calendar
     @Binding var selectedDay: Date?
     let resolvedDay: Date?
@@ -44,7 +45,14 @@ struct CycleCalendarLens<Header: View>: View {
                 ))
             }
 
-            if contents.isEmpty {
+            if contents.isEmpty, let planFilter {
+                Section {
+                    InlineMessageCard(
+                        title: planFilter.emptyCycleTitle,
+                        detail: planFilter.emptyCycleDetail(span: cycle.rangeText(calendar: calendar))
+                    )
+                }
+            } else if contents.isEmpty {
                 Section {
                     InlineMessageCard(
                         title: storeIsEmpty ? "No expenses yet" : "No expenses this cycle",
@@ -60,6 +68,11 @@ struct CycleCalendarLens<Header: View>: View {
                             ExpenseListRow(expense: expense) { onSelect(expense) }
                         }
                         .onDelete { onDelete($0, group.expenses) }
+                    } else if let planFilter {
+                        InlineMessageCard(
+                            title: planFilter.emptyDayTitle(dayPhrase: DayLabel.phrase(day, calendar: calendar)),
+                            detail: planFilter.emptyDayDetail
+                        )
                     } else {
                         InlineMessageCard(
                             title: "No expenses \(DayLabel.phrase(day, calendar: calendar))",

@@ -38,10 +38,12 @@ nonisolated enum PlanDormancy {
     /// break ties, so the list is stable across launches and across devices — an
     /// unstable sort makes a screenshot comparison meaningless.
     static func sorted(_ items: [PlanItem]) -> [PlanItem] {
-        items.sorted { a, b in
-            if a.amount != b.amount { return a.amount > b.amount }
-            if a.name != b.name { return a.name < b.name }
-            return a.createdAt < b.createdAt
-        }
+        items.sorted(by: precedes)
+    }
+
+    static func precedes(_ a: PlanItem, _ b: PlanItem) -> Bool {
+        if a.amount != b.amount { return a.amount > b.amount }
+        if a.name != b.name { return a.name < b.name }
+        return a.createdAt < b.createdAt
     }
 }

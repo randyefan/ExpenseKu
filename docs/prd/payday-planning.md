@@ -471,6 +471,8 @@ only possible if the owner can create and rename them. Nothing else in Manage ch
 Consequences rather than choices, written down so none of them is silent:
 
 1. Plan rows sort by **amount descending**; dormant rows collapse at the bottom. `[→ E2, F2]`
+   Since 2026-10-03 this is the **default** order; the owner can pick Account, Group,
+   Due day, Status or Name for the session (`docs/prd/plan-sort.md`, flow M).
 2. **Past plans are never locked.** A closed cycle's plan stays editable; there is no
    book-closing step. `[→ nothing to draw — the absence of a step, §11.2]`
 3. **Envelope overspend and a negative Sisa are visual only.** Nothing is ever blocked.

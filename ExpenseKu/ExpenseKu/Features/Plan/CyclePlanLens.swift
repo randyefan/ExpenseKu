@@ -32,6 +32,7 @@ struct CyclePlanLens<Header: View>: View {
     let calendar: Calendar
     let dormantExpanded: Bool
     var isFundedFiltered = false
+    var sort: PlanSort = .amount
     var revealTrigger: AnyHashable = 0
     let onAction: (PlanAction) -> Void
     @ViewBuilder let header: Header
@@ -129,11 +130,15 @@ struct CyclePlanLens<Header: View>: View {
             : contents.sectionTitle
     }
 
-    @ViewBuilder
+    private var sections: [PlanSection] {
+        PlanSections.sections(shownItems, by: isFundedFiltered ? .amount : sort,
+                              cycle: contents.cycle, calendar: calendar)
+    }
+
     private var planItems: some View {
-        if !shownItems.isEmpty {
+        ForEach(sections.enumerated(), id: \.element.id) { index, section in
             Section {
-                ForEach(shownItems) { item in
+                ForEach(section.items) { item in
                     PlanListRow {
                         if item.isEnvelope {
                             PlanEnvelopeRow(
@@ -156,9 +161,22 @@ struct CyclePlanLens<Header: View>: View {
                     }
                 }
             } header: {
-                SectionHeaderText(sectionTitle)
-                    .textCase(nil)
-                    .listRowInsets(EdgeInsets(top: 14, leading: 4, bottom: 6, trailing: 4))
+                VStack(alignment: .leading, spacing: 10) {
+                    if index == 0 {
+                        HStack {
+                            SectionHeaderText(sectionTitle)
+                            Spacer(minLength: 8)
+                            if !isFundedFiltered {
+                                PlanSortMenu(sort: sort) { onAction(.sortPlan($0)) }
+                            }
+                        }
+                    }
+                    if section.heading != nil {
+                        PlanSectionHeader(section: section)
+                    }
+                }
+                .textCase(nil)
+                .listRowInsets(EdgeInsets(top: 14, leading: 4, bottom: 6, trailing: 4))
             }
             // Per section, never per row: a 25-row plan must not cascade 25 reveals.
             .reveal(0, trigger: revealTrigger)

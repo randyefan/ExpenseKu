@@ -60,6 +60,9 @@ struct ExpensesView: View {
     /// The cycle whose plan is filtered to its Funded items (L6), if any. Keyed by
     /// cycle so paging away drops the filter instead of carrying it to another plan.
     @State var fundedFilterCycle: PayCycle?
+    /// Cleared by every page, so coming back to a cycle shows it in Amount again; the
+    /// cycle key catches the paths that move the cycle without paging (a payday change).
+    @State var planSortChoice: PlanSortChoice?
     @State var planSheet: PlanSheet?
     @State var planConfirmation: PlanConfirmation?
     @State private var searchText = ""
@@ -144,6 +147,7 @@ struct ExpensesView: View {
                             today: .now,
                             dormantExpanded: dormantExpanded,
                             isFundedFiltered: isFundedFilterOn(planContents),
+                            planSort: planSort,
                             onPlanAction: { perform($0, in: planContents) },
                             selectedDay: $selectedDay,
                             resolvedDay: resolvedSelectedDay,
@@ -310,6 +314,7 @@ struct ExpensesView: View {
     /// the transition matches the arrow that was pressed.
     private func page(to newCycle: PayCycle, edge: Edge) {
         contentChange = .page(edge)
+        planSortChoice = nil
         cycle = newCycle
     }
 

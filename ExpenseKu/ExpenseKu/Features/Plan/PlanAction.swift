@@ -37,4 +37,5 @@ enum PlanAction {
     /// L6: narrow the plan to its Funded Fixed items, or widen it back.
     case showFunded
     case clearFundedFilter
+    case sortPlan(PlanSort)
 }

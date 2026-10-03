@@ -55,8 +55,11 @@ extension ExpensesView {
             planSheet = .review
         case .showFunded:
             fundedFilterCycle = cycle
+            planSortChoice = nil
         case .clearFundedFilter:
             fundedFilterCycle = nil
+        case .sortPlan(let sort):
+            withAnimation(Motion.snap) { planSortChoice = PlanSortChoice(cycle: cycle, sort: sort) }
         }
     }
 
@@ -64,6 +67,11 @@ extension ExpensesView {
     /// to show. Paging away or paying the last Funded item ends it.
     func isFundedFilterOn(_ contents: PlanContents) -> Bool {
         fundedFilterCycle == cycle && !contents.funded.isEmpty
+    }
+
+    var planSort: PlanSort {
+        guard let planSortChoice, planSortChoice.cycle == cycle else { return .amount }
+        return planSortChoice.sort
     }
 
     /// Fills a forward cycle's plan from the previous one, on arrival (PRD §7.2).

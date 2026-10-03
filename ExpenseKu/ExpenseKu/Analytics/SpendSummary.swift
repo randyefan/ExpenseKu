@@ -8,6 +8,7 @@
 //
 
 import Foundation
+import SwiftData
 
 /// Total spend for one category (or the "Uncategorized" bucket).
 nonisolated struct CategorySpend: Identifiable {
@@ -18,7 +19,9 @@ nonisolated struct CategorySpend: Identifiable {
     /// "Uncategorized" bucket, which has no entity behind it.
     var colorHex: String? = nil
     var symbol: String? = nil
+    var categoryID: PersistentIdentifier? = nil
     var id: String { categoryName }
+    var subject: SpendSubject { categoryID.map(SpendSubject.category) ?? .uncategorized }
 }
 
 /// Total spend for one account (or the "Unassigned" bucket).
@@ -28,7 +31,9 @@ nonisolated struct AccountSpend: Identifiable {
     /// As `CategorySpend`; nil for the "Unassigned" bucket.
     var colorHex: String? = nil
     var symbol: String? = nil
+    var accountID: PersistentIdentifier? = nil
     var id: String { accountName }
+    var subject: SpendSubject { accountID.map(SpendSubject.account) ?? .unassigned }
 }
 
 /// Total spend within one time bucket, keyed by the bucket's start date.
@@ -52,13 +57,13 @@ nonisolated enum SpendSummary {
         dateRange: ClosedRange<Date>? = nil
     ) -> [CategorySpend] {
         var totals: [String: Decimal] = [:]
-        var appearance: [String: (colorHex: String?, symbol: String?)] = [:]
+        var appearance: [String: (colorHex: String?, symbol: String?, id: PersistentIdentifier)] = [:]
         for expense in expenses {
             if let dateRange, !dateRange.contains(expense.date) { continue }
             let name = expense.category?.name ?? "Uncategorized"
             totals[name, default: 0] += expense.amount
             if appearance[name] == nil, let category = expense.category {
-                appearance[name] = (category.colorHex, category.resolvedSymbol)
+                appearance[name] = (category.colorHex, category.resolvedSymbol, category.persistentModelID)
             }
         }
         return totals
@@ -67,7 +72,8 @@ nonisolated enum SpendSummary {
                     categoryName: $0.key,
                     total: $0.value,
                     colorHex: appearance[$0.key]?.colorHex,
-                    symbol: appearance[$0.key]?.symbol
+                    symbol: appearance[$0.key]?.symbol,
+                    categoryID: appearance[$0.key]?.id
                 )
             }
             .sorted { $0.total > $1.total }
@@ -80,13 +86,13 @@ nonisolated enum SpendSummary {
         dateRange: ClosedRange<Date>? = nil
     ) -> [AccountSpend] {
         var totals: [String: Decimal] = [:]
-        var appearance: [String: (colorHex: String?, symbol: String?)] = [:]
+        var appearance: [String: (colorHex: String?, symbol: String?, id: PersistentIdentifier)] = [:]
         for expense in expenses {
             if let dateRange, !dateRange.contains(expense.date) { continue }
             let name = expense.account?.name ?? "Unassigned"
             totals[name, default: 0] += expense.amount
             if appearance[name] == nil, let account = expense.account {
-                appearance[name] = (account.colorHex, account.resolvedSymbol)
+                appearance[name] = (account.colorHex, account.resolvedSymbol, account.persistentModelID)
             }
         }
         return totals
@@ -95,7 +101,8 @@ nonisolated enum SpendSummary {
                     accountName: $0.key,
                     total: $0.value,
                     colorHex: appearance[$0.key]?.colorHex,
-                    symbol: appearance[$0.key]?.symbol
+                    symbol: appearance[$0.key]?.symbol,
+                    accountID: appearance[$0.key]?.id
                 )
             }
             .sorted { $0.total > $1.total }

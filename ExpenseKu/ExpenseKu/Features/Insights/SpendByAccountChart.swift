@@ -11,6 +11,7 @@ import SwiftUI
 
 struct SpendByAccountChart: View {
     let data: [AccountSpend]
+    let onSelect: (SpendSubject) -> Void
 
     @State private var growth = ChartGrowth()
 
@@ -19,14 +20,21 @@ struct SpendByAccountChart: View {
     var body: some View {
         VStack(spacing: 16) {
             ForEach(data) { item in
-                ProportionRow(
-                    name: item.accountName,
-                    value: item.total,
-                    fraction: item.total.doubleValue / maxTotal,
-                    tint: Theme.categoryTint(hex: item.colorHex, seed: item.accountName),
-                    symbol: item.symbol ?? Account.defaultSymbol,
-                    growth: growth.factor
-                )
+                Button {
+                    onSelect(item.subject)
+                } label: {
+                    ProportionRow(
+                        name: item.accountName,
+                        value: item.total,
+                        fraction: item.total.doubleValue / maxTotal,
+                        tint: Theme.categoryTint(hex: item.colorHex, seed: item.accountName),
+                        symbol: item.symbol ?? Account.defaultSymbol,
+                        growth: growth.factor,
+                        mark: .chevron
+                    )
+                    .contentShape(.rect)
+                }
+                .buttonStyle(.pressableRow)
             }
         }
         .growsOnAppear(growth, trigger: data.map(\.id))

@@ -1,6 +1,6 @@
 # ADR-0003 — Pay-period filter preset: KV-store anchor, pure period math
 
-Status: Accepted (the "analytics-only / not the primary lens" scope is superseded by ADR-0004)
+Status: Accepted (the "analytics-only / not the primary lens" scope is superseded by ADR-0004; the Insights stepper and "no Last pay period" by `docs/prd/insights-drill-in.md`)
 Date: 2026-08-09
 
 ## Context

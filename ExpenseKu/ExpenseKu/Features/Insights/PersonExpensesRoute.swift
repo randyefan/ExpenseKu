@@ -28,23 +28,7 @@ struct PersonExpensesRoute: Hashable {
         self.range = range
     }
 
-    func person(in context: ModelContext) -> Person? { resolve(personID, in: context) }
-    func category(in context: ModelContext) -> Category? { resolve(categoryID, in: context) }
-    func account(in context: ModelContext) -> Account? { resolve(accountID, in: context) }
-
-    /// Nil when the identifier is absent or its object has since been deleted.
-    ///
-    /// Deliberately not `ModelContext.model(for:)`: that one *crashes* on a deleted
-    /// identifier rather than returning nil, which is the exact case this route exists
-    /// to survive. `registeredModel(for:)` answers from memory and returns nil once the
-    /// object is gone; the fetch covers a live object this context has not registered.
-    private func resolve<T: PersistentModel>(_ id: PersistentIdentifier?, in context: ModelContext) -> T? {
-        guard let id else { return nil }
-        if let registered: T = context.registeredModel(for: id) {
-            return registered.isDeleted ? nil : registered
-        }
-        var descriptor = FetchDescriptor<T>(predicate: #Predicate { $0.persistentModelID == id })
-        descriptor.fetchLimit = 1
-        return try? context.fetch(descriptor).first
-    }
+    func person(in context: ModelContext) -> Person? { context.existingModel(for: personID) }
+    func category(in context: ModelContext) -> Category? { context.existingModel(for: categoryID) }
+    func account(in context: ModelContext) -> Account? { context.existingModel(for: accountID) }
 }

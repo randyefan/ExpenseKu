@@ -10,6 +10,8 @@
 import SwiftUI
 
 struct EmptyChartMessage: View {
+    var message = "No spending in this period."
+
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             ForEach(0..<3, id: \.self) { index in
@@ -17,7 +19,7 @@ struct EmptyChartMessage: View {
                     .fill(Theme.textSecondary.opacity(0.12))
                     .frame(width: ghostWidth(index), height: 14)
             }
-            Text("No spending in this period.")
+            Text(message)
                 .font(.dsSubhead)
                 .foregroundStyle(Theme.textSecondary)
                 .padding(.top, 2)
@@ -25,7 +27,7 @@ struct EmptyChartMessage: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 4)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("No spending in this period.")
+        .accessibilityLabel(message)
     }
 
     private func ghostWidth(_ index: Int) -> CGFloat {

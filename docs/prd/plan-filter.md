@@ -152,7 +152,10 @@ the lens `.id()`, never stored.
 - **Plan lens** — its header is SISA and has no legend; the filter waits for List or Month.
 - **Search** — all-time results, every expense, tags as today.
 - **Person detail** — every expense with that Person, tags as today.
-- **The SPENDING hero, the split rule, row tags, Insights.**
+- **The SPENDING hero, the split rule, row tags.**
+- **Insights** has a plan filter of its own since `docs/prd/insights-drill-in.md`: the same
+  three states and split rule, on Insights and its drill-in. This filter and that one are
+  separate view state and never set each other.
 
 ---
 

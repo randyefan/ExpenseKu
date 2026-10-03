@@ -8,6 +8,10 @@ Issues live as local markdown files under `.scratch/<feature>/` in this repo. Se
 
 The five canonical triage roles, used as-is (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See `docs/agents/triage-labels.md`.
 
+### Feature workflow
+
+Building a feature: follow `.claude/skills/build-feature/SKILL.md` (the owner's `/build-feature`).
+
 ### Domain docs
 
 Single-context: one `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.

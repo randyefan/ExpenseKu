@@ -1,12 +1,12 @@
 # PRD — Sorting the Plan
 
-Status: Accepted
-Date: 2026-10-03 · design approved the same day (flow M)
+Status: Built
+Date: 2026-10-03 · design approved and built the same day (flow M)
 Owner: Randy Efan
 
 Companion documents: `docs/prd/payday-planning.md` (the Plan lens this changes),
 `CONTEXT.md` (ubiquitous language), and **`design/ExpenseKu.pen`**, page
-`05 · Proposals — not built`, **Flow M**. Frame references appear inline as `[→ M2]`.
+`02 · Pages · iPhone`, **Flow M** (moved there from `05 · Proposals` once built). Frame references appear inline as `[→ M2]`.
 
 ---
 
@@ -107,7 +107,7 @@ The order is **session view state**, held beside the Funded filter, never stored
 | Event | Order afterwards |
 |---|---|
 | App relaunched | Amount |
-| Paging to another cycle (`‹ ›`) | Amount |
+| Paging to another cycle (`‹ ›`), and paging back | Amount |
 | Switching lens and back | kept |
 | Tapping the funded notice (filter on) | Amount, control hidden `[→ M6]` |
 | ✕ on the funded filter | Amount |
@@ -158,7 +158,8 @@ approved flow M the same day.
 
 ## 8. Design traceability
 
-Page `05 · Proposals — not built`, **Flow M · Plan sort**.
+Page `02 · Pages · iPhone`, **Flow M · Plan sort**. Components `PlanSortMenu` and
+`PlanSectionHeader` live on `01 · Design System`, group `Cycle plan`, row `Plan sort`.
 
 | Frame | Covers |
 |---|---|
@@ -168,3 +169,11 @@ Page `05 · Proposals — not built`, **Flow M · Plan sort**.
 | **M4** · By Due day | §4.1 cycle position, undated tail |
 | **M5** · By Status | §4.2 Todo → Funded → Done |
 | **M6** · Funded filter — no control | §5, decision 9 |
+
+### 8.1 Closed during implementation
+
+| Gap | Answer | Where |
+|---|---|---|
+| Keying the choice by cycle alone brought the old order back when the owner paged away and back | Every page clears the choice; the cycle key stays for a cycle change that is not a page (a new payday) | `ExpensesView.page(to:edge:)`, `PlanSortChoice` |
+| An inline `Picker` inside the Menu swallowed the "Order the plan by" title M1 draws | The six choices are `Toggle`s in a titled `Section`; iOS still draws the checkmark | `PlanSortMenu` |
+| The derivation | Pure and tested against flow M's own sample plan | `PlanSections`, `PlanSectionsTests` |

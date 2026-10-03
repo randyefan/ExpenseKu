@@ -46,6 +46,15 @@ nonisolated struct PlanOrigins {
         }
     }
 
+    func expenses(
+        _ cycleExpenses: [Expense],
+        in cycle: PayCycle,
+        matching filter: PlanFilter
+    ) -> [Expense] {
+        let envelopes = envelopeNames(for: cycle)
+        return cycleExpenses.filter { filter.admits(Self.origin(of: $0, envelopes: envelopes)) }
+    }
+
     private func envelopeNames(for cycle: PayCycle) -> [PersistentIdentifier: String] {
         guard let plan = PlanLookup.plan(for: cycle, in: plans) else { return [:] }
         let envelopes = PlanDormancy.split(plan.items ?? []).active.filter(\.isEnvelope)

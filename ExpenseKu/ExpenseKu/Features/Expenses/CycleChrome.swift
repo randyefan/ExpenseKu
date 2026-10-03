@@ -14,6 +14,8 @@ struct CycleChrome: View {
     let cycle: PayCycle
     let headline: CycleHeadline
     var split: SpendingSplit? = nil
+    var planFilter: PlanFilter? = nil
+    var onPlanFilter: (PlanFilter) -> Void = { _ in }
     let canGoBack: Bool
     let canGoForward: Bool
     let calendar: Calendar
@@ -27,6 +29,8 @@ struct CycleChrome: View {
                 cycle: cycle,
                 headline: headline,
                 split: split,
+                planFilter: planFilter,
+                onPlanFilter: onPlanFilter,
                 canGoBack: canGoBack,
                 canGoForward: canGoForward,
                 calendar: calendar,

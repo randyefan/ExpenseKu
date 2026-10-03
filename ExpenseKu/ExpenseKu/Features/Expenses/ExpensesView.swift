@@ -63,6 +63,9 @@ struct ExpensesView: View {
     /// Cleared by every page, so coming back to a cycle shows it in Amount again; the
     /// cycle key catches the paths that move the cycle without paging (a payday change).
     @State var planSortChoice: PlanSortChoice?
+    /// Which half of the split the List and Month lenses show; nil is All. Cleared by
+    /// every page and by anything else that moves the cycle (plan-filter.md §6).
+    @State private var planFilter: PlanFilter?
     @State var planSheet: PlanSheet?
     @State var planConfirmation: PlanConfirmation?
     @State private var searchText = ""
@@ -113,6 +116,14 @@ struct ExpensesView: View {
             cycleExpenses: contents.expenses
         )
         let planOrigins = PlanOrigins(plans: plans, payday: payday, calendar: calendar)
+        let shownContents = planFilter.map {
+            CycleContents(
+                cycle: cycle,
+                allExpenses: planOrigins.expenses(contents.expenses, in: cycle, matching: $0),
+                calendar: calendar
+            )
+        } ?? contents
+        let calendarGrid = cycleCalendar(for: cycle, expenses: shownContents.expenses, calendar: calendar)
 
         NavigationSplitView {
             ZStack {
@@ -136,6 +147,8 @@ struct ExpensesView: View {
                     } else {
                         CycleLensArea(
                             contents: contents,
+                            shownContents: shownContents,
+                            planFilter: planFilter,
                             cycle: cycle,
                             calendarGrid: calendarGrid,
                             calendar: calendar,
@@ -150,7 +163,7 @@ struct ExpensesView: View {
                             planSort: planSort,
                             onPlanAction: { perform($0, in: planContents) },
                             selectedDay: $selectedDay,
-                            resolvedDay: resolvedSelectedDay,
+                            resolvedDay: resolvedSelectedDay(in: calendarGrid),
                             onSelect: { selection = $0 },
                             onDelete: delete,
                             header: {
@@ -159,9 +172,11 @@ struct ExpensesView: View {
                                     headline: lens == .plan
                                         ? .sisa(planContents.totals.sisa)
                                         : .spending(contents.total),
-                                    split: lens == .list
-                                        ? planOrigins.split(contents.expenses, in: cycle)
-                                        : nil,
+                                    split: lens == .plan
+                                        ? nil
+                                        : planOrigins.split(contents.expenses, in: cycle),
+                                    planFilter: planFilter,
+                                    onPlanFilter: { planFilter = PlanFilter.tapping($0, on: planFilter) },
                                     canGoBack: CyclePaging.canGoBack(
                                         from: cycle,
                                         oldestExpense: expenses.last?.date,
@@ -177,7 +192,15 @@ struct ExpensesView: View {
                         )
                     }
                 }
+                .safeAreaInset(edge: .bottom) {
+                    if let planFilter, !isSearching, lens != .plan {
+                        PlanFilterPill(filter: planFilter) { self.planFilter = nil }
+                            .padding(.bottom, 8)
+                            .transition(.move(edge: .bottom).combined(with: .opacity))
+                    }
+                }
                 .motion(Motion.settle, value: cycle)
+                .motion(Motion.settle, value: planFilter)
                 .environment(\.planOrigins, planOrigins)
             }
             .searchableWhenThereIsSomethingToSearch(text: $searchText, enabled: !expenses.isEmpty)
@@ -228,6 +251,7 @@ struct ExpensesView: View {
                 if isEmpty { fundedFilterCycle = nil }
             }
             .onChange(of: payday) { _, newValue in
+                planFilter = nil
                 cycle = PayCycle.containing(.now, payday: newValue, calendar: calendar)
             }
             .onChange(of: searchText) { _, newValue in
@@ -285,14 +309,10 @@ struct ExpensesView: View {
 
     // MARK: - Calendar state
 
-    private var calendarGrid: CycleCalendar {
-        cycleCalendar(for: cycle, expenses: expenses, calendar: calendar)
-    }
-
     /// The day the grid should show as selected. An explicit tap wins, but only
     /// while it still belongs to the visible cycle — so paging with ‹ › re-defaults
     /// without any reset bookkeeping.
-    private var resolvedSelectedDay: Date? {
+    private func resolvedSelectedDay(in calendarGrid: CycleCalendar) -> Date? {
         if let selectedDay, cycle.contains(selectedDay) { return selectedDay }
         #if DEBUG
         if debugSelectHeaviest,
@@ -307,7 +327,9 @@ struct ExpensesView: View {
 
     private func resetToCurrentCycle() {
         payday = Payday.current
-        cycle = PayCycle.containing(.now, payday: payday, calendar: calendar)
+        let current = PayCycle.containing(.now, payday: payday, calendar: calendar)
+        if current != cycle { planFilter = nil }
+        cycle = current
     }
 
     /// Pages to another cycle, first recording which way the outgoing one leaves so
@@ -315,6 +337,7 @@ struct ExpensesView: View {
     private func page(to newCycle: PayCycle, edge: Edge) {
         contentChange = .page(edge)
         planSortChoice = nil
+        planFilter = nil
         cycle = newCycle
     }
 

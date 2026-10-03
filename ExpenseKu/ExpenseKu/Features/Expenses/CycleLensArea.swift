@@ -35,6 +35,9 @@ enum CycleContentChange {
 
 struct CycleLensArea<Header: View>: View {
     let contents: CycleContents
+    /// `contents` narrowed by the plan filter; the same value when none is on.
+    let shownContents: CycleContents
+    let planFilter: PlanFilter?
     let cycle: PayCycle
     let calendarGrid: CycleCalendar
     let calendar: Calendar
@@ -75,9 +78,12 @@ struct CycleLensArea<Header: View>: View {
                     .scrollBounceBehavior(.basedOnSize)
                 } else {
                     CycleListLens(
-                        dayGroups: contents.dayGroups,
+                        dayGroups: shownContents.dayGroups,
                         calendar: calendar,
                         revealTrigger: AnyHashable(cycle),
+                        emptyMessage: planFilter.map {
+                            ($0.emptyCycleTitle, $0.emptyCycleDetail(span: cycle.rangeText(calendar: calendar)))
+                        },
                         onSelect: onSelect,
                         onDelete: onDelete,
                         header: { header }
@@ -99,9 +105,10 @@ struct CycleLensArea<Header: View>: View {
             case .calendar:
                 CycleCalendarLens(
                     calendarGrid: calendarGrid,
-                    contents: contents,
+                    contents: shownContents,
                     cycle: cycle,
                     storeIsEmpty: storeIsEmpty,
+                    planFilter: planFilter,
                     calendar: calendar,
                     selectedDay: $selectedDay,
                     resolvedDay: resolvedDay,

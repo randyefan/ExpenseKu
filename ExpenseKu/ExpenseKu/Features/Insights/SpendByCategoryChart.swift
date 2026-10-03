@@ -13,6 +13,7 @@ import SwiftUI
 
 struct SpendByCategoryChart: View {
     let data: [CategorySpend]
+    let onSelect: (SpendSubject) -> Void
 
     @State private var growth = ChartGrowth()
 
@@ -21,14 +22,21 @@ struct SpendByCategoryChart: View {
     var body: some View {
         VStack(spacing: 16) {
             ForEach(data) { item in
-                ProportionRow(
-                    name: item.categoryName,
-                    value: item.total,
-                    fraction: item.total.doubleValue / maxTotal,
-                    tint: Theme.categoryTint(hex: item.colorHex, seed: item.categoryName),
-                    symbol: item.symbol ?? CategoryIcon.symbol(for: item.categoryName),
-                    growth: growth.factor
-                )
+                Button {
+                    onSelect(item.subject)
+                } label: {
+                    ProportionRow(
+                        name: item.categoryName,
+                        value: item.total,
+                        fraction: item.total.doubleValue / maxTotal,
+                        tint: Theme.categoryTint(hex: item.colorHex, seed: item.categoryName),
+                        symbol: item.symbol ?? CategoryIcon.symbol(for: item.categoryName),
+                        growth: growth.factor,
+                        mark: .chevron
+                    )
+                    .contentShape(.rect)
+                }
+                .buttonStyle(.pressableRow)
             }
         }
         .growsOnAppear(growth, trigger: data.map(\.id))

@@ -17,6 +17,7 @@ import SwiftUI
 
 struct PeriodFilterChips: View {
     @Binding var selection: DateRangeFilter
+    var label: (DateRangeFilter) -> String = \.label
 
     @Namespace private var chip
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -46,7 +47,7 @@ struct PeriodFilterChips: View {
                 selection = filter
             }
         } label: {
-            Text(filter.label)
+            Text(label(filter))
                 .font(.dsSubhead).fontWeight(.semibold)
                 .foregroundStyle(isSelected ? Theme.onAccent : Theme.textSecondary)
                 .padding(.horizontal, 14)

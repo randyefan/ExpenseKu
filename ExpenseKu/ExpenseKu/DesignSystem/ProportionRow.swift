@@ -15,6 +15,13 @@
 import SwiftUI
 
 struct ProportionRow: View {
+    enum Mark {
+        /// The row drills in.
+        case chevron
+        /// The row is the active narrowing.
+        case check
+    }
+
     let name: String
     let value: Decimal
     /// Share of the largest row, 0…1.
@@ -23,6 +30,7 @@ struct ProportionRow: View {
     var symbol: String? = nil
     /// The chart-wide 0→1 growth factor; the bar draws `fraction * growth`.
     var growth: Double = 1
+    var mark: Mark? = nil
 
     private var barHeight: CGFloat { 10 }
 
@@ -49,6 +57,13 @@ struct ProportionRow: View {
                     .foregroundStyle(Theme.textSecondary)
                     .lineLimit(1)
                     .layoutPriority(1)
+
+                if let mark {
+                    Image(systemName: mark == .check ? "checkmark" : "chevron.right")
+                        .font(.dsCaption.weight(.semibold))
+                        .foregroundStyle(mark == .check ? Theme.accentText : Theme.textSecondary.opacity(0.6))
+                        .accessibilityHidden(true)
+                }
             }
 
             Capsule()

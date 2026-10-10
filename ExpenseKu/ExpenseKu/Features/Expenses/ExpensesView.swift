@@ -36,6 +36,9 @@ struct ExpensesView: View {
     @Query(sort: \Expense.date, order: .reverse) private var expenses: [Expense]
     /// Feeds the search Category chip. Sorted by name so the menu is stable.
     @Query(sort: \Category.name) private var categories: [Category]
+    @Query(sort: \CategoryGroup.name) private var groups: [CategoryGroup]
+    @Query(sort: \Account.name) private var accounts: [Account]
+    @Query(sort: \Person.name) private var people: [Person]
     /// Every plan, ascending. One array doing three jobs — which plan the lens shows,
     /// how far back the ‹ arrow reaches, and a plan item's amount history — rather
     /// than a `@Query(filter:)` keyed on the visible cycle, whose predicate is fixed
@@ -66,6 +69,10 @@ struct ExpensesView: View {
     /// Which half of the split the List and Month lenses show; nil is All. Cleared by
     /// every page and by anything else that moves the cycle (plan-filter.md §6).
     @State private var planFilter: PlanFilter?
+    /// The Category / Group / Account / Person filter of the List and Month lenses. Cleared
+    /// by every page and by anything else that moves the cycle (expense-filter.md §8.1).
+    @State private var filter = ExpenseFilter()
+    @State private var showingFilter = false
     @State var planSheet: PlanSheet?
     @State var planConfirmation: PlanConfirmation?
     @State private var searchText = ""
@@ -97,6 +104,14 @@ struct ExpensesView: View {
         !searchText.trimmingCharacters(in: .whitespaces).isEmpty
     }
 
+    private var filterCatalog: FilterCatalog {
+        FilterCatalog(categories: categories, groups: groups, accounts: accounts, people: people)
+    }
+
+    private var showsFilter: Bool {
+        !expenses.isEmpty && !isSearching && lens != .plan
+    }
+
     private var searchResults: ExpenseSearchResults {
         ExpenseSearchResults(
             query: searchText,
@@ -116,13 +131,20 @@ struct ExpensesView: View {
             cycleExpenses: contents.expenses
         )
         let planOrigins = PlanOrigins(plans: plans, payday: payday, calendar: calendar)
+        let catalog = filterCatalog
+        let activeFilter = catalog.pruning(filter)
+        let filteredContents = activeFilter.isEmpty ? contents : CycleContents(
+            cycle: cycle,
+            allExpenses: activeFilter.expenses(contents.expenses),
+            calendar: calendar
+        )
         let shownContents = planFilter.map {
             CycleContents(
                 cycle: cycle,
-                allExpenses: planOrigins.expenses(contents.expenses, in: cycle, matching: $0),
+                allExpenses: planOrigins.expenses(filteredContents.expenses, in: cycle, matching: $0),
                 calendar: calendar
             )
-        } ?? contents
+        } ?? filteredContents
         let calendarGrid = cycleCalendar(for: cycle, expenses: shownContents.expenses, calendar: calendar)
 
         NavigationSplitView {
@@ -147,8 +169,11 @@ struct ExpensesView: View {
                     } else {
                         CycleLensArea(
                             contents: contents,
+                            filteredContents: filteredContents,
                             shownContents: shownContents,
                             planFilter: planFilter,
+                            filter: activeFilter,
+                            onClearFilters: { filter = ExpenseFilter() },
                             cycle: cycle,
                             calendarGrid: calendarGrid,
                             calendar: calendar,
@@ -171,10 +196,11 @@ struct ExpensesView: View {
                                     cycle: cycle,
                                     headline: lens == .plan
                                         ? .sisa(planContents.totals.sisa)
-                                        : .spending(contents.total),
+                                        : .spending(filteredContents.total),
+                                    ofTotal: lens == .plan ? nil : activeFilter.ofTotal(contents.total),
                                     split: lens == .plan
                                         ? nil
-                                        : planOrigins.split(contents.expenses, in: cycle),
+                                        : planOrigins.split(filteredContents.expenses, in: cycle),
                                     planFilter: planFilter,
                                     onPlanFilter: { planFilter = PlanFilter.tapping($0, on: planFilter) },
                                     canGoBack: CyclePaging.canGoBack(
@@ -193,14 +219,21 @@ struct ExpensesView: View {
                     }
                 }
                 .safeAreaInset(edge: .bottom) {
-                    if let planFilter, !isSearching, lens != .plan {
-                        PlanFilterPill(filter: planFilter) { self.planFilter = nil }
-                            .padding(.bottom, 8)
-                            .transition(.move(edge: .bottom).combined(with: .opacity))
+                    VStack(spacing: 10) {
+                        if !activeFilter.isEmpty, showsFilter {
+                            FilterPill(text: catalog.pillText(for: activeFilter)) { filter = ExpenseFilter() }
+                                .transition(.move(edge: .bottom).combined(with: .opacity))
+                        }
+                        if let planFilter, !isSearching, lens != .plan {
+                            PlanFilterPill(filter: planFilter) { self.planFilter = nil }
+                                .transition(.move(edge: .bottom).combined(with: .opacity))
+                        }
                     }
+                    .padding(.bottom, 8)
                 }
                 .motion(Motion.settle, value: cycle)
                 .motion(Motion.settle, value: planFilter)
+                .motion(Motion.settle, value: activeFilter)
                 .environment(\.planOrigins, planOrigins)
             }
             .searchableWhenThereIsSomethingToSearch(text: $searchText, enabled: !expenses.isEmpty)
@@ -213,6 +246,13 @@ struct ExpensesView: View {
                         showingSettings = true
                     }
                     .tint(Theme.textSecondary)
+                }
+                if showsFilter {
+                    ToolbarItem(placement: .navigation) {
+                        FilterButton(activeCount: activeFilter.activeDimensions.count) {
+                            showingFilter = true
+                        }
+                    }
                 }
                 ToolbarItem(placement: .primaryAction) {
                     Button("Add Expense", systemImage: "plus") {
@@ -228,6 +268,9 @@ struct ExpensesView: View {
             }
             .sheet(isPresented: $showingSettings) {
                 TransactionSettingsView(payday: $payday)
+            }
+            .sheet(isPresented: $showingFilter) {
+                FilterSheet(filter: $filter, catalog: catalog)
             }
             .sheet(item: editsInSheet ? $selection : .constant(nil)) { expense in
                 NavigationStack {
@@ -252,6 +295,7 @@ struct ExpensesView: View {
             }
             .onChange(of: payday) { _, newValue in
                 planFilter = nil
+                filter = ExpenseFilter()
                 cycle = PayCycle.containing(.now, payday: newValue, calendar: calendar)
             }
             .onChange(of: searchText) { _, newValue in
@@ -328,7 +372,10 @@ struct ExpensesView: View {
     private func resetToCurrentCycle() {
         payday = Payday.current
         let current = PayCycle.containing(.now, payday: payday, calendar: calendar)
-        if current != cycle { planFilter = nil }
+        if current != cycle {
+            planFilter = nil
+            filter = ExpenseFilter()
+        }
         cycle = current
     }
 
@@ -338,6 +385,7 @@ struct ExpensesView: View {
         contentChange = .page(edge)
         planSortChoice = nil
         planFilter = nil
+        filter = ExpenseFilter()
         cycle = newCycle
     }
 

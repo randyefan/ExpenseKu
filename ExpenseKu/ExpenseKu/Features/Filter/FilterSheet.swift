@@ -12,16 +12,20 @@
 //
 //  A drill-in hides its subject's own dimension (§6.1), which the subject already fixes.
 //
+//  The Plan row edits the screen's own plan filter, the one its split chips set (§4.8), so
+//  the sheet and the chips can never disagree.
+//
 
 import SwiftUI
 
 struct FilterSheet: View {
     @Binding var filter: ExpenseFilter
+    @Binding var planFilter: PlanFilter?
     let catalog: FilterCatalog
     var hiding: FilterDimension? = nil
 
     @Environment(\.dismiss) private var dismiss
-    @State private var path: [FilterDimension] = []
+    @State private var path: [FilterSheetPage] = []
     @State private var detent: PresentationDetent = .medium
 
     static let help = "Choices in one row match any of them. Rows combine: an expense shows only if it matches every row."
@@ -30,22 +34,12 @@ struct FilterSheet: View {
         NavigationStack(path: $path) {
             List {
                 Section {
+                    row("Plan", value: planFilter?.title ?? "All", isOn: planFilter != nil, page: .plan)
                     ForEach(FilterDimension.allCases.filter { $0 != hiding }, id: \.self) { dimension in
-                        Button { open(dimension) } label: {
-                            LabeledContent(dimension.title) {
-                                HStack(spacing: 8) {
-                                    Text(catalog.summary(of: filter, in: dimension))
-                                        .foregroundStyle(filter.choices(in: dimension).isEmpty ? Theme.textSecondary : Theme.accent)
-                                        .lineLimit(1)
-                                    Image(systemName: "chevron.right")
-                                        .font(.dsCaption.weight(.semibold))
-                                        .foregroundStyle(Theme.textSecondary.opacity(0.6))
-                                }
-                            }
-                            .font(.dsBody)
-                            .foregroundStyle(Theme.text)
-                        }
-                        .listRowBackground(Theme.card)
+                        row(dimension.title,
+                            value: catalog.summary(of: filter, in: dimension),
+                            isOn: !filter.choices(in: dimension).isEmpty,
+                            page: .dimension(dimension))
                     }
                 } footer: {
                     Text(Self.help)
@@ -60,35 +54,65 @@ struct FilterSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Clear All") { filter = ExpenseFilter() }
-                        .disabled(filter.isEmpty)
+                    Button("Clear All") {
+                        filter = ExpenseFilter()
+                        planFilter = nil
+                    }
+                    .disabled(filter.isEmpty && planFilter == nil)
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { dismiss() }
                 }
             }
-            .navigationDestination(for: FilterDimension.self) { dimension in
-                FilterChecklist(
-                    dimension: dimension,
-                    options: catalog.options(for: dimension),
-                    filter: $filter,
-                    onDone: { dismiss() }
-                )
+            .navigationDestination(for: FilterSheetPage.self) { page in
+                switch page {
+                case .plan:
+                    PlanFilterChecklist(planFilter: $planFilter, onDone: { dismiss() })
+                case .dimension(let dimension):
+                    FilterChecklist(
+                        dimension: dimension,
+                        options: catalog.options(for: dimension),
+                        filter: $filter,
+                        onDone: { dismiss() }
+                    )
+                }
             }
         }
         .presentationDetents([.medium, .large], selection: $detent)
         .presentationDragIndicator(.visible)
     }
 
-    private func open(_ dimension: FilterDimension) {
+    private func row(_ title: String, value: String, isOn: Bool, page: FilterSheetPage) -> some View {
+        Button { open(page) } label: {
+            LabeledContent(title) {
+                HStack(spacing: 8) {
+                    Text(value)
+                        .foregroundStyle(isOn ? Theme.accent : Theme.textSecondary)
+                        .lineLimit(1)
+                    Image(systemName: "chevron.right")
+                        .font(.dsCaption.weight(.semibold))
+                        .foregroundStyle(Theme.textSecondary.opacity(0.6))
+                }
+            }
+            .font(.dsBody)
+            .foregroundStyle(Theme.text)
+        }
+        .listRowBackground(Theme.card)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(title)
+        .accessibilityValue(value)
+        .accessibilityAddTraits(.isButton)
+    }
+
+    private func open(_ page: FilterSheetPage) {
         guard detent != .large else {
-            path.append(dimension)
+            path.append(page)
             return
         }
         detent = .large
         Task {
             try? await Task.sleep(for: .milliseconds(350))
-            path.append(dimension)
+            path.append(page)
         }
     }
 }

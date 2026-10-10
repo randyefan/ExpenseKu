@@ -114,14 +114,14 @@ struct InsightsView: View {
             .toolbar {
                 if !oldest.isEmpty {
                     ToolbarItem(placement: .primaryAction) {
-                        FilterButton(activeCount: activeFilter.activeDimensions.count) {
+                        FilterButton(activeCount: activeFilter.activeCount(planFilter: planFilter)) {
                             showingFilter = true
                         }
                     }
                 }
             }
             .sheet(isPresented: $showingFilter) {
-                FilterSheet(filter: $filter, catalog: catalog)
+                FilterSheet(filter: $filter, planFilter: $planFilter, catalog: catalog)
             }
             .navigationBarTitleDisplayMode(.inline)
             .background(Theme.bg)

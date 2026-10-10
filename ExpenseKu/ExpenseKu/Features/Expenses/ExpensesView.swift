@@ -173,7 +173,10 @@ struct ExpensesView: View {
                             shownContents: shownContents,
                             planFilter: planFilter,
                             filter: activeFilter,
-                            onClearFilters: { filter = ExpenseFilter() },
+                            onClearFilters: {
+                                filter = ExpenseFilter()
+                                planFilter = nil
+                            },
                             cycle: cycle,
                             calendarGrid: calendarGrid,
                             calendar: calendar,
@@ -249,7 +252,7 @@ struct ExpensesView: View {
                 }
                 if showsFilter {
                     ToolbarItem(placement: .navigation) {
-                        FilterButton(activeCount: activeFilter.activeDimensions.count) {
+                        FilterButton(activeCount: activeFilter.activeCount(planFilter: planFilter)) {
                             showingFilter = true
                         }
                     }
@@ -270,7 +273,7 @@ struct ExpensesView: View {
                 TransactionSettingsView(payday: $payday)
             }
             .sheet(isPresented: $showingFilter) {
-                FilterSheet(filter: $filter, catalog: catalog)
+                FilterSheet(filter: $filter, planFilter: $planFilter, catalog: catalog)
             }
             .sheet(item: editsInSheet ? $selection : .constant(nil)) { expense in
                 NavigationStack {

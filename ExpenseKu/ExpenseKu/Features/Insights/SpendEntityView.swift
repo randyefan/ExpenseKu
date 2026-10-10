@@ -96,14 +96,14 @@ struct SpendEntityView: View {
         .toolbar {
             if identity != nil {
                 ToolbarItem(placement: .primaryAction) {
-                    FilterButton(activeCount: activeFilter.activeDimensions.count) {
+                    FilterButton(activeCount: activeFilter.activeCount(planFilter: planFilter)) {
                         showingFilter = true
                     }
                 }
             }
         }
         .sheet(isPresented: $showingFilter) {
-            FilterSheet(filter: $filter, catalog: catalog, hiding: route.subject.dimension)
+            FilterSheet(filter: $filter, planFilter: $planFilter, catalog: catalog, hiding: route.subject.dimension)
         }
         .environment(\.planOrigins, origins)
         .background(Theme.bg)

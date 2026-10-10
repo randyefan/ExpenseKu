@@ -252,6 +252,17 @@ nonisolated final class ExpenseFilterTests: XCTestCase {
         XCTAssertEqual(f.activeDimensions.count, 2)
     }
 
+    // MARK: - §4.8 The plan filter in the sheet
+
+    @MainActor
+    func testTheBadgeCountsThePlanFilterAlongsideTheDimensions() throws {
+        let s = try sample(try makeInMemoryContext())
+        let f = filter((s.id("Makan"), .category), (s.account("Cash"), .account))
+        XCTAssertEqual(f.activeCount(planFilter: nil), 2)
+        XCTAssertEqual(f.activeCount(planFilter: .outsidePlan), 3)
+        XCTAssertEqual(ExpenseFilter().activeCount(planFilter: .fromPlan), 1)
+    }
+
     // MARK: - §4.5 The SPENDING hero and the split
 
     @MainActor

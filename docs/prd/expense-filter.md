@@ -1,7 +1,7 @@
 # PRD — Filtering expenses by Category, Group, Account and Person
 
-Status: Built · amendment §4.9 (hiding values): Accepted
-Date: 2026-10-10 · design approved and built the same day (flow P); §4.9 grilled and its design (P12–P17) approved the same day
+Status: Built (§4.9 hiding values included)
+Date: 2026-10-10 · design approved and built the same day (flow P); §4.9 grilled, approved (P12–P17) and built the same day
 Owner: Randy Efan
 
 Companion documents: `docs/prd/plan-filter.md` (the Outside plan / From plan filter this
@@ -9,7 +9,7 @@ combines with), `docs/prd/insights-drill-in.md` (the Insights window and the dri
 filter reaches), `CONTEXT.md` (ubiquitous language), and **`design/ExpenseKu.pen`**, page
 `02 · Pages · iPhone`, **Flow P** (moved there from `05 · Proposals` once built; the two
 marks not chosen stay on 05). Frame references appear inline as `[→ P3]`. The §4.9
-amendment draws P12–P17, on `05 · Proposals` until built.
+amendment draws P12–P17, drawn on `05 · Proposals` and moved into Flow P once built.
 
 ---
 
@@ -492,4 +492,9 @@ expense outside this sample, a Kopi with Fadil and Tarisa, for the any-person ru
 | The derivation | Pure and tested on this PRD's own sample, one test per rule | `ExpenseFilter`, `FilterDimension`, `FilterCatalog`, `EmptyNotice`, `ExpenseFilterTests` (26 tests) |
 | The checklist was pushed while the sheet grew from .medium to .large, so it laid out at the small height and left a blank band for a moment (found on the owner's iPhone) | The sheet grows first and the page is pushed 0.35 s later; the root rows became Buttons with their own chevron | `FilterSheet.open` |
 | Those Buttons read "Category, All, Category" to VoiceOver | Each row is one element: label the row's title, value its summary | `FilterSheet.row` |
+| §4.9 storage | One map per dimension from choice to `FilterMark` (`only` / `hidden`); `FilterMark.after` is the tap cycle, so the derivation, not the view, owns Off → Only → Hidden → Off | `ExpenseFilter`, `FilterMark` |
+| §4.9 VoiceOver | An Off row carries no value; Only adds the Selected trait and "Only"; Hidden reads "Hidden" | `FilterOptionRow` |
+| §4.9 help line elsewhere | P1 and P9 drew the old help line; both now draw §4.9.3's, and P1's label (which read "P3·B") was corrected | Flow P |
+| §4.9 tests | One per rule on this PRD's sample, plus a shared Kopi with Fadil and Tarisa for the any-person rule; 41 tests in `ExpenseFilterTests` | `ExpenseFilterTests` |
+| §4.9 simulator | Driven on an iPhone 17 Pro over the October seed: the cycle and its VoiceOver values, Not-summaries, the pill, the hero and "of Rp", Only + Hidden in Person, hiding No one, the empty message, Clear Person, Month and Plan keeping or ignoring it, paging resetting it, Insights rows vanishing (Mandiri with Tagihan), chip and pay period keeping it, the Account detail carrying it and the Category detail dropping it, the pill clearing it | — |
 | Simulator | Every row of §8's tables, the empty states, swipe-to-delete, Search and the Plan lens were driven on an iPhone 17 Pro; the badge and VoiceOver bugs above were found there | — |

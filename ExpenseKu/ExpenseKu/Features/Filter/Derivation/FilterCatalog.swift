@@ -38,23 +38,38 @@ nonisolated struct FilterCatalog {
         }
     }
 
-    /// "All", one name, two names, or two names and "+N", in the checklist's order.
+    /// "All", or the Only names then "not" and the Hidden names, each part one or two names
+    /// then "+N", in the checklist's order: "Kopi, Makan, not Kos", "Not Cicilan, Kos".
     func summary(of filter: ExpenseFilter, in dimension: FilterDimension) -> String {
-        let chosen = filter.choices(in: dimension)
-        let names = options(for: dimension).filter { chosen.contains($0.choice) }.map(\.name)
-        switch names.count {
-        case 0: return "All"
-        case 1, 2: return names.joined(separator: ", ")
-        default: return names.prefix(2).joined(separator: ", ") + " +\(names.count - 2)"
-        }
+        values(of: filter, in: dimension, capitalisingNot: true) ?? "All"
     }
 
-    /// "Category · Makan, Kopi" for one dimension; the values joined by " · " for several.
+    /// "Category · not Cicilan, Kos" for one dimension; the values joined by " · " for several.
     func pillText(for filter: ExpenseFilter) -> String {
         let active = filter.activeDimensions
-        if active.count == 1, let only = active.first {
-            return "\(only.title) · \(summary(of: filter, in: only))"
+        let described = active.compactMap { values(of: filter, in: $0, capitalisingNot: false) }
+        if active.count == 1, let only = active.first, let value = described.first {
+            return "\(only.title) · \(value)"
         }
-        return active.map { summary(of: filter, in: $0) }.joined(separator: " · ")
+        return described.joined(separator: " · ")
+    }
+
+    private func values(of filter: ExpenseFilter, in dimension: FilterDimension, capitalisingNot: Bool) -> String? {
+        let shown = names(of: filter.choices(marked: .only, in: dimension), in: dimension)
+        let hidden = names(of: filter.choices(marked: .hidden, in: dimension), in: dimension)
+        var parts: [String] = []
+        if !shown.isEmpty { parts.append(Self.abbreviated(shown)) }
+        if !hidden.isEmpty { parts.append((parts.isEmpty && capitalisingNot ? "Not " : "not ") + Self.abbreviated(hidden)) }
+        return parts.isEmpty ? nil : parts.joined(separator: ", ")
+    }
+
+    private func names(of choices: Set<FilterChoice>, in dimension: FilterDimension) -> [String] {
+        options(for: dimension).filter { choices.contains($0.choice) }.map(\.name)
+    }
+
+    private static func abbreviated(_ names: [String]) -> String {
+        names.count <= 2
+            ? names.joined(separator: ", ")
+            : names.prefix(2).joined(separator: ", ") + " +\(names.count - 2)"
     }
 }

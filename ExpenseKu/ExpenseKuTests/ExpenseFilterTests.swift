@@ -114,8 +114,23 @@ nonisolated final class ExpenseFilterTests: XCTestCase {
 
     private func filter(_ picks: (FilterChoice, FilterDimension)...) -> ExpenseFilter {
         var filter = ExpenseFilter()
-        for (choice, dimension) in picks { filter.toggle(choice, in: dimension) }
+        for (choice, dimension) in picks { filter.set(.only, for: choice, in: dimension) }
         return filter
+    }
+
+    private func marking(_ marks: (FilterChoice, FilterDimension, FilterMark)...) -> ExpenseFilter {
+        var filter = ExpenseFilter()
+        for (choice, dimension, mark) in marks { filter.set(mark, for: choice, in: dimension) }
+        return filter
+    }
+
+    @MainActor
+    private func addSharedKopi(_ s: Sample, to context: ModelContext) throws -> [Expense] {
+        let shared = Expense(amount: 50_000, date: date(8, 4), note: "Shared latte", category: s.categories["Kopi"],
+                             people: [s.people["Fadil"]!, s.people["Tarisa"]!], account: s.accounts["Cash"])
+        context.insert(shared)
+        try context.save()
+        return augustExpenses(s) + [shared]
     }
 
     private func total(_ expenses: [Expense]) -> Decimal {
@@ -157,10 +172,11 @@ nonisolated final class ExpenseFilterTests: XCTestCase {
     }
 
     @MainActor
-    func testTogglingTheLastValueOffReturnsTheDimensionToAll() throws {
+    func testCyclingTheLastValueBackToOffReturnsTheDimensionToAll() throws {
         let s = try sample(try makeInMemoryContext())
         var f = filter((s.id("Makan"), .category))
-        f.toggle(s.id("Makan"), in: .category)
+        f.cycle(s.id("Makan"), in: .category)
+        f.cycle(s.id("Makan"), in: .category)
         XCTAssertTrue(f.isEmpty)
         XCTAssertEqual(f, ExpenseFilter())
     }
@@ -296,7 +312,7 @@ nonisolated final class ExpenseFilterTests: XCTestCase {
 
     func testAnEmptiedListNamesTheFiltersAndOffersToClearThem() {
         var f = ExpenseFilter()
-        f.toggle(.none, in: .account)
+        f.cycle(.none, in: .account)
         let notice = EmptyNotice.cycle(filter: f, filteredIsEmpty: true, planFilter: .outsidePlan,
                                        span: "31/07/2026 ~ 30/08/2026")
         XCTAssertEqual(notice, EmptyNotice(title: "Nothing matches these filters",
@@ -306,7 +322,7 @@ nonisolated final class ExpenseFilterTests: XCTestCase {
 
     func testThePlanFiltersMessageWinsWhenItsHalfIsWhatIsEmpty() {
         var f = ExpenseFilter()
-        f.toggle(.none, in: .account)
+        f.cycle(.none, in: .account)
         let notice = EmptyNotice.cycle(filter: f, filteredIsEmpty: false, planFilter: .outsidePlan, span: "x")
         XCTAssertEqual(notice?.title, "Nothing outside the plan")
         XCTAssertEqual(notice?.offersClearFilters, false)
@@ -315,7 +331,7 @@ nonisolated final class ExpenseFilterTests: XCTestCase {
 
     func testAnEmptyMonthDayNamesTheFilters() {
         var f = ExpenseFilter()
-        f.toggle(.none, in: .person)
+        f.cycle(.none, in: .person)
         let notice = EmptyNotice.day(filter: f, filteredDayIsEmpty: true, planFilter: nil, dayPhrase: "on Sun, 2 August")
         XCTAssertEqual(notice?.title, "Nothing matches on Sun, 2 August")
         XCTAssertEqual(notice?.offersClearFilters, true)
@@ -323,7 +339,7 @@ nonisolated final class ExpenseFilterTests: XCTestCase {
 
     func testAnEmptyInsightsChartSaysNothingMatches() {
         var f = ExpenseFilter()
-        f.toggle(.none, in: .person)
+        f.cycle(.none, in: .person)
         XCTAssertEqual(EmptyNotice.chart(filter: f, filteredIsEmpty: true, planFilter: .fromPlan),
                        "Nothing matches these filters in this period.")
         XCTAssertEqual(EmptyNotice.chart(filter: f, filteredIsEmpty: false, planFilter: .fromPlan),
@@ -398,5 +414,158 @@ nonisolated final class ExpenseFilterTests: XCTestCase {
         )
         XCTAssertTrue(detail.listed.isEmpty)
         XCTAssertEqual(detail.breakdown.map(\.name), ["GoPay"])
+    }
+
+    // MARK: - §4.9 Hiding values
+
+    func testATapCyclesOffOnlyHiddenOff() {
+        var f = ExpenseFilter()
+        var seen: [FilterMark?] = []
+        for _ in 0..<3 {
+            f.cycle(.none, in: .account)
+            seen.append(f.mark(of: .none, in: .account))
+        }
+        XCTAssertEqual(seen, [.only, .hidden, nil])
+        XCTAssertTrue(f.isEmpty)
+    }
+
+    @MainActor
+    func testHidingValuesKeepsEverythingElse() throws {
+        let s = try sample(try makeInMemoryContext())
+        let shown = marking((s.id("Cicilan"), .category, .hidden), (s.id("Kos"), .category, .hidden))
+            .expenses(augustExpenses(s))
+        XCTAssertEqual(total(shown), 570_000)
+        XCTAssertEqual(origins(s).split(shown, in: august), SpendingSplit(outsidePlan: 55_000, fromPlan: 515_000))
+    }
+
+    @MainActor
+    func testHidingAGroupHidesEveryCategoryInIt() throws {
+        let s = try sample(try makeInMemoryContext())
+        let shown = marking((s.group("Housing & Living"), .group, .hidden)).expenses(augustExpenses(s))
+        XCTAssertEqual(total(shown), 1_555_000)
+    }
+
+    @MainActor
+    func testAnEmptyValueCanBeHidden() throws {
+        let s = try sample(try makeInMemoryContext())
+        let shown = marking((.none, .person, .hidden)).expenses(augustExpenses(s))
+        XCTAssertEqual(shown.map(\.note).sorted(), ["Dinner", "Lunch"])
+        XCTAssertEqual(total(shown), 165_000)
+    }
+
+    @MainActor
+    func testAHiddenPersonHidesAnExpenseWithAnyOfItsPeople() throws {
+        let context = try makeInMemoryContext()
+        let s = try sample(context)
+        let expenses = try addSharedKopi(s, to: context)
+        let shown = marking((s.person("Fadil"), .person, .hidden)).expenses(expenses)
+        XCTAssertFalse(shown.contains { $0.note == "Shared latte" })
+        XCTAssertFalse(shown.contains { $0.note == "Dinner" })
+        XCTAssertTrue(shown.contains { $0.note == "Lunch" })
+    }
+
+    @MainActor
+    func testOnlyAndHiddenMixInThePersonRow() throws {
+        let context = try makeInMemoryContext()
+        let s = try sample(context)
+        let expenses = try addSharedKopi(s, to: context)
+        let shown = marking((s.person("Fadil"), .person, .only), (s.person("Tarisa"), .person, .hidden))
+            .expenses(expenses)
+        XCTAssertEqual(shown.map(\.note), ["Dinner"])
+        XCTAssertEqual(total(shown), 120_000)
+    }
+
+    @MainActor
+    func testAHiddenValueBesideAnOnlyOneChangesNothingOnASingleValuedDimension() throws {
+        let s = try sample(try makeInMemoryContext())
+        let mixed = marking((s.id("Makan"), .category, .only), (s.id("Kos"), .category, .hidden))
+        XCTAssertEqual(mixed.expenses(augustExpenses(s)).map(\.note), filter((s.id("Makan"), .category)).expenses(augustExpenses(s)).map(\.note))
+        XCTAssertEqual(mixed.choices(marked: .hidden, in: .category), [s.id("Kos")])
+    }
+
+    @MainActor
+    func testHiddenInOneDimensionAndsWithOnlyInAnother() throws {
+        let s = try sample(try makeInMemoryContext())
+        let f = marking((s.id("Kopi"), .category, .hidden), (s.id("Makan"), .category, .hidden),
+                        (s.account("Cash"), .account, .only))
+        XCTAssertTrue(f.expenses(augustExpenses(s)).isEmpty)
+        XCTAssertEqual(f.activeCount(planFilter: nil), 2)
+        XCTAssertEqual(EmptyNotice.cycle(filter: f, filteredIsEmpty: true, planFilter: nil, span: "x")?.title,
+                       "Nothing matches these filters")
+    }
+
+    @MainActor
+    func testClearingADimensionClearsOnlyAndHidden() throws {
+        let s = try sample(try makeInMemoryContext())
+        var f = marking((s.id("Makan"), .category, .only), (s.id("Kos"), .category, .hidden),
+                        (s.account("Cash"), .account, .hidden))
+        f.clear(.category)
+        XCTAssertEqual(f.activeDimensions, [.account])
+        XCTAssertNil(f.mark(of: s.id("Kos"), in: .category))
+    }
+
+    @MainActor
+    func testADeletedHiddenEntityDropsOutOfTheFilter() throws {
+        let s = try sample(try makeInMemoryContext())
+        let f = marking((s.account("BNI"), .account, .hidden))
+        let withoutBNI = FilterCatalog(
+            categories: Array(s.categories.values), groups: Array(s.groups.values),
+            accounts: s.accounts.values.filter { $0.name != "BNI" }, people: Array(s.people.values)
+        )
+        XCTAssertTrue(withoutBNI.pruning(f).isEmpty)
+    }
+
+    @MainActor
+    func testRowsAndThePillSayNot() throws {
+        let s = try sample(try makeInMemoryContext())
+        let hidden = marking((s.id("Kos"), .category, .hidden), (s.id("Cicilan"), .category, .hidden))
+        XCTAssertEqual(s.catalog.summary(of: hidden, in: .category), "Not Cicilan, Kos")
+        XCTAssertEqual(s.catalog.pillText(for: hidden), "Category · not Cicilan, Kos")
+
+        let mixed = marking((s.person("Fadil"), .person, .only), (s.person("Tarisa"), .person, .hidden))
+        XCTAssertEqual(s.catalog.summary(of: mixed, in: .person), "Fadil, not Tarisa")
+
+        let several = marking((s.id("Makan"), .category, .hidden), (s.id("Kopi"), .category, .hidden),
+                              (s.account("Cash"), .account, .only),
+                              (s.person("Fadil"), .person, .only), (s.person("Tarisa"), .person, .hidden))
+        XCTAssertEqual(s.catalog.pillText(for: several), "not Kopi, Makan · Cash · Fadil, not Tarisa")
+
+        let long = marking((s.id("Transport"), .category, .only), (s.id("Makan"), .category, .only),
+                           (s.id("Kopi"), .category, .only), (s.id("Kos"), .category, .hidden),
+                           (s.id("Internet"), .category, .hidden), (s.id("Cicilan"), .category, .hidden))
+        XCTAssertEqual(s.catalog.summary(of: long, in: .category), "Kopi, Makan +1, not Cicilan, Internet +1")
+    }
+
+    @MainActor
+    func testAHiddenCategoryHasNoInsightsRowToOpen() throws {
+        let s = try sample(try makeInMemoryContext())
+        let shown = marking((s.id("Cicilan"), .category, .hidden), (s.id("Kos"), .category, .hidden))
+            .expenses(augustExpenses(s))
+        XCTAssertEqual(SpendSummary.byCategory(from: shown).map(\.categoryName), ["Internet", "Makan", "Transport", "Kopi"])
+        XCTAssertEqual(SpendSummary.byAccount(from: shown).map(\.total), [350_000, 150_000, 70_000])
+    }
+
+    @MainActor
+    func testSpendOverTimeFollowsHiddenValues() throws {
+        let s = try sample(try makeInMemoryContext())
+        let f = marking((s.id("Cicilan"), .category, .hidden), (s.id("Kos"), .category, .hidden))
+        let window = PayPeriodChoices.trendWindow(count: 12, selected: august, now: date(8, 6, 21),
+                                                  payday: payday, calendar: calendar)
+        let bars = SpendSummary.byPayPeriod(from: f.expenses(s.expenses), window: window, calendar: calendar)
+        XCTAssertEqual(bars.map(\.total), [155_000, 570_000])
+    }
+
+    @MainActor
+    func testTheDrillInDropsItsSubjectsHiddenValuesAndCarriesTheOthers() throws {
+        let s = try sample(try makeInMemoryContext())
+        let bca = SpendSubject.account(s.accounts["BCA"]!.persistentModelID)
+        let f = marking((s.account("GoPay"), .account, .hidden), (s.id("Kos"), .category, .hidden))
+        let carried = f.dropping(bca.dimension)
+        XCTAssertEqual(carried.activeDimensions, [.category])
+        let detail = SpendEntityDetail(
+            expenses: s.expenses, subject: bca, narrowing: nil,
+            dateRange: august.start...date(8, 6, 21), planFilter: nil, filter: carried, origins: origins(s)
+        )
+        XCTAssertEqual(detail.total, 350_000)
     }
 }

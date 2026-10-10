@@ -65,6 +65,12 @@ nonisolated struct ExpenseFilter: Hashable {
         isEmpty ? expenses : expenses.filter(admits)
     }
 
+    /// The Filter button's badge: every active dimension, and the plan filter when it is on
+    /// (§4.8), since the sheet sets both.
+    func activeCount(planFilter: PlanFilter?) -> Int {
+        activeDimensions.count + (planFilter == nil ? 0 : 1)
+    }
+
     /// The figure under the hero: the unfiltered total, only while a filter is on (§4.5).
     func ofTotal(_ whole: Decimal) -> Decimal? {
         isEmpty ? nil : whole

@@ -153,6 +153,22 @@ in 13pt semibold secondary text. `[→ P3, P7]`
 The plan filter's empty messages win when both filters are on and the plan half is what
 empties the list.
 
+### 4.8 The plan filter in the sheet
+
+Added on 2026-10-10, after flow P shipped. The sheet's first row is **Plan**, and it edits
+the **same plan filter** the split chips set (`plan-filter.md`, `insights-drill-in.md`
+§6), on whichever screen the sheet belongs to. `[→ P1, P11]`
+
+| Rule | |
+|---|---|
+| The row reads **All**, **Outside plan** or **From plan**, the latter two in the accent | `[→ P1]` |
+| It pushes a single-choice page: **Outside plan** and **From plan** with their half's dot, then **All** in a card of its own | `[→ P11]` |
+| Setting it from the sheet lights the chip and shows PlanFilterPill; tapping a chip or the pill changes the row | — simulator |
+| The Filter button's badge counts the plan filter as one more active row | — unit test |
+| **Clear All** and the empty card's **Clear Filters** clear the plan filter too; FilterPill still clears this filter only, PlanFilterPill the plan filter only | — simulator |
+| The row is offered even when the split is hidden (no From-plan spending); an empty half shows its own message, as `plan-filter.md` decision 7 | — |
+| Lifetime is the plan filter's own: it still resets on a page, and on Insights on a chip or cycle change | — |
+
 ---
 
 ## 5. Expenses tab (List and Month)
@@ -289,6 +305,10 @@ approved with flow P the same day.
 | 29 | A help line under the root rows explains OR within a row and AND across rows | `P1` |
 | 30 | The empty message's detail is "No expenses in <range> match these filters."; Clear Filters is a glass button | `P6` |
 | 31 | A filtered set with nothing from the plan and no plan filter draws no split | `P6` |
+| 32 | The sheet gains a **Plan** row bound to the **same** plan filter as the chips — against a separate sheet-only plan filter | `P1`, `P11` |
+| 33 | The Plan row is a **single choice** on its own page, not a segmented control on the root | `P11` |
+| 34 | The **badge, Clear All and Clear Filters include the plan filter** | `P1` |
+| 35 | Plan is the **first** row; its page lists Outside plan, From plan, then All in its own card | `P11` |
 
 ---
 
@@ -342,6 +362,7 @@ August: SPENDING Rp 4.570.000 · Outside plan Rp 55.000 · From plan Rp 4.515.00
 | **P8** · GoPay detail from P7 | §6.1 carried filter, 120.000 = 73% of 165.000 |
 | **P9** · The Filter sheet on the GoPay detail | §6.1 no Account row, D7 |
 | **P10** · Plan lens with a filter waiting | §7 no button, no pill |
+| **P11** · The Plan page of the sheet | §4.8 single choice, All in its own card |
 | **P3·A**, **P3·C** · marks not chosen | decision 4 |
 
 ### 11.1 Closed during implementation
@@ -356,4 +377,6 @@ August: SPENDING Rp 4.570.000 · Outside plan Rp 55.000 · From plan Rp 4.515.00
 | A drill-in that a filter empties | Its title is **Nothing matches these filters** and the message ends "… that match these filters." (the plan filter's title wins when both are on) | `SpendEntityDetail.emptyTitle/emptyMessage` |
 | A deleted entity in the filter (D8) | Every render prunes the filter against the catalog built from the live store, so the stored choice simply stops counting | `FilterCatalog.pruning` |
 | The derivation | Pure and tested on this PRD's own sample, one test per rule | `ExpenseFilter`, `FilterDimension`, `FilterCatalog`, `EmptyNotice`, `ExpenseFilterTests` (26 tests) |
+| The checklist was pushed while the sheet grew from .medium to .large, so it laid out at the small height and left a blank band for a moment (found on the owner's iPhone) | The sheet grows first and the page is pushed 0.35 s later; the root rows became Buttons with their own chevron | `FilterSheet.open` |
+| Those Buttons read "Category, All, Category" to VoiceOver | Each row is one element: label the row's title, value its summary | `FilterSheet.row` |
 | Simulator | Every row of §8's tables, the empty states, swipe-to-delete, Search and the Plan lens were driven on an iPhone 17 Pro; the badge and VoiceOver bugs above were found there | — |

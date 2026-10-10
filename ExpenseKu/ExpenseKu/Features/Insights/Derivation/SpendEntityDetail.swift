@@ -28,9 +28,10 @@ nonisolated struct SpendEntityDetail {
         narrowing: SpendSubject?,
         dateRange: ClosedRange<Date>?,
         planFilter: PlanFilter?,
+        filter: ExpenseFilter = ExpenseFilter(),
         origins: PlanOrigins
     ) {
-        let window = expenses.filter { dateRange?.contains($0.date) ?? true }
+        let window = expenses.filter { (dateRange?.contains($0.date) ?? true) && filter.admits($0) }
         let windowHalf = planFilter.map { origins.expenses(window, matching: $0) } ?? window
         let subjectHalf = windowHalf.filter(subject.matches)
 
@@ -49,12 +50,19 @@ nonisolated struct SpendEntityDetail {
             : SpendSummary.byCategory(from: subjectHalf).map(SpendBreakdownRow.init)
     }
 
-    static func emptyTitle(planFilter: PlanFilter?) -> String {
-        planFilter?.emptyCycleTitle ?? "Nothing in This Window"
+    static func emptyTitle(planFilter: PlanFilter?, filter: ExpenseFilter = ExpenseFilter()) -> String {
+        if let planFilter { return planFilter.emptyCycleTitle }
+        return filter.isEmpty ? "Nothing in This Window" : EmptyNotice.filterTitle
     }
 
-    static func emptyMessage(name: String, planFilter: PlanFilter?, windowPhrase: String) -> String {
-        guard let planFilter else { return "\(name) has no expenses \(windowPhrase)." }
-        return "\(name) has no expenses \(planFilter.phrase) \(windowPhrase)."
+    static func emptyMessage(
+        name: String,
+        planFilter: PlanFilter?,
+        filter: ExpenseFilter = ExpenseFilter(),
+        windowPhrase: String
+    ) -> String {
+        let half = planFilter.map { " \($0.phrase)" } ?? ""
+        let matching = filter.isEmpty ? "" : " that match these filters"
+        return "\(name) has no expenses\(half) \(windowPhrase)\(matching)."
     }
 }

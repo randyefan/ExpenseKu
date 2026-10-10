@@ -24,6 +24,12 @@ nonisolated enum SpendSubject: Hashable {
         }
     }
 
+    /// The filter dimension this subject already fixes, dropped from a carried filter and
+    /// not offered on its drill-in (expense-filter.md §6.1).
+    var dimension: FilterDimension {
+        isCategory ? .category : .account
+    }
+
     func matches(_ expense: Expense) -> Bool {
         switch self {
         case .category(let id): expense.category?.persistentModelID == id

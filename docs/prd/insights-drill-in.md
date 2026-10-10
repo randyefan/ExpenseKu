@@ -236,6 +236,9 @@ The narrowing is kept when the window changes.
 - **People leaderboard and Person detail** — no plan filter, chip still "This pay period".
 - **Search and the Expenses tab** — unchanged.
 - **The split rule, row tags, SpendSummary's grouping.**
+- Since `docs/prd/expense-filter.md`, Insights and the drill-in also carry a Category /
+  Group / Account / Person filter. It applies before this plan filter and, unlike it,
+  survives chip and cycle changes.
 
 ---
 

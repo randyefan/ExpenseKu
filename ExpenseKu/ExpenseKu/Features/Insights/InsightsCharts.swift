@@ -23,6 +23,7 @@ struct InsightsCharts: View {
     /// The cycle Spend over Time marks in amber.
     let highlightedCycle: PayCycle
     let origins: PlanOrigins
+    let filter: ExpenseFilter
     @Binding var planFilter: PlanFilter?
     let onSelect: (SpendSubject) -> Void
 
@@ -38,6 +39,7 @@ struct InsightsCharts: View {
         payday: Int,
         highlightedCycle: PayCycle,
         origins: PlanOrigins,
+        filter: ExpenseFilter,
         planFilter: Binding<PlanFilter?>,
         onSelect: @escaping (SpendSubject) -> Void
     ) {
@@ -45,6 +47,7 @@ struct InsightsCharts: View {
         self.payday = payday
         self.highlightedCycle = highlightedCycle
         self.origins = origins
+        self.filter = filter
         _planFilter = planFilter
         self.onSelect = onSelect
         let lower = dateRange?.lowerBound ?? .distantPast
@@ -63,17 +66,24 @@ struct InsightsCharts: View {
     }
 
     var body: some View {
-        let split = origins.split(expenses)
-        let shown = planFilter.map { origins.expenses(expenses, matching: $0) } ?? expenses
-        let shownTrend = planFilter.map { origins.expenses(trendExpenses, matching: $0) } ?? trendExpenses
+        let filtered = filter.expenses(expenses)
+        let filteredTrend = filter.expenses(trendExpenses)
+        let split = origins.split(filtered)
+        let shown = planFilter.map { origins.expenses(filtered, matching: $0) } ?? filtered
+        let shownTrend = planFilter.map { origins.expenses(filteredTrend, matching: $0) } ?? filteredTrend
         let byCategory = SpendSummary.byCategory(from: shown, dateRange: dateRange)
         let byAccount = SpendSummary.byAccount(from: shown, dateRange: dateRange)
         let granularity = SpendGranularity.payPeriod(payday: payday)
         let overTime = SpendSummary.byPayPeriod(from: shownTrend, window: trendWindow)
-        let emptyMessage = planFilter?.emptyPeriodMessage ?? EmptyChartMessage().message
+        let emptyMessage = EmptyNotice.chart(filter: filter, filteredIsEmpty: filtered.isEmpty, planFilter: planFilter)
+            ?? EmptyChartMessage().message
 
         Group {
-            InsightsSpendingCard(split: split, filter: planFilter) { half in
+            InsightsSpendingCard(
+                split: split,
+                ofTotal: filter.ofTotal(expenses.reduce(0) { $0 + $1.amount }),
+                filter: planFilter
+            ) { half in
                 planFilter = PlanFilter.tapping(half, on: planFilter)
             }
             .reveal(1, trigger: dateRange)

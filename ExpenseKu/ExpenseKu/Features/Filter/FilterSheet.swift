@@ -28,7 +28,7 @@ struct FilterSheet: View {
     @State private var path: [FilterSheetPage] = []
     @State private var detent: PresentationDetent = .medium
 
-    static let help = "Choices in one row match any of them. Rows combine: an expense shows only if it matches every row."
+    static let help = "Tap once to show only, twice to hide. An expense shows when it matches a shown value in each row that has one, and no hidden value."
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -38,7 +38,7 @@ struct FilterSheet: View {
                     ForEach(FilterDimension.allCases.filter { $0 != hiding }, id: \.self) { dimension in
                         row(dimension.title,
                             value: catalog.summary(of: filter, in: dimension),
-                            isOn: !filter.choices(in: dimension).isEmpty,
+                            isOn: filter.isActive(dimension),
                             page: .dimension(dimension))
                     }
                 } footer: {

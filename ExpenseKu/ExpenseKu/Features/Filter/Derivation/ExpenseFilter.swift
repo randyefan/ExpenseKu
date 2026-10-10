@@ -3,8 +3,9 @@
 //  ExpenseKu
 //
 //  The owner's Category / Group / Account / Person filter on the Expenses tab, Insights and
-//  its drill-in (docs/prd/expense-filter.md). Choices in one dimension match any of them;
-//  dimensions combine with AND; a dimension with nothing chosen does not narrow.
+//  its drill-in (docs/prd/expense-filter.md). Within a dimension an expense passes when it
+//  matches any Only value, if there is one, and carries no Hidden value (§4.9); dimensions
+//  combine with AND; a dimension with nothing marked does not narrow.
 //
 //  Held as identifiers rather than models, for PersonExpensesRoute's reason: no live
 //  model sits in view state, and a deleted entity is pruned against the catalog (D8).
@@ -13,30 +14,38 @@
 import Foundation
 
 nonisolated struct ExpenseFilter: Hashable {
-    private var selections: [FilterDimension: Set<FilterChoice>] = [:]
+    private var marks: [FilterDimension: [FilterChoice: FilterMark]] = [:]
 
-    var isEmpty: Bool { selections.isEmpty }
+    var isEmpty: Bool { marks.isEmpty }
 
     var activeDimensions: [FilterDimension] {
-        FilterDimension.allCases.filter { selections[$0] != nil }
+        FilterDimension.allCases.filter(isActive)
     }
 
-    func choices(in dimension: FilterDimension) -> Set<FilterChoice> {
-        selections[dimension] ?? []
+    func isActive(_ dimension: FilterDimension) -> Bool {
+        marks[dimension] != nil
     }
 
-    func contains(_ choice: FilterChoice, in dimension: FilterDimension) -> Bool {
-        selections[dimension]?.contains(choice) ?? false
+    func mark(of choice: FilterChoice, in dimension: FilterDimension) -> FilterMark? {
+        marks[dimension]?[choice]
     }
 
-    mutating func toggle(_ choice: FilterChoice, in dimension: FilterDimension) {
-        var chosen = selections[dimension] ?? []
-        if chosen.remove(choice) == nil { chosen.insert(choice) }
-        selections[dimension] = chosen.isEmpty ? nil : chosen
+    func choices(marked mark: FilterMark, in dimension: FilterDimension) -> Set<FilterChoice> {
+        Set((marks[dimension] ?? [:]).filter { $0.value == mark }.keys)
+    }
+
+    mutating func set(_ mark: FilterMark?, for choice: FilterChoice, in dimension: FilterDimension) {
+        var marked = marks[dimension] ?? [:]
+        marked[choice] = mark
+        marks[dimension] = marked.isEmpty ? nil : marked
+    }
+
+    mutating func cycle(_ choice: FilterChoice, in dimension: FilterDimension) {
+        set(FilterMark.after(mark(of: choice, in: dimension)), for: choice, in: dimension)
     }
 
     mutating func clear(_ dimension: FilterDimension) {
-        selections[dimension] = nil
+        marks[dimension] = nil
     }
 
     func dropping(_ dimension: FilterDimension?) -> ExpenseFilter {
@@ -48,16 +57,19 @@ nonisolated struct ExpenseFilter: Hashable {
 
     func keeping(where isKept: (FilterChoice, FilterDimension) -> Bool) -> ExpenseFilter {
         var copy = ExpenseFilter()
-        for (dimension, chosen) in selections {
-            let kept = chosen.filter { isKept($0, dimension) }
-            if !kept.isEmpty { copy.selections[dimension] = kept }
+        for (dimension, marked) in marks {
+            let kept = marked.filter { isKept($0.key, dimension) }
+            if !kept.isEmpty { copy.marks[dimension] = kept }
         }
         return copy
     }
 
     func admits(_ expense: Expense) -> Bool {
-        selections.allSatisfy { dimension, chosen in
-            !dimension.choices(of: expense).isDisjoint(with: chosen)
+        marks.allSatisfy { dimension, marked in
+            let carried = dimension.choices(of: expense)
+            let only = marked.filter { $0.value == .only }.keys
+            let matchesOnly = only.isEmpty || only.contains(where: carried.contains)
+            return matchesOnly && !carried.contains { marked[$0] == .hidden }
         }
     }
 

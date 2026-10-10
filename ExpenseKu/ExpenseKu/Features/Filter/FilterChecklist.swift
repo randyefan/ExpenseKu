@@ -4,7 +4,8 @@
 //
 //  One dimension's checklist, pushed inside the Filter sheet (docs/prd/expense-filter.md
 //  §4.3): every entity by name, its empty value in a card of its own, and a button that
-//  clears this dimension alone. Each tap applies at once.
+//  clears this dimension alone. Each tap cycles a row Off → Only → Hidden (§4.9) and
+//  applies at once.
 //
 
 import SwiftUI
@@ -33,7 +34,7 @@ struct FilterChecklist: View {
                     .font(.dsBody.weight(.semibold))
                     .foregroundStyle(Theme.accent)
                     .frame(maxWidth: .infinity)
-                    .disabled(filter.choices(in: dimension).isEmpty)
+                    .disabled(!filter.isActive(dimension))
                     .listRowBackground(Color.clear)
             }
         }
@@ -54,9 +55,9 @@ struct FilterChecklist: View {
         FilterOptionRow(
             option: option,
             dimension: dimension,
-            isOn: filter.contains(option.choice, in: dimension)
+            mark: filter.mark(of: option.choice, in: dimension)
         ) {
-            filter.toggle(option.choice, in: dimension)
+            filter.cycle(option.choice, in: dimension)
         }
     }
 }

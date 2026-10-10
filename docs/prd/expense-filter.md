@@ -1,14 +1,15 @@
 # PRD — Filtering expenses by Category, Group, Account and Person
 
-Status: Built
-Date: 2026-10-10 · design approved and built the same day (flow P)
+Status: Built · amendment §4.9 (hiding values): Accepted
+Date: 2026-10-10 · design approved and built the same day (flow P); §4.9 grilled and its design (P12–P17) approved the same day
 Owner: Randy Efan
 
 Companion documents: `docs/prd/plan-filter.md` (the Outside plan / From plan filter this
 combines with), `docs/prd/insights-drill-in.md` (the Insights window and the drill-in this
 filter reaches), `CONTEXT.md` (ubiquitous language), and **`design/ExpenseKu.pen`**, page
 `02 · Pages · iPhone`, **Flow P** (moved there from `05 · Proposals` once built; the two
-marks not chosen stay on 05). Frame references appear inline as `[→ P3]`.
+marks not chosen stay on 05). Frame references appear inline as `[→ P3]`. The §4.9
+amendment draws P12–P17, on `05 · Proposals` until built.
 
 ---
 
@@ -39,7 +40,8 @@ Accounts and People, chosen in a sheet, applied live.
 - **The People leaderboard and Person detail.** They have Category / Account menus of
   their own (§9).
 - **Remembering the filter across launches** (§8).
-- **Saved filters, negation ("not Kos"), or OR between dimensions.**
+- **Saved filters, or OR between dimensions.** (Negation, "not Kos", was a non-goal until
+  §4.9 added it.)
 
 ---
 
@@ -64,6 +66,7 @@ Four dimensions, always in this order: **Category · Group · Account · Person*
 | Group and Category are separate dimensions: Group = Housing & Living with Category = Kopi, Kos leaves only Kos | — unit test |
 | An impossible combination is allowed and shows §4.6's message | `[→ P6]` |
 | The filter combines with the plan filter by **AND**; neither resets the other | `[→ P4]` |
+| A value can also be **hidden**; §4.9 gives the full rule, of which the rows above are the case with nothing hidden | `[→ P12]` |
 
 The filter is held as **identifiers**, never live models. A chosen entity that is deleted
 drops out of the filter: its dimension falls back to All if nothing else is chosen there.
@@ -102,7 +105,7 @@ nothing is chosen) and **Done** (trailing). `[→ P1]`
 - The empty value sits in a card of its own under the main list; Uncategorized wears a
   dashed-circle glyph in a neutral wash. `[→ P2]`
 - Under the root rows, one help line: *Choices in one row match any of them. Rows
-  combine: an expense shows only if it matches every row.* `[→ P1]`
+  combine: an expense shows only if it matches every row.* `[→ P1]` §4.9 rewrites it.
 - Done closes the sheet. Clear All empties every dimension and leaves the sheet open.
 
 ### 4.4 The filter pill
@@ -116,7 +119,7 @@ its dot. `[→ P3]`
 |---|---|
 | One dimension on: **<Dimension> · <values>** — "Category · Kopi, Makan", "Person · Fadil, Tarisa" | `[→ P3, P7]` |
 | Several on: the dimensions' values, joined by " · " in §4.1's order — "Makan · BNI" | `[→ P6]` |
-| Values follow the sheet row's rule: one or two names, then "+N" | — |
+| Values follow the sheet row's rule: one or two names, then "+N"; hidden values read as §4.9 | — |
 | The whole pill is one button that clears **this filter only** (the plan filter stays) | `[→ P3]` |
 | With the plan filter on too, both pills show, **this one above** the plan pill; each clears its own | `[→ P4]` |
 | Not drawn in the Plan lens, during Search, or with no filter | `[→ P10]` |
@@ -169,6 +172,80 @@ the **same plan filter** the split chips set (`plan-filter.md`, `insights-drill-
 | The row is offered even when the split is hidden (no From-plan spending); an empty half shows its own message, as `plan-filter.md` decision 7 | — |
 | Lifetime is the plan filter's own: it still resets on a page, and on Insights on a chip or cycle change | — |
 
+### 4.9 Hiding values
+
+Added on 2026-10-10, after flow P shipped. The owner wants "this month without Kos and
+Cicilan" without ticking every other Category. Any value in a checklist can be **shown
+only** (✓) or **hidden** (⊘). `[→ P12, P13]`
+
+#### 4.9.1 Three states per row
+
+| State | Mark | Meaning |
+|---|---|---|
+| Off | `circle`, secondary | the value does not narrow |
+| **Only** | `checkmark.circle.fill`, accent | as today: the dimension keeps expenses matching any Only value |
+| **Hidden** | `nosign` (outline, unfilled) in the negative red, the size of the other marks; the name in secondary text, the icon or avatar undimmed, no strikethrough | an expense carrying this value is hidden |
+
+| Rule | |
+|---|---|
+| Tapping a row cycles **Off → Only → Hidden → Off**, on every row of every dimension; un-ticking an Only now takes two taps | `[→ P13]` |
+| The **empty values** (Uncategorized, No group, Unassigned, No one) cycle the same way: hiding No one keeps only expenses with people | — unit test |
+| Each step plays the `.selection` haptic, as today | — |
+| **Clear <Dimension>** clears Only and Hidden in that dimension; **Clear All** and FilterPill's ✕ clear both everywhere (Clear All also the plan filter, §4.8) | `[→ P13]` |
+| The **Plan** row (§4.8) has no Hidden state; it stays a single choice | `[→ P12]` |
+| VoiceOver: an Only row has the Selected trait and the value "Only"; a Hidden row has the value "Hidden" and no Selected trait | — simulator |
+
+#### 4.9.2 Matching
+
+Within one dimension an expense passes when **it matches any Only value, if there is one,
+and it carries no Hidden value**. Dimensions still combine with AND, and the plan filter
+with AND.
+
+| Rule | |
+|---|---|
+| Only and Hidden **mix freely** in one dimension, under that one rule | `[→ P15]` |
+| On Category, Group and Account an expense has one value, so a Hidden value beside an Only one changes nothing; it is allowed, kept and shown | — unit test |
+| **Person**: an expense is hidden when **any** of its people is hidden. Hide Fadil and a dinner with Fadil and Tarisa is hidden | — unit test |
+| Person, mixed: Only Fadil + Hidden Tarisa keeps expenses with Fadil and without Tarisa | `[→ P15]` |
+| A dimension with only Hidden values keeps everything else, including the empty value unless it is hidden too | `[→ P14]` |
+| Hidden values in one dimension and Only values in another combine like any two dimensions | `[→ P17]` |
+| An active dimension is one with any Only or Hidden value; the badge counts it once (`activeCount`, §4.8) | `[→ P14, P17]` |
+| A deleted entity drops out of Hidden as it does out of Only (D8) | — unit test |
+
+Every figure follows the filtered set as §4.5–§6 already say: the hero with "of Rp …",
+the split, day totals, Month, the charts and the drill-in. Hiding adds no rule of its own
+there. `[→ P14, P16]`
+
+#### 4.9.3 Words
+
+| Where | Only only | Hidden only | Both |
+|---|---|---|---|
+| Sheet row value | Kopi, Makan | **Not** Cicilan, Kos | Kopi, Makan, **not** Kos |
+| Pill, one dimension | Category · Kopi, Makan | Category · **not** Cicilan, Kos | Person · Fadil, **not** Tarisa |
+| Pill, several | … · GoPay | **not** Cicilan, Kos · GoPay | **not** Cicilan, Kos · Fadil, **not** Tarisa |
+
+| Rule | |
+|---|---|
+| Only values first, then the Hidden ones after "not"; each part follows the one-or-two-names-then-"+N" rule: "Kopi, Makan +1, not Kos +2" | `[→ P12]` |
+| "Not" is capitalised only when it starts a sheet row's value; the pill always writes "not" | `[→ P12, P14]` |
+| Inside a dimension the parts join with ", "; " · " separates dimensions only | `[→ P17]` |
+| Names keep checklist order (by name, the empty value last), never the order tapped | — unit test |
+| The sheet row's value is in the accent whenever the dimension is active, Hidden-only included | `[→ P12]` |
+| "not" is plain text on the pill: no colour or glyph of its own | `[→ P14, P17]` |
+
+The help line under the root rows becomes: *Tap once to show only, twice to hide. An
+expense shows when it matches a shown value in each row that has one, and no hidden
+value.* `[→ P12]`
+
+#### 4.9.4 Empty, drill-in and lifetime
+
+| Rule | |
+|---|---|
+| Hiding everything in the cycle shows §4.6's message unchanged: **Nothing matches these filters** with Clear Filters | `[→ P17]` |
+| A hidden Category or Account has no row in Spend by Category / Spend by Account, so its detail cannot be opened from Insights | `[→ P16]` |
+| The drill-in drops its subject's dimension, hidden values included, and carries the hidden values of the other dimensions (§6.1) | — unit test |
+| Hidden values live and reset exactly as Only values do (§8): paging ‹ › clears both on Expenses; Insights keeps both across chip and pay-period changes | — simulator |
+
 ---
 
 ## 5. Expenses tab (List and Month)
@@ -203,6 +280,7 @@ plan filter it already carries. `[→ P8]`
 | The share reads **X% of what you spent in this window with these filters**, over the filtered window | `[→ P8]` |
 | Narrowing (FocusChip) works inside the filtered set | — unit test |
 | Uncategorized and Unassigned details drop their dimension too | — unit test |
+| The dropped dimension takes its **hidden** values with it; hidden values in the other dimensions are carried (§4.9) | — unit test |
 
 ---
 
@@ -259,7 +337,8 @@ The plan filter still resets on a chip or cycle change (`insights-drill-in.md` d
 ## 10. Decision log
 
 Settled in a grilling session on 2026-10-10. Entries 22–31 are the design calls the owner
-approved with flow P the same day.
+approved with flow P the same day; 36–48 were grilled for §4.9, and 49–53 are its design
+calls, approved with P12–P17.
 
 | # | Decision | Drawn in |
 |---|---|---|
@@ -309,6 +388,24 @@ approved with flow P the same day.
 | 33 | The Plan row is a **single choice** on its own page, not a segmented control on the root | `P11` |
 | 34 | The **badge, Clear All and Clear Filters include the plan filter** | `P1` |
 | 35 | Plan is the **first** row; its page lists Outside plan, From plan, then All in its own card | `P11` |
+| 36 | A value can be **hidden**, not only chosen; negation leaves the non-goals | `P12`–`P17` |
+| 37 | **Three states per row** (Off · Only · Hidden) — *owner override*, against an Only \| Hide mode per dimension above each checklist | `P13` |
+| 38 | A hidden **Person** hides an expense when **any** of its people is hidden — against only when all of them are | — unit test |
+| 39 | Only and Hidden **mix freely** in one dimension under one rule — against clearing one when the other is set, or skipping Hidden while an Only exists | `P15` |
+| 40 | Reaching Hidden is a **tap cycle** Off → Only → Hidden → Off — against two buttons per row, or tap for Only and swipe for Hide | `P13` |
+| 41 | The **empty values can be hidden**, with the same cycle | `P13` |
+| 42 | The word is **"not"**: "Not Cicilan, Kos", "Category · not Cicilan, Kos" — against "except" and "Hide" | `P12`, `P14` |
+| 43 | Inside a dimension, Only and Hidden join with **", "** ("Fadil, not Tarisa"); " · " separates dimensions — against " · " inside and " \| " between, or dimension names only | `P15`, `P17` |
+| 44 | The badge still counts **active dimensions** | `P14` |
+| 45 | Hiding everything shows the **same** empty message | `P17` |
+| 46 | Hidden values have the **same lifetime** as Only values | — |
+| 47 | Written as an **amendment** to this PRD, §4.9, rather than a PRD of its own | — |
+| 48 | The Plan row has no Hidden state | `P12` |
+| 49 | Hidden mark: `nosign`, outline, negative red, the size of the check | `P13`, `P15` |
+| 50 | A hidden row dims its **name** to secondary; the icon stays, no strikethrough | `P13`, `P15` |
+| 51 | A Hidden-only row value is in the **accent**, like an Only one | `P12` |
+| 52 | The help line is shortened to fit the `.medium` sheet | `P12` |
+| 53 | "not" on the pill is **plain text** | `P14`, `P17` |
 
 ---
 
@@ -349,6 +446,16 @@ August: SPENDING Rp 4.570.000 · Outside plan Rp 55.000 · From plan Rp 4.515.00
 | Account = GoPay | 150.000 | 30.000 | 120.000 |
 | Person = Fadil, Tarisa | 165.000 | 0 | 165.000 |
 | Category = Makan · Account = BNI | 0 | 0 | 0 |
+| Category = not Cicilan, Kos | 570.000 | 55.000 | 515.000 |
+| Group = not Housing & Living | 1.555.000 | 55.000 | 1.500.000 |
+| Person = not No one | 165.000 | 0 | 165.000 |
+| Person = Fadil, not Tarisa | 120.000 | 0 | 120.000 |
+| Category = not Kopi, Makan · Account = Cash | 0 | 0 | 0 |
+
+Insights over August with Category = not Cicilan, Kos: Spend by Category Internet 350.000 ·
+Makan 165.000 · Transport 30.000 · Kopi 25.000; Spend by Account BCA 350.000 · GoPay
+150.000 · Cash 70.000 (no BNI); trend July 155.000 / August 570.000. The tests add one
+expense outside this sample, a Kopi with Fadil and Tarisa, for the any-person rule.
 
 | Frame | Covers |
 |---|---|
@@ -363,6 +470,12 @@ August: SPENDING Rp 4.570.000 · Outside plan Rp 55.000 · From plan Rp 4.515.00
 | **P9** · The Filter sheet on the GoPay detail | §6.1 no Account row, D7 |
 | **P10** · Plan lens with a filter waiting | §7 no button, no pill |
 | **P11** · The Plan page of the sheet | §4.8 single choice, All in its own card |
+| **P12** · The Filter sheet, Category = not Cicilan, Kos | §4.9.3 row value, help line, Plan row unchanged |
+| **P13** · The Category checklist, Cicilan and Kos hidden | §4.9.1 three marks, the cycle, empty value Off, Clear Category |
+| **P14** · List — Category = not Cicilan, Kos | §4.9.2 hero 570.000 of 4.570.000, split 55.000 / 515.000, pill, badge 1 |
+| **P15** · The Person checklist, Only Fadil + Hidden Tarisa | §4.9.2 mixing, the any-person rule |
+| **P16** · Insights — Category = not Cicilan, Kos | §4.9.4 no Kos or Cicilan row, no BNI row, trend 155.000 / 570.000 |
+| **P17** · List — not Kopi, Makan · Cash, empty | §4.9.4 empty message, several-dimension pill, badge 2 |
 | **P3·A**, **P3·C** · marks not chosen | decision 4 |
 
 ### 11.1 Closed during implementation

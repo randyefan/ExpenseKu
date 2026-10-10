@@ -6,6 +6,10 @@
 //  choices, each pushing its checklist. It opens at .medium and grows to .large for a
 //  checklist. There is no Cancel: every tick already applied, so Done only closes.
 //
+//  The sheet grows first and the checklist is pushed once it has: pushed while still
+//  growing, the checklist laid out at the .medium height and left a blank band for a
+//  moment as the sheet finished.
+//
 //  A drill-in hides its subject's own dimension (§6.1), which the subject already fixes.
 //
 
@@ -27,11 +31,16 @@ struct FilterSheet: View {
             List {
                 Section {
                     ForEach(FilterDimension.allCases.filter { $0 != hiding }, id: \.self) { dimension in
-                        NavigationLink(value: dimension) {
+                        Button { open(dimension) } label: {
                             LabeledContent(dimension.title) {
-                                Text(catalog.summary(of: filter, in: dimension))
-                                    .foregroundStyle(filter.choices(in: dimension).isEmpty ? Theme.textSecondary : Theme.accent)
-                                    .lineLimit(1)
+                                HStack(spacing: 8) {
+                                    Text(catalog.summary(of: filter, in: dimension))
+                                        .foregroundStyle(filter.choices(in: dimension).isEmpty ? Theme.textSecondary : Theme.accent)
+                                        .lineLimit(1)
+                                    Image(systemName: "chevron.right")
+                                        .font(.dsCaption.weight(.semibold))
+                                        .foregroundStyle(Theme.textSecondary.opacity(0.6))
+                                }
                             }
                             .font(.dsBody)
                             .foregroundStyle(Theme.text)
@@ -69,8 +78,17 @@ struct FilterSheet: View {
         }
         .presentationDetents([.medium, .large], selection: $detent)
         .presentationDragIndicator(.visible)
-        .onChange(of: path) { _, newPath in
-            if !newPath.isEmpty { detent = .large }
+    }
+
+    private func open(_ dimension: FilterDimension) {
+        guard detent != .large else {
+            path.append(dimension)
+            return
+        }
+        detent = .large
+        Task {
+            try? await Task.sleep(for: .milliseconds(350))
+            path.append(dimension)
         }
     }
 }

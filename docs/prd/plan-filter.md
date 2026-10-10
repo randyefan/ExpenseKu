@@ -156,6 +156,8 @@ the lens `.id()`, never stored.
 - **Insights** has a plan filter of its own since `docs/prd/insights-drill-in.md`: the same
   three states and split rule, on Insights and its drill-in. This filter and that one are
   separate view state and never set each other.
+- **The Category / Group / Account / Person filter** (`docs/prd/expense-filter.md`) narrows
+  List and Month first; this filter then splits what is left, and neither resets the other.
 
 ---
 

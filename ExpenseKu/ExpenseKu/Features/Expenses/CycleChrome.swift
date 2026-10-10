@@ -13,6 +13,7 @@ import SwiftUI
 struct CycleChrome: View {
     let cycle: PayCycle
     let headline: CycleHeadline
+    var ofTotal: Decimal? = nil
     var split: SpendingSplit? = nil
     var planFilter: PlanFilter? = nil
     var onPlanFilter: (PlanFilter) -> Void = { _ in }
@@ -28,6 +29,7 @@ struct CycleChrome: View {
             CycleHeader(
                 cycle: cycle,
                 headline: headline,
+                ofTotal: ofTotal,
                 split: split,
                 planFilter: planFilter,
                 onPlanFilter: onPlanFilter,

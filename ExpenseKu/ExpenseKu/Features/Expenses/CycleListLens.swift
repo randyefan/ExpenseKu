@@ -19,8 +19,10 @@ struct CycleListLens<Header: View>: View {
     let calendar: Calendar
     /// Re-runs the reveal cascade when the owner pages to another cycle.
     var revealTrigger: AnyHashable = 0
-    /// Shown in place of the days when a plan filter leaves none (plan-filter.md §4.4).
-    var emptyMessage: (title: String, detail: String)? = nil
+    /// Shown in place of the days when a filter leaves none (plan-filter.md §4.4,
+    /// expense-filter.md §4.6).
+    var emptyNotice: EmptyNotice? = nil
+    var onClearFilters: () -> Void = {}
     let onSelect: (Expense) -> Void
     let onDelete: (IndexSet, [Expense]) -> Void
     /// The cycle header and lens toggle. They ride inside the list rather than
@@ -37,9 +39,9 @@ struct CycleListLens<Header: View>: View {
                     .listRowInsets(EdgeInsets())
             }
 
-            if dayGroups.isEmpty, let emptyMessage {
+            if dayGroups.isEmpty, let emptyNotice {
                 Section {
-                    InlineMessageCard(title: emptyMessage.title, detail: emptyMessage.detail)
+                    InlineMessageCard(emptyNotice, onClearFilters: onClearFilters)
                 }
             }
 

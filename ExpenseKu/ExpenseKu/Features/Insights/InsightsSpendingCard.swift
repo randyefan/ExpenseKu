@@ -12,6 +12,7 @@ import SwiftUI
 
 struct InsightsSpendingCard: View {
     let split: SpendingSplit
+    var ofTotal: Decimal? = nil
     let filter: PlanFilter?
     let onTap: (PlanFilter) -> Void
 
@@ -19,6 +20,9 @@ struct InsightsSpendingCard: View {
         VStack(spacing: 2) {
             SectionHeaderText("Spending")
             MoneyText(split.total, font: .dsHero, color: Theme.text, rolls: true)
+            if let ofTotal {
+                OfTotalText(total: ofTotal)
+            }
 
             if PlanFilter.showsLegend(for: split, filter: filter) {
                 SpendingSplitView(split: split, filter: filter, onTap: onTap)

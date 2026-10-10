@@ -15,6 +15,10 @@ struct CycleCalendarLens<Header: View>: View {
     let cycle: PayCycle
     let storeIsEmpty: Bool
     var planFilter: PlanFilter? = nil
+    var filter = ExpenseFilter()
+    /// The cycle narrowed by `filter` alone, which decides whose empty message shows.
+    var filteredContents: CycleContents? = nil
+    var onClearFilters: () -> Void = {}
     let calendar: Calendar
     @Binding var selectedDay: Date?
     let resolvedDay: Date?
@@ -45,12 +49,14 @@ struct CycleCalendarLens<Header: View>: View {
                 ))
             }
 
-            if contents.isEmpty, let planFilter {
+            if contents.isEmpty, let notice = EmptyNotice.cycle(
+                filter: filter,
+                filteredIsEmpty: filteredContents?.isEmpty ?? false,
+                planFilter: planFilter,
+                span: cycle.rangeText(calendar: calendar)
+            ) {
                 Section {
-                    InlineMessageCard(
-                        title: planFilter.emptyCycleTitle,
-                        detail: planFilter.emptyCycleDetail(span: cycle.rangeText(calendar: calendar))
-                    )
+                    InlineMessageCard(notice, onClearFilters: onClearFilters)
                 }
             } else if contents.isEmpty {
                 Section {
@@ -68,11 +74,13 @@ struct CycleCalendarLens<Header: View>: View {
                             ExpenseListRow(expense: expense) { onSelect(expense) }
                         }
                         .onDelete { onDelete($0, group.expenses) }
-                    } else if let planFilter {
-                        InlineMessageCard(
-                            title: planFilter.emptyDayTitle(dayPhrase: DayLabel.phrase(day, calendar: calendar)),
-                            detail: planFilter.emptyDayDetail
-                        )
+                    } else if let notice = EmptyNotice.day(
+                        filter: filter,
+                        filteredDayIsEmpty: filteredContents?.group(for: day) == nil,
+                        planFilter: planFilter,
+                        dayPhrase: DayLabel.phrase(day, calendar: calendar)
+                    ) {
+                        InlineMessageCard(notice, onClearFilters: onClearFilters)
                     } else {
                         InlineMessageCard(
                             title: "No expenses \(DayLabel.phrase(day, calendar: calendar))",

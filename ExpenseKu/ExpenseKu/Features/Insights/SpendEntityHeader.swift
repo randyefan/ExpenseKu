@@ -18,6 +18,7 @@ struct SpendEntityHeader: View {
     /// 0…1, or nil when there is nothing to take a share of.
     var share: Double?
     var planFilter: PlanFilter?
+    var isFiltered = false
     var growth: Double = 1
 
     private var tint: Color { Theme.categoryTint(hex: identity.colorHex, seed: identity.name) }
@@ -26,7 +27,8 @@ struct SpendEntityHeader: View {
 
     private var shareCaption: String {
         let half = planFilter.map { " \($0.phrase)" } ?? ""
-        return "\(sharePercent)% of what you spent\(half) in this window"
+        let filtered = isFiltered ? " with these filters" : ""
+        return "\(sharePercent)% of what you spent\(half) in this window\(filtered)"
     }
 
     var body: some View {

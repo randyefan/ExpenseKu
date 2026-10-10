@@ -28,9 +28,17 @@ struct InsightsView: View {
 
     @Query(sort: \CyclePlan.cycleStart) private var plans: [CyclePlan]
     @Query(Self.oldestExpense) private var oldest: [Expense]
+    @Query(sort: \Category.name) private var categories: [Category]
+    @Query(sort: \CategoryGroup.name) private var groups: [CategoryGroup]
+    @Query(sort: \Account.name) private var accounts: [Account]
+    @Query(sort: \Person.name) private var people: [Person]
 
     @State private var window = InsightsWindow(preset: .payPeriod)
     @State private var planFilter: PlanFilter?
+    /// Insights' own Category / Group / Account / Person filter; it survives chip and pay
+    /// period changes (expense-filter.md §8.2).
+    @State private var filter = ExpenseFilter()
+    @State private var showingFilter = false
     @State private var payday: Int = Payday.current
     @State private var now = Date.now
     @State private var path: [Destination] = []
@@ -45,6 +53,8 @@ struct InsightsView: View {
         let dateRange = window.range(now: now, payday: payday, calendar: calendar)
         let shownCycle = window.payCycle(now: now, payday: payday, calendar: calendar)
         let origins = PlanOrigins(plans: plans, payday: payday, calendar: calendar)
+        let catalog = FilterCatalog(categories: categories, groups: groups, accounts: accounts, people: people)
+        let activeFilter = catalog.pruning(filter)
 
         NavigationStack(path: $path) {
             ScrollView {
@@ -71,10 +81,12 @@ struct InsightsView: View {
                             ? shownCycle
                             : PayCycle.containing(now, payday: payday, calendar: calendar),
                         origins: origins,
+                        filter: activeFilter,
                         planFilter: $planFilter
                     ) { subject in
                         path.append(.spendEntity(SpendEntityRoute(subject: subject, window: window,
-                                                                  planFilter: planFilter)))
+                                                                  planFilter: planFilter,
+                                                                  filter: activeFilter)))
                     }
                     .id(dateRange)
 
@@ -85,13 +97,32 @@ struct InsightsView: View {
                 .motion(Motion.snap, value: window)
             }
             .safeAreaInset(edge: .bottom) {
-                if let planFilter {
-                    PlanFilterPill(filter: planFilter) { self.planFilter = nil }
-                        .padding(.bottom, 8)
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                VStack(spacing: 10) {
+                    if !activeFilter.isEmpty {
+                        FilterPill(text: catalog.pillText(for: activeFilter)) { filter = ExpenseFilter() }
+                            .transition(.move(edge: .bottom).combined(with: .opacity))
+                    }
+                    if let planFilter {
+                        PlanFilterPill(filter: planFilter) { self.planFilter = nil }
+                            .transition(.move(edge: .bottom).combined(with: .opacity))
+                    }
                 }
+                .padding(.bottom, 8)
             }
             .motion(Motion.settle, value: planFilter)
+            .motion(Motion.settle, value: activeFilter)
+            .toolbar {
+                if !oldest.isEmpty {
+                    ToolbarItem(placement: .primaryAction) {
+                        FilterButton(activeCount: activeFilter.activeDimensions.count) {
+                            showingFilter = true
+                        }
+                    }
+                }
+            }
+            .sheet(isPresented: $showingFilter) {
+                FilterSheet(filter: $filter, catalog: catalog)
+            }
             .navigationBarTitleDisplayMode(.inline)
             .background(Theme.bg)
             .navigationTitle("Insights")

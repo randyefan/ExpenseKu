@@ -21,6 +21,7 @@ import SwiftUI
 struct CycleHeader: View {
     let cycle: PayCycle
     let headline: CycleHeadline
+    var ofTotal: Decimal? = nil
     var split: SpendingSplit? = nil
     var planFilter: PlanFilter? = nil
     var onPlanFilter: (PlanFilter) -> Void = { _ in }
@@ -69,6 +70,9 @@ struct CycleHeader: View {
             VStack(spacing: 2) {
                 SectionHeaderText(headline.label)
                 MoneyText(headline.amount, font: .dsHero, color: headlineColor, rolls: true)
+                if let ofTotal {
+                    OfTotalText(total: ofTotal)
+                }
             }
 
             if let split, PlanFilter.showsLegend(for: split, filter: planFilter) {

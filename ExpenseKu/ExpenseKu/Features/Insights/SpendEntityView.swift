@@ -23,9 +23,15 @@ struct SpendEntityView: View {
 
     @Query(sort: \Expense.date, order: .reverse) private var expenses: [Expense]
     @Query(sort: \CyclePlan.cycleStart) private var plans: [CyclePlan]
+    @Query(sort: \Category.name) private var categories: [Category]
+    @Query(sort: \CategoryGroup.name) private var groups: [CategoryGroup]
+    @Query(sort: \Account.name) private var accounts: [Account]
+    @Query(sort: \Person.name) private var people: [Person]
 
     @State private var window: InsightsWindow
     @State private var planFilter: PlanFilter?
+    @State private var filter: ExpenseFilter
+    @State private var showingFilter = false
     @State private var narrowing: SpendSubject?
     @State private var now = Date.now
     @State private var editing: Expense?
@@ -35,25 +41,29 @@ struct SpendEntityView: View {
         self.route = route
         _window = State(initialValue: route.window)
         _planFilter = State(initialValue: route.planFilter)
+        _filter = State(initialValue: route.filter.dropping(route.subject.dimension))
     }
 
     var body: some View {
         let payday = Payday.current
         let identity = SpendEntityIdentity.resolve(route.subject, in: context)
         let origins = PlanOrigins(plans: plans, payday: payday, calendar: calendar)
+        let catalog = FilterCatalog(categories: categories, groups: groups, accounts: accounts, people: people)
+        let activeFilter = catalog.pruning(filter).dropping(route.subject.dimension)
         let detail = SpendEntityDetail(
             expenses: expenses,
             subject: route.subject,
             narrowing: narrowing,
             dateRange: window.range(now: now, payday: payday, calendar: calendar),
             planFilter: planFilter,
+            filter: activeFilter,
             origins: origins
         )
 
         ScrollView {
             VStack(alignment: .leading, spacing: Metric.cardGap) {
                 if let identity {
-                    content(identity: identity, detail: detail, payday: payday)
+                    content(identity: identity, detail: detail, filter: activeFilter, payday: payday)
                 } else {
                     EmptyStateView(
                         title: route.subject.isCategory ? "Category Removed" : "Account Removed",
@@ -69,13 +79,32 @@ struct SpendEntityView: View {
             .motion(Motion.settle, value: detail.listed.count)
         }
         .safeAreaInset(edge: .bottom) {
-            if let planFilter {
-                PlanFilterPill(filter: planFilter) { self.planFilter = nil }
-                    .padding(.bottom, 8)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            VStack(spacing: 10) {
+                if !activeFilter.isEmpty {
+                    FilterPill(text: catalog.pillText(for: activeFilter)) { filter = ExpenseFilter() }
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+                if let planFilter {
+                    PlanFilterPill(filter: planFilter) { self.planFilter = nil }
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
             }
+            .padding(.bottom, 8)
         }
         .motion(Motion.settle, value: planFilter)
+        .motion(Motion.settle, value: activeFilter)
+        .toolbar {
+            if identity != nil {
+                ToolbarItem(placement: .primaryAction) {
+                    FilterButton(activeCount: activeFilter.activeDimensions.count) {
+                        showingFilter = true
+                    }
+                }
+            }
+        }
+        .sheet(isPresented: $showingFilter) {
+            FilterSheet(filter: $filter, catalog: catalog, hiding: route.subject.dimension)
+        }
         .environment(\.planOrigins, origins)
         .background(Theme.bg)
         .navigationTitle(identity?.name ?? (route.subject.isCategory ? "Category" : "Account"))
@@ -92,7 +121,12 @@ struct SpendEntityView: View {
     }
 
     @ViewBuilder
-    private func content(identity: SpendEntityIdentity, detail: SpendEntityDetail, payday: Int) -> some View {
+    private func content(
+        identity: SpendEntityIdentity,
+        detail: SpendEntityDetail,
+        filter: ExpenseFilter,
+        payday: Int
+    ) -> some View {
         let windowLabel = window.label(now: now, payday: payday, calendar: calendar)
         let focus = narrowing.flatMap { SpendEntityIdentity.resolve($0, in: context) }
 
@@ -103,6 +137,7 @@ struct SpendEntityView: View {
             windowLabel: windowLabel,
             share: detail.share,
             planFilter: planFilter,
+            isFiltered: !filter.isEmpty,
             growth: growth.factor
         )
         .padding(.horizontal, Metric.screenPadding)
@@ -158,11 +193,12 @@ struct SpendEntityView: View {
 
         if detail.listed.isEmpty {
             EmptyStateView(
-                title: SpendEntityDetail.emptyTitle(planFilter: planFilter),
+                title: SpendEntityDetail.emptyTitle(planFilter: planFilter, filter: filter),
                 systemImage: identity.symbol,
                 message: SpendEntityDetail.emptyMessage(
                     name: [identity.name, focus?.name].compactMap { $0 }.joined(separator: " · "),
                     planFilter: planFilter,
+                    filter: filter,
                     windowPhrase: window.phrase(now: now, payday: payday, calendar: calendar)
                 )
             )

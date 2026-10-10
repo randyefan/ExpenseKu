@@ -13,4 +13,5 @@ struct SpendEntityRoute: Hashable {
     let subject: SpendSubject
     let window: InsightsWindow
     let planFilter: PlanFilter?
+    var filter = ExpenseFilter()
 }

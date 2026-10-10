@@ -35,9 +35,13 @@ enum CycleContentChange {
 
 struct CycleLensArea<Header: View>: View {
     let contents: CycleContents
-    /// `contents` narrowed by the plan filter; the same value when none is on.
+    /// `contents` narrowed by the Category / Group / Account / Person filter alone.
+    let filteredContents: CycleContents
+    /// `filteredContents` narrowed by the plan filter; the same value when none is on.
     let shownContents: CycleContents
     let planFilter: PlanFilter?
+    let filter: ExpenseFilter
+    let onClearFilters: () -> Void
     let cycle: PayCycle
     let calendarGrid: CycleCalendar
     let calendar: Calendar
@@ -81,9 +85,13 @@ struct CycleLensArea<Header: View>: View {
                         dayGroups: shownContents.dayGroups,
                         calendar: calendar,
                         revealTrigger: AnyHashable(cycle),
-                        emptyMessage: planFilter.map {
-                            ($0.emptyCycleTitle, $0.emptyCycleDetail(span: cycle.rangeText(calendar: calendar)))
-                        },
+                        emptyNotice: EmptyNotice.cycle(
+                            filter: filter,
+                            filteredIsEmpty: filteredContents.isEmpty,
+                            planFilter: planFilter,
+                            span: cycle.rangeText(calendar: calendar)
+                        ),
+                        onClearFilters: onClearFilters,
                         onSelect: onSelect,
                         onDelete: onDelete,
                         header: { header }
@@ -109,6 +117,9 @@ struct CycleLensArea<Header: View>: View {
                     cycle: cycle,
                     storeIsEmpty: storeIsEmpty,
                     planFilter: planFilter,
+                    filter: filter,
+                    filteredContents: filteredContents,
+                    onClearFilters: onClearFilters,
                     calendar: calendar,
                     selectedDay: $selectedDay,
                     resolvedDay: resolvedDay,

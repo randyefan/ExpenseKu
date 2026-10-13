@@ -9,6 +9,13 @@ import SwiftData
 nonisolated enum PlanOrigin: Equatable {
     case fixed
     case envelope(name: String)
+    case paidEarly(name: String, label: PaidEarlyLabel)
+
+    /// Paid early is tagged but Outside plan: this cycle's plan never held it (§4.10.1).
+    var isFromPlan: Bool {
+        if case .paidEarly = self { return false }
+        return true
+    }
 }
 
 nonisolated struct SpendingSplit: Equatable {
@@ -32,13 +39,13 @@ nonisolated struct PlanOrigins {
         if expense.planItem != nil { return .fixed }
         guard !plans.isEmpty else { return nil }
         let cycle = PayCycle.containing(expense.date, payday: payday, calendar: calendar)
-        return Self.origin(of: expense, claims: claims(for: cycle))
+        return origin(of: expense, claims: claims(for: cycle))
     }
 
     func split(_ cycleExpenses: [Expense], in cycle: PayCycle) -> SpendingSplit {
         let cycleClaims = claims(for: cycle)
         return cycleExpenses.reduce(into: SpendingSplit()) { split, expense in
-            if Self.origin(of: expense, claims: cycleClaims) == nil {
+            if origin(of: expense, claims: cycleClaims)?.isFromPlan != true {
                 split.outsidePlan += expense.amount
             } else {
                 split.fromPlan += expense.amount
@@ -52,7 +59,7 @@ nonisolated struct PlanOrigins {
         matching filter: PlanFilter
     ) -> [Expense] {
         let cycleClaims = claims(for: cycle)
-        return cycleExpenses.filter { filter.admits(Self.origin(of: $0, claims: cycleClaims)) }
+        return cycleExpenses.filter { filter.admits(origin(of: $0, claims: cycleClaims)) }
     }
 
     /// Expenses from any number of cycles, each judged by its own cycle's plan
@@ -66,7 +73,7 @@ nonisolated struct PlanOrigins {
     func split(_ expenses: [Expense]) -> SpendingSplit {
         var claimsByCycle: [Date: EnvelopeClaims] = [:]
         return expenses.reduce(into: SpendingSplit()) { split, expense in
-            if origin(of: expense, claimsByCycle: &claimsByCycle) == nil {
+            if origin(of: expense, claimsByCycle: &claimsByCycle)?.isFromPlan != true {
                 split.outsidePlan += expense.amount
             } else {
                 split.fromPlan += expense.amount
@@ -83,28 +90,32 @@ nonisolated struct PlanOrigins {
         let cycle = PayCycle.containing(expense.date, payday: payday, calendar: calendar)
         let cycleClaims = claimsByCycle[cycle.start] ?? claims(for: cycle)
         claimsByCycle[cycle.start] = cycleClaims
-        return Self.origin(of: expense, claims: cycleClaims)
+        return origin(of: expense, claims: cycleClaims)
     }
 
-    /// Where a row's "Move to envelope…" points (envelope-assignment.md §4.8): the plan
-    /// of the expense's own cycle, or nil when that plan has no active envelope or a
-    /// Fixed item created the expense.
-    func moveTarget(for expense: Expense) -> (plan: CyclePlan, cycle: PayCycle)? {
+    /// The cycle whose envelopes a row's "Move to envelope…" offers (envelope-assignment.md
+    /// §4.8, §4.10.2): the expense's own, or nil when neither it nor a later cycle on offer
+    /// has an active envelope, or a Fixed item created the expense.
+    func moveTarget(for expense: Expense, now: Date) -> PayCycle? {
         guard ExpenseSelection.isSelectable(expense) else { return nil }
         let cycle = PayCycle.containing(expense.date, payday: payday, calendar: calendar)
-        guard let plan = PlanLookup.plan(for: cycle, in: plans), !claims(for: cycle).isEmpty else { return nil }
-        return (plan, cycle)
+        let offer = EnvelopeOffer(cycle: cycle, plans: plans, payday: payday, calendar: calendar, now: now)
+        return offer.isEmpty ? nil : cycle
     }
 
     /// The active envelopes of the cycle's own plan, which is also the set an
-    /// assignment must belong to for it to count.
+    /// assignment must belong to for it to count there.
     func claims(for cycle: PayCycle) -> EnvelopeClaims {
-        guard let plan = PlanLookup.plan(for: cycle, in: plans) else { return EnvelopeClaims(envelopes: []) }
-        return EnvelopeClaims(envelopes: PlanDormancy.split(plan.items ?? []).active.filter(\.isEnvelope))
+        EnvelopeClaims(envelopes: EnvelopeOffer.activeEnvelopes(of: PlanLookup.plan(for: cycle, in: plans)),
+                       cycle: cycle)
     }
 
-    private static func origin(of expense: Expense, claims: EnvelopeClaims) -> PlanOrigin? {
+    private func origin(of expense: Expense, claims: EnvelopeClaims) -> PlanOrigin? {
         if expense.planItem != nil { return .fixed }
-        return claims.envelope(for: expense).map { .envelope(name: $0.name) }
+        if let envelope = claims.envelope(for: expense) { return .envelope(name: envelope.name) }
+        guard let target = claims.paidEarlyTarget(of: expense), let start = target.plan?.cycleStart else { return nil }
+        let targetCycle = PayCycle.containing(start, payday: payday, calendar: calendar)
+        return .paidEarly(name: target.name,
+                          label: PaidEarlyLabel(target: targetCycle, from: claims.cycle, calendar: calendar))
     }
 }

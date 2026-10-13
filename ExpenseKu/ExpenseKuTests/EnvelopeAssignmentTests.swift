@@ -21,6 +21,8 @@ nonisolated final class EnvelopeAssignmentTests: XCTestCase {
         calendar.date(from: DateComponents(year: year, month: m, day: d, hour: 12)) ?? .distantPast
     }
 
+    private var october: PayCycle { PayCycle.containing(date(10, 1), payday: payday, calendar: calendar) }
+
     private struct Sample {
         let plan: CyclePlan
         let hidup: PlanItem
@@ -71,7 +73,8 @@ nonisolated final class EnvelopeAssignmentTests: XCTestCase {
     }
 
     private func progress(_ s: Sample, _ envelope: PlanItem) throws -> EnvelopeProgress {
-        let all = EnvelopeSpend.progress(envelopes: [s.hidup, s.kos, s.travelling], cycleExpenses: s.all)
+        let all = EnvelopeSpend.progress(envelopes: [s.hidup, s.kos, s.travelling], cycleExpenses: s.all,
+                                         cycle: october)
         return try XCTUnwrap(all.first { $0.itemID == envelope.persistentModelID })
     }
 
@@ -121,7 +124,7 @@ nonisolated final class EnvelopeAssignmentTests: XCTestCase {
         XCTAssertEqual(fromPlan.reduce(0) { $0 + $1.amount }, split.fromPlan)
     }
 
-    /// **The guard.** An assignment to an envelope of another cycle's plan is ignored
+    /// **The guard.** An assignment to an envelope of an earlier cycle's plan is ignored
     /// and the expense falls back to its Category — what a payday change leaves behind.
     @MainActor
     func testAnAssignmentToAnotherCyclesEnvelopeIsIgnored() throws {
@@ -140,7 +143,8 @@ nonisolated final class EnvelopeAssignmentTests: XCTestCase {
         let origins = PlanOrigins(plans: [s.plan, november], payday: payday, calendar: calendar)
         XCTAssertNil(origins.origin(of: strayed), "November's Hidup claims no Makan, and October's Travelling does not count")
 
-        let spent = EnvelopeSpend.progress(envelopes: [hidupNov], cycleExpenses: [strayed])
+        let spent = EnvelopeSpend.progress(envelopes: [hidupNov], cycleExpenses: [strayed],
+                                           cycle: october.next(payday: payday, calendar: calendar))
         XCTAssertEqual(spent.first?.spent, 0)
     }
 
@@ -157,7 +161,7 @@ nonisolated final class EnvelopeAssignmentTests: XCTestCase {
         rent.envelope = s.travelling
         try context.save()
 
-        let spent = EnvelopeSpend.progress(envelopes: [s.travelling], cycleExpenses: s.all + [rent])
+        let spent = EnvelopeSpend.progress(envelopes: [s.travelling], cycleExpenses: s.all + [rent], cycle: october)
         XCTAssertEqual(spent.first?.spent, 685_000)
     }
 

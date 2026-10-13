@@ -1,12 +1,13 @@
 # PRD — Assigning an expense to an Envelope
 
-Status: Built
-Date: 2026-10-13 · flow Q built the same day; flow R (§4.5, §4.6, §4.8, §4.9) approved and built the same day
+Status: Built (flows Q, R, S)
+Date: 2026-10-13 · flow Q built the same day; flow R (§4.5, §4.6, §4.8, §4.9) approved and built the same day;
+flow S (§4.10) grilled, approved and built 2026-10-14
 Owner: Randy Efan
 
 Companion documents: `docs/prd/payday-planning.md` (the Envelope this changes, §5.1–5.2),
 `docs/prd/plan-filter.md` (the Outside plan / From plan split this feeds), `CONTEXT.md`
-(ubiquitous language), `docs/adr/0005-plan-and-ledger-are-separate.md`, and
+(ubiquitous language), `docs/adr/0005-plan-and-ledger-are-separate.md`, `docs/adr/0009-assignment-may-pay-ahead.md` (flow S), and
 **`design/ExpenseKu.pen`**, page `02 · Pages · iPhone`, **Flow Q** (moved there from
 `05 · Proposals` once built). Frame
 references appear inline as `[→ Q2]`.
@@ -48,7 +49,10 @@ in the Plan lens, and a **Select** mode in the List lens that moves many expense
 - **Bulk actions other than Move to envelope** (no bulk delete, no bulk recategorise).
 - **Assigning an expense a Fixed item created.** It is already From plan; §5.2's exclusion
   is unchanged.
-- **Carrying assignments across cycles.** An assignment belongs to one plan (§5.4).
+- **Carrying assignments across cycles.** Carry-over never copies one (§5.4). An
+  assignment may point *forward* to a later cycle's plan (§4.10), never backward.
+- **Creating a plan to pay ahead into.** Only plans that already exist are offered; a
+  later cycle's plan is still made only by paging the Plan lens forward (§4.10).
 
 ---
 
@@ -64,24 +68,28 @@ in the Plan lens, and a **Select** mode in the List lens that moves many expense
 | `isOutsideEnvelopes: Bool` | the owner chose **No envelope** |
 
 At most one of the two is set; the editor and the bulk move write both together. An
-expense resolves to **one** of four origins, checked top to bottom:
+expense resolves to **one** of five origins, checked top to bottom:
 
 | # | When | Counts in | Split half | Row tag |
 |---|---|---|---|---|
 | 1 | `planItem != nil` — a Fixed item created it | its Fixed item | From plan | filled violet **Plan** |
 | 2 | `envelope` is set **and** belongs to the plan of the expense's own cycle | that envelope only | From plan | outlined violet, the envelope's name |
-| 3 | `isOutsideEnvelopes` | nothing | Outside plan | none |
-| 4 | otherwise — **by category** | the active envelope claiming its Category, if any | From plan if claimed, else Outside plan | the claiming envelope's name, or none |
+| 3 | `envelope` is set **and** belongs to the plan of a **later** cycle — **paid early** (§4.10) | that envelope, in *its* cycle; nothing in the expense's own | Outside plan | dashed violet, **‹name› · ‹Mon›** |
+| 4 | `isOutsideEnvelopes` | nothing | Outside plan | none |
+| 5 | otherwise — **by category** | the active envelope claiming its Category, if any | From plan if claimed, else Outside plan | the claiming envelope's name, or none |
 
-`[→ Q4]`
+`[→ Q4, S3]`
 
 - Row 2 **wins over row 4**: an assigned `Makan` counts in Travelling and is skipped by
   Hidup, though Hidup claims `Makan`. `[→ Q4, Q5]`
 - Row 2 does **not** care whether the envelope claims the expense's Category. That is the
   point.
-- An assignment whose envelope belongs to **another cycle's plan** is ignored and the
-  expense falls to row 3/4. The editor prevents it (§4.4); this guard covers what the
-  editor cannot see — a payday change that re-cuts cycles, a sync from an older build.
+- Row 3 **wins over row 5** too: a paid-early expense never falls back to the Category
+  claim of its own cycle, or it would count twice — once in Hidup now, once in
+  Travelling next month. *Amended by flow S.*
+- An assignment whose envelope belongs to an **earlier** cycle's plan is ignored and the
+  expense falls to row 4/5. The editor never offers one (§4.10); this guard covers what
+  the editor cannot see — a payday change that re-cuts cycles, a sync from an older build.
   — unit test
 - An assignment to an envelope that is **not active** (dormant) still counts: an envelope
   with assigned spending is in use, so it is never dormant (§5.4). — unit test
@@ -110,7 +118,7 @@ The expense editor gains an **Envelope** row directly under **Category**. `[→ 
 
 | Shown when | Hidden when |
 |---|---|
-| the cycle containing the editor's **date** has a plan with ≥ 1 **active** Envelope | no plan, or no active Envelope, for that cycle |
+| the cycle containing the editor's **date** has a plan with ≥ 1 **active** Envelope — *or a later cycle on offer does (§4.10.2, flow S)* | no plan, or no active Envelope, for that cycle or any later one on offer |
 | | the expense was created by a Fixed item (`planItem != nil`) |
 
 The row's value:
@@ -160,9 +168,13 @@ than truncate.
 - The remainder is the envelope's **saved** state; it does not preview the expense
   being edited.
 
-**Changing the date** across a cycle boundary resets an assignment to **By category**,
-visibly, before Save. **No envelope** survives a date change: it names no plan.
+**Changing the date** past the assigned envelope's cycle resets the assignment to **By
+category**, visibly, before Save; a date in that cycle or any earlier one keeps it
+(*amended by flow S*, §4.10.4). **No envelope** survives a date change: it names no plan.
 Changing the **Category** never touches the choice. — simulator + unit test
+
+*Amended by flow S:* later cycles' envelopes follow the **ENVELOPES** section, one section
+per cycle (§4.10.2).
 
 ### 4.5 ＋ on an Envelope row
 
@@ -186,7 +198,7 @@ envelope and the date set to:
 |---|---|
 | the current one | now |
 | in the past | its last day, at the current time of day |
-| in the future | its first day, at the current time of day |
+| in the future | **now** — paid early (§4.10.7); *was* its first day before flow S |
 
 so the assignment never resets on open. The ＋ is not drawn on dormant rows or on Fixed
 rows. The toolbar's ＋ is unchanged and opens the editor at **By category**.
@@ -223,7 +235,7 @@ drill-in — has an iOS context menu. `[→ R1]`
 | Item | Shown when | Does |
 |---|---|---|
 | **Select** | List lens only, the row is selectable, not already selecting | enters Select mode with this row checked |
-| **Move to envelope…** | the row is selectable and the plan of its **own** cycle has an active envelope | the §4.6 sheet for this one expense, titled **"Move 1 expense"** |
+| **Move to envelope…** | the row is selectable and the plan of its **own** cycle, or of a later cycle on offer (§4.10.2), has an active envelope | the §4.6 sheet for this one expense, titled **"Move 1 expense"** |
 | **Edit** | always | opens the editor, as a tap does |
 | **Delete** | always | deletes at once, as swipe-to-delete does |
 
@@ -241,6 +253,7 @@ closed with ✕. `[→ R4]`
 - Tapping a row toggles its check circle. A violet **"Move N expenses"** button pinned at
   the foot (disabled at 0) assigns them all to this envelope at once, saves and closes.
 - Nothing to list: **"Everything this cycle is already in ‹name›."**
+- *Amended by flow S:* expenses of earlier cycles may be gathered too (§4.10.8).
 
 ### 4.7 Deleting an Envelope
 
@@ -251,6 +264,125 @@ The confirmation says so when there are any:
 > to counting by category."
 
 With none, the body is today's. — unit test
+
+### 4.10 Paying ahead *(flow S)*
+
+The owner's payday is the 25th. Next cycle's plan (November 2026, 25 Oct – 24 Nov) holds
+**Travelling** for a trip on the 27th. On 14 Oct the owner buys the train ticket. Its date
+puts it in **October**, whose plan has no Travelling, so under rows 2 and 5 the ticket
+could only land by Category — in October's Hidup at worst.
+
+An expense may be **assigned to an envelope of a later cycle's plan**. It is then **paid
+early**: it keeps its own date, so it stays in its own cycle's ledger, and it counts in
+that later envelope and in no envelope of its own cycle. It is counted exactly once
+(ADR-0005), and deleting the envelope nullifies the assignment (ADR-0001), returning the
+expense to by-category in its own cycle. No schema change: `Expense.envelope` (V4)
+already holds it, and the envelope's cycle is `envelope.plan.cycleStart`.
+
+#### 4.10.1 Where a paid-early expense shows
+
+| | Its own cycle (October) | The envelope's cycle (November) |
+|---|---|---|
+| Ledger: List, Month, Search, cycle total, Insights | listed, by its date | not listed |
+| List header split, plan filter, Insights drill-in | **Outside plan** | — |
+| Envelope bars and remainders | in none | in **Travelling** |
+| Drift strip's envelope overspend | — | counts |
+| Row tag | dashed **Travelling · Nov** `[→ S3]` | — |
+| Plan lens envelope row | — | caption **"Rp 1.200.000 paid early in October"** `[→ S4]` |
+
+November's List lens never lists the ticket, so its From plan figure can sit below what
+Travelling's bar says was spent. That gap is the caption.
+
+#### 4.10.2 Which envelopes are offered
+
+The editor's picker `[→ S1]`, the long-press and bulk **Move N expenses** sheet, the
+editor row's visibility (§4.3) and the long-press item (§4.8) all read one list:
+
+1. By category, No envelope — as §4.4.
+2. **ENVELOPES** — the active envelopes of the expense's own cycle, as §4.4. Omitted when
+   that cycle has none.
+3. Then one section per **later** cycle that has a plan **and has not ended** (its end is
+   after now), oldest first, headed **"‹CYCLE TITLE› · PAID EARLY"** — "NOVEMBER 2026 ·
+   PAID EARLY". It lists that plan's **active** envelopes by planned amount ↓, name, each
+   with its remainder (which includes every paid-early expense already in it).
+
+- Every later cycle is offered, not only the next one — *owner override*.
+- A plan is **never created** to have something to offer. A cycle with no plan has no
+  section; the owner makes one by paging the Plan lens forward (`PlanCarryOver`).
+- A cycle that has ended is not offered, however old the expense: a July expense is
+  offered July's envelopes and those of the current and future cycles, not August's.
+- The **current choice is always drawn**: an assignment to a cycle no longer on offer
+  keeps its section so the checkmark shows.
+- The editor row and **Move to envelope…** show when any section 2 or 3 has an envelope.
+
+#### 4.10.3 The editor's Envelope row
+
+Assigned to a later cycle's envelope, the row reads **‹name›** in primary text followed
+by **"· ‹Mon›"** in secondary — "Travelling · Nov" — and the name truncates, never the
+suffix, as with "· by category". `[→ S2]`
+
+#### 4.10.4 Changing the date
+
+| New date's cycle, against the envelope's cycle | The assignment |
+|---|---|
+| earlier | kept — now paid early |
+| the same | kept — now an ordinary assignment (row 2) |
+| later | reset to **By category**, visibly, before Save |
+
+This replaces §4.4's "any cycle change resets", for own-cycle assignments too: moving an
+October Travelling expense back into September makes it paid early rather than resetting
+it. — unit test
+
+#### 4.10.5 The tag
+
+On the expense's own cycle, a paid-early row carries a violet capsule with a **dashed**
+outline, an `arrow.forward` glyph and **"‹name› · ‹Mon›"**, where ‹Mon› is the
+three-letter month of the envelope cycle's title (the title is its last day's month, so
+25 Oct – 24 Nov is "Nov"). A cycle 12 or more cycles ahead adds the year: "Nov 2027". The
+name truncates, never the suffix. VoiceOver reads **"Paid early, ‹name›, ‹Month›"**.
+`[→ S3]`
+
+The dash is drawn with `StrokeStyle(dash:)` on the capsule; the glyph is `arrow.forward`.
+The dashed outline sets it apart from an ordinary envelope tag, which is From plan; this
+row is Outside plan.
+
+#### 4.10.6 The envelope row's caption
+
+In the envelope's own cycle, an envelope holding paid-early expenses adds a caption line
+under its bar, in secondary text: `[→ S4]`
+
+| Paid-early expenses come from | Caption |
+|---|---|
+| one earlier cycle | **"Rp 1.200.000 paid early in October"** — that cycle's title month, wide |
+| several earlier cycles | **"Rp 1.500.000 paid early"** |
+| none | no caption |
+
+It is a third line under the bar's legend, as wide as the bar, caption size, regular
+weight; the ＋ stays level with the bar. It is part of the row's body: a tap opens the item
+editor, as anywhere on the row.
+
+#### 4.10.7 ＋ New expense on a future envelope
+
+When the viewed cycle is in the future, ＋ › **New expense** dates the expense **now**,
+so it is logged paid early (§4.5 amended). Current and past cycles are unchanged.
+
+#### 4.10.8 Move expenses here…
+
+For an envelope of cycle V, §4.9's sheet lists V's own expenses as before, then — for each
+cycle C from **today's cycle** up to the one before V, newest first — that cycle's
+selectable expenses not already counting in this envelope, under **"PAID EARLY ·
+‹CYCLE TITLE›"**, grouped by day. Ended cycles are not offered. A section with nothing to
+list is not drawn; with nothing anywhere the empty text is §4.9's. The subtitle's
+remainder includes paid-early expenses. `[→ S5]`
+
+The envelope's own cycle keeps §4.9's look and has **no** section header; only the earlier
+cycles are headed. Their header sits above that cycle's day groups.
+
+#### 4.10.9 Deleting and carrying over
+
+- Deleting the envelope nullifies its paid-early assignments with the rest; §4.7's count
+  includes them, and they count by Category again in their own cycle.
+- Carry-over copies the envelope, never its assignments (§5.4).
 
 ---
 
@@ -283,7 +415,8 @@ row carries no tag, like any Outside-plan row. `[→ Q4]`
 
 ### 5.4 Across cycles
 
-- **Carry-over** copies Envelopes, not assignments. Next cycle's Travelling starts empty.
+- **Carry-over** copies Envelopes, not assignments. Next cycle's Travelling starts empty
+  of this cycle's assignments; expenses paid early into it are already its own (§4.10).
 - An Envelope with assigned spending is **in use**, so it is never folded as dormant even
   at Rp 0 planned.
 - Editing an Envelope's Categories never touches its assigned expenses.
@@ -295,6 +428,8 @@ row carries no tag, like any Outside-plan row. `[→ Q4]`
 - **Insights** charts by Category, Group, Account and Person: the Category stays true.
 - **Search, Month and Person detail** — they show the tags (§5.3) and nothing more.
 - **The expense filter** — no new dimension.
+- *Flow S:* the schema (no V5), the cycle total, Insights by Category, and the List lens of
+  the envelope's cycle, which never lists an expense dated before it.
 
 ---
 
@@ -318,6 +453,28 @@ One cycle, the `-seedPlanData normal` plan plus:
 
 Travelling: Rp 685.000 of Rp 2.000.000 → **Rp 1.315.000 left**. Hidup is not moved by
 the two Travelling `Makan`/`Bensin` rows nor by the gift.
+
+### 7.1 Paying ahead *(flow S, `-seedPlanData paid-early`)*
+
+Today 14 Oct 2026, payday 25. The `-seedPlanData normal` plan for **October 2026**
+(25 Sep – 24 Oct), unchanged, with no Travelling. **November 2026** (25 Oct – 24 Nov) has a
+plan carried over from October, plus:
+
+| Envelope (November) | Planned | Categories |
+|---|---|---|
+| Travelling | Rp 2.000.000 | — none |
+| Hidup (Makan, bensin, emoney saldo) | Rp 938.300 | Makan, Bensin, E-money (carried over) |
+| Kebutuhan Kos di Jkt (Tisu, sabun, galon) | Rp 193.900 | Tisu, Sabun, Galon (carried over) |
+
+| Expense | Date | Category | Choice | October | November |
+|---|---|---|---|---|---|
+| Tiket KAI ke Jakarta | 14 Oct | Transport Rp 1.200.000 | Travelling (Nov) | listed, **Outside plan**, tag **Travelling · Nov**; in no envelope | Travelling: Rp 1.200.000 of Rp 2.000.000 → **Rp 800.000 left**, caption **"Rp 1.200.000 paid early in October"** |
+| (seed) | — | Makan, Bensin, E-money | by category | Hidup **Rp 226.900 left**, unchanged | — |
+
+October's split gains Rp 1.200.000 Outside plan. November's List lens is empty of it.
+Gathering into November's Travelling on 14 Oct, before the ticket is assigned, lists no
+November expenses and, under **PAID EARLY · OCTOBER 2026**, October's selectable expenses
+— the ticket among them, untagged. `[→ S5]`
 
 ## 8. Decision log
 
@@ -372,6 +529,50 @@ Settled in a grilling session on 2026-10-13.
 
 Settled when the owner approved flow Q on 2026-10-13: entries 17–26.
 
+### 8.1 Flow S — paying ahead
+
+Settled in a grilling session on 2026-10-14; the owner chose option 4 of four (rejected:
+changing the expense's date, a manual "No envelope + reduce next month's envelope", and a
+Fixed item in the current cycle).
+
+| # | Decision | Drawn in |
+|---|---|---|
+| 31 | An expense may be assigned to an envelope of a **later** cycle's plan — paid early; never an earlier one | `S1` |
+| 32 | Only plans that exist are offered; none is created speculatively | — |
+| 33 | It keeps its date: listed, totalled and split in its own cycle, in no envelope there | `S3` |
+| 34 | In its own cycle it is **Outside plan** in the split, the plan filter and Insights | `S3` |
+| 35 | **Every** later cycle with a plan is offered, not only the next — *owner override*, against next cycle only | `S1` |
+| 36 | The picker keeps **ENVELOPES** for the own cycle and adds **"‹CYCLE TITLE› · PAID EARLY"** per later cycle | `S1` |
+| 37 | The envelope's cycle counts it in bar, remainder and drift; its row gains **"Rp X paid early in ‹Month›"**; its List lens is unchanged | `S4` |
+| 38 | Move expenses here… also offers expenses from today's cycle up to the one before the envelope's, under **PAID EARLY · ‹CYCLE TITLE›** | `S5` |
+| 39 | ＋ › New expense on a future cycle's envelope dates it **now** | — |
+| 40 | The editor row and Move to envelope… show when the own cycle **or** a later cycle on offer has an active envelope | `S1` |
+| 41 | Tag text **"‹name› · ‹Mon›"** | `S3` |
+| 42 | Tag style: **dashed** violet outline, `arrow.forward` glyph | `S3` |
+| 43 | A date change keeps the assignment while the new cycle is not after the envelope's; otherwise resets to By category | — unit test |
+| 44 | Ended cycles are never offered, however old the expense | `S1` |
+| O | Paid early beats the own cycle's Category claim, so it is counted once; an assignment backward is ignored | — unit test |
+| P | Counting has no time limit; only offering does. A chosen envelope in a cycle no longer offered keeps its section | — unit test |
+| Q | Only active envelopes are offered in later cycles too | `S1` |
+| R | Editor row: name primary, "· ‹Mon›" secondary, the suffix never truncates | `S2` |
+| S | Caption names the month only when every paid-early expense comes from one cycle; it is not tappable apart from the row | `S4` |
+| T | The tag adds the year 12 or more cycles ahead | — |
+| U | Bulk Move N expenses uses the same sections | — |
+| V | Delete-envelope confirmation counts paid-early expenses; carry-over never copies them | — unit test |
+| W | No schema change: the envelope's cycle is derived from `envelope.plan.cycleStart` | — |
+| X | Amendment here (§4.10) plus **ADR-0009**; CONTEXT.md gains **Paid early**; seed `-seedPlanData paid-early` | — |
+
+Settled when the owner approved flow S on 2026-10-14:
+
+| # | Decision | Drawn in |
+|---|---|---|
+| 45 | The tag's dash is `StrokeStyle(dash:)`, its glyph `arrow.forward` (lucide `arrow-right` in the .pen, which has no dashed stroke) | `S3` |
+| 46 | November's section lists every active envelope of that plan, not only ones without Categories | `S1` |
+| 47 | The editor's "· ‹Mon›" suffix is styled as "· by category" | `S2` |
+| 48 | The caption is a third line under the legend, caption size, regular weight; ＋ stays level with the bar | `S4` |
+| 49 | In Move expenses here…, only earlier cycles are headed; the envelope's own cycle has no header, as before | `S5` |
+| 50 | The frames shorten meta lines to stay legible; the app truncates as today (#26) | `S3` |
+
 ## 9. Design traceability
 
 Page `02 · Pages · iPhone`, **Flow Q · Assign an expense to an Envelope**. Components
@@ -395,6 +596,18 @@ carries the ＋ itself, so every envelope row on page 02 shows it.
 
 Flow R sits on page 02 after flow Q; its options B and D stay on page 05 as not chosen.
 
+**Flow S · Paying ahead into a later cycle's envelope**, on page 02 after flow R (drawn
+on 05 first), with the §7.1 sample in every frame. Component `PlanOriginTag · Paid early`
+lives on `01 · Design System`, group `Cycle plan`, row `Envelope assignment`; S3 uses it.
+
+| Frame | Covers |
+|---|---|
+| **S1** · Envelope picker — October expense | §4.10.2 sections, remainders, ENVELOPES kept |
+| **S2** · Editor — Travelling · Nov | §4.10.3 the row's value |
+| **S3** · List lens, October — the ticket | §4.10.1 Outside plan, §4.10.5 dashed tag |
+| **S4** · Plan lens, November — Travelling | §4.10.1 bar, §4.10.6 caption |
+| **S5** · Move to Travelling — November | §4.10.8 PAID EARLY section |
+
 ### 9.1 Closed during implementation
 
 | Gap | Answer | Where |
@@ -412,3 +625,18 @@ Flow R sits on page 02 after flow Q; its options B and D stay on page 05 as not 
 | Flow R: in a row narrowed by a check circle, the meta text broke "Cash" mid-word because the tag takes layout priority | A Dynamic-Type-scaled floor on the meta text; the tag truncates instead | `ExpenseMetaLine` |
 | Flow R: menu item subtitles did not show when both Texts sat inside a `Label` | A `Label` plus a second `Text` in the Button | `PlanEnvelopeRow` |
 | Flow R: `LeaderboardFilters` used `ForEach` over `Account` without importing SwiftData, and only compiled by luck of batch grouping; the new files moved the batches | `import SwiftData` | `LeaderboardFilters` |
+
+### 9.2 Closed during implementation — flow S
+
+| Gap | Answer | Where |
+|---|---|---|
+| Which envelopes are on offer was worked out in four places (picker, Move sheet, row menu, editor row) | One pure `EnvelopeOffer` (own cycle, then later open cycles, plus the current choice); `EnvelopeOptions` wraps it with remainders | `EnvelopeOffer`, `EnvelopeSection`, `EnvelopeOptions` |
+| `EnvelopeClaims` could not tell a later envelope from an earlier one | It now knows its cycle: `paidEarlyTarget(of:)` and `paidEarly(into:)` sit beside `envelope(for:)`, so the resolver stays the one place | `EnvelopeClaims` |
+| A cycle's bars were fed only that cycle's dated expenses | `EnvelopeSpend.progress` takes the cycle and adds each envelope's paid-early assignments, keeping them apart for the caption | `EnvelopeSpend`, `EnvelopeProgress` |
+| The split and the plan filter treated any origin as From plan | `PlanOrigin.isFromPlan`; `.paidEarly` is tagged yet Outside plan, Insights included | `PlanOrigins`, `PlanFilter` |
+| ＋ was pinned to the row's bottom, so the caption would have pulled it down | A custom alignment guide at the bar line; ＋ aligns to it | `EnvelopeBarLine`, `PlanEnvelopeRow` |
+| A Move request carried a plan, and a List-lens move from a cycle without one had nothing to offer | The request carries the cycle; the sheet builds the offer from all plans | `EnvelopeMoveRequest`, `EnvelopeMoveSheet` |
+| The gather sheet only queried the envelope's cycle | It queries from today's cycle start (`EnvelopeGather.earliestStart`) | `EnvelopeGatherSheet` |
+| A long note beside the wider paid-early tag wraps to three lines | Kept: the meta line's existing floor and line limit (#26); the tag never truncates "· Nov" | `ExpenseMetaLine` |
+| The rule, the offer, the labels, the caption and gathering | Pure and tested against §7.1 | `PaidEarlyTests` (14) |
+| Simulator sample | `-seedPlanData paid-early`; on a simulator whose payday is not 25 the dates shift, the rules do not | `DebugPlanSeed` |

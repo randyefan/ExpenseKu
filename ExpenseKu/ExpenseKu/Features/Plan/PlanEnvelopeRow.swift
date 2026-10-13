@@ -16,6 +16,10 @@
 //  An envelope with an Account (§7.6) gains one chip line above the bar naming it, and
 //  "in Jago" once the allowance is moved. Without one the row is exactly as before.
 //
+//  Expenses paid early into it from an earlier cycle (envelope-assignment.md §4.10.6) are
+//  in the bar but in no list of this cycle, so a caption under the legend says where the
+//  money came from.
+//
 //  ＋ beside the bar is a menu (envelope-assignment.md §4.5): a new expense already
 //  assigned here, or Move expenses here… for ones already logged. It is a sibling of
 //  the row's Button rather than inside it, for the same accessibility reason as the
@@ -28,6 +32,7 @@ import SwiftUI
 struct PlanEnvelopeRow: View {
     let item: PlanItem
     let progress: EnvelopeProgress?
+    var paidEarlyCaption: String? = nil
     let onChooseFunding: (FundMenuEntry) -> Void
     let onSelect: () -> Void
     let onAddExpense: () -> Void
@@ -75,12 +80,21 @@ struct PlanEnvelopeRow: View {
                         }
                         Color.clear.frame(width: addSize, height: 1)
                     }
+                    .alignmentGuide(.envelopeBarLine) { $0[.bottom] }
+
+                    if let paidEarlyCaption {
+                        Text(paidEarlyCaption)
+                            .font(.dsCaption)
+                            .foregroundStyle(Theme.textSecondary)
+                            .padding(.trailing, addSize + 12)
+                            .padding(.top, -4)
+                    }
                 }
                 .contentShape(.rect)
             }
             .buttonStyle(.pressableRow)
         }
-        .overlay(alignment: .bottomTrailing) {
+        .overlay(alignment: Alignment(horizontal: .trailing, vertical: .envelopeBarLine)) {
             Menu {
                 Button(action: onAddExpense) {
                     Label("New expense", systemImage: "plus")

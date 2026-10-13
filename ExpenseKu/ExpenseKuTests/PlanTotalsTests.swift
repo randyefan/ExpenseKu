@@ -66,7 +66,8 @@ nonisolated final class PlanTotalsTests: XCTestCase {
         loose.forEach(context.insert)
         try context.save()
 
-        let envelopes = EnvelopeSpend.progress(envelopes: [envelope], cycleExpenses: loose + [actual])
+        let envelopes = EnvelopeSpend.progress(envelopes: [envelope], cycleExpenses: loose + [actual],
+                                               cycle: PayCycle.containing(.now, payday: 25))
         let after = makeTotals(items: [fixed, envelope], income: income, envelopes: envelopes)
 
         XCTAssertEqual(after.sisa, before, "Sisa is a plan figure, not a balance")

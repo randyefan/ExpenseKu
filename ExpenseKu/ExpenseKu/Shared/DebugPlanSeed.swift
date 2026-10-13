@@ -26,7 +26,7 @@ import Foundation
 import SwiftData
 
 enum DebugPlanSeed {
-    /// -seedPlanData normal|payday|auto-landed|overspent|travelling|none
+    /// -seedPlanData normal|payday|auto-landed|overspent|travelling|paid-early|none
     static var variant: String? {
         let args = ProcessInfo.processInfo.arguments
         guard let i = args.firstIndex(of: "-seedPlanData"), i + 1 < args.count else { return nil }
@@ -59,6 +59,9 @@ enum DebugPlanSeed {
         seedDormant(context, plan: plan, previousStart: previous.start)
         seedTransfers(context, plan: plan, accounts: accounts, variant: variant)
         seedPreviousPlan(context, start: previous.start, categories: categories, accounts: accounts)
+        if variant == "paid-early" {
+            seedPaidEarly(context, plan: plan, cycle: cycle, accounts: accounts)
+        }
 
         try? context.save()
     }
@@ -265,6 +268,26 @@ enum DebugPlanSeed {
                                        planItem: item, needsReview: true))
             }
         }
+    }
+
+    /// envelope-assignment.md §7.1: November's plan carried over with a Travelling
+    /// envelope, and today's train ticket paid early into it.
+    private static func seedPaidEarly(_ context: ModelContext, plan: CyclePlan, cycle: PayCycle,
+                                      accounts: [String: Account]) {
+        let next = cycle.next(payday: Payday.current, calendar: .current)
+        guard let nextPlan = PlanCarryOver.makePlan(for: next, from: [plan], in: context) else { return }
+        let travelling = PlanItem(name: "Travelling", amount: 2_000_000, kind: .envelope,
+                                  createdAt: .now.addingTimeInterval(400), plan: nextPlan)
+        context.insert(travelling)
+
+        let existing = existingEntity(Category.self, matching: "Transport", in: context)
+        let transport = existing ?? Category(name: "Transport", colorHex: AppearancePalette.swatches[8],
+                                             iconName: "car.fill")
+        if existing == nil { context.insert(transport) }
+        let ticket = Expense(amount: 1_200_000, date: .now, note: "Tiket KAI ke Jakarta",
+                             category: transport, account: accounts["BCA"])
+        ticket.envelope = travelling
+        context.insert(ticket)
     }
 
     /// The rows the spreadsheet keeps as reminders and never uses: 11 of them by

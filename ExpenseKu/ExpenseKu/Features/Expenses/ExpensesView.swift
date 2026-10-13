@@ -243,7 +243,6 @@ struct ExpensesView: View {
                             SelectionBar(count: expenseSelection.count) {
                                 envelopeSheet = .move(EnvelopeMoveRequest(
                                     expenses: expenseSelection.expenses(in: shownContents.expenses),
-                                    plan: planContents.plan,
                                     cycle: cycle
                                 ))
                             }

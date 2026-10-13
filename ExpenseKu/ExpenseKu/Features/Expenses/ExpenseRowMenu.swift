@@ -3,7 +3,8 @@
 //  ExpenseKu
 //
 //  The long-press menu every expense row carries (frame R1): Select (List lens only),
-//  Move to envelope… (when the row's own cycle has an envelope), Edit and Delete. A row
+//  Move to envelope… (when the row's own cycle, or a later one on offer, has an envelope),
+//  Edit and Delete. A row
 //  a Fixed item created is From plan already, so it offers Edit and Delete only.
 //
 
@@ -21,9 +22,9 @@ struct ExpenseRowMenu: ViewModifier {
             if let startSelecting = actions.startSelecting, ExpenseSelection.isSelectable(expense) {
                 Button("Select", systemImage: "checkmark.circle") { startSelecting(expense) }
             }
-            if let move = actions.move, let target = planOrigins.moveTarget(for: expense) {
+            if let move = actions.move, let cycle = planOrigins.moveTarget(for: expense, now: .now) {
                 Button("Move to envelope…", systemImage: "tray") {
-                    move(EnvelopeMoveRequest(expenses: [expense], plan: target.plan, cycle: target.cycle))
+                    move(EnvelopeMoveRequest(expenses: [expense], cycle: cycle))
                 }
             }
             Button("Edit", systemImage: "pencil", action: onEdit)

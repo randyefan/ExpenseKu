@@ -36,7 +36,8 @@ nonisolated final class EnvelopeSpendTests: XCTestCase {
         try context.save()
 
         let progress = try XCTUnwrap(EnvelopeSpend.progress(envelopes: [envelope],
-                                                            cycleExpenses: expenses).first)
+                                                            cycleExpenses: expenses,
+                                                            cycle: PayCycle.containing(.now, payday: 25)).first)
         XCTAssertEqual(progress.spent, 711_400, "Kopi is in no envelope and is simply unbudgeted")
         XCTAssertEqual(progress.remainder, 226_900)
         XCTAssertFalse(progress.isOver)
@@ -62,7 +63,8 @@ nonisolated final class EnvelopeSpendTests: XCTestCase {
         try context.save()
 
         let progress = try XCTUnwrap(EnvelopeSpend.progress(
-            envelopes: [envelope], cycleExpenses: [fromPlan, ordinary]).first)
+            envelopes: [envelope], cycleExpenses: [fromPlan, ordinary],
+            cycle: PayCycle.containing(.now, payday: 25)).first)
         XCTAssertEqual(progress.spent, 120_000)
     }
 
@@ -81,7 +83,8 @@ nonisolated final class EnvelopeSpendTests: XCTestCase {
         try context.save()
 
         let progress = try XCTUnwrap(EnvelopeSpend.progress(
-            envelopes: [envelope], cycleExpenses: expenses).first)
+            envelopes: [envelope], cycleExpenses: expenses,
+            cycle: PayCycle.containing(.now, payday: 25)).first)
         XCTAssertTrue(progress.isOver)
         XCTAssertEqual(progress.remainder, 48_300)
         XCTAssertEqual(progress.overspend, 48_300)
@@ -102,7 +105,8 @@ nonisolated final class EnvelopeSpendTests: XCTestCase {
         try context.save()
 
         let progress = try XCTUnwrap(EnvelopeSpend.progress(
-            envelopes: [envelope], cycleExpenses: expenses).first)
+            envelopes: [envelope], cycleExpenses: expenses,
+            cycle: PayCycle.containing(.now, payday: 25)).first)
         XCTAssertEqual(progress.fraction, 0)
         XCTAssertTrue(progress.fraction.isFinite)
     }

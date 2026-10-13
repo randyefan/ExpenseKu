@@ -12,6 +12,11 @@
 //  "Hidup" envelope that shares its Group, and the plan quietly reports money twice
 //  (ADR-0005).
 //
+//  An envelope also counts the expenses paid early into it from an earlier cycle
+//  (§4.10). They are not in `cycleExpenses` — the ledger keeps them by date — so they
+//  arrive through the envelope's own assignments, and `paidEarly` keeps them apart for
+//  the row's caption.
+//
 //  An expense that lands in no envelope is simply unbudgeted: it counts in the cycle's
 //  spending as it always has, and toward no envelope. That is a third way real money
 //  escapes Sisa, and it is deliberately unreported (§11.3).
@@ -21,17 +26,22 @@ import Foundation
 import SwiftData
 
 nonisolated enum EnvelopeSpend {
-    static func progress(envelopes: [PlanItem], cycleExpenses: [Expense]) -> [EnvelopeProgress] {
-        let envelopeClaims = EnvelopeClaims(envelopes: envelopes)
+    static func progress(envelopes: [PlanItem], cycleExpenses: [Expense],
+                         cycle: PayCycle) -> [EnvelopeProgress] {
+        let envelopeClaims = EnvelopeClaims(envelopes: envelopes, cycle: cycle)
         var spent: [PersistentIdentifier: Decimal] = [:]
         for expense in cycleExpenses {
             guard let envelope = envelopeClaims.envelope(for: expense) else { continue }
             spent[envelope.persistentModelID, default: 0] += expense.amount
         }
         return envelopes.map { envelope in
-            EnvelopeProgress(itemID: envelope.persistentModelID,
-                             planned: envelope.amount,
-                             spent: spent[envelope.persistentModelID] ?? 0)
+            let early = envelopeClaims.paidEarly(into: envelope)
+            let earlyTotal = early.reduce(Decimal(0)) { $0 + $1.amount }
+            return EnvelopeProgress(itemID: envelope.persistentModelID,
+                                    planned: envelope.amount,
+                                    spent: (spent[envelope.persistentModelID] ?? 0) + earlyTotal,
+                                    paidEarly: earlyTotal,
+                                    paidEarlyDates: early.map(\.date))
         }
     }
 
@@ -57,6 +67,8 @@ nonisolated struct EnvelopeProgress: Identifiable, Equatable {
     let itemID: PersistentIdentifier
     let planned: Decimal
     let spent: Decimal
+    var paidEarly: Decimal = 0
+    var paidEarlyDates: [Date] = []
 
     var id: PersistentIdentifier { itemID }
 
@@ -73,6 +85,18 @@ nonisolated struct EnvelopeProgress: Identifiable, Equatable {
     var remainder: Decimal { isOver ? spent - planned : planned - spent }
 
     var remainderText: String { "\(remainder.formattedIDR()) \(isOver ? "over" : "left")" }
+
+    /// "Rp 1.200.000 paid early in October" (§4.10.6): the month only when every such
+    /// expense comes from one cycle, nil when there are none.
+    func paidEarlyCaption(payday: Int, calendar: Calendar) -> String? {
+        guard paidEarly > 0 else { return nil }
+        let cycles = Set(paidEarlyDates.map { PayCycle.containing($0, payday: payday, calendar: calendar) })
+        guard cycles.count == 1, let cycle = cycles.first else {
+            return "\(paidEarly.formattedIDR()) paid early"
+        }
+        let month = cycle.lastDay(calendar: calendar).formatted(.dateTime.month(.wide))
+        return "\(paidEarly.formattedIDR()) paid early in \(month)"
+    }
 
     /// Deliberately unclamped — past 1 the bar fills its track and recolours rather
     /// than stopping at full and hiding the overspend. Zero when nothing is planned,

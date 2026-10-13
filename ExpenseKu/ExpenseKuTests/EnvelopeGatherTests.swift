@@ -47,7 +47,8 @@ nonisolated final class EnvelopeGatherTests: XCTestCase {
         EnvelopeChoice.noEnvelope.apply(to: gift, envelopes: [])
         try context.save()
 
-        let claims = EnvelopeClaims(envelopes: [hidup, travelling])
+        let claims = EnvelopeClaims(envelopes: [hidup, travelling],
+                                    cycle: PayCycle.containing(date(10, 1), payday: payday, calendar: calendar))
         let all = [lunch, hotel, nasi, gift, rent]
         XCTAssertEqual(EnvelopeGather.candidates(for: travelling, cycleExpenses: all, claims: claims).map(\.note),
                        ["Gift", "Hotel", "Lunch"])
@@ -55,8 +56,8 @@ nonisolated final class EnvelopeGatherTests: XCTestCase {
                        ["Gift", "Hotel", "Nasi"], "Nasi is assigned to Travelling, so Hidup may take it back")
     }
 
-    /// **§4.8.** A row offers Move to envelope… only when its own cycle's plan has an
-    /// active envelope, and never for a Fixed item's expense.
+    /// **§4.8.** A row offers Move to envelope… only when its own cycle's plan, or a
+    /// later one on offer, has an active envelope, and never for a Fixed item's expense.
     @MainActor
     func testARowCanMoveOnlyWhenItsOwnCycleHasAnEnvelope() throws {
         let context = try makeInMemoryContext()
@@ -75,8 +76,10 @@ nonisolated final class EnvelopeGatherTests: XCTestCase {
         try context.save()
 
         let origins = PlanOrigins(plans: [october, november], payday: payday, calendar: calendar)
-        XCTAssertEqual(origins.moveTarget(for: inOctober)?.plan, october)
-        XCTAssertNil(origins.moveTarget(for: inNovember), "November's plan has no envelope")
-        XCTAssertNil(origins.moveTarget(for: fromFixed))
+        let now = date(10, 14)
+        XCTAssertEqual(origins.moveTarget(for: inOctober, now: now),
+                       PayCycle.containing(date(10, 12), payday: payday, calendar: calendar))
+        XCTAssertNil(origins.moveTarget(for: inNovember, now: now), "November's plan has no envelope, and October's is behind it")
+        XCTAssertNil(origins.moveTarget(for: fromFixed, now: now))
     }
 }

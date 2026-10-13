@@ -1,7 +1,7 @@
 # PRD — Assigning an expense to an Envelope
 
-Status: Accepted — amendment (flow R) in build
-Date: 2026-10-13 · flow Q built the same day; flow R (§4.5, §4.6, §4.8, §4.9) approved 2026-10-13
+Status: Built
+Date: 2026-10-13 · flow Q built the same day; flow R (§4.5, §4.6, §4.8, §4.9) approved and built the same day
 Owner: Randy Efan
 
 Companion documents: `docs/prd/payday-planning.md` (the Envelope this changes, §5.1–5.2),
@@ -393,6 +393,8 @@ carries the ＋ itself, so every envelope row on page 02 shows it.
 | **R3** · ＋ menu on an envelope | §4.5 amended |
 | **R4** · Move to Travelling | §4.9 |
 
+Flow R sits on page 02 after flow Q; its options B and D stay on page 05 as not chosen.
+
 ### 9.1 Closed during implementation
 
 | Gap | Answer | Where |
@@ -406,3 +408,7 @@ carries the ＋ itself, so every envelope row on page 02 shows it.
 | The rule, the editor's choice and Select mode | Pure and tested against §7's sample | `EnvelopeClaims`, `EnvelopeChoice`, `EnvelopeOptions`, `EnvelopeAddDate`, `ExpenseSelection`; `EnvelopeAssignmentTests`, `EnvelopeChoiceTests` |
 | A V3 store opens unchanged | `Fixtures/PlanV3.store`, written by the V3 code before the change | `StoreMigrationTests` |
 | Simulator sample | `-seedPlanData travelling` | `DebugPlanSeed` |
+| Flow R: Move expenses here… rows showed no envelope tags — the sheet sits outside the `planOrigins` environment | The sheet is handed `planOrigins` explicitly | `ExpensesView` |
+| Flow R: in a row narrowed by a check circle, the meta text broke "Cash" mid-word because the tag takes layout priority | A Dynamic-Type-scaled floor on the meta text; the tag truncates instead | `ExpenseMetaLine` |
+| Flow R: menu item subtitles did not show when both Texts sat inside a `Label` | A `Label` plus a second `Text` in the Button | `PlanEnvelopeRow` |
+| Flow R: `LeaderboardFilters` used `ForEach` over `Account` without importing SwiftData, and only compiled by luck of batch grouping; the new files moved the batches | `import SwiftData` | `LeaderboardFilters` |

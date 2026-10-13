@@ -78,7 +78,7 @@ struct ExpensesView: View {
     /// Non-nil while the List lens is in Select mode (envelope-assignment.md §4.6). Left
     /// by Done, a move, a page, a lens or tab switch, a payday change, or a search.
     @State private var expenseSelection: ExpenseSelection?
-    @State private var showingMove = false
+    @State var envelopeSheet: EnvelopeSheet?
     @State var planSheet: PlanSheet?
     @State var planConfirmation: PlanConfirmation?
     @State private var searchText = ""
@@ -240,7 +240,13 @@ struct ExpensesView: View {
                                 .transition(.move(edge: .bottom).combined(with: .opacity))
                         }
                         if let expenseSelection {
-                            SelectionBar(count: expenseSelection.count) { showingMove = true }
+                            SelectionBar(count: expenseSelection.count) {
+                                envelopeSheet = .move(EnvelopeMoveRequest(
+                                    expenses: expenseSelection.expenses(in: shownContents.expenses),
+                                    plan: planContents.plan,
+                                    cycle: cycle
+                                ))
+                            }
                                 .transition(.move(edge: .bottom).combined(with: .opacity))
                         }
                     }
@@ -251,12 +257,18 @@ struct ExpensesView: View {
                 .motion(Motion.settle, value: expenseSelection == nil)
                 .motion(Motion.settle, value: activeFilter)
                 .environment(\.planOrigins, planOrigins)
-                .sheet(isPresented: $showingMove) {
-                    EnvelopeMoveSheet(
-                        options: EnvelopeOptions(plan: planContents.plan, cycleExpenses: contents.expenses),
-                        count: expenseSelection?.count ?? 0
-                    ) { choice in
-                        move(to: choice, shown: shownContents.expenses, plan: planContents.plan)
+                .environment(\.expenseRowActions, ExpenseRowActions(
+                    startSelecting: lens == .list && !isSearching ? { startSelecting(with: $0) } : nil,
+                    move: { envelopeSheet = .move($0) },
+                    delete: deleteOne
+                ))
+                .sheet(item: $envelopeSheet) { sheet in
+                    switch sheet {
+                    case .move(let request):
+                        EnvelopeMoveSheet(request: request) { expenseSelection = nil }
+                    case .gather(let envelope, let cycle):
+                        EnvelopeGatherSheet(envelope: envelope, cycle: cycle)
+                            .environment(\.planOrigins, planOrigins)
                     }
                 }
                 .onChange(of: shownContents.expenses.map(\.persistentModelID)) {
@@ -291,11 +303,6 @@ struct ExpensesView: View {
                             FilterButton(activeCount: activeFilter.activeCount(planFilter: planFilter)) {
                                 showingFilter = true
                             }
-                        }
-                    }
-                    if lens == .list, !isSearching, !contents.isEmpty {
-                        ToolbarItem(placement: .primaryAction) {
-                            Button("Select") { expenseSelection = ExpenseSelection() }
                         }
                     }
                     ToolbarItem(placement: .primaryAction) {
@@ -451,14 +458,18 @@ struct ExpensesView: View {
         )
     }
 
-    /// The bulk move: one choice for every checked row still on screen, saved at once,
-    /// and Select mode ends (envelope-assignment.md §4.6).
-    private func move(to choice: EnvelopeChoice, shown: [Expense], plan: CyclePlan?) {
-        guard let expenseSelection else { return }
-        let envelopes = EnvelopeOptions(plan: plan, cycleExpenses: []).envelopes
-        choice.apply(to: expenseSelection.expenses(in: shown), envelopes: envelopes)
+    /// Select mode opens from a row's long-press with that row already checked
+    /// (envelope-assignment.md §4.6, §4.8).
+    private func startSelecting(with expense: Expense) {
+        var selection = ExpenseSelection()
+        selection.toggle(expense)
+        expenseSelection = selection
+    }
+
+    private func deleteOne(_ expense: Expense) {
+        if expense == selection { selection = nil }
+        context.delete(expense)
         try? context.save()
-        self.expenseSelection = nil
     }
 
     /// Delete by offset within one day's rows — shared by both lenses, so a swipe

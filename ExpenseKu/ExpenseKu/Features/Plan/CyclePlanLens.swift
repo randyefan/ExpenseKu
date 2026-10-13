@@ -146,7 +146,8 @@ struct CyclePlanLens<Header: View>: View {
                                 progress: contents.envelope(for: item),
                                 onChooseFunding: { onAction(.chooseFunding(item, $0)) },
                                 onSelect: { onAction(.editPlanItem(item)) },
-                                onAddExpense: { onAction(.addExpense(to: item)) }
+                                onAddExpense: { onAction(.addExpense(to: item)) },
+                                onMoveExpenses: { onAction(.moveExpenses(to: item)) }
                             )
                         } else {
                             PlanFixedRow(

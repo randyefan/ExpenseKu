@@ -35,6 +35,7 @@ struct SpendEntityView: View {
     @State private var narrowing: SpendSubject?
     @State private var now = Date.now
     @State private var editing: Expense?
+    @State private var moveRequest: EnvelopeMoveRequest?
     @State private var growth = ChartGrowth()
 
     init(route: SpendEntityRoute) {
@@ -106,6 +107,14 @@ struct SpendEntityView: View {
             FilterSheet(filter: $filter, planFilter: $planFilter, catalog: catalog, hiding: route.subject.dimension)
         }
         .environment(\.planOrigins, origins)
+        .environment(\.expenseRowActions, ExpenseRowActions(
+            move: { moveRequest = $0 },
+            delete: { expense in
+                context.delete(expense)
+                try? context.save()
+            }
+        ))
+        .sheet(item: $moveRequest) { EnvelopeMoveSheet(request: $0) }
         .background(Theme.bg)
         .navigationTitle(identity?.name ?? (route.subject.isCategory ? "Category" : "Account"))
         .navigationBarTitleDisplayMode(.inline)

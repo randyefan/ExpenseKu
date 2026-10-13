@@ -15,6 +15,11 @@ struct ExpenseMetaLine: View {
     let peopleNames: String
     var origin: PlanOrigin? = nil
 
+    /// The tag has layout priority, so in a narrow row — Select mode's check circle,
+    /// Move expenses here… — the text got only the leftover and broke "Cash" mid-word.
+    /// A floor keeps a word whole and makes the tag truncate instead.
+    @ScaledMetric(relativeTo: .caption) private var textFloor: CGFloat = 56
+
     private var parts: [String] {
         var parts: [String] = []
         if !note.isEmpty { parts.append(note) }
@@ -29,6 +34,7 @@ struct ExpenseMetaLine: View {
                 PlanOriginTag(origin: origin)
                     .layoutPriority(1)
                 text
+                    .frame(minWidth: textFloor, alignment: .leading)
             }
         } else {
             text

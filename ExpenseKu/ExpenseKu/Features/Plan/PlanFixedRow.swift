@@ -41,7 +41,7 @@ struct PlanFixedRow: View {
     }
 
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
+        HStack(alignment: .planRowTitleLine, spacing: 12) {
             DoneCheck(state: state, tap: .of(item), itemName: item.name,
                       accountName: item.account?.name,
                       onTap: onTapCheck, onChoose: onChooseFunding)
@@ -49,27 +49,30 @@ struct PlanFixedRow: View {
 
             Button(action: onSelect) {
                 VStack(alignment: .leading, spacing: 6) {
-                    HStack(spacing: 8) {
+                    HStack(alignment: .lastTextBaseline, spacing: 8) {
                         Text(item.name.isEmpty ? "Untitled" : item.name)
                             .font(.dsBody).bold()
                             .foregroundStyle(Theme.text)
                             .lineLimit(1)
+                            .alignmentGuide(.planRowTitleLine) { $0[.top] }
 
                         Spacer(minLength: 8)
 
-                        MoneyText(actual?.amount ?? item.amount, font: .dsBody, color: Theme.text)
-                            .layoutPriority(1)
+                        VStack(alignment: .trailing, spacing: 2) {
+                            if hasDrifted {
+                                Text("plan was \(item.amount.formattedIDR())")
+                                    .font(.dsCaption)
+                                    .monospacedDigit()
+                                    .foregroundStyle(Theme.textSecondary)
+                                    .lineLimit(1)
+                            }
+
+                            MoneyText(actual?.amount ?? item.amount, font: .dsBody, color: Theme.text)
+                        }
+                        .layoutPriority(1)
                     }
 
                     chips
-
-                    if hasDrifted {
-                        Text("plan was \(item.amount.formattedIDR())")
-                            .font(.dsCaption)
-                            .monospacedDigit()
-                            .foregroundStyle(Theme.textSecondary)
-                            .frame(maxWidth: .infinity, alignment: .trailing)
-                    }
                 }
                 .contentShape(.rect)
             }

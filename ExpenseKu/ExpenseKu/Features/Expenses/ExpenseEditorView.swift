@@ -29,10 +29,12 @@ struct ExpenseEditorView: View {
     @State private var category: Category?
     @State private var people: [Person]
     @State private var account: Account?
+    @State private var envelopeChoice: EnvelopeChoice
 
     /// The protected owner entry, auto-selected on a new expense (design: "Me by
     /// default"). Empty until `reconcileMe` has run, but that happens at app launch.
     @Query(filter: #Predicate<Person> { $0.isMe }) private var me: [Person]
+    @Query(sort: \CyclePlan.cycleStart) private var plans: [CyclePlan]
     /// Taken right after the "Me" default is applied, so that default alone does not
     /// count as a change. Also guards the one-shot default so re-appearing (e.g.
     /// returning from the People picker after the user unselected "Me") doesn't
@@ -42,15 +44,19 @@ struct ExpenseEditorView: View {
     @FocusState private var notesFocused: Bool
     @State private var scrollPosition = ScrollPosition()
 
-    init(editing: Expense? = nil, onFinish: (() -> Void)? = nil) {
+    /// `envelope` and `date` preset a new expense from ＋ on an envelope row (frame Q5).
+    init(editing: Expense? = nil, envelope: PlanItem? = nil, date: Date? = nil,
+         onFinish: (() -> Void)? = nil) {
         self.editing = editing
         self.onFinish = onFinish
         _expr = State(initialValue: ExpressionEvaluator(amount: editing?.amount ?? 0))
-        _date = State(initialValue: editing?.date ?? .now)
+        _date = State(initialValue: editing?.date ?? date ?? .now)
         _note = State(initialValue: editing?.note ?? "")
         _category = State(initialValue: editing?.category)
         _people = State(initialValue: editing?.people ?? [])
         _account = State(initialValue: editing?.account)
+        _envelopeChoice = State(initialValue: editing.map(EnvelopeChoice.of)
+                                ?? envelope.map { .envelope($0.persistentModelID) } ?? .byCategory)
     }
 
     /// The amount that will be saved.
@@ -65,6 +71,7 @@ struct ExpenseEditorView: View {
         var category: PersistentIdentifier?
         var account: PersistentIdentifier?
         var people: Set<PersistentIdentifier>
+        var envelope: EnvelopeChoice
     }
 
     private var draft: Draft {
@@ -74,11 +81,31 @@ struct ExpenseEditorView: View {
             note: note,
             category: category?.persistentModelID,
             account: account?.persistentModelID,
-            people: Set(people.map(\.persistentModelID))
+            people: Set(people.map(\.persistentModelID)),
+            envelope: envelopeChoice
         )
     }
 
     private var hasChanges: Bool { pristine.map { $0 != draft } ?? false }
+
+    private var cycle: PayCycle { PayCycle.containing(date, payday: Payday.current) }
+
+    private var envelopeOptions: EnvelopeOptions {
+        EnvelopeOptions(plan: PlanLookup.plan(for: cycle, in: plans), cycleExpenses: [])
+    }
+
+    /// Drawn only when the date's cycle has an envelope to offer, and never on an
+    /// expense a Fixed item created — that one is already From plan (§4.3).
+    private var envelopeField: EnvelopeField? {
+        let options = envelopeOptions
+        guard editing?.planItem == nil, !options.isEmpty else { return nil }
+        return EnvelopeField(
+            choice: $envelopeChoice,
+            value: options.value(for: envelopeChoice, category: category),
+            plan: PlanLookup.plan(for: cycle, in: plans),
+            cycle: cycle
+        )
+    }
 
     var body: some View {
         editorBody
@@ -114,7 +141,8 @@ struct ExpenseEditorView: View {
                         date: $date,
                         category: $category,
                         account: $account,
-                        people: $people
+                        people: $people,
+                        envelope: envelopeField
                     )
                     
                     TextField("Add a note…", text: $note, axis: .vertical)
@@ -129,6 +157,9 @@ struct ExpenseEditorView: View {
             .scrollDismissesKeyboard(.interactively)
             .dismissesKeyboardOnOutsideTap()
             .scrollPosition($scrollPosition)
+            .onChange(of: date) {
+                envelopeChoice = envelopeChoice.kept(among: envelopeOptions.envelopes)
+            }
             .onChange(of: notesFocused) { _, focused in
                 if focused {
                     withAnimation { scrollPosition.scrollTo(id: notesRowID, anchor: .bottom) }
@@ -177,6 +208,10 @@ struct ExpenseEditorView: View {
         target.category = category
         target.people = people
         target.account = account
+        if target.planItem == nil {
+            let envelopes = envelopeOptions.envelopes
+            envelopeChoice.kept(among: envelopes).apply(to: target, envelopes: envelopes)
+        }
         try? context.save()
         finish()
     }

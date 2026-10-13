@@ -166,7 +166,7 @@ nonisolated final class PlanSchemaTests: XCTestCase {
     /// Reading it off `Schema` catches it here instead.
     @MainActor
     func testEveryRelationshipHasAnInverse() {
-        let schema = Schema(versionedSchema: ExpenseKuSchemaV3.self)
+        let schema = Schema(versionedSchema: ExpenseKuSchemaV4.self)
         let missing = schema.entities.flatMap { entity in
             entity.relationships
                 .filter { $0.inverseName == nil }
@@ -181,7 +181,7 @@ nonisolated final class PlanSchemaTests: XCTestCase {
     /// that. `PlanItem.isFunded` is the newest case: older builds never write it.
     @MainActor
     func testEveryAttributeIsOptionalOrDefaulted() {
-        let schema = Schema(versionedSchema: ExpenseKuSchemaV3.self)
+        let schema = Schema(versionedSchema: ExpenseKuSchemaV4.self)
         let bare = schema.entities.flatMap { entity in
             entity.attributes
                 .filter { !$0.isOptional && $0.defaultValue == nil }
@@ -192,9 +192,17 @@ nonisolated final class PlanSchemaTests: XCTestCase {
 
     @MainActor
     func testIsFundedDefaultsToFalse() throws {
-        let schema = Schema(versionedSchema: ExpenseKuSchemaV3.self)
+        let schema = Schema(versionedSchema: ExpenseKuSchemaV4.self)
         let entity = try XCTUnwrap(schema.entities.first { $0.name == "PlanItem" })
         let attribute = try XCTUnwrap(entity.attributes.first { $0.name == "isFunded" })
+        XCTAssertEqual(attribute.defaultValue as? Bool, false)
+    }
+
+    @MainActor
+    func testIsOutsideEnvelopesDefaultsToFalse() throws {
+        let schema = Schema(versionedSchema: ExpenseKuSchemaV4.self)
+        let entity = try XCTUnwrap(schema.entities.first { $0.name == "Expense" })
+        let attribute = try XCTUnwrap(entity.attributes.first { $0.name == "isOutsideEnvelopes" })
         XCTAssertEqual(attribute.defaultValue as? Bool, false)
     }
 

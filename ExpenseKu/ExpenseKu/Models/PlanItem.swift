@@ -82,6 +82,11 @@ final class PlanItem {
     @Relationship(deleteRule: .nullify, inverse: \Expense.planItem)
     var linkedExpenses: [Expense]? = []
 
+    /// Envelope only: expenses the owner assigned here by hand, whatever their
+    /// Category. Deleting the envelope returns them to counting by Category.
+    @Relationship(deleteRule: .nullify, inverse: \Expense.envelope)
+    var assignedExpenses: [Expense]? = []
+
     init(
         name: String = "",
         amount: Decimal = 0,

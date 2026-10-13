@@ -45,6 +45,16 @@ final class Expense {
     // derived from the link. Inverse lives on the PlanItem side.
     var planItem: PlanItem?
 
+    // The Envelope the owner assigned this expense to by hand. It wins over the
+    // envelope claiming the expense's Category, but only while it belongs to the plan
+    // of the expense's own cycle (docs/prd/envelope-assignment.md §4.1). Inverse lives
+    // on the PlanItem side.
+    var envelope: PlanItem?
+
+    // The owner chose "No envelope": the expense counts in no envelope even when one
+    // claims its Category, and so falls Outside plan.
+    var isOutsideEnvelopes: Bool = false
+
     // Written by an Auto item without confirmation (ADR-0007), and unconfirmed until
     // the owner clears it. The Plan lens's review notice is the only prompt, and the
     // only defence against a failed autodebit being recorded as fact.

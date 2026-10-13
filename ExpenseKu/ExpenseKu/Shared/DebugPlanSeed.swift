@@ -26,7 +26,7 @@ import Foundation
 import SwiftData
 
 enum DebugPlanSeed {
-    /// -seedPlanData normal|payday|auto-landed|overspent|none
+    /// -seedPlanData normal|payday|auto-landed|overspent|travelling|none
     static var variant: String? {
         let args = ProcessInfo.processInfo.arguments
         guard let i = args.firstIndex(of: "-seedPlanData"), i + 1 < args.count else { return nil }
@@ -184,7 +184,9 @@ enum DebugPlanSeed {
             ("Hidup (Makan, bensin, emoney saldo)", 938_300, ["Makan", "Bensin", "E-money"]),
             ("Kebutuhan Kos di Jkt (Tisu, sabun, galon)", 193_900, ["Tisu", "Sabun", "Galon"]),
         ]
-        for (offset, spec) in envelopes.enumerated() {
+        let trip: [(String, Decimal, [String])] = variant == "travelling"
+            ? [("Travelling", 2_000_000, [])] : []
+        for (offset, spec) in (envelopes + trip).enumerated() {
             let (name, amount, categoryNames) = spec
             let item = PlanItem(
                 name: name, amount: amount, kind: .envelope,
@@ -226,6 +228,27 @@ enum DebugPlanSeed {
             context.insert(Expense(amount: 373_800, date: day, note: item.name,
                                    category: item.category, people: item.people ?? [],
                                    account: item.account, planItem: item))
+        }
+
+        // envelope-assignment.md §7: a trip assigned to Travelling by hand, though Hidup
+        // claims its Makan and Bensin, and a gift marked No envelope.
+        if variant == "travelling", let travelling = items["Travelling"] {
+            let tripDay = Calendar.current.date(byAdding: .day, value: 1, to: day) ?? day
+            let trip: [(String, Decimal, String, String)] = [
+                ("Makan", 85_000, "Nasi Padang Bandung", "Cash"),
+                ("Bensin", 150_000, "Bensin ke Bandung", "BCA"),
+                ("Sewa", 450_000, "Hotel Bandung", "BCA"),
+            ]
+            for (category, amount, note, account) in trip {
+                let expense = Expense(amount: amount, date: tripDay, note: note,
+                                      category: categories[category], account: accounts[account])
+                expense.envelope = travelling
+                context.insert(expense)
+            }
+            let gift = Expense(amount: 250_000, date: tripDay, note: "Kado ultah Tarisa",
+                               category: categories["Makan"], account: accounts["Cash"])
+            gift.isOutsideEnvelopes = true
+            context.insert(gift)
         }
 
         // G2: five Auto items that posted themselves while the owner was away, one of

@@ -65,8 +65,13 @@ nonisolated enum PlanCopy {
     }
 
     /// I7. Deleting a plan item leaves its Expense alone (§9.4, ADR-0001 nullify), and
-    /// the owner has to be told so before they tap, not after.
-    static func deleteItemBody(amount: Decimal?, date: Date?) -> String {
+    /// the owner has to be told so before they tap, not after. An envelope's assigned
+    /// expenses survive the same way (envelope-assignment.md §4.7).
+    static func deleteItemBody(amount: Decimal?, date: Date?, assignedCount: Int = 0) -> String {
+        if assignedCount > 0 {
+            let one = assignedCount == 1
+            return "\(counted(assignedCount, "expense")) assigned to it \(one ? "stays" : "stay") in your ledger and \(one ? "goes" : "go") back to counting by category."
+        }
         guard let amount, let date else {
             return "The plan item goes; nothing in your ledger changes."
         }

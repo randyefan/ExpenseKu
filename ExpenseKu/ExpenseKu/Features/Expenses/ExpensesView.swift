@@ -46,7 +46,9 @@ struct ExpensesView: View {
     @Query(sort: \CyclePlan.cycleStart) var plans: [CyclePlan]
 
     @State private var selection: Expense?
-    @State private var showingNew = false
+    /// Add Expense, as an item so ＋ on an envelope row can carry its preset into the
+    /// sheet: an `isPresented` sheet built its content before the preset had landed.
+    @State var newExpense: NewExpensePreset?
     @State private var showingSettings = false
     @State private var payday: Int = Payday.current
     @State var cycle: PayCycle = PayCycle.containing(.now, payday: Payday.current)
@@ -73,6 +75,10 @@ struct ExpensesView: View {
     /// by every page and by anything else that moves the cycle (expense-filter.md §8.1).
     @State private var filter = ExpenseFilter()
     @State private var showingFilter = false
+    /// Non-nil while the List lens is in Select mode (envelope-assignment.md §4.6). Left
+    /// by Done, a move, a page, a lens or tab switch, a payday change, or a search.
+    @State private var expenseSelection: ExpenseSelection?
+    @State private var showingMove = false
     @State var planSheet: PlanSheet?
     @State var planConfirmation: PlanConfirmation?
     @State private var searchText = ""
@@ -194,6 +200,8 @@ struct ExpensesView: View {
                             resolvedDay: resolvedSelectedDay(in: calendarGrid),
                             onSelect: { selection = $0 },
                             onDelete: delete,
+                            selection: expenseSelection,
+                            onToggle: { expenseSelection?.toggle($0) },
                             header: {
                                 CycleChrome(
                                     cycle: cycle,
@@ -231,42 +239,76 @@ struct ExpensesView: View {
                             PlanFilterPill(filter: planFilter) { self.planFilter = nil }
                                 .transition(.move(edge: .bottom).combined(with: .opacity))
                         }
+                        if let expenseSelection {
+                            SelectionBar(count: expenseSelection.count) { showingMove = true }
+                                .transition(.move(edge: .bottom).combined(with: .opacity))
+                        }
                     }
                     .padding(.bottom, 8)
                 }
                 .motion(Motion.settle, value: cycle)
                 .motion(Motion.settle, value: planFilter)
+                .motion(Motion.settle, value: expenseSelection == nil)
                 .motion(Motion.settle, value: activeFilter)
                 .environment(\.planOrigins, planOrigins)
+                .sheet(isPresented: $showingMove) {
+                    EnvelopeMoveSheet(
+                        options: EnvelopeOptions(plan: planContents.plan, cycleExpenses: contents.expenses),
+                        count: expenseSelection?.count ?? 0
+                    ) { choice in
+                        move(to: choice, shown: shownContents.expenses, plan: planContents.plan)
+                    }
+                }
+                .onChange(of: shownContents.expenses.map(\.persistentModelID)) {
+                    expenseSelection?.keepOnly(shownContents.expenses)
+                }
             }
-            .searchableWhenThereIsSomethingToSearch(text: $searchText, enabled: !expenses.isEmpty)
+            .toolbar(expenseSelection == nil ? .automatic : .hidden, for: .tabBar)
+            .searchableWhenThereIsSomethingToSearch(text: $searchText, enabled: !expenses.isEmpty && expenseSelection == nil)
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(Theme.bg, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
-                ToolbarItem(placement: .navigation) {
-                    Button("Monthly Start Date", systemImage: "calendar") {
-                        showingSettings = true
-                    }
-                    .tint(Theme.textSecondary)
-                }
-                if showsFilter {
+                if let expenseSelection {
                     ToolbarItem(placement: .navigation) {
-                        FilterButton(activeCount: activeFilter.activeCount(planFilter: planFilter)) {
-                            showingFilter = true
+                        Button(expenseSelection.isAllSelected(of: shownContents.expenses) ? "Deselect All" : "Select All") {
+                            self.expenseSelection?.toggleAll(of: shownContents.expenses)
                         }
                     }
-                }
-                ToolbarItem(placement: .primaryAction) {
-                    Button("Add Expense", systemImage: "plus") {
-                        showingNew = true
+                    ToolbarItem(placement: .primaryAction) {
+                        Button("Done") { self.expenseSelection = nil }
+                            .bold()
                     }
-                    .accentCircleButton()
+                } else {
+                    ToolbarItem(placement: .navigation) {
+                        Button("Monthly Start Date", systemImage: "calendar") {
+                            showingSettings = true
+                        }
+                        .tint(Theme.textSecondary)
+                    }
+                    if showsFilter {
+                        ToolbarItem(placement: .navigation) {
+                            FilterButton(activeCount: activeFilter.activeCount(planFilter: planFilter)) {
+                                showingFilter = true
+                            }
+                        }
+                    }
+                    if lens == .list, !isSearching, !contents.isEmpty {
+                        ToolbarItem(placement: .primaryAction) {
+                            Button("Select") { expenseSelection = ExpenseSelection() }
+                        }
+                    }
+                    ToolbarItem(placement: .primaryAction) {
+                        Button("Add Expense", systemImage: "plus") {
+                            newExpense = NewExpensePreset()
+                        }
+                        .accentCircleButton()
+                    }
                 }
             }
-            .sheet(isPresented: $showingNew) {
+            .sheet(item: $newExpense) { preset in
                 NavigationStack {
-                    ExpenseEditorView()
+                    ExpenseEditorView(envelope: preset.envelope, date: preset.date)
                 }
             }
             .sheet(isPresented: $showingSettings) {
@@ -296,12 +338,15 @@ struct ExpensesView: View {
             .onChange(of: planContents.funded.isEmpty) { _, isEmpty in
                 if isEmpty { fundedFilterCycle = nil }
             }
+            .onDisappear { expenseSelection = nil }
             .onChange(of: payday) { _, newValue in
+                expenseSelection = nil
                 planFilter = nil
                 filter = ExpenseFilter()
                 cycle = PayCycle.containing(.now, payday: newValue, calendar: calendar)
             }
             .onChange(of: searchText) { _, newValue in
+                if !newValue.isEmpty { expenseSelection = nil }
                 // Filters belong to a query, not to the tab: clearing the search
                 // clears them, so the next one never starts secretly narrowed.
                 if newValue.isEmpty {
@@ -386,6 +431,7 @@ struct ExpensesView: View {
     /// the transition matches the arrow that was pressed.
     private func page(to newCycle: PayCycle, edge: Edge) {
         contentChange = .page(edge)
+        expenseSelection = nil
         planSortChoice = nil
         planFilter = nil
         filter = ExpenseFilter()
@@ -399,9 +445,20 @@ struct ExpensesView: View {
             get: { lens },
             set: { newValue in
                 contentChange = .lens
+                expenseSelection = nil
                 lens = newValue
             }
         )
+    }
+
+    /// The bulk move: one choice for every checked row still on screen, saved at once,
+    /// and Select mode ends (envelope-assignment.md §4.6).
+    private func move(to choice: EnvelopeChoice, shown: [Expense], plan: CyclePlan?) {
+        guard let expenseSelection else { return }
+        let envelopes = EnvelopeOptions(plan: plan, cycleExpenses: []).envelopes
+        choice.apply(to: expenseSelection.expenses(in: shown), envelopes: envelopes)
+        try? context.save()
+        self.expenseSelection = nil
     }
 
     /// Delete by offset within one day's rows — shared by both lenses, so a swipe

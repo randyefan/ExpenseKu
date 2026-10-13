@@ -2,8 +2,8 @@
 //  ExpenseDetailRows.swift
 //  ExpenseKu
 //
-//  The Date / Category / Account / People rows of the expense editor, shared by the
-//  iOS and macOS layouts so the two cannot drift.
+//  The Date / Category / Envelope / Account / People rows of the expense editor, shared
+//  by the iOS and macOS layouts so the two cannot drift.
 //
 
 import SwiftUI
@@ -13,6 +13,7 @@ struct ExpenseDetailRows: View {
     @Binding var category: Category?
     @Binding var account: Account?
     @Binding var people: [Person]
+    var envelope: EnvelopeField? = nil
 
     private var peopleSummary: String {
         people.isEmpty ? "None" : people.map(\.name).sorted().joined(separator: ", ")
@@ -33,6 +34,10 @@ struct ExpenseDetailRows: View {
             .font(.dsBody)
         }
         .listRowBackground(Theme.card)
+
+        if let envelope {
+            EnvelopeFormRow(field: envelope, category: category)
+        }
 
         NavigationLink {
             AccountPicker(selection: $account)

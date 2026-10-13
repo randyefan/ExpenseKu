@@ -31,6 +31,7 @@ struct PersonExpensesView: View {
 
     @State private var range: DateRangeFilter
     @State private var editing: Expense?
+    @State private var moveRequest: EnvelopeMoveRequest?
     @State private var growth = ChartGrowth()
 
     init(route: PersonExpensesRoute) {
@@ -127,6 +128,14 @@ struct PersonExpensesView: View {
             .motion(Motion.settle, value: listed.count)
         }
         .environment(\.planOrigins, PlanOrigins(plans: plans, payday: Payday.current, calendar: calendar))
+        .environment(\.expenseRowActions, ExpenseRowActions(
+            move: { moveRequest = $0 },
+            delete: { expense in
+                context.delete(expense)
+                try? context.save()
+            }
+        ))
+        .sheet(item: $moveRequest) { EnvelopeMoveSheet(request: $0) }
         .background(Theme.bg)
         .navigationTitle(person?.name ?? "Person")
         .navigationBarTitleDisplayMode(.inline)

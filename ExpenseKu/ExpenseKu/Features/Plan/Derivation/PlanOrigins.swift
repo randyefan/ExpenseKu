@@ -86,6 +86,16 @@ nonisolated struct PlanOrigins {
         return Self.origin(of: expense, claims: cycleClaims)
     }
 
+    /// Where a row's "Move to envelope…" points (envelope-assignment.md §4.8): the plan
+    /// of the expense's own cycle, or nil when that plan has no active envelope or a
+    /// Fixed item created the expense.
+    func moveTarget(for expense: Expense) -> (plan: CyclePlan, cycle: PayCycle)? {
+        guard ExpenseSelection.isSelectable(expense) else { return nil }
+        let cycle = PayCycle.containing(expense.date, payday: payday, calendar: calendar)
+        guard let plan = PlanLookup.plan(for: cycle, in: plans), !claims(for: cycle).isEmpty else { return nil }
+        return (plan, cycle)
+    }
+
     /// The active envelopes of the cycle's own plan, which is also the set an
     /// assignment must belong to for it to count.
     func claims(for cycle: PayCycle) -> EnvelopeClaims {

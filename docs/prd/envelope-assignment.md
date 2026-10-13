@@ -1,7 +1,7 @@
 # PRD — Assigning an expense to an Envelope
 
 Status: Built
-Date: 2026-10-13 · design approved and built the same day (flow Q)
+Date: 2026-10-13 · flow Q built the same day; flow R (§4.5, §4.6, §4.8, §4.9) approved and built the same day
 Owner: Randy Efan
 
 Companion documents: `docs/prd/payday-planning.md` (the Envelope this changes, §5.1–5.2),
@@ -170,10 +170,17 @@ Each active Envelope row in the Plan lens gains a **＋** button trailing its ba
 legend, outside the row's tappable body (so the row still opens the item editor and
 VoiceOver reads the two separately). It is a small circle in the plan's violet wash with a
 violet plus — not the accent ＋ of the toolbar, which logs an ordinary expense. Its label is
-**"Add expense to ‹name›"**. The bar shortens to make room. `[→ Q5]`
+**"Add to ‹name›"**. The bar shortens to make room. `[→ Q5]`
 
-It opens the ordinary **Add Expense** editor with the Envelope row set to that envelope
-and the date set to:
+*Amended by flow R:* the ＋ is a **menu** with two items `[→ R3]`:
+
+| Item | Detail line | Does |
+|---|---|---|
+| **New expense** | "Logged straight into ‹name›" | what ＋ did before — below |
+| **Move expenses here…** | "Pick from this cycle's expenses" | opens §4.9 |
+
+**New expense** opens the ordinary **Add Expense** editor with the Envelope row set to that
+envelope and the date set to:
 
 | The viewed cycle is… | Date |
 |---|---|
@@ -186,13 +193,14 @@ rows. The toolbar's ＋ is unchanged and opens the editor at **By category**.
 
 ### 4.6 Select mode — moving many at once
 
-The List lens toolbar gains a **Select** text button before ＋ and search. `[→ Q4]` It is shown in
-the **List lens only**. `[→ Q7]`
+*Amended by flow R:* there is **no Select button**; the toolbar is ＋ and search as before
+flow Q. Select mode is entered from a row's long-press menu (§4.8), in the **List lens
+only**, and opens with that row already checked. `[→ R1, Q7]`
 
 | | Normal | Select mode |
 |---|---|---|
 | Leading toolbar | Monthly Start Date + Filter | **Select All** / **Deselect All** |
-| Trailing toolbar | Select · ＋ · 🔍 | **Done** |
+| Trailing toolbar | ＋ · 🔍 | **Done** |
 | Rows | tap opens the editor | tap toggles a leading check circle (accent, filled with a tick when on) |
 | Rows a Fixed item created | as today | dimmed to 40%, no circle (its space kept so rows align), not selectable |
 | Bottom bar | tab bar | the tab bar is hidden; a glass bar reads **"N selected"** and carries a violet **Move to envelope…** button (disabled at 0) |
@@ -206,6 +214,33 @@ the **List lens only**. `[→ Q7]`
 - Picking a choice applies it to every selected expense at once, saves, dismisses the
   sheet and **leaves select mode**. No confirmation: the move is undone by moving again.
 - The plan filter legend, header and day headers behave as today while selecting.
+
+### 4.8 Long-press a row *(flow R)*
+
+Every expense row — List, Month's day list, Search, Person detail and the Insights
+drill-in — has an iOS context menu. `[→ R1]`
+
+| Item | Shown when | Does |
+|---|---|---|
+| **Select** | List lens only, the row is selectable, not already selecting | enters Select mode with this row checked |
+| **Move to envelope…** | the row is selectable and the plan of its **own** cycle has an active envelope | the §4.6 sheet for this one expense, titled **"Move 1 expense"** |
+| **Edit** | always | opens the editor, as a tap does |
+| **Delete** | always | deletes at once, as swipe-to-delete does |
+
+A row a Fixed item created gets Edit and Delete only. While selecting, rows have no menu.
+
+### 4.9 Move expenses here… *(flow R)*
+
+A `.large` sheet titled **"Move to ‹name›"**, subtitled **"‹cycle title› · ‹remainder›"**,
+closed with ✕. `[→ R4]`
+
+- It lists every expense of the **envelope's own cycle** that does not count in this
+  envelope now — by category elsewhere, Outside plan, No envelope, or assigned to another
+  envelope — each with its tag, newest day first, grouped by day. Rows a Fixed item
+  created are not listed.
+- Tapping a row toggles its check circle. A violet **"Move N expenses"** button pinned at
+  the foot (disabled at 0) assigns them all to this envelope at once, saves and closes.
+- Nothing to list: **"Everything this cycle is already in ‹name›."**
 
 ### 4.7 Deleting an Envelope
 
@@ -317,6 +352,13 @@ Settled in a grilling session on 2026-10-13.
 | I | No envelope filter dimension; no select mode in Search or Month | — |
 | J | Words: Envelope · By category · No envelope · Select · Select All · Move to envelope… · Move N expenses · Add expense to ‹name› | all |
 | K | ADR-0008 records that an assignment overrides the Category claim | — |
+| 27 | The Select text button is removed; Select mode is entered by long-pressing a row — *owner override of decision 12*, after living with it | `R1` |
+| 28 | Long-press works on every expense list; Select only in the List lens | `R1` |
+| 29 | The envelope's ＋ becomes a menu: New expense · Move expenses here… | `R3` |
+| 30 | Move expenses here… lists every cycle expense not already counting in the envelope | `R4` |
+| L | Move to envelope… on a row only when its own cycle has an active envelope; Fixed rows get Edit and Delete | — |
+| M | Delete in the menu behaves as swipe-to-delete | — |
+| N | Flow R's B (capsule glyph) and D (swipe right) are not built; they stay on page 05 | — |
 | 17 | Picker glyphs: grey `tag` for By category, grey `nosign` for No envelope, violet `tray` per envelope | `Q2` |
 | 18 | Picker details (remainder, where by-category lands) sit on a second line, not trailing | `Q2` |
 | 19 | The bulk sheet's By category reads "Each keeps whatever its Category says" | `Q8` |
@@ -347,6 +389,11 @@ carries the ＋ itself, so every envelope row on page 02 shows it.
 | **Q6** · Plan item editor — Envelope without Categories | §4.2 optional Categories |
 | **Q7** · List lens — Select mode | §4.6 toolbar, check circles, dimmed Fixed row, bottom bar |
 | **Q8** · Move N expenses | §4.6 the sheet |
+| **R1** · Long-press a row | §4.8 the menu, §4.6 entry |
+| **R3** · ＋ menu on an envelope | §4.5 amended |
+| **R4** · Move to Travelling | §4.9 |
+
+Flow R sits on page 02 after flow Q; its options B and D stay on page 05 as not chosen.
 
 ### 9.1 Closed during implementation
 
@@ -361,3 +408,7 @@ carries the ＋ itself, so every envelope row on page 02 shows it.
 | The rule, the editor's choice and Select mode | Pure and tested against §7's sample | `EnvelopeClaims`, `EnvelopeChoice`, `EnvelopeOptions`, `EnvelopeAddDate`, `ExpenseSelection`; `EnvelopeAssignmentTests`, `EnvelopeChoiceTests` |
 | A V3 store opens unchanged | `Fixtures/PlanV3.store`, written by the V3 code before the change | `StoreMigrationTests` |
 | Simulator sample | `-seedPlanData travelling` | `DebugPlanSeed` |
+| Flow R: Move expenses here… rows showed no envelope tags — the sheet sits outside the `planOrigins` environment | The sheet is handed `planOrigins` explicitly | `ExpensesView` |
+| Flow R: in a row narrowed by a check circle, the meta text broke "Cash" mid-word because the tag takes layout priority | A Dynamic-Type-scaled floor on the meta text; the tag truncates instead | `ExpenseMetaLine` |
+| Flow R: menu item subtitles did not show when both Texts sat inside a `Label` | A `Label` plus a second `Text` in the Button | `PlanEnvelopeRow` |
+| Flow R: `LeaderboardFilters` used `ForEach` over `Account` without importing SwiftData, and only compiled by luck of batch grouping; the new files moved the batches | `import SwiftData` | `LeaderboardFilters` |

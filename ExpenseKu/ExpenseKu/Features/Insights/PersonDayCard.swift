@@ -37,6 +37,7 @@ struct PersonDayCard: View {
                             .contentShape(.rect)
                     }
                     .buttonStyle(.pressableRow)
+                    .expenseRowMenu(expense) { onSelect(expense) }
                 }
             }
             .padding(.horizontal, Metric.cardPadding)

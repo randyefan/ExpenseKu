@@ -32,6 +32,8 @@ extension ExpensesView {
             planSheet = .newPlanItem
         case .editPlanItem(let item):
             planSheet = .editPlanItem(item)
+        case .moveExpenses(let envelope):
+            envelopeSheet = .gather(envelope, cycle)
         case .addExpense(let envelope):
             newExpense = NewExpensePreset(
                 envelope: envelope,

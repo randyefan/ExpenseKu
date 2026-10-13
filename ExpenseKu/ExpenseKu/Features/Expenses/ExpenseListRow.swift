@@ -33,11 +33,28 @@ struct ExpenseListRow: View {
         .disabled(selectionMark == .unavailable)
         .opacity(selectionMark == .unavailable ? 0.4 : 1)
         .accessibilityAddTraits(selectionMark == .on ? .isSelected : [])
+        .modifier(RowMenuUnlessSelecting(expense: expense, isSelecting: selectionMark != nil, onEdit: onSelect))
         .listRowBackground(Theme.card)
         .listRowSeparatorTint(Theme.hairline)
         .listRowInsets(EdgeInsets(
             top: 0, leading: Metric.cardPadding,
             bottom: 0, trailing: Metric.cardPadding
         ))
+    }
+}
+
+/// Select mode owns the tap; a long-press there would offer actions on a row whose
+/// meaning has changed, so the menu steps aside.
+private struct RowMenuUnlessSelecting: ViewModifier {
+    let expense: Expense
+    let isSelecting: Bool
+    let onEdit: () -> Void
+
+    func body(content: Content) -> some View {
+        if isSelecting {
+            content
+        } else {
+            content.expenseRowMenu(expense, onEdit: onEdit)
+        }
     }
 }

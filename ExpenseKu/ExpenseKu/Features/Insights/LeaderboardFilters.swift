@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct LeaderboardFilters: View {
     @Binding var range: DateRangeFilter

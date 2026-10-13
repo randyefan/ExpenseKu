@@ -141,6 +141,10 @@ that column stops being manual work and becomes live during the cycle.
 
 ### 5.2 Why an Envelope scopes to Categories, not to a Group
 
+> Amended 2026-10-13 by `docs/prd/envelope-assignment.md` (ADR-0008): an expense can be
+> **assigned** to an envelope by hand, which wins over the Category claim, and an envelope
+> may claim no Category at all.
+
 Five February rows share one Group:
 
 ```

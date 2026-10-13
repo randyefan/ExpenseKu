@@ -1,13 +1,14 @@
 # PRD — Assigning an expense to an Envelope
 
-Status: Accepted
-Date: 2026-10-13 · design approved the same day (flow Q)
+Status: Built
+Date: 2026-10-13 · design approved and built the same day (flow Q)
 Owner: Randy Efan
 
 Companion documents: `docs/prd/payday-planning.md` (the Envelope this changes, §5.1–5.2),
 `docs/prd/plan-filter.md` (the Outside plan / From plan split this feeds), `CONTEXT.md`
 (ubiquitous language), `docs/adr/0005-plan-and-ledger-are-separate.md`, and
-**`design/ExpenseKu.pen`**, page `05 · Proposals — not built`, **Flow Q**. Frame
+**`design/ExpenseKu.pen`**, page `02 · Pages · iPhone`, **Flow Q** (moved there from
+`05 · Proposals` once built). Frame
 references appear inline as `[→ Q2]`.
 
 ---
@@ -331,7 +332,10 @@ Settled when the owner approved flow Q on 2026-10-13: entries 17–26.
 
 ## 9. Design traceability
 
-Page `05 · Proposals — not built`, **Flow Q · Assign an expense to an Envelope**.
+Page `02 · Pages · iPhone`, **Flow Q · Assign an expense to an Envelope**. Components
+`EnvelopeFormRow`, `EnvelopeChoiceRow`, `SelectionCircle · On / Off` and `SelectionBar` live
+on `01 · Design System`, group `Cycle plan`, row `Envelope assignment`; `PlanEnvelopeRow`
+carries the ＋ itself, so every envelope row on page 02 shows it.
 
 | Frame | Covers |
 |---|---|
@@ -343,3 +347,17 @@ Page `05 · Proposals — not built`, **Flow Q · Assign an expense to an Envelo
 | **Q6** · Plan item editor — Envelope without Categories | §4.2 optional Categories |
 | **Q7** · List lens — Select mode | §4.6 toolbar, check circles, dimmed Fixed row, bottom bar |
 | **Q8** · Move N expenses | §4.6 the sheet |
+
+### 9.1 Closed during implementation
+
+| Gap | Answer | Where |
+|---|---|---|
+| Add Expense opened from ＋ showed "None": an `isPresented` sheet built its content before the preset landed | Add Expense is a `.sheet(item:)` carrying `NewExpensePreset`; the toolbar ＋ passes an empty one | `ExpensesView`, `NewExpensePreset` |
+| `LabeledContent` stacked a long envelope value under its label, and VoiceOver read "Envelope" twice | The row is an explicit HStack — label, then name (truncates) and suffix (never) — read as one element, label "Envelope" | `EnvelopeFormRow` |
+| Search stayed in the toolbar during Select mode | Search is off while selecting; Q7 draws only Select All and Done | `ExpensesView` |
+| §5.1 "switching tab leaves select mode" | The tab bar is hidden while selecting, so a tab switch cannot happen; `onDisappear` still clears it | `ExpensesView` |
+| By category's detail with no Category yet | "Choose a category first" | `EnvelopeOptions` |
+| An active envelope always draws its bar (Rp 0 spent included), so §4.2's "Assigned expenses only" is only reachable where no progress exists | Kept as the empty text, replacing "No categories yet" | `PlanEnvelopeRow` |
+| The rule, the editor's choice and Select mode | Pure and tested against §7's sample | `EnvelopeClaims`, `EnvelopeChoice`, `EnvelopeOptions`, `EnvelopeAddDate`, `ExpenseSelection`; `EnvelopeAssignmentTests`, `EnvelopeChoiceTests` |
+| A V3 store opens unchanged | `Fixtures/PlanV3.store`, written by the V3 code before the change | `StoreMigrationTests` |
+| Simulator sample | `-seedPlanData travelling` | `DebugPlanSeed` |

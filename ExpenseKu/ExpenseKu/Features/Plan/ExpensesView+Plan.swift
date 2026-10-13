@@ -247,7 +247,8 @@ private func confirmationBody(_ pending: PlanConfirmation) -> String {
         return PlanCopy.untickBody(amount: expense.amount, date: expense.date)
     case .deleteItem(let item):
         let expense = item.linkedExpense
-        return PlanCopy.deleteItemBody(amount: expense?.amount, date: expense?.date)
+        return PlanCopy.deleteItemBody(amount: expense?.amount, date: expense?.date,
+                                       assignedCount: item.assignedExpenses?.count ?? 0)
     }
 }
 

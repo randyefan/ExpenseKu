@@ -6,16 +6,15 @@
 //  logged (PRD §5.2). This is the single biggest improvement over the spreadsheet,
 //  where that column was totalled by hand at the end of a cycle; here it is live.
 //
-//  The rule has no screen and is the easiest thing in the feature to get wrong. An
-//  expense counts toward an envelope when its Category is in that envelope's set AND
-//  it was not created by a Fixed PlanItem. Without the second clause a completed
-//  "Kos" is counted a second time inside the "Hidup" envelope that shares its Group,
-//  and the plan quietly reports money twice (ADR-0005). Because an envelope never
-//  creates an expense, the exclusion is exactly `planItem == nil`.
+//  Which envelope an expense counts in is `EnvelopeClaims`' job — an assignment by
+//  hand, else its Category, never a Fixed item's expense (envelope-assignment.md §4.1).
+//  Without that last exclusion a completed "Kos" is counted a second time inside the
+//  "Hidup" envelope that shares its Group, and the plan quietly reports money twice
+//  (ADR-0005).
 //
-//  An expense whose Category is in no envelope is simply unbudgeted: it counts in the
-//  cycle's spending as it always has, and toward no envelope. That is a third way real
-//  money escapes Sisa, and it is deliberately unreported (§11.3).
+//  An expense that lands in no envelope is simply unbudgeted: it counts in the cycle's
+//  spending as it always has, and toward no envelope. That is a third way real money
+//  escapes Sisa, and it is deliberately unreported (§11.3).
 //
 
 import Foundation
@@ -23,16 +22,16 @@ import SwiftData
 
 nonisolated enum EnvelopeSpend {
     static func progress(envelopes: [PlanItem], cycleExpenses: [Expense]) -> [EnvelopeProgress] {
-        let unlinked = cycleExpenses.filter { $0.planItem == nil }
+        let envelopeClaims = EnvelopeClaims(envelopes: envelopes)
+        var spent: [PersistentIdentifier: Decimal] = [:]
+        for expense in cycleExpenses {
+            guard let envelope = envelopeClaims.envelope(for: expense) else { continue }
+            spent[envelope.persistentModelID, default: 0] += expense.amount
+        }
         return envelopes.map { envelope in
-            let claimed = Set((envelope.envelopeCategories ?? []).map(\.persistentModelID))
-            let spent = unlinked.reduce(Decimal(0)) { running, expense in
-                guard let id = expense.category?.persistentModelID, claimed.contains(id) else { return running }
-                return running + expense.amount
-            }
-            return EnvelopeProgress(itemID: envelope.persistentModelID,
-                                    planned: envelope.amount,
-                                    spent: spent)
+            EnvelopeProgress(itemID: envelope.persistentModelID,
+                             planned: envelope.amount,
+                             spent: spent[envelope.persistentModelID] ?? 0)
         }
     }
 
@@ -72,6 +71,8 @@ nonisolated struct EnvelopeProgress: Identifiable, Equatable {
     /// Always positive; read it with `isOver` to pick "Rp 226.900 left" or
     /// "Rp 48.300 over".
     var remainder: Decimal { isOver ? spent - planned : planned - spent }
+
+    var remainderText: String { "\(remainder.formattedIDR()) \(isOver ? "over" : "left")" }
 
     /// Deliberately unclamped — past 1 the bar fills its track and recolours rather
     /// than stopping at full and hiding the overspend. Zero when nothing is planned,

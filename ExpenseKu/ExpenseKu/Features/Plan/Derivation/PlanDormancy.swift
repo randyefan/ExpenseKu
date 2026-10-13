@@ -17,14 +17,15 @@
 //  ubiquitous language.
 //
 //  It also requires `carriedOver`, so a Rp 0 row the owner is halfway through typing
-//  in F2 stays where they can see it.
+//  in F2 stays where they can see it, and no assigned expenses: an envelope holding
+//  spending is in use whatever it was planned at (envelope-assignment.md §5.4).
 //
 
 import Foundation
 
 nonisolated enum PlanDormancy {
     static func isDormant(_ item: PlanItem) -> Bool {
-        item.carriedOver && item.amount == 0 && !item.isDone
+        item.carriedOver && item.amount == 0 && !item.isDone && (item.assignedExpenses ?? []).isEmpty
     }
 
     /// Active rows first, in display order; dormant rows in their own list for the

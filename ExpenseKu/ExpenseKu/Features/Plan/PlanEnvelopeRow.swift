@@ -75,7 +75,7 @@ struct PlanEnvelopeRow: View {
     @ViewBuilder
     private var categoryNames: some View {
         let names = (item.envelopeCategories ?? []).map(\.name).sorted()
-        Text(names.isEmpty ? "No categories yet" : names.joined(separator: " · "))
+        Text(names.isEmpty ? "Assigned expenses only" : names.joined(separator: " · "))
             .font(.dsCaption)
             .foregroundStyle(Theme.textSecondary)
             .lineLimit(1)

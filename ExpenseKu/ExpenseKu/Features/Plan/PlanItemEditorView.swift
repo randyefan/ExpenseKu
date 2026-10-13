@@ -98,7 +98,7 @@ struct PlanItemEditorView: View {
 
     private var canSave: Bool {
         guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return false }
-        return kind == .envelope ? !envelopeCategories.isEmpty : category != nil
+        return kind == .envelope || category != nil
     }
 
     private var historyHint: String? {
@@ -143,7 +143,7 @@ struct PlanItemEditorView: View {
                         }
                     } footer: {
                         if kind == .envelope {
-                            Text("An envelope never creates an expense, so it has no due day and no Auto. Its Account is optional: set it and the allowance joins that account's transfer line and can be marked as moved.")
+                            Text("An envelope never creates an expense, so it has no due day and no Auto. Its Categories are optional: with none, it fills only from expenses you assign to it. Its Account is optional too: set it and the allowance joins that account's transfer line and can be marked as moved.")
                                 .font(.dsCaption)
                                 .foregroundStyle(Theme.textSecondary)
                         }
@@ -269,9 +269,9 @@ struct PlanItemEditorView: View {
         } label: {
             LabeledContent("Categories") {
                 Text(envelopeCategories.isEmpty
-                     ? "Required"
+                     ? "None"
                      : envelopeCategories.map(\.name).sorted().joined(separator: ", "))
-                    .foregroundStyle(envelopeCategories.isEmpty ? Theme.accent : Theme.text)
+                    .foregroundStyle(envelopeCategories.isEmpty ? Theme.textSecondary : Theme.text)
                     .lineLimit(1)
             }
             .font(.dsBody)

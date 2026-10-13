@@ -43,7 +43,7 @@ struct EnvelopeBar: View {
 
                 Spacer(minLength: 8)
 
-                Text("\(progress.remainder.formattedIDR()) \(progress.isOver ? "over" : "left")")
+                Text(progress.remainderText)
                     .font(.dsCaption)
                     .fontWeight(.semibold)
                     .monospacedDigit()
@@ -54,9 +54,7 @@ struct EnvelopeBar: View {
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Spent \(progress.spent.formattedIDR()) of \(progress.planned.formattedIDR())")
-        .accessibilityValue(progress.isOver
-                            ? "\(progress.remainder.formattedIDR()) over"
-                            : "\(progress.remainder.formattedIDR()) left")
+        .accessibilityValue(progress.remainderText)
     }
 
     private var fill: Color {

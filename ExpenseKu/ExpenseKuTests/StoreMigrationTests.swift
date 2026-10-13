@@ -12,6 +12,10 @@
 //  an Envelope, a dormant row, transfer ticks, an adjustment, and an October plan made
 //  by carry-over.
 //
+//  `Fixtures/PlanV3.store` is the V2 fixture opened and written by the V3 code (the
+//  commit before V4), with one item Funded and one more expense: what a 1.2 install
+//  holds before envelope assignment arrives.
+//
 //  Every test opens a *copy*: SwiftData migrates in place, and the fixture has to stay
 //  a pre-change store for the next run.
 //
@@ -36,10 +40,14 @@ nonisolated final class StoreMigrationTests: XCTestCase {
     }
 
     private func copyOfV2Store() throws -> URL {
+        try copyOfStore("PlanV2")
+    }
+
+    private func copyOfStore(_ name: String) throws -> URL {
         let bundle = Bundle(for: StoreMigrationTests.self)
-        let fixture = try XCTUnwrap(bundle.url(forResource: "PlanV2", withExtension: "store"),
-                                    "Fixtures/PlanV2.store is missing from the test bundle")
-        let url = directory.appending(path: "PlanV2.store")
+        let fixture = try XCTUnwrap(bundle.url(forResource: name, withExtension: "store"),
+                                    "Fixtures/\(name).store is missing from the test bundle")
+        let url = directory.appending(path: "\(name).store")
         try FileManager.default.copyItem(at: fixture, to: url)
         return url
     }
@@ -47,7 +55,7 @@ nonisolated final class StoreMigrationTests: XCTestCase {
     /// Opened the way `StoreBootstrap` opens the real store, minus CloudKit.
     @MainActor
     private func open(_ url: URL) throws -> ModelContainer {
-        let schema = Schema(versionedSchema: ExpenseKuSchemaV3.self)
+        let schema = Schema(versionedSchema: ExpenseKuSchemaV4.self)
         let config = ModelConfiguration(schema: schema, url: url, cloudKitDatabase: .none)
         return try ModelContainer(for: schema, migrationPlan: ExpenseKuMigrationPlan.self,
                                   configurations: [config])
@@ -174,5 +182,44 @@ nonisolated final class StoreMigrationTests: XCTestCase {
         let kirim = try XCTUnwrap(items(in: context, plan: september)["Kirim buat Ibu"])
         XCTAssertTrue(kirim.isFunded)
         XCTAssertEqual(PlanItemState.of(kirim), .funded)
+    }
+
+    // MARK: - V3 → V4
+
+    /// **The V3 store opens**, every row intact, and nothing arrives assigned: every
+    /// expense counts by Category exactly as it did before the update.
+    @MainActor
+    func testAV3StoreOpensWithEveryExpenseCountingByCategory() throws {
+        let context = ModelContext(try open(try copyOfStore("PlanV3")))
+        let (september, _) = try plans(in: context)
+
+        XCTAssertEqual(try context.fetchCount(FetchDescriptor<PlanItem>()), 12)
+        let expenses = try context.fetch(FetchDescriptor<Expense>())
+        XCTAssertEqual(expenses.count, 4)
+        XCTAssertTrue(expenses.allSatisfy { EnvelopeChoice.of($0) == .byCategory })
+        XCTAssertTrue(try context.fetch(FetchDescriptor<PlanItem>()).allSatisfy { ($0.assignedExpenses ?? []).isEmpty })
+
+        let sep = items(in: context, plan: september)
+        XCTAssertEqual(PlanItemState.of(try XCTUnwrap(sep["Kirim buat Ibu"])), .funded)
+        XCTAssertEqual(sep["Kos"]?.linkedExpense?.amount, 2_250_000)
+    }
+
+    /// Once migrated, an assignment is written, kept, and the store opens again.
+    @MainActor
+    func testTheMigratedV3StoreKeepsAnAssignmentAcrossRelaunches() throws {
+        let url = try copyOfStore("PlanV3")
+        do {
+            let context = ModelContext(try open(url))
+            let (september, _) = try plans(in: context)
+            let hidup = try XCTUnwrap(items(in: context, plan: september)["Hidup"])
+            let nasi = try XCTUnwrap(try context.fetch(FetchDescriptor<Expense>()).first { $0.note == "Nasi Padang" })
+            EnvelopeChoice.envelope(hidup.persistentModelID).apply(to: nasi, envelopes: [hidup])
+            try context.save()
+        }
+
+        let context = ModelContext(try open(url))
+        let nasi = try XCTUnwrap(try context.fetch(FetchDescriptor<Expense>()).first { $0.note == "Nasi Padang" })
+        XCTAssertEqual(nasi.envelope?.name, "Hidup")
+        XCTAssertFalse(nasi.isOutsideEnvelopes)
     }
 }

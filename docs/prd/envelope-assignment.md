@@ -180,7 +180,8 @@ per cycle (§4.10.2).
 
 Each active Envelope row in the Plan lens gains a **＋** button trailing its bar and
 legend, outside the row's tappable body (so the row still opens the item editor and
-VoiceOver reads the two separately). It is a small circle in the plan's violet wash with a
+VoiceOver reads the two separately). *Amended by `envelope-detail.md` §4.1:* the row's body now
+opens the envelope's detail; the item editor is behind its **Edit**. It is a small circle in the plan's violet wash with a
 violet plus — not the accent ＋ of the toolbar, which logs an ordinary expense. Its label is
 **"Add to ‹name›"**. The bar shortens to make room. `[→ Q5]`
 
@@ -359,7 +360,8 @@ under its bar, in secondary text: `[→ S4]`
 
 It is a third line under the bar's legend, as wide as the bar, caption size, regular
 weight; the ＋ stays level with the bar. It is part of the row's body: a tap opens the item
-editor, as anywhere on the row.
+editor, as anywhere on the row. *Amended by `envelope-detail.md` §4.1:* a tap opens the
+envelope's detail, which lists the paid-early expenses under "Paid early · ‹cycle›".
 
 #### 4.10.7 ＋ New expense on a future envelope
 

@@ -1,7 +1,7 @@
 # PRD — Envelope detail
 
-Status: Accepted
-Date: 2026-10-14 · grilled and design approved the same day (flow T)
+Status: Built
+Date: 2026-10-14 · grilled, design approved and built the same day (flow T)
 Owner: Randy Efan
 
 Companion documents: `docs/prd/envelope-assignment.md` (where an expense counts, §4.1;
@@ -10,7 +10,8 @@ Companion documents: `docs/prd/envelope-assignment.md` (where an expense counts,
 language), `docs/adr/0005-plan-and-ledger-are-separate.md`,
 `docs/adr/0008-envelope-assignment-overrides-category.md`,
 `docs/adr/0009-assignment-may-pay-ahead.md`, and **`design/ExpenseKu.pen`**, page
-`05 · Proposals — not built`, **Flow T**. Frame references appear inline as `[→ T2]`.
+`02 · Pages · iPhone`, **Flow T** (moved there from `05 · Proposals` once built). Frame
+references appear inline as `[→ T2]`.
 
 ---
 
@@ -319,7 +320,9 @@ Settled when the owner approved flow T on 2026-10-14:
 
 ## 9. Design traceability
 
-Page `05 · Proposals — not built`, **Flow T · Envelope detail**, with the §7 samples.
+Page `02 · Pages · iPhone`, **Flow T · Envelope detail**, after flow S, with the §7 samples.
+Components `EnvelopeDetailCard` and `EnvelopeAddMenu` live on `01 · Design System`, group
+`Cycle plan`, row `Envelope detail`; T2–T6 use the card, and the card uses the menu.
 
 | Frame | Covers |
 |---|---|
@@ -329,3 +332,19 @@ Page `05 · Proposals — not built`, **Flow T · Envelope detail**, with the §
 | **T4** · Travelling detail, November — paid early | §4.3 caption, §4.4 Paid early section, no own part |
 | **T5** · Hidup detail, November — empty | §4.5 claims Categories |
 | **T6** · Travelling detail, November — empty | §4.5 assigned only |
+
+### 9.1 Closed during implementation
+
+| Gap | Answer | Where |
+|---|---|---|
+| The list needed one cycle's worth of expenses per section, which Move expenses here… already had as `EnvelopeGatherSection` | Renamed `EnvelopeCycleSection` and shared | `EnvelopeCycleSection`, `EnvelopeGather`, `EnvelopeDetail` |
+| The card needed the row's ＋ menu | Extracted as `EnvelopeAddMenu`; the row and the card both carry it | `EnvelopeAddMenu`, `PlanEnvelopeRow`, `EnvelopeDetailCard` |
+| The row and the card both spell the claims line | One `EnvelopeDetail.claimsLine(for:)` | `EnvelopeDetail`, `PlanEnvelopeRow` |
+| Hiding tags without losing the long-press menu, which reads the same `planOrigins` | An environment switch `showsPlanOriginTags`, off in the detail only | `PlanOriginTag`, `ExpenseRow` |
+| Presenting the next sheet while the detail is still animating away is dropped | The hand-off waits for the envelope sheet's `onDismiss`; coming back waits for the other sheet's `onDismiss` | `ExpensesView+EnvelopeDetail`, `EnvelopeDetailVisit` |
+| Edit › Delete plan item dismisses the editor before its confirmation is answered | Coming back also waits for the confirmation to clear; Cancel reopens, Delete does not | `ExpensesView+EnvelopeDetail`, `ExpensesView` |
+| "Still active" when a sheet closes | `EnvelopeDetail.canReopen`: not deleted, still in a plan, an Envelope, not dormant | `EnvelopeDetail`; `EnvelopeDetailTests` |
+| An envelope deleted under an open detail (a sync) | The detail stops drawing it and dismisses | `EnvelopeDetailSheet` |
+| A paid-early expense dated today heads its day "Today", not "Wed, 14 October" as T4 draws it | `DayLabel`'s existing rule, as in every day list | `EnvelopeDetailSection` |
+| The rules | Pure and tested against §7 | `EnvelopeDetail`; `EnvelopeDetailTests` (10) |
+| Simulator | Driven on `-seedPlanData travelling` and `paid-early`; that simulator's payday was 30, so seeded dates shift and the rules do not | — |

@@ -1,6 +1,6 @@
 # ADR-0008 — An expense assigned to an envelope by hand counts there, not by Category
 
-Status: Accepted
+Status: Accepted · amended by ADR-0009 (an assignment may point forward)
 Date: 2026-10-13
 
 ## Context
@@ -38,7 +38,8 @@ Insights — goes through it.
 - The Category stays true, so Insights by Category never sees the plan's bookkeeping.
 - One expense still lands in at most one envelope: ADR-0005's no-double-count guarantee
   holds without a new guard.
-- An assignment is bound to one plan. Moving the expense's date to another cycle resets
+- An assignment is bound to one plan. *Amended by ADR-0009: it may point at a later
+  cycle's plan — paid early — but never an earlier one.* Moving the expense's date to another cycle resets
   it in the editor, and an assignment that ends up pointing at another cycle's plan (a
   payday change re-cuts cycles without touching expenses) is ignored rather than trusted.
 - Deleting an envelope nullifies its assignments (ADR-0001): those expenses count by

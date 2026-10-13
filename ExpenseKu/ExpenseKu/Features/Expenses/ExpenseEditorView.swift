@@ -90,20 +90,26 @@ struct ExpenseEditorView: View {
 
     private var cycle: PayCycle { PayCycle.containing(date, payday: Payday.current) }
 
+    /// The date's cycle and every later one on offer (§4.10.2). Keeping the draft's
+    /// choice in it is what lets a date change keep an assignment that still points
+    /// forward, and drop one that would now point back (§4.10.4).
     private var envelopeOptions: EnvelopeOptions {
-        EnvelopeOptions(plan: PlanLookup.plan(for: cycle, in: plans), cycleExpenses: [])
+        EnvelopeOptions(
+            offer: EnvelopeOffer(cycle: cycle, plans: plans, payday: Payday.current, calendar: .current,
+                                 now: .now, keeping: envelopeChoice),
+            expenses: []
+        )
     }
 
-    /// Drawn only when the date's cycle has an envelope to offer, and never on an
-    /// expense a Fixed item created — that one is already From plan (§4.3).
+    /// Drawn only when an envelope is on offer, and never on an expense a Fixed item
+    /// created — that one is already From plan (§4.3).
     private var envelopeField: EnvelopeField? {
         let options = envelopeOptions
         guard editing?.planItem == nil, !options.isEmpty else { return nil }
         return EnvelopeField(
             choice: $envelopeChoice,
             value: options.value(for: envelopeChoice, category: category),
-            plan: PlanLookup.plan(for: cycle, in: plans),
-            cycle: cycle
+            offer: options.offer
         )
     }
 

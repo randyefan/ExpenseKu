@@ -27,8 +27,8 @@ nonisolated enum PlanFilter: Hashable, CaseIterable {
 
     func admits(_ origin: PlanOrigin?) -> Bool {
         switch self {
-        case .outsidePlan: origin == nil
-        case .fromPlan: origin != nil
+        case .outsidePlan: origin?.isFromPlan != true
+        case .fromPlan: origin?.isFromPlan == true
         }
     }
 

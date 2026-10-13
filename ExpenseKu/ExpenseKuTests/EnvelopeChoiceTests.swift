@@ -19,6 +19,14 @@ nonisolated final class EnvelopeChoiceTests: XCTestCase {
         calendar.date(from: DateComponents(year: 2026, month: m, day: d, hour: hour, minute: minute)) ?? .distantPast
     }
 
+    private func offered(for day: Date, plans: [CyclePlan], expenses: [Expense] = [],
+                         keeping choice: EnvelopeChoice = .byCategory) -> EnvelopeOptions {
+        let cycle = PayCycle.containing(day, payday: 25, calendar: calendar)
+        return EnvelopeOptions(offer: EnvelopeOffer(cycle: cycle, plans: plans, payday: 25, calendar: calendar,
+                                                    now: date(10, 14), keeping: choice),
+                               expenses: expenses)
+    }
+
     private struct Sample {
         let plan: CyclePlan
         let hidup: PlanItem
@@ -65,14 +73,14 @@ nonisolated final class EnvelopeChoiceTests: XCTestCase {
         context.insert(PlanItem(name: "Liburan Saving", amount: 0, kind: .envelope, carriedOver: true, plan: plan))
         try context.save()
 
-        XCTAssertTrue(EnvelopeOptions(plan: plan, cycleExpenses: []).isEmpty, "a Fixed item and a dormant envelope offer nothing")
-        XCTAssertTrue(EnvelopeOptions(plan: nil, cycleExpenses: []).isEmpty)
+        XCTAssertTrue(offered(for: date(10, 1), plans: [plan]).isEmpty, "a Fixed item and a dormant envelope offer nothing")
+        XCTAssertTrue(offered(for: date(10, 1), plans: []).isEmpty)
     }
 
     @MainActor
     func testTheRowNamesWhereTheExpenseLands() throws {
         let s = try sample(in: try makeInMemoryContext())
-        let options = EnvelopeOptions(plan: s.plan, cycleExpenses: s.expenses)
+        let options = offered(for: date(10, 1), plans: [s.plan], expenses: s.expenses)
 
         XCTAssertEqual(options.value(for: .byCategory, category: s.makan),
                        EnvelopeRowValue(name: "Hidup (Makan, bensin, emoney saldo)", suffix: "· by category", isChosen: false))
@@ -88,7 +96,7 @@ nonisolated final class EnvelopeChoiceTests: XCTestCase {
     @MainActor
     func testThePickerListsActiveEnvelopesByAmountWithTheirRemainder() throws {
         let s = try sample(in: try makeInMemoryContext())
-        let options = EnvelopeOptions(plan: s.plan, cycleExpenses: s.expenses)
+        let options = offered(for: date(10, 1), plans: [s.plan], expenses: s.expenses)
 
         XCTAssertEqual(options.envelopes.map(\.name),
                        ["Travelling", "Hidup (Makan, bensin, emoney saldo)", "Kebutuhan Kos di Jkt (Tisu, sabun, galon)"])
@@ -114,8 +122,9 @@ nonisolated final class EnvelopeChoiceTests: XCTestCase {
         XCTAssertEqual(EnvelopeChoice.of(s.expenses[2]), .byCategory)
     }
 
-    /// **Changing the date across a cycle resets an assignment**; No envelope and By
-    /// category survive, because neither names a plan.
+    /// **Changing the date past the envelope's cycle resets an assignment**; No envelope
+    /// and By category survive, because neither names a plan. Moving it earlier keeps it,
+    /// paid early (§4.10.4) — see PaidEarlyTests.
     @MainActor
     func testMovingTheDateToAnotherCycleResetsAnAssignment() throws {
         let context = try makeInMemoryContext()
@@ -125,10 +134,10 @@ nonisolated final class EnvelopeChoiceTests: XCTestCase {
         let novTravelling = PlanItem(name: "Travelling", amount: 2_000_000, kind: .envelope, plan: november)
         context.insert(novTravelling)
         try context.save()
-        let novOptions = EnvelopeOptions(plan: november, cycleExpenses: [])
-        let octOptions = EnvelopeOptions(plan: s.plan, cycleExpenses: s.expenses)
-
         let assigned = EnvelopeChoice.envelope(s.travelling.persistentModelID)
+        let novOptions = offered(for: date(11, 1), plans: [s.plan, november], keeping: assigned)
+        let octOptions = offered(for: date(10, 1), plans: [s.plan, november], expenses: s.expenses, keeping: assigned)
+
         XCTAssertEqual(assigned.kept(among: octOptions.envelopes), assigned)
         XCTAssertEqual(assigned.kept(among: novOptions.envelopes), .byCategory, "a same-named envelope is not matched")
         XCTAssertEqual(EnvelopeChoice.noEnvelope.kept(among: novOptions.envelopes), .noEnvelope)
@@ -138,7 +147,7 @@ nonisolated final class EnvelopeChoiceTests: XCTestCase {
 
     // MARK: - §4.5 ＋ on an envelope row
 
-    func testAddingFromAnEnvelopeDatesTheExpenseInsideTheViewedCycle() {
+    func testAddingFromAnEnvelopeDatesTheExpenseInsideTheViewedCycleOrNowWhenAhead() {
         let october = PayCycle.containing(date(10, 1), payday: 25, calendar: calendar)
         let now = date(10, 13, hour: 21, minute: 6)
 
@@ -148,8 +157,8 @@ nonisolated final class EnvelopeChoiceTests: XCTestCase {
         XCTAssertEqual(EnvelopeAddDate.date(in: september, now: now, calendar: calendar), date(9, 24, hour: 21, minute: 6))
 
         let november = october.next(payday: 25, calendar: calendar)
-        XCTAssertEqual(EnvelopeAddDate.date(in: november, now: now, calendar: calendar), date(10, 25, hour: 21, minute: 6))
-        XCTAssertTrue(november.contains(EnvelopeAddDate.date(in: november, now: now, calendar: calendar)))
+        XCTAssertEqual(EnvelopeAddDate.date(in: november, now: now, calendar: calendar), now,
+                       "a future cycle's envelope is paid early, today (§4.10.7)")
     }
 
     // MARK: - §4.6 Select mode and the bulk move
@@ -200,7 +209,7 @@ nonisolated final class EnvelopeChoiceTests: XCTestCase {
         let rent = Expense(amount: 2_200_000, date: date(10, 5), planItem: fixed)
         context.insert(rent)
         try context.save()
-        let options = EnvelopeOptions(plan: s.plan, cycleExpenses: s.expenses)
+        let options = offered(for: date(10, 1), plans: [s.plan], expenses: s.expenses)
 
         EnvelopeChoice.envelope(s.travelling.persistentModelID)
             .apply(to: [s.expenses[0], s.expenses[1], rent], envelopes: options.envelopes)

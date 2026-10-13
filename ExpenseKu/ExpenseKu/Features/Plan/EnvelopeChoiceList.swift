@@ -3,8 +3,9 @@
 //  ExpenseKu
 //
 //  The choices the editor's picker and the bulk move share (envelope-assignment.md
-//  §4.4, §4.6): By category, No envelope, then every active envelope of the cycle's
-//  plan with its saved remainder.
+//  §4.4, §4.6, §4.10.2): By category, No envelope, then every active envelope of the
+//  cycle's plan under ENVELOPES, then each later cycle's under "‹title› · Paid early",
+//  each with its saved remainder.
 //
 
 import SwiftUI
@@ -28,19 +29,23 @@ struct EnvelopeChoiceList: View {
                                   isChosen: chosen == .noEnvelope) { onPick(.noEnvelope) }
             }
 
-            Section {
-                ForEach(options.envelopes) { envelope in
-                    let choice = EnvelopeChoice.envelope(envelope.persistentModelID)
-                    let progress = options.progress(of: envelope)
-                    EnvelopeChoiceRow(title: envelope.name.isEmpty ? "Untitled" : envelope.name,
-                                      detail: progress?.remainderText ?? "",
-                                      detailIsOver: progress?.isOver ?? false,
-                                      symbol: "tray", tint: Theme.plan,
-                                      isChosen: chosen == choice) { onPick(choice) }
+            ForEach(options.sections) { section in
+                Section {
+                    ForEach(section.envelopes) { envelope in
+                        let choice = EnvelopeChoice.envelope(envelope.persistentModelID)
+                        let progress = options.progress(of: envelope)
+                        EnvelopeChoiceRow(title: envelope.name.isEmpty ? "Untitled" : envelope.name,
+                                          detail: progress?.remainderText ?? "",
+                                          detailIsOver: progress?.isOver ?? false,
+                                          symbol: "tray", tint: Theme.plan,
+                                          isChosen: chosen == choice) { onPick(choice) }
+                    }
+                } header: {
+                    SectionHeaderText(section.isPaidEarly
+                                      ? "\(section.cycle.title()) · Paid early"
+                                      : "Envelopes")
+                        .textCase(nil)
                 }
-            } header: {
-                SectionHeaderText("Envelopes")
-                    .textCase(nil)
             }
         }
         .listStyle(.insetGrouped)

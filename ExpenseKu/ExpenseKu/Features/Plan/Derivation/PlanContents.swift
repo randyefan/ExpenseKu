@@ -43,7 +43,8 @@ nonisolated struct PlanContents {
 
         let envelopes = EnvelopeSpend.progress(
             envelopes: split.active.filter(\.isEnvelope),
-            cycleExpenses: cycleExpenses
+            cycleExpenses: cycleExpenses,
+            cycle: cycle
         )
         envelopesByItem = Dictionary(uniqueKeysWithValues: envelopes.map { ($0.itemID, $0) })
 

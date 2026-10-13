@@ -2,6 +2,10 @@
 //  PlanOriginTag.swift
 //  ExpenseKu
 //
+//  A paid-early tag (envelope-assignment.md §4.10.5) is dashed and points forward: the
+//  row is Outside plan in this cycle, so it must not read like an envelope tag, which is
+//  From plan. Its "· Nov" never truncates; the name gives way first.
+//
 
 import SwiftUI
 
@@ -31,6 +35,13 @@ struct PlanOriginTag: View {
                 .fontWeight(.semibold)
                 .lineLimit(1)
                 .truncationMode(.tail)
+            if case .paidEarly(_, let label) = origin {
+                Text("· \(label.short)")
+                    .font(.dsCaption)
+                    .fontWeight(.semibold)
+                    .lineLimit(1)
+                    .fixedSize()
+            }
         }
         .foregroundStyle(Theme.plan)
         .padding(.horizontal, 7)
@@ -41,6 +52,8 @@ struct PlanOriginTag: View {
                 Capsule().fill(Theme.planWash)
             case .envelope:
                 Capsule().strokeBorder(Theme.plan, lineWidth: 1)
+            case .paidEarly:
+                Capsule().strokeBorder(Theme.plan, style: StrokeStyle(lineWidth: 1, dash: [3, 2]))
             }
         }
     }
@@ -49,6 +62,7 @@ struct PlanOriginTag: View {
         switch origin {
         case .fixed: "Plan"
         case .envelope(let name): name
+        case .paidEarly(let name, _): name
         }
     }
 
@@ -56,6 +70,7 @@ struct PlanOriginTag: View {
         switch origin {
         case .fixed: "checklist"
         case .envelope: "tray"
+        case .paidEarly: "arrow.forward"
         }
     }
 
@@ -63,6 +78,7 @@ struct PlanOriginTag: View {
         switch origin {
         case .fixed: "From plan"
         case .envelope(let name): "Envelope \(name)"
+        case .paidEarly(let name, let label): "Paid early, \(name), \(label.long)"
         }
     }
 }

@@ -5,7 +5,8 @@
 //  "Move expenses here…" (frame R4): starting from the envelope rather than the list,
 //  tick the cycle's other expenses and move them in at once (envelope-assignment.md
 //  §4.9). The target is chosen before anything is ticked, so no envelope picker
-//  follows.
+//  follows. Earlier cycles from today's on follow under "Paid early · ‹title›" (§4.10.8);
+//  the envelope's own cycle keeps its unheaded look.
 //
 
 import SwiftUI
@@ -15,7 +16,7 @@ struct EnvelopeGatherSheet: View {
     let envelope: PlanItem
     let cycle: PayCycle
 
-    @Query private var cycleExpenses: [Expense]
+    @Query private var expenses: [Expense]
     @State private var selection = ExpenseSelection()
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
@@ -24,17 +25,24 @@ struct EnvelopeGatherSheet: View {
     init(envelope: PlanItem, cycle: PayCycle) {
         self.envelope = envelope
         self.cycle = cycle
-        let start = cycle.start
+        let start = EnvelopeGather.earliestStart(for: cycle, payday: Payday.current, calendar: .current, now: .now)
         let end = cycle.end
-        _cycleExpenses = Query(filter: #Predicate<Expense> { $0.date >= start && $0.date < end })
+        _expenses = Query(filter: #Predicate<Expense> { $0.date >= start && $0.date < end })
     }
 
     private var name: String { envelope.name.isEmpty ? "Untitled" : envelope.name }
 
     var body: some View {
-        let options = EnvelopeOptions(plan: envelope.plan, cycleExpenses: cycleExpenses)
-        let candidates = EnvelopeGather.candidates(for: envelope, cycleExpenses: cycleExpenses,
-                                                   claims: EnvelopeClaims(envelopes: options.envelopes))
+        let envelopes = EnvelopeOffer.activeEnvelopes(of: envelope.plan)
+        let progress = EnvelopeSpend.progress(envelopes: envelopes,
+                                              cycleExpenses: expenses.filter { cycle.contains($0.date) },
+                                              cycle: cycle)
+            .first { $0.itemID == envelope.persistentModelID }
+        let sections = EnvelopeGather.sections(for: envelope,
+                                               claims: EnvelopeClaims(envelopes: envelopes, cycle: cycle),
+                                               expenses: expenses, payday: Payday.current,
+                                               calendar: calendar, now: .now)
+        let candidates = sections.flatMap(\.expenses)
         NavigationStack {
             Group {
                 if candidates.isEmpty {
@@ -43,19 +51,27 @@ struct EnvelopeGatherSheet: View {
                                    message: "Everything this cycle is already in \(name).")
                 } else {
                     List {
-                        ForEach(expenseDayGroups(candidates, calendar: calendar)) { group in
-                            Section {
-                                ForEach(group.expenses) { expense in
-                                    ExpenseListRow(expense: expense,
-                                                   selectionMark: .of(expense, in: selection)) {
-                                        selection.toggle(expense)
+                        ForEach(sections) { section in
+                            let groups = expenseDayGroups(section.expenses, calendar: calendar)
+                            ForEach(groups.enumerated(), id: \.element.id) { index, group in
+                                Section {
+                                    ForEach(group.expenses) { expense in
+                                        ExpenseListRow(expense: expense,
+                                                       selectionMark: .of(expense, in: selection)) {
+                                            selection.toggle(expense)
+                                        }
                                     }
-                                }
-                            } header: {
-                                DayGroupHeader(title: DayLabel.title(group.day, calendar: calendar),
-                                               total: group.total)
+                                } header: {
+                                    VStack(alignment: .leading, spacing: 10) {
+                                        if section.isPaidEarly, index == 0 {
+                                            SectionHeaderText("Paid early · \(section.cycle.title(calendar: calendar))")
+                                        }
+                                        DayGroupHeader(title: DayLabel.title(group.day, calendar: calendar),
+                                                       total: group.total)
+                                    }
                                     .textCase(nil)
                                     .listRowInsets(EdgeInsets(top: 14, leading: 4, bottom: 6, trailing: 4))
+                                }
                             }
                         }
                     }
@@ -92,7 +108,7 @@ struct EnvelopeGatherSheet: View {
                             .font(.dsBody).bold()
                             .foregroundStyle(Theme.text)
                             .lineLimit(1)
-                        Text(subtitle(options))
+                        Text(subtitle(progress))
                             .font(.dsCaption)
                             .foregroundStyle(Theme.textSecondary)
                     }
@@ -104,9 +120,9 @@ struct EnvelopeGatherSheet: View {
         .presentationDragIndicator(.visible)
     }
 
-    private func subtitle(_ options: EnvelopeOptions) -> String {
+    private func subtitle(_ progress: EnvelopeProgress?) -> String {
         let title = cycle.title(calendar: calendar)
-        guard let remainder = options.progress(of: envelope)?.remainderText else { return title }
+        guard let remainder = progress?.remainderText else { return title }
         return "\(title) · \(remainder)"
     }
 }

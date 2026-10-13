@@ -6,8 +6,8 @@
 //  long-press (envelope-assignment.md §4.6, §4.8). Nothing is ticked, because a
 //  selection may be mixed, and picking applies at once — moving again is the undo.
 //
-//  It fetches the cycle's own expenses for the remainders and writes the move itself,
-//  so every screen that lists expenses can raise it the same way.
+//  It fetches the plans and the offered cycles' expenses for the remainders, and writes
+//  the move itself, so every screen that lists expenses can raise it the same way.
 //
 
 import SwiftUI
@@ -17,7 +17,8 @@ struct EnvelopeMoveSheet: View {
     let request: EnvelopeMoveRequest
     let onApplied: () -> Void
 
-    @Query private var cycleExpenses: [Expense]
+    @Query private var expenses: [Expense]
+    @Query(sort: \CyclePlan.cycleStart) private var plans: [CyclePlan]
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
 
@@ -25,12 +26,13 @@ struct EnvelopeMoveSheet: View {
         self.request = request
         self.onApplied = onApplied
         let start = request.cycle.start
-        let end = request.cycle.end
-        _cycleExpenses = Query(filter: #Predicate<Expense> { $0.date >= start && $0.date < end })
+        _expenses = Query(filter: #Predicate<Expense> { $0.date >= start })
     }
 
     var body: some View {
-        let options = EnvelopeOptions(plan: request.plan, cycleExpenses: cycleExpenses)
+        let offer = EnvelopeOffer(cycle: request.cycle, plans: plans, payday: Payday.current,
+                                  calendar: .current, now: .now)
+        let options = EnvelopeOptions(offer: offer, expenses: expenses)
         NavigationStack {
             EnvelopeChoiceList(options: options,
                                chosen: nil,

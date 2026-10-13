@@ -144,6 +144,8 @@ struct CyclePlanLens<Header: View>: View {
                             PlanEnvelopeRow(
                                 item: item,
                                 progress: contents.envelope(for: item),
+                                paidEarlyCaption: contents.envelope(for: item)?
+                                    .paidEarlyCaption(payday: payday, calendar: calendar),
                                 onChooseFunding: { onAction(.chooseFunding(item, $0)) },
                                 onSelect: { onAction(.editPlanItem(item)) },
                                 onAddExpense: { onAction(.addExpense(to: item)) },

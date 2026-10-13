@@ -6,10 +6,9 @@
 import SwiftUI
 
 /// What the expense editor hands its Envelope row: the draft's choice, how it reads,
-/// and the plan and cycle the picker offers envelopes from.
+/// and the envelopes the picker offers.
 struct EnvelopeField {
     let choice: Binding<EnvelopeChoice>
     let value: EnvelopeRowValue
-    let plan: CyclePlan?
-    let cycle: PayCycle
+    let offer: EnvelopeOffer
 }

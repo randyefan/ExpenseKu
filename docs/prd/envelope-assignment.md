@@ -1,8 +1,8 @@
 # PRD — Assigning an expense to an Envelope
 
-Status: Built (flows Q, R) · flow S (§4.10 Paying ahead): Accepted
+Status: Built (flows Q, R, S)
 Date: 2026-10-13 · flow Q built the same day; flow R (§4.5, §4.6, §4.8, §4.9) approved and built the same day;
-flow S grilled and its design approved 2026-10-14
+flow S (§4.10) grilled, approved and built 2026-10-14
 Owner: Randy Efan
 
 Companion documents: `docs/prd/payday-planning.md` (the Envelope this changes, §5.1–5.2),
@@ -596,8 +596,9 @@ carries the ＋ itself, so every envelope row on page 02 shows it.
 
 Flow R sits on page 02 after flow Q; its options B and D stay on page 05 as not chosen.
 
-**Flow S · Paying ahead**, drawn on `05 · Proposals — not built` until built, with the
-§7.1 sample in every frame:
+**Flow S · Paying ahead into a later cycle's envelope**, on page 02 after flow R (drawn
+on 05 first), with the §7.1 sample in every frame. Component `PlanOriginTag · Paid early`
+lives on `01 · Design System`, group `Cycle plan`, row `Envelope assignment`; S3 uses it.
 
 | Frame | Covers |
 |---|---|
@@ -624,3 +625,18 @@ Flow R sits on page 02 after flow Q; its options B and D stay on page 05 as not 
 | Flow R: in a row narrowed by a check circle, the meta text broke "Cash" mid-word because the tag takes layout priority | A Dynamic-Type-scaled floor on the meta text; the tag truncates instead | `ExpenseMetaLine` |
 | Flow R: menu item subtitles did not show when both Texts sat inside a `Label` | A `Label` plus a second `Text` in the Button | `PlanEnvelopeRow` |
 | Flow R: `LeaderboardFilters` used `ForEach` over `Account` without importing SwiftData, and only compiled by luck of batch grouping; the new files moved the batches | `import SwiftData` | `LeaderboardFilters` |
+
+### 9.2 Closed during implementation — flow S
+
+| Gap | Answer | Where |
+|---|---|---|
+| Which envelopes are on offer was worked out in four places (picker, Move sheet, row menu, editor row) | One pure `EnvelopeOffer` (own cycle, then later open cycles, plus the current choice); `EnvelopeOptions` wraps it with remainders | `EnvelopeOffer`, `EnvelopeSection`, `EnvelopeOptions` |
+| `EnvelopeClaims` could not tell a later envelope from an earlier one | It now knows its cycle: `paidEarlyTarget(of:)` and `paidEarly(into:)` sit beside `envelope(for:)`, so the resolver stays the one place | `EnvelopeClaims` |
+| A cycle's bars were fed only that cycle's dated expenses | `EnvelopeSpend.progress` takes the cycle and adds each envelope's paid-early assignments, keeping them apart for the caption | `EnvelopeSpend`, `EnvelopeProgress` |
+| The split and the plan filter treated any origin as From plan | `PlanOrigin.isFromPlan`; `.paidEarly` is tagged yet Outside plan, Insights included | `PlanOrigins`, `PlanFilter` |
+| ＋ was pinned to the row's bottom, so the caption would have pulled it down | A custom alignment guide at the bar line; ＋ aligns to it | `EnvelopeBarLine`, `PlanEnvelopeRow` |
+| A Move request carried a plan, and a List-lens move from a cycle without one had nothing to offer | The request carries the cycle; the sheet builds the offer from all plans | `EnvelopeMoveRequest`, `EnvelopeMoveSheet` |
+| The gather sheet only queried the envelope's cycle | It queries from today's cycle start (`EnvelopeGather.earliestStart`) | `EnvelopeGatherSheet` |
+| A long note beside the wider paid-early tag wraps to three lines | Kept: the meta line's existing floor and line limit (#26); the tag never truncates "· Nov" | `ExpenseMetaLine` |
+| The rule, the offer, the labels, the caption and gathering | Pure and tested against §7.1 | `PaidEarlyTests` (14) |
+| Simulator sample | `-seedPlanData paid-early`; on a simulator whose payday is not 25 the dates shift, the rules do not | `DebugPlanSeed` |

@@ -147,7 +147,7 @@ struct CyclePlanLens<Header: View>: View {
                                 paidEarlyCaption: contents.envelope(for: item)?
                                     .paidEarlyCaption(payday: payday, calendar: calendar),
                                 onChooseFunding: { onAction(.chooseFunding(item, $0)) },
-                                onSelect: { onAction(.editPlanItem(item)) },
+                                onSelect: { onAction(.openEnvelope(item)) },
                                 onAddExpense: { onAction(.addExpense(to: item)) },
                                 onMoveExpenses: { onAction(.moveExpenses(to: item)) }
                             )

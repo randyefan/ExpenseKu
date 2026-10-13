@@ -28,8 +28,8 @@ nonisolated enum EnvelopeGather {
     /// The envelope's own cycle first, unheaded; then each earlier cycle from the newest
     /// back to today's. A cycle with nothing to offer is left out.
     static func sections(for envelope: PlanItem, claims: EnvelopeClaims, expenses: [Expense],
-                         payday: Int, calendar: Calendar, now: Date) -> [EnvelopeGatherSection] {
-        let own = EnvelopeGatherSection(
+                         payday: Int, calendar: Calendar, now: Date) -> [EnvelopeCycleSection] {
+        let own = EnvelopeCycleSection(
             cycle: claims.cycle, isPaidEarly: false,
             expenses: candidates(for: envelope,
                                  cycleExpenses: expenses.filter { claims.cycle.contains($0.date) },
@@ -43,7 +43,7 @@ nonisolated enum EnvelopeGather {
                 .filter { cycle.contains($0.date) && ExpenseSelection.isSelectable($0) }
                 .filter { $0.envelope?.persistentModelID != envelope.persistentModelID }
                 .sorted { $0.date > $1.date }
-            sections.append(EnvelopeGatherSection(cycle: cycle, isPaidEarly: true, expenses: earlier))
+            sections.append(EnvelopeCycleSection(cycle: cycle, isPaidEarly: true, expenses: earlier))
             cycle = cycle.previous(payday: payday, calendar: calendar)
         }
         return sections.filter { !$0.expenses.isEmpty }

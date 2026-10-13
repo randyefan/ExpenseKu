@@ -11,6 +11,9 @@ import SwiftUI
 
 extension EnvironmentValues {
     @Entry var planOrigins = PlanOrigins(plans: [], payday: 1, calendar: .current)
+    /// Off inside an envelope's detail, where every row counts in that envelope and its
+    /// tag would only repeat the title (envelope-detail.md §4.4).
+    @Entry var showsPlanOriginTags = true
 }
 
 struct PlanOriginTag: View {

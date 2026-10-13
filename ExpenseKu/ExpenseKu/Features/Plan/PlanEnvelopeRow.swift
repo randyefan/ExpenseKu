@@ -20,11 +20,12 @@
 //  in the bar but in no list of this cycle, so a caption under the legend says where the
 //  money came from.
 //
-//  ＋ beside the bar is a menu (envelope-assignment.md §4.5): a new expense already
-//  assigned here, or Move expenses here… for ones already logged. It is a sibling of
-//  the row's Button rather than inside it, for the same accessibility reason as the
-//  lead glyph, and it wears the plan's violet so it does not read as the toolbar's ＋,
-//  which logs an ordinary expense.
+//  ＋ beside the bar is `EnvelopeAddMenu` (envelope-assignment.md §4.5). It is a sibling
+//  of the row's Button rather than inside it, for the same accessibility reason as the
+//  lead glyph.
+//
+//  A tap on the body opens the envelope's detail, not its editor (envelope-detail.md
+//  §4.1): which expenses make up the bar is the question an envelope is opened to answer.
 //
 
 import SwiftUI
@@ -38,7 +39,7 @@ struct PlanEnvelopeRow: View {
     let onAddExpense: () -> Void
     let onMoveExpenses: () -> Void
 
-    private let addSize: CGFloat = 30
+    private let addSize = EnvelopeAddMenu.size
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
@@ -93,36 +94,18 @@ struct PlanEnvelopeRow: View {
                 .contentShape(.rect)
             }
             .buttonStyle(.pressableRow)
+            .accessibilityHint("Shows its expenses")
         }
         .overlay(alignment: Alignment(horizontal: .trailing, vertical: .envelopeBarLine)) {
-            Menu {
-                Button(action: onAddExpense) {
-                    Label("New expense", systemImage: "plus")
-                    Text("Logged straight into \(item.name)")
-                }
-                Button(action: onMoveExpenses) {
-                    Label("Move expenses here…", systemImage: "checklist")
-                    Text("Pick from this cycle's expenses")
-                }
-            } label: {
-                Image(systemName: "plus")
-                    .font(.dsCaption.weight(.bold))
-                    .foregroundStyle(Theme.plan)
-                    .frame(width: addSize, height: addSize)
-                    .background(Theme.planWash, in: .circle)
-                    .contentShape(.circle)
-            }
-            .accessibilityLabel("Add to \(item.name)")
+            EnvelopeAddMenu(name: item.name, onAddExpense: onAddExpense, onMoveExpenses: onMoveExpenses)
         }
         .padding(.vertical, 10)
     }
 
     /// Before any expense lands there is no bar worth drawing, so the row says what it
     /// is going to total instead.
-    @ViewBuilder
     private var categoryNames: some View {
-        let names = (item.envelopeCategories ?? []).map(\.name).sorted()
-        Text(names.isEmpty ? "Assigned expenses only" : names.joined(separator: " · "))
+        Text(EnvelopeDetail.claimsLine(for: item))
             .font(.dsCaption)
             .foregroundStyle(Theme.textSecondary)
             .lineLimit(1)

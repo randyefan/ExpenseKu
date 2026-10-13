@@ -45,7 +45,7 @@ struct ExpensesView: View {
     /// at init and would become a second source of truth about which cycle is showing.
     @Query(sort: \CyclePlan.cycleStart) var plans: [CyclePlan]
 
-    @State private var selection: Expense?
+    @State var selection: Expense?
     /// Add Expense, as an item so ＋ on an envelope row can carry its preset into the
     /// sheet: an `isPresented` sheet built its content before the preset had landed.
     @State var newExpense: NewExpensePreset?
@@ -79,6 +79,9 @@ struct ExpensesView: View {
     /// by Done, a move, a page, a lens or tab switch, a payday change, or a search.
     @State private var expenseSelection: ExpenseSelection?
     @State var envelopeSheet: EnvelopeSheet?
+    /// Set while an envelope's detail is stepped out of for another sheet, so it can be
+    /// reopened when that sheet closes (envelope-detail.md §4.6).
+    @State var envelopeDetailVisit: EnvelopeDetailVisit?
     @State var planSheet: PlanSheet?
     @State var planConfirmation: PlanConfirmation?
     @State private var searchText = ""
@@ -98,7 +101,7 @@ struct ExpensesView: View {
     /// On compact width (iPhone) the split view would push the editor as a full
     /// page; there we present editing as a bottom sheet instead. iPad keeps
     /// the detail-pane editing (design.md §1).
-    private var editsInSheet: Bool {
+    var editsInSheet: Bool {
         horizontalSizeClass == .compact
     }
 
@@ -261,13 +264,18 @@ struct ExpensesView: View {
                     move: { envelopeSheet = .move($0) },
                     delete: deleteOne
                 ))
-                .sheet(item: $envelopeSheet) { sheet in
+                .sheet(item: $envelopeSheet, onDismiss: envelopeSheetDismissed) { sheet in
                     switch sheet {
                     case .move(let request):
                         EnvelopeMoveSheet(request: request) { expenseSelection = nil }
                     case .gather(let envelope, let cycle):
                         EnvelopeGatherSheet(envelope: envelope, cycle: cycle)
                             .environment(\.planOrigins, planOrigins)
+                    case .detail(let envelope, let cycle):
+                        EnvelopeDetailSheet(envelope: envelope, cycle: cycle) { action in
+                            leaveEnvelopeDetail(envelope, cycle: cycle, for: action)
+                        }
+                        .environment(\.planOrigins, planOrigins)
                     }
                 }
                 .onChange(of: shownContents.expenses.map(\.persistentModelID)) {
@@ -312,7 +320,7 @@ struct ExpensesView: View {
                     }
                 }
             }
-            .sheet(item: $newExpense) { preset in
+            .sheet(item: $newExpense, onDismiss: returnToEnvelopeDetail) { preset in
                 NavigationStack {
                     ExpenseEditorView(envelope: preset.envelope, date: preset.date)
                 }
@@ -323,7 +331,7 @@ struct ExpensesView: View {
             .sheet(isPresented: $showingFilter) {
                 FilterSheet(filter: $filter, planFilter: $planFilter, catalog: catalog)
             }
-            .sheet(item: editsInSheet ? $selection : .constant(nil)) { expense in
+            .sheet(item: editsInSheet ? $selection : .constant(nil), onDismiss: returnToEnvelopeDetail) { expense in
                 NavigationStack {
                     ExpenseEditorView(editing: expense, onFinish: { selection = nil })
                 }
@@ -335,12 +343,16 @@ struct ExpensesView: View {
                 contents: planContents,
                 plans: plans,
                 today: .now,
-                onOpenExpense: { selection = $0 }
+                onOpenExpense: { selection = $0 },
+                onDismiss: returnToEnvelopeDetail
             )
             .sensoryFeedback(.selection, trigger: cycle)
             .sensoryFeedback(.selection, trigger: lens)
             .onAppear { resetToCurrentCycle() }
             .task(id: CarryOverKey(cycle: cycle, isPlan: lens == .plan)) { carryOverIfNeeded() }
+            .onChange(of: planConfirmation == nil) { _, isClear in
+                if isClear { returnToEnvelopeDetail() }
+            }
             .onChange(of: planContents.funded.isEmpty) { _, isEmpty in
                 if isEmpty { fundedFilterCycle = nil }
             }

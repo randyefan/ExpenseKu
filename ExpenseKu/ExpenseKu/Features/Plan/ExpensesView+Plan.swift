@@ -32,6 +32,8 @@ extension ExpensesView {
             planSheet = .newPlanItem
         case .editPlanItem(let item):
             planSheet = .editPlanItem(item)
+        case .openEnvelope(let envelope):
+            envelopeSheet = .detail(envelope, cycle)
         case .moveExpenses(let envelope):
             envelopeSheet = .gather(envelope, cycle)
         case .addExpense(let envelope):
@@ -182,9 +184,10 @@ extension View {
         contents: PlanContents,
         plans: [CyclePlan],
         today: Date,
-        onOpenExpense: @escaping (Expense) -> Void
+        onOpenExpense: @escaping (Expense) -> Void,
+        onDismiss: @escaping () -> Void
     ) -> some View {
-        self.sheet(item: sheet) { which in
+        self.sheet(item: sheet, onDismiss: onDismiss) { which in
             PlanSheetContent(
                 which: which,
                 contents: contents,

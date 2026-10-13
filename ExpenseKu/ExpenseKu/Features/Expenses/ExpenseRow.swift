@@ -19,6 +19,7 @@ struct ExpenseRow: View {
     var dateLabel: String? = nil
 
     @Environment(\.planOrigins) private var planOrigins
+    @Environment(\.showsPlanOriginTags) private var showsPlanOriginTags
 
     private var categoryName: String { expense.category?.name ?? "Uncategorized" }
 
@@ -43,7 +44,7 @@ struct ExpenseRow: View {
                     note: expense.note,
                     accountName: expense.account?.name,
                     peopleNames: peopleNames,
-                    origin: planOrigins.origin(of: expense)
+                    origin: showsPlanOriginTags ? planOrigins.origin(of: expense) : nil
                 )
             }
 

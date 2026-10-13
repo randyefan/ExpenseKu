@@ -22,6 +22,8 @@ enum PlanAction {
 
     case addPlanItem
     case editPlanItem(PlanItem)
+    /// A tap on an active Envelope row's body (envelope-detail.md §4.1).
+    case openEnvelope(PlanItem)
     /// ＋ on an envelope row: Add Expense, already assigned there (envelope-assignment.md §4.5).
     case addExpense(to: PlanItem)
     /// "Move expenses here…" from the same menu (envelope-assignment.md §4.9).

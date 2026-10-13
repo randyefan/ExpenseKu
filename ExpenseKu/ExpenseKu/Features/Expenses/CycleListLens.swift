@@ -23,6 +23,9 @@ struct CycleListLens<Header: View>: View {
     /// expense-filter.md §4.6).
     var emptyNotice: EmptyNotice? = nil
     var onClearFilters: () -> Void = {}
+    /// Non-nil in Select mode: rows check instead of opening, and swipe-to-delete is off.
+    var selection: ExpenseSelection? = nil
+    var onToggle: (Expense) -> Void = { _ in }
     let onSelect: (Expense) -> Void
     let onDelete: (IndexSet, [Expense]) -> Void
     /// The cycle header and lens toggle. They ride inside the list rather than
@@ -48,9 +51,14 @@ struct CycleListLens<Header: View>: View {
             ForEach(dayGroups.enumerated(), id: \.element.id) { index, group in
                 Section {
                     ForEach(group.expenses) { expense in
-                        ExpenseListRow(expense: expense) { onSelect(expense) }
+                        if let selection {
+                            ExpenseListRow(expense: expense,
+                                           selectionMark: .of(expense, in: selection)) { onToggle(expense) }
+                        } else {
+                            ExpenseListRow(expense: expense) { onSelect(expense) }
+                        }
                     }
-                    .onDelete { onDelete($0, group.expenses) }
+                    .onDelete(perform: selection == nil ? { onDelete($0, group.expenses) } : nil)
                 } header: {
                     DayGroupHeader(
                         title: DayLabel.title(group.day, calendar: calendar),

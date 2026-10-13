@@ -22,6 +22,8 @@ enum PlanAction {
 
     case addPlanItem
     case editPlanItem(PlanItem)
+    /// ＋ on an envelope row: Add Expense, already assigned there (envelope-assignment.md §4.5).
+    case addExpense(to: PlanItem)
     /// The owner tapped a row's Done control. What that means depends on the row's
     /// state, which is `DoneCheckState`'s job, not the lens's.
     case tapDoneCheck(PlanItem)

@@ -16,6 +16,11 @@
 //  An envelope with an Account (§7.6) gains one chip line above the bar naming it, and
 //  "in Jago" once the allowance is moved. Without one the row is exactly as before.
 //
+//  ＋ beside the bar adds an expense already assigned here (envelope-assignment.md
+//  §4.5). It is a sibling of the row's Button rather than inside it, for the same
+//  accessibility reason as the lead glyph, and it wears the plan's violet so it does
+//  not read as the toolbar's ＋, which logs an ordinary expense.
+//
 
 import SwiftUI
 
@@ -24,6 +29,9 @@ struct PlanEnvelopeRow: View {
     let progress: EnvelopeProgress?
     let onChooseFunding: (FundMenuEntry) -> Void
     let onSelect: () -> Void
+    let onAddExpense: () -> Void
+
+    private let addSize: CGFloat = 30
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
@@ -57,15 +65,28 @@ struct PlanEnvelopeRow: View {
                         .lineLimit(1)
                     }
 
-                    if let progress {
-                        EnvelopeBar(progress: progress)
-                    } else {
-                        categoryNames
+                    HStack(spacing: 12) {
+                        if let progress {
+                            EnvelopeBar(progress: progress)
+                        } else {
+                            categoryNames
+                        }
+                        Color.clear.frame(width: addSize, height: 1)
                     }
                 }
                 .contentShape(.rect)
             }
             .buttonStyle(.pressableRow)
+        }
+        .overlay(alignment: .bottomTrailing) {
+            Button("Add expense to \(item.name)", systemImage: "plus", action: onAddExpense)
+                .labelStyle(.iconOnly)
+                .font(.dsCaption.weight(.bold))
+                .foregroundStyle(Theme.plan)
+                .frame(width: addSize, height: addSize)
+                .background(Theme.planWash, in: .circle)
+                .contentShape(.circle)
+                .buttonStyle(.plain)
         }
         .padding(.vertical, 10)
     }

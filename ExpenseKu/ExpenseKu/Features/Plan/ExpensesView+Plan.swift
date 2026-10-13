@@ -32,6 +32,11 @@ extension ExpensesView {
             planSheet = .newPlanItem
         case .editPlanItem(let item):
             planSheet = .editPlanItem(item)
+        case .addExpense(let envelope):
+            newExpense = NewExpensePreset(
+                envelope: envelope,
+                date: EnvelopeAddDate.date(in: cycle, now: .now, calendar: .current)
+            )
         case .tapDoneCheck(let item):
             tapDoneCheck(item)
         case .chooseFunding(let item, let entry):

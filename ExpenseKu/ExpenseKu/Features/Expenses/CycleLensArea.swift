@@ -59,6 +59,8 @@ struct CycleLensArea<Header: View>: View {
     let resolvedDay: Date?
     let onSelect: (Expense) -> Void
     let onDelete: (IndexSet, [Expense]) -> Void
+    let selection: ExpenseSelection?
+    let onToggle: (Expense) -> Void
     /// The cycle header and lens toggle, handed to whichever lens is showing so
     /// they scroll with its content instead of being pinned above it.
     @ViewBuilder let header: Header
@@ -92,6 +94,8 @@ struct CycleLensArea<Header: View>: View {
                             span: cycle.rangeText(calendar: calendar)
                         ),
                         onClearFilters: onClearFilters,
+                        selection: selection,
+                        onToggle: onToggle,
                         onSelect: onSelect,
                         onDelete: onDelete,
                         header: { header }

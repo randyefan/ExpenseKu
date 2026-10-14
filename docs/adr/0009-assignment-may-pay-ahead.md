@@ -52,3 +52,18 @@ cycle is derived from `envelope.plan.cycleStart`.
   Category again in its own cycle.
 - A payday change that re-cuts cycles may turn an own-cycle assignment into a paid-early
   one or an ignored backward one; neither double-counts.
+
+## Amendment — flow U (2026-10-14)
+
+Counting the ticket only in Travelling's bar left both plans' Sisa untouched, so the
+money was set aside twice: free in October's Sisa, still owed by November's payday. A
+paid-early expense now **moves its amount between the two plans**: the own cycle's Sisa
+falls by it in full; the envelope's cycle's Sisa rises by it, capped at the envelope's
+planned amount. Each side shows it as a reconciling row, so Total cost keeps meaning
+Σ planned. Transfer lines and Group shares count the envelope net of the credit. Drift
+is unchanged by the owner's choice: an envelope's whole overspend stays in its own
+cycle's Over plan so far (`docs/prd/envelope-assignment.md` §4.10.10).
+
+ADR-0005 still holds — Sisa subtracts no expense of its own cycle. The paid-early row
+moves *planned* money between two plans; it is derived per read from the assignments and
+never stored.

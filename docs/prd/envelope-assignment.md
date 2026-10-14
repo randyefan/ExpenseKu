@@ -1,8 +1,8 @@
 # PRD — Assigning an expense to an Envelope
 
-Status: Built (flows Q, R, S)
+Status: Draft — flow U design in review (flows Q, R, S built)
 Date: 2026-10-13 · flow Q built the same day; flow R (§4.5, §4.6, §4.8, §4.9) approved and built the same day;
-flow S (§4.10) grilled, approved and built 2026-10-14
+flow S (§4.10) grilled, approved and built 2026-10-14; flow U (§4.10.10) grilled 2026-10-14
 Owner: Randy Efan
 
 Companion documents: `docs/prd/payday-planning.md` (the Envelope this changes, §5.1–5.2),
@@ -386,6 +386,56 @@ cycles are headed. Their header sits above that cycle's day groups.
   includes them, and they count by Category again in their own cycle.
 - Carry-over copies the envelope, never its assignments (§5.4).
 
+#### 4.10.10 Paid early moves money between plans *(flow U)*
+
+Flow S counted the ticket in Travelling's bar but left both plans' **Sisa** alone, so the
+money was set aside twice: October's Sisa still offered the Rp 1.200.000 as free, and
+November still asked its payday for the whole Rp 2.000.000. The owner's reading: the ticket
+was paid with October's money, so November only has to find the rest.
+
+A paid-early expense now **moves its amount from the plan of its own cycle to the plan of
+its envelope's cycle**. Total cost keeps its meaning — Σ of the active items' planned
+amounts — and each side gains one reconciling row on the totals card, between Total cost
+and the Sisa divider. `[→ U1, U2]`
+
+| | Its own cycle (October) | The envelope's cycle (November) |
+|---|---|---|
+| Row | **"Paid early for November"**, negative | **"Paid early in October"**, positive |
+| Amount | Σ of this cycle's paid-early expenses, in full | Σ over envelopes of **min(paid early into it, its planned amount)** |
+| Sisa | `income − cost − paid early out` | `income − cost + paid early in` |
+| Shown when | the amount is above 0 | the amount is above 0 |
+
+`Sisa = Total income − Total cost − paid early out + paid early in`. The cycle header's
+**SISA** headline and the **Over income** strip read the same Sisa: a plan pushed below
+zero by paying ahead shows the strip, as any other.
+
+- **The credit is capped at the envelope.** Rp 2.500.000 paid early into a Rp 2.000.000
+  Travelling credits November Rp 2.000.000; November never gains more than it planned.
+  October is still debited the full Rp 2.500.000 — it is what left October.
+- **Drift is unchanged** — *owner override*: November's **Over plan so far** counts
+  Travelling's whole overspend, paid-early part included (Rp 800.000 for 2,5jt early plus
+  300rb in November), as flow S did. The rupiah over the cap is then reported in both
+  October's Sisa and November's drift; the owner prefers the bar and the strip to agree.
+- **Transfers are net.** An envelope's contribution to its Account's transfer line is its
+  planned amount less the capped credit: Travelling on BCA adds Rp 800.000 to **ke BCA**,
+  not Rp 2.000.000. `[→ U2]`
+- **Group shares are net** the same way, so the bars add up to Total cost less the credit.
+- The envelope row itself is unchanged: planned Rp 2.000.000, its bar
+  "Rp 800.000 left", its caption "Rp 1.200.000 paid early in October" (§4.10.6).
+- **Labels.** The month is the other cycle's title month, wide, as in the caption:
+
+  | Side | One other cycle | Several |
+  |---|---|---|
+  | own cycle | **Paid early for November** | **Paid early for later cycles** |
+  | envelope's cycle | **Paid early in October** | **Paid early** |
+
+- A cycle with **no plan** shows no totals card, so the debit appears nowhere; the
+  envelope's cycle still takes its credit.
+- Deleting the envelope, or reassigning the expense, removes both rows at once — they are
+  derived per read through `EnvelopeClaims`, never stored.
+- The row is not tappable; the envelope's detail (`envelope-detail.md`) lists the
+  expenses.
+
 ---
 
 ## 5. Lifetime
@@ -427,9 +477,13 @@ row carries no tag, like any Outside-plan row. `[→ Q4]`
 
 - **Fixed items** — Done, Funded, Auto, the drift figure and the transfer checklist.
 - **Totals and Sisa** — an Envelope's planned amount is what Total cost reads, as today.
+  *Amended by flow U:* paying ahead adds a reconciling row on each side (§4.10.10);
+  Total cost itself is unchanged.
 - **Insights** charts by Category, Group, Account and Person: the Category stays true.
 - **Search, Month and Person detail** — they show the tags (§5.3) and nothing more.
 - **The expense filter** — no new dimension.
+- *Flow U:* the envelope row, drift, the Funded notice (Fixed items only), the List
+  lens's split and the cycle total.
 - *Flow S:* the schema (no V5), the cycle total, Insights by Category, and the List lens of
   the envelope's cycle, which never lists an expense dated before it.
 
@@ -477,6 +531,18 @@ October's split gains Rp 1.200.000 Outside plan. November's List lens is empty o
 Gathering into November's Travelling on 14 Oct, before the ticket is assigned, lists no
 November expenses and, under **PAID EARLY · OCTOBER 2026**, October's selectable expenses
 — the ticket among them, untagged. `[→ S5]`
+
+With flow U, take October's income as Rp 10.000.000 and Travelling on account BCA:
+
+| | October | November |
+|---|---|---|
+| Totals card | **Paid early for November −Rp 1.200.000**; Sisa Rp 1.200.000 lower | **Paid early in October +Rp 1.200.000**; Sisa Rp 1.200.000 higher |
+| Transfers | — | **ke BCA** counts Travelling as Rp 800.000 |
+| Travelling row | — | unchanged: Rp 2.000.000, "Rp 800.000 left", caption |
+
+Capped case (unit test): Rp 2.500.000 paid early, Rp 300.000 spent in November → October
+−Rp 2.500.000, November +Rp 2.000.000, Travelling "Rp 800.000 over", Over plan so far
+Rp 800.000, ke BCA counts Travelling as Rp 0.
 
 ## 8. Decision log
 
@@ -575,6 +641,24 @@ Settled when the owner approved flow S on 2026-10-14:
 | 49 | In Move expenses here…, only earlier cycles are headed; the envelope's own cycle has no header, as before | `S5` |
 | 50 | The frames shorten meta lines to stay legible; the app truncates as today (#26) | `S3` |
 
+### 8.2 Flow U — paid early moves money between plans
+
+Raised by the owner on 2026-10-14 after living with flow S on a device: a Rp 500.000
+ticket paid early into November's Rp 2.000.000 Travelling left November's Sisa unmoved.
+Grilled the same day; no design asked for, then allowed.
+
+| # | Decision | Drawn in |
+|---|---|---|
+| 51 | Paying ahead lowers what the envelope's cycle must find: its **Sisa** rises by the paid-early amount | `U2` |
+| 52 | The own cycle carries it: its **Sisa** falls by the same amount, so the money is set aside once | `U1` |
+| 53 | Over the envelope's planned amount, the credit is capped; **Over plan so far** still counts the whole overspend — *owner override*, against counting only the envelope cycle's own overspend | — unit test |
+| 54 | Transfer lines and Group shares count the envelope net of its capped credit | `U2` |
+| 55 | Each side shows a reconciling row — "Paid early for ‹Month›" / "Paid early in ‹Month›" — and Total cost stays Σ planned | `U1`, `U2` |
+| Y | The row shows only above Rp 0; several cycles read "for later cycles" / "Paid early" | — unit test |
+| Z | The SISA headline and the Over income strip follow the new Sisa | `U1` |
+| AA | The envelope row, its caption, the Funded notice and the List lens are unchanged | — |
+| AB | Amendment here (§4.10.10) plus an amendment to **ADR-0009** | — |
+
 ## 9. Design traceability
 
 Page `02 · Pages · iPhone`, **Flow Q · Assign an expense to an Envelope**. Components
@@ -609,6 +693,14 @@ lives on `01 · Design System`, group `Cycle plan`, row `Envelope assignment`; S
 | **S3** · List lens, October — the ticket | §4.10.1 Outside plan, §4.10.5 dashed tag |
 | **S4** · Plan lens, November — Travelling | §4.10.1 bar, §4.10.6 caption |
 | **S5** · Move to Travelling — November | §4.10.8 PAID EARLY section |
+
+**Flow U · Paid early moves money between plans**, drawn on page 05 first, with the
+§7.1 sample:
+
+| Frame | Covers |
+|---|---|
+| **U1** · Plan lens, October — totals card | §4.10.10 the debit row, Sisa, SISA headline |
+| **U2** · Plan lens, November — totals card and Transfers | §4.10.10 the credit row, Sisa, net ke BCA |
 
 ### 9.1 Closed during implementation
 

@@ -1,8 +1,8 @@
 # PRD — Assigning an expense to an Envelope
 
-Status: Accepted — flow U (flows Q, R, S built)
+Status: Built (flows Q, R, S, U)
 Date: 2026-10-13 · flow Q built the same day; flow R (§4.5, §4.6, §4.8, §4.9) approved and built the same day;
-flow S (§4.10) grilled, approved and built 2026-10-14; flow U (§4.10.10) grilled and approved 2026-10-14
+flow S (§4.10) grilled, approved and built 2026-10-14; flow U (§4.10.10) grilled, approved and built 2026-10-14
 Owner: Randy Efan
 
 Companion documents: `docs/prd/payday-planning.md` (the Envelope this changes, §5.1–5.2),
@@ -709,7 +709,8 @@ lives on `01 · Design System`, group `Cycle plan`, row `Envelope assignment`; S
 | **S4** · Plan lens, November — Travelling | §4.10.1 bar, §4.10.6 caption |
 | **S5** · Move to Travelling — November | §4.10.8 PAID EARLY section |
 
-**Flow U · Paid early moves money between plans**, drawn on page 05 first, with the
+**Flow U · Paid early moves money between plans**, on page 02 after flow T (drawn on 05
+first), with the
 §7.1 sample:
 
 | Frame | Covers |
@@ -750,3 +751,17 @@ lives on `01 · Design System`, group `Cycle plan`, row `Envelope assignment`; S
 | A long note beside the wider paid-early tag wraps to three lines | Kept: the meta line's existing floor and line limit (#26); the tag never truncates "· Nov" | `ExpenseMetaLine` |
 | The rule, the offer, the labels, the caption and gathering | Pure and tested against §7.1 | `PaidEarlyTests` (14) |
 | Simulator sample | `-seedPlanData paid-early`; on a simulator whose payday is not 25 the dates shift, the rules do not | `DebugPlanSeed` |
+
+### 9.3 Closed during implementation — flow U
+
+| Gap | Answer | Where |
+|---|---|---|
+| Where both sides' figures come from | One pure `PaidEarlyShift`: outgoing through `EnvelopeClaims.paidEarlyTarget(of:)`, incoming from each `EnvelopeProgress` capped at its plan, and the per-envelope credit the transfers and shares subtract | `PaidEarlyShift`, `PlanContents` |
+| Total cost could have absorbed the shift silently | `PlanTotals` keeps `totalCost` Σ planned and carries the shift beside it; `sisa` applies both | `PlanTotals` |
+| A separate "+" Text did not scale with `MoneyText`'s minimum scale factor, so it sat larger than the figure | `MoneyText(showsPlus:)` puts the sign in the same string | `MoneyText`, `PlanTotalsCard` |
+| The transfer row's one-line subtitle truncated the envelope's name ("Travelli…"), the part that explains the figure | It wraps to two lines when it carries a paid-early credit; other subtitles stay one line | `TransferRowView` |
+| The §7.1 sample put Travelling on no account, so ke BCA could not be observed | `-seedPlanData paid-early` puts Travelling on BCA | `DebugPlanSeed` |
+| VoiceOver read the glyph | The arrow is hidden; the row reads "Paid early in October, +Rp 1.200.000" | `PlanTotalsCard` |
+| No new view type | The row is a private helper of `PlanTotalsCard`; the DS `PlanTotals` component's notes describe it, and U1/U2 draw it | `.pen` page 01 |
+| The rules | Pure and tested against §7.1 | `PaidEarlyShiftTests` (10) |
+

@@ -20,16 +20,19 @@ struct MoneyText: View {
     var font: Font = .dsBody
     var color: Color = Theme.text
     var rolls: Bool = false
+    var showsPlus: Bool = false
 
-    init(_ amount: Decimal, font: Font = .dsBody, color: Color = Theme.text, rolls: Bool = false) {
+    init(_ amount: Decimal, font: Font = .dsBody, color: Color = Theme.text, rolls: Bool = false,
+         showsPlus: Bool = false) {
         self.amount = amount
         self.font = font
         self.color = color
         self.rolls = rolls
+        self.showsPlus = showsPlus
     }
 
     var body: some View {
-        Text(amount.formattedIDR())
+        Text((showsPlus && amount > 0 ? "+" : "") + amount.formattedIDR())
             .font(font)
             .bold()
             .monospacedDigit()

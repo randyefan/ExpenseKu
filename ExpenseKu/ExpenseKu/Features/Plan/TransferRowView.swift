@@ -43,7 +43,7 @@ struct TransferRowView: View {
                             Text(subtitle)
                                 .font(.dsCaption)
                                 .foregroundStyle(Theme.textSecondary)
-                                .lineLimit(1)
+                                .lineLimit(row.paidEarly > 0 ? 2 : 1)
                         }
                     }
                     Spacer(minLength: 8)

@@ -88,14 +88,8 @@ struct PlanTotalsCard: View {
                 .font(.dsSubhead)
                 .foregroundStyle(Theme.textSecondary)
             Spacer(minLength: 8)
-            HStack(spacing: 2) {
-                if amount > 0 {
-                    Text(verbatim: "+").font(.dsSubhead).bold()
-                }
-                MoneyText(amount, font: .dsSubhead, color: Theme.textSecondary)
-            }
-            .foregroundStyle(Theme.textSecondary)
-            .layoutPriority(1)
+            MoneyText(amount, font: .dsSubhead, color: Theme.textSecondary, showsPlus: true)
+                .layoutPriority(1)
         }
         .padding(.vertical, 6)
         .accessibilityElement(children: .combine)

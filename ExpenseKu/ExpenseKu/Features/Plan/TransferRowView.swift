@@ -43,7 +43,7 @@ struct TransferRowView: View {
                             Text(subtitle)
                                 .font(.dsCaption)
                                 .foregroundStyle(Theme.textSecondary)
-                                .lineLimit(1)
+                                .lineLimit(row.paidEarly > 0 ? 2 : 1)
                         }
                     }
                     Spacer(minLength: 8)
@@ -58,8 +58,10 @@ struct TransferRowView: View {
     }
 
     private var subtitle: String? {
-        if row.hasAdjustment {
-            return "\(row.adjustment.formattedIDR()) adjustment applied"
+        let adjustment = row.hasAdjustment ? "\(row.adjustment.formattedIDR()) adjustment applied" : nil
+        let parts = [adjustment, row.paidEarlyText].compactMap(\.self)
+        if !parts.isEmpty {
+            return parts.joined(separator: " · ")
         }
         if row.allAuto {
             return "Auto debit — keep this covered"

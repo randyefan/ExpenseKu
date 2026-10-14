@@ -44,7 +44,7 @@ struct CyclePlanLens<Header: View>: View {
                     header
                     if contents.hasPlan {
                         notice
-                        PlanTotalsCard(contents: contents, onAction: onAction)
+                        PlanTotalsCard(contents: contents, payday: payday, calendar: calendar, onAction: onAction)
                     }
                 }
                 .listRowBackground(Color.clear)

@@ -14,6 +14,8 @@ import SwiftUI
 
 struct PlanTotalsCard: View {
     let contents: PlanContents
+    let payday: Int
+    let calendar: Calendar
     let onAction: (PlanAction) -> Void
 
     private var totals: PlanTotals { contents.totals }
@@ -32,6 +34,12 @@ struct PlanTotalsCard: View {
 
                 summaryRow("Total income", totals.totalIncome)
                 summaryRow("Total cost", -totals.totalCost)
+                if let label = totals.paidEarly.outgoingLabel(payday: payday, calendar: calendar) {
+                    paidEarlyRow(label, -totals.paidEarly.outgoing)
+                }
+                if let label = totals.paidEarly.incomingLabel(payday: payday, calendar: calendar) {
+                    paidEarlyRow(label, totals.paidEarly.incoming)
+                }
 
                 Divider().overlay(Theme.hairline).padding(.vertical, 2)
 
@@ -68,5 +76,22 @@ struct PlanTotalsCard: View {
                 .layoutPriority(1)
         }
         .padding(.vertical, 6)
+    }
+
+    private func paidEarlyRow(_ title: String, _ amount: Decimal) -> some View {
+        HStack(spacing: 6) {
+            Image(systemName: "arrow.forward")
+                .font(.dsCaption.weight(.semibold))
+                .foregroundStyle(Theme.plan)
+                .accessibilityHidden(true)
+            Text(title)
+                .font(.dsSubhead)
+                .foregroundStyle(Theme.textSecondary)
+            Spacer(minLength: 8)
+            MoneyText(amount, font: .dsSubhead, color: Theme.textSecondary, showsPlus: true)
+                .layoutPriority(1)
+        }
+        .padding(.vertical, 6)
+        .accessibilityElement(children: .combine)
     }
 }

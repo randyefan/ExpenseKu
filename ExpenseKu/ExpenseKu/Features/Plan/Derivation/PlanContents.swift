@@ -47,10 +47,18 @@ nonisolated struct PlanContents {
             cycle: cycle
         )
         envelopesByItem = Dictionary(uniqueKeysWithValues: envelopes.map { ($0.itemID, $0) })
+        let paidEarly = plan == nil ? .none : PaidEarlyShift(
+            cycleExpenses: cycleExpenses,
+            claims: EnvelopeClaims(envelopes: split.active.filter(\.isEnvelope), cycle: cycle),
+            envelopes: envelopes
+        )
 
-        totals = PlanTotals(activeItems: split.active, incomeLines: incomeLines, envelopes: envelopes)
-        transfers = TransferLines.rows(activeItems: split.active, lines: plan?.transferLines ?? [])
-        groupShares = GroupShares.rows(activeItems: split.active, totalIncome: totals.totalIncome)
+        totals = PlanTotals(activeItems: split.active, incomeLines: incomeLines, envelopes: envelopes,
+                            paidEarly: paidEarly)
+        transfers = TransferLines.rows(activeItems: split.active, lines: plan?.transferLines ?? [],
+                                       paidEarly: paidEarly)
+        groupShares = GroupShares.rows(activeItems: split.active, totalIncome: totals.totalIncome,
+                                       paidEarly: paidEarly)
         review = ReviewState(cycleItems: split.active)
         funded = FundedSummary(activeItems: split.active)
     }

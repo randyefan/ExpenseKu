@@ -277,7 +277,8 @@ enum DebugPlanSeed {
         let next = cycle.next(payday: Payday.current, calendar: .current)
         guard let nextPlan = PlanCarryOver.makePlan(for: next, from: [plan], in: context) else { return }
         let travelling = PlanItem(name: "Travelling", amount: 2_000_000, kind: .envelope,
-                                  createdAt: .now.addingTimeInterval(400), plan: nextPlan)
+                                  createdAt: .now.addingTimeInterval(400), plan: nextPlan,
+                                  account: accounts["BCA"])
         context.insert(travelling)
 
         let existing = existingEntity(Category.self, matching: "Transport", in: context)

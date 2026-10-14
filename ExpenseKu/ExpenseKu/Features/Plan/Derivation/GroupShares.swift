@@ -22,14 +22,15 @@ import Foundation
 nonisolated enum GroupShares {
     static let ungroupedName = "Ungrouped"
 
-    static func rows(activeItems: [PlanItem], totalIncome: Decimal) -> [GroupShare] {
+    static func rows(activeItems: [PlanItem], totalIncome: Decimal,
+                     paidEarly: PaidEarlyShift = .none) -> [GroupShare] {
         var planned: [String: Decimal] = [:]
         var appearance: [String: (colorHex: String?, symbol: String?)] = [:]
 
         for item in activeItems {
             let group = self.group(of: item)
             let key = group?.name ?? ungroupedName
-            planned[key, default: 0] += item.amount
+            planned[key, default: 0] += item.amount - paidEarly.credit(for: item)
             if let group, appearance[key] == nil {
                 appearance[key] = (group.colorHex, group.resolvedSymbol)
             }

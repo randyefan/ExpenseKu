@@ -58,8 +58,10 @@ struct TransferRowView: View {
     }
 
     private var subtitle: String? {
-        if row.hasAdjustment {
-            return "\(row.adjustment.formattedIDR()) adjustment applied"
+        let adjustment = row.hasAdjustment ? "\(row.adjustment.formattedIDR()) adjustment applied" : nil
+        let parts = [adjustment, row.paidEarlyText].compactMap(\.self)
+        if !parts.isEmpty {
+            return parts.joined(separator: " · ")
         }
         if row.allAuto {
             return "Auto debit — keep this covered"

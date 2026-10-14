@@ -1,8 +1,8 @@
 # PRD — Assigning an expense to an Envelope
 
-Status: Draft — flow U design in review (flows Q, R, S built)
+Status: Accepted — flow U (flows Q, R, S built)
 Date: 2026-10-13 · flow Q built the same day; flow R (§4.5, §4.6, §4.8, §4.9) approved and built the same day;
-flow S (§4.10) grilled, approved and built 2026-10-14; flow U (§4.10.10) grilled 2026-10-14
+flow S (§4.10) grilled, approved and built 2026-10-14; flow U (§4.10.10) grilled and approved 2026-10-14
 Owner: Randy Efan
 
 Companion documents: `docs/prd/payday-planning.md` (the Envelope this changes, §5.1–5.2),
@@ -395,8 +395,10 @@ was paid with October's money, so November only has to find the rest.
 
 A paid-early expense now **moves its amount from the plan of its own cycle to the plan of
 its envelope's cycle**. Total cost keeps its meaning — Σ of the active items' planned
-amounts — and each side gains one reconciling row on the totals card, between Total cost
-and the Sisa divider. `[→ U1, U2]`
+amounts — and each side gains one reconciling row on the totals card, directly under Total cost
+and above the Sisa divider: a violet `arrow.forward` glyph, then the label and amount
+styled exactly as Total cost (subhead, secondary, amount bold), with a **−** on the own
+cycle and a **+** on the envelope's cycle — no green or red. `[→ U1, U2]`
 
 | | Its own cycle (October) | The envelope's cycle (November) |
 |---|---|---|
@@ -418,7 +420,10 @@ zero by paying ahead shows the strip, as any other.
   October's Sisa and November's drift; the owner prefers the bar and the strip to agree.
 - **Transfers are net.** An envelope's contribution to its Account's transfer line is its
   planned amount less the capped credit: Travelling on BCA adds Rp 800.000 to **ke BCA**,
-  not Rp 2.000.000. `[→ U2]`
+  not Rp 2.000.000. The transfer row's second line says why, in the adjustment line's
+  place: **"Rp 1.200.000 paid early into Travelling"**; several envelopes on one account
+  read **"Rp X paid early"**. With a manual adjustment too, both share the line, adjustment
+  first, joined by " · ". `[→ U3]`
 - **Group shares are net** the same way, so the bars add up to Total cost less the credit.
 - The envelope row itself is unchanged: planned Rp 2.000.000, its bar
   "Rp 800.000 left", its caption "Rp 1.200.000 paid early in October" (§4.10.6).
@@ -537,7 +542,7 @@ With flow U, take October's income as Rp 10.000.000 and Travelling on account BC
 | | October | November |
 |---|---|---|
 | Totals card | **Paid early for November −Rp 1.200.000**; Sisa Rp 1.200.000 lower | **Paid early in October +Rp 1.200.000**; Sisa Rp 1.200.000 higher |
-| Transfers | — | **ke BCA** counts Travelling as Rp 800.000 |
+| Transfers | — | **ke BCA** counts Travelling as Rp 800.000, second line "Rp 1.200.000 paid early into Travelling" |
 | Travelling row | — | unchanged: Rp 2.000.000, "Rp 800.000 left", caption |
 
 Capped case (unit test): Rp 2.500.000 paid early, Rp 300.000 spent in November → October
@@ -652,12 +657,22 @@ Grilled the same day; no design asked for, then allowed.
 | 51 | Paying ahead lowers what the envelope's cycle must find: its **Sisa** rises by the paid-early amount | `U2` |
 | 52 | The own cycle carries it: its **Sisa** falls by the same amount, so the money is set aside once | `U1` |
 | 53 | Over the envelope's planned amount, the credit is capped; **Over plan so far** still counts the whole overspend — *owner override*, against counting only the envelope cycle's own overspend | — unit test |
-| 54 | Transfer lines and Group shares count the envelope net of its capped credit | `U2` |
+| 54 | Transfer lines and Group shares count the envelope net of its capped credit | `U3` |
 | 55 | Each side shows a reconciling row — "Paid early for ‹Month›" / "Paid early in ‹Month›" — and Total cost stays Σ planned | `U1`, `U2` |
 | Y | The row shows only above Rp 0; several cycles read "for later cycles" / "Paid early" | — unit test |
 | Z | The SISA headline and the Over income strip follow the new Sisa | `U1` |
 | AA | The envelope row, its caption, the Funded notice and the List lens are unchanged | — |
 | AB | Amendment here (§4.10.10) plus an amendment to **ADR-0009** | — |
+
+Settled when the owner approved flow U on 2026-10-14:
+
+| # | Decision | Drawn in |
+|---|---|---|
+| 56 | The reconciling row carries a violet `arrow.forward`, as the paid-early tag does; otherwise it is styled as Total cost | `U1`, `U2` |
+| 57 | It sits directly under Total cost, above the Sisa divider | `U1`, `U2` |
+| 58 | Signs only: **−** own cycle, **+** envelope's cycle, both in secondary | `U1`, `U2` |
+| 59 | The transfer row explains the net figure in its second line, sharing it with an adjustment | `U3` |
+| 60 | The transfers get their own frame, U3 | `U3` |
 
 ## 9. Design traceability
 
@@ -700,7 +715,8 @@ lives on `01 · Design System`, group `Cycle plan`, row `Envelope assignment`; S
 | Frame | Covers |
 |---|---|
 | **U1** · Plan lens, October — totals card | §4.10.10 the debit row, Sisa, SISA headline |
-| **U2** · Plan lens, November — totals card and Transfers | §4.10.10 the credit row, Sisa, net ke BCA |
+| **U2** · Plan lens, November — totals card and Travelling | §4.10.10 the credit row, Sisa, the unchanged envelope row |
+| **U3** · Payday, November — transfers | §4.10.10 net ke BCA and its second line |
 
 ### 9.1 Closed during implementation
 

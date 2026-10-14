@@ -34,14 +34,18 @@ nonisolated struct PlanTotals: Equatable {
     let totalCost: Decimal
     /// Σ(actual − planned) over completed Fixed items, plus Σ envelope overspend.
     let drift: Decimal
+    /// Planned money moved by paying ahead: out of this plan, and back into it (§4.10.10).
+    var paidEarly: PaidEarlyShift = .none
 
     /// What the owner is actually looking for. Can go negative; nothing is blocked.
-    var sisa: Decimal { totalIncome - totalCost }
+    var sisa: Decimal { totalIncome - totalCost - paidEarly.outgoing + paidEarly.incoming }
 
     var showsDrift: Bool { drift > 0 }
     var showsOverIncome: Bool { sisa < 0 }
 
-    init(activeItems: [PlanItem], incomeLines: [IncomeLine], envelopes: [EnvelopeProgress]) {
+    init(activeItems: [PlanItem], incomeLines: [IncomeLine], envelopes: [EnvelopeProgress],
+         paidEarly: PaidEarlyShift = .none) {
+        self.paidEarly = paidEarly
         totalIncome = incomeLines.reduce(Decimal(0)) { $0 + $1.amount }
         totalCost = activeItems.reduce(Decimal(0)) { $0 + $1.amount }
 

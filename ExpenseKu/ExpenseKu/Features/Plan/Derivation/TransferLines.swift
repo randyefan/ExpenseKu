@@ -31,15 +31,23 @@ nonisolated enum TransferLines {
     /// One row per account with money against it, largest first. An Envelope
     /// contributes through its optional Account like any Fixed item (PRD §7.6);
     /// dormant items are not in this cycle's plan and never contribute.
-    static func rows(activeItems: [PlanItem], lines: [TransferLine]) -> [TransferRow] {
+    static func rows(activeItems: [PlanItem], lines: [TransferLine],
+                     paidEarly: PaidEarlyShift = .none) -> [TransferRow] {
         var planned: [PersistentIdentifier: Decimal] = [:]
+        var credited: [PersistentIdentifier: Decimal] = [:]
+        var creditedNames: [PersistentIdentifier: [String]] = [:]
         var names: [PersistentIdentifier: String] = [:]
         var allAuto: [PersistentIdentifier: Bool] = [:]
 
         for item in activeItems {
             guard let account = item.account else { continue }
             let id = account.persistentModelID
-            planned[id, default: 0] += item.amount
+            let credit = paidEarly.credit(for: item)
+            planned[id, default: 0] += item.amount - credit
+            if credit > 0 {
+                credited[id, default: 0] += credit
+                creditedNames[id, default: []].append(item.name)
+            }
             names[id] = account.name
             allAuto[id] = (allAuto[id] ?? true) && item.isAuto
         }
@@ -59,7 +67,9 @@ nonisolated enum TransferLines {
                 planned: amount,
                 adjustment: adjustments[id]?.adjustment ?? 0,
                 hasTransferred: adjustments[id]?.hasTransferred ?? false,
-                allAuto: allAuto[id] ?? false
+                allAuto: allAuto[id] ?? false,
+                paidEarly: credited[id] ?? 0,
+                paidEarlyEnvelopes: creditedNames[id] ?? []
             )
         }
         .sorted { a, b in
@@ -86,10 +96,22 @@ nonisolated struct TransferRow: Identifiable, Equatable {
     /// Every contributing item is Auto, so the row reads "keep this covered" rather
     /// than "send this". An Envelope is never Auto, so one on the line makes it "send".
     let allAuto: Bool
+    /// The envelopes' capped paid-early credit already taken off `planned` (§4.10.10).
+    var paidEarly: Decimal = 0
+    var paidEarlyEnvelopes: [String] = []
 
     var id: PersistentIdentifier { accountID }
 
     /// What the owner actually moves.
     var transfer: Decimal { planned + adjustment }
     var hasAdjustment: Bool { adjustment != 0 }
+
+    /// "Rp 1.200.000 paid early into Travelling"; several envelopes drop the name.
+    var paidEarlyText: String? {
+        guard paidEarly > 0 else { return nil }
+        guard paidEarlyEnvelopes.count == 1, let name = paidEarlyEnvelopes.first else {
+            return "\(paidEarly.formattedIDR()) paid early"
+        }
+        return "\(paidEarly.formattedIDR()) paid early into \(name)"
+    }
 }

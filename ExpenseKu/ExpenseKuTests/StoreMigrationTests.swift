@@ -16,6 +16,11 @@
 //  commit before V4), with one item Funded and one more expense: what a 1.2 install
 //  holds before envelope assignment arrives.
 //
+//  `Fixtures/PlanV4.store` is the V3 fixture opened and written by the V4 code (the
+//  commit before V5), with Nasi Padang assigned to Hidup, a Travelling envelope in the
+//  October plan holding a ticket paid early from September, and one expense marked No
+//  envelope: what a 1.3 install holds before set-aside arrives.
+//
 //  Every test opens a *copy*: SwiftData migrates in place, and the fixture has to stay
 //  a pre-change store for the next run.
 //
@@ -55,7 +60,7 @@ nonisolated final class StoreMigrationTests: XCTestCase {
     /// Opened the way `StoreBootstrap` opens the real store, minus CloudKit.
     @MainActor
     private func open(_ url: URL) throws -> ModelContainer {
-        let schema = Schema(versionedSchema: ExpenseKuSchemaV4.self)
+        let schema = Schema(versionedSchema: ExpenseKuSchemaV5.self)
         let config = ModelConfiguration(schema: schema, url: url, cloudKitDatabase: .none)
         return try ModelContainer(for: schema, migrationPlan: ExpenseKuMigrationPlan.self,
                                   configurations: [config])
@@ -221,5 +226,52 @@ nonisolated final class StoreMigrationTests: XCTestCase {
         let nasi = try XCTUnwrap(try context.fetch(FetchDescriptor<Expense>()).first { $0.note == "Nasi Padang" })
         XCTAssertEqual(nasi.envelope?.name, "Hidup")
         XCTAssertFalse(nasi.isOutsideEnvelopes)
+    }
+
+    // MARK: - V4 → V5
+
+    /// **The V4 store opens**, every assignment intact, and nothing arrives set aside.
+    @MainActor
+    func testAV4StoreOpensWithItsAssignmentsAndNothingSetAside() throws {
+        let context = ModelContext(try open(try copyOfStore("PlanV4")))
+        let (september, october) = try plans(in: context)
+
+        let all = try context.fetch(FetchDescriptor<PlanItem>())
+        XCTAssertEqual(all.count, 13)
+        XCTAssertTrue(all.allSatisfy { !$0.isSetAside && $0.setAsideTarget == nil && !$0.isSetAsideMoved })
+        XCTAssertTrue(all.allSatisfy { ($0.setAsideSources ?? []).isEmpty })
+
+        let expenses = try context.fetch(FetchDescriptor<Expense>())
+        XCTAssertEqual(expenses.count, 5)
+        XCTAssertEqual(expenses.first { $0.note == "Nasi Padang" }?.envelope?.name, "Hidup")
+        XCTAssertEqual(expenses.first { $0.note == "Tiket KAI" }?.envelope?.name, "Travelling")
+        XCTAssertEqual(expenses.count(where: \.isOutsideEnvelopes), 1)
+
+        let travelling = try XCTUnwrap(items(in: context, plan: october)["Travelling"])
+        XCTAssertEqual(travelling.kind, .envelope)
+        XCTAssertEqual(PlanItemState.of(try XCTUnwrap(items(in: context, plan: september)["Kirim buat Ibu"])), .funded)
+    }
+
+    /// Once migrated, a set-aside item keeps its target and its tick, and the store opens again.
+    @MainActor
+    func testTheMigratedV4StoreKeepsASetAsideAcrossRelaunches() throws {
+        let url = try copyOfStore("PlanV4")
+        do {
+            let context = ModelContext(try open(url))
+            let (september, october) = try plans(in: context)
+            let travelling = try XCTUnwrap(items(in: context, plan: october)["Travelling"])
+            let line = PlanItem(name: "Travelling", amount: 500_000, kind: .setAside, plan: september)
+            context.insert(line)
+            line.setAsideTarget = travelling
+            line.isSetAsideMoved = true
+            try context.save()
+        }
+
+        let context = ModelContext(try open(url))
+        let (september, _) = try plans(in: context)
+        let line = try XCTUnwrap((september.items ?? []).first(where: \.isSetAside))
+        XCTAssertEqual(line.setAsideTarget?.name, "Travelling")
+        XCTAssertTrue(line.isSetAsideMoved)
+        XCTAssertEqual(SetAside.target(of: line)?.name, "Travelling")
     }
 }

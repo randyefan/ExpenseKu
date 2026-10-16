@@ -19,7 +19,7 @@ import XCTest
 
 @MainActor
 func makeInMemoryContext() throws -> ModelContext {
-    let schema = Schema(versionedSchema: ExpenseKuSchemaV4.self)
+    let schema = Schema(versionedSchema: ExpenseKuSchemaV5.self)
     let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true, cloudKitDatabase: .none)
     return ModelContext(try ModelContainer(for: schema, configurations: [config]))
 }

@@ -4,9 +4,8 @@
 //
 //  The Expenses tab and the app's home surface. The primary lens is the owner's
 //  pay cycle (ADR-0004): one cycle at a time, anchored to the Monthly Start Date,
-//  paged with < / > and sub-grouped by day. Uses NavigationSplitView so it adapts
-//  per device (design.md §1): list + detail-pane editing on iPad/Mac, a collapsed
-//  push on iPhone. Add is always a sheet for the fast logging flow (design.md §2).
+//  paged with < / > and sub-grouped by day. One column on every device (ADR-0011):
+//  on iPad it centres at a readable width, and both add and edit open as sheets.
 //
 //  Within the cycle the owner picks one of three lenses with the List/Month/Plan
 //  toggle: the day-grouped list (default), the calendar grid (CycleCalendar.swift), or
@@ -32,7 +31,6 @@ struct ExpensesView: View {
     enum Lens: Hashable { case list, calendar, plan }
 
     @Environment(\.modelContext) var context
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Query(sort: \Expense.date, order: .reverse) private var expenses: [Expense]
     /// Feeds the search Category chip. Sorted by name so the menu is stable.
     @Query(sort: \Category.name) private var categories: [Category]
@@ -98,13 +96,6 @@ struct ExpensesView: View {
 
     private var calendar: Calendar { .current }
 
-    /// On compact width (iPhone) the split view would push the editor as a full
-    /// page; there we present editing as a bottom sheet instead. iPad keeps
-    /// the detail-pane editing (design.md §1).
-    var editsInSheet: Bool {
-        horizontalSizeClass == .compact
-    }
-
     /// Driven by the text, not by `@Environment(\.isSearching)`: the rule is "an
     /// empty query shows the cycle", which is a statement about what was typed,
     /// not about where focus is. `isSearching` is also only readable inside a
@@ -156,7 +147,7 @@ struct ExpensesView: View {
         } ?? filteredContents
         let calendarGrid = cycleCalendar(for: cycle, expenses: shownContents.expenses, calendar: calendar)
 
-        NavigationSplitView {
+        NavigationStack {
             ZStack {
                 Theme.bg.ignoresSafeArea()
                 // Header + arrows stay even with no expenses at all (home-empty.png);
@@ -331,7 +322,7 @@ struct ExpensesView: View {
             .sheet(isPresented: $showingFilter) {
                 FilterSheet(filter: $filter, planFilter: $planFilter, catalog: catalog)
             }
-            .sheet(item: editsInSheet ? $selection : .constant(nil), onDismiss: returnToEnvelopeDetail) { expense in
+            .sheet(item: $selection, onDismiss: returnToEnvelopeDetail) { expense in
                 NavigationStack {
                     ExpenseEditorView(editing: expense, onFinish: { selection = nil })
                 }
@@ -400,17 +391,6 @@ struct ExpensesView: View {
                 }
             }
             #endif
-        } detail: {
-            if let selection, !editsInSheet {
-                ExpenseEditorView(editing: selection, onFinish: { self.selection = nil })
-                    .id(selection.persistentModelID)
-            } else {
-                EmptyStateView(
-                    title: "No Expense Selected",
-                    systemImage: "sidebar.right",
-                    message: "Select an expense to view or edit it."
-                )
-            }
         }
         // A level above the editors: stacked presentation modifiers do not all fire,
         // and this one was swallowed behind them.

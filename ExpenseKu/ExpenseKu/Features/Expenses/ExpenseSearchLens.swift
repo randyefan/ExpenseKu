@@ -29,6 +29,7 @@ struct ExpenseSearchLens: View {
                 categoryName: $categoryName,
                 range: $range
             )
+            .readableColumn()
 
             if results.isEmpty {
                 EmptyStateView(
@@ -38,6 +39,7 @@ struct ExpenseSearchLens: View {
                 )
             } else {
                 ExpenseSearchSummary(count: results.count, total: results.total)
+                    .readableColumn()
 
                 List {
                     ForEach(results.expenses) { expense in
@@ -52,7 +54,7 @@ struct ExpenseSearchLens: View {
                 }
                 .listStyle(.insetGrouped)
                 .listSectionSpacing(.compact)
-                .contentMargins(.horizontal, Metric.screenPadding, for: .scrollContent)
+                .readableListMargins()
                 .scrollContentBackground(.hidden)
                 .background(Theme.bg)
             }

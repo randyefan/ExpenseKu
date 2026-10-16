@@ -22,7 +22,7 @@ extension View {
             .listStyle(.insetGrouped)
             .listSectionSpacing(.compact)
             .environment(\.defaultMinListHeaderHeight, 0)
-            .contentMargins(.horizontal, Metric.screenPadding, for: .scrollContent)
+            .readableListMargins()
             .contentMargins(.top, 0, for: .scrollContent)
             .scrollContentBackground(.hidden)
             .background(Theme.bg)

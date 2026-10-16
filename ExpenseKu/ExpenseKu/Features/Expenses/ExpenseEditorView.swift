@@ -15,11 +15,12 @@ import SwiftData
 struct ExpenseEditorView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     /// nil = adding a new expense; non-nil = editing an existing one.
     let editing: Expense?
     /// Called after save/cancel/delete. When nil, the view dismisses itself
-    /// (sheet or pushed presentation); a split-view detail pane passes a closure
+    /// (sheet or pushed presentation); the Expenses tab's edit sheet passes a closure
     /// that clears its selection instead.
     let onFinish: (() -> Void)?
 
@@ -43,6 +44,7 @@ struct ExpenseEditorView: View {
 
     @FocusState private var notesFocused: Bool
     @State private var scrollPosition = ScrollPosition()
+    @State private var formHeight: CGFloat?
 
     /// `envelope` and `date` preset a new expense from ＋ on an envelope row (frame Q5).
     init(editing: Expense? = nil, envelope: PlanItem? = nil, date: Date? = nil,
@@ -85,6 +87,10 @@ struct ExpenseEditorView: View {
             envelope: envelopeChoice
         )
     }
+
+    /// On a tall iPad pane a bottom-docked keypad sits a hand's width below the rows it
+    /// fills, so there the form shrinks to its content and the keypad follows it.
+    private var keypadFollowsForm: Bool { horizontalSizeClass == .regular }
 
     private var hasChanges: Bool { pristine.map { $0 != draft } ?? false }
 
@@ -163,6 +169,12 @@ struct ExpenseEditorView: View {
             .scrollDismissesKeyboard(.interactively)
             .dismissesKeyboardOnOutsideTap()
             .scrollPosition($scrollPosition)
+            .onScrollGeometryChange(for: CGFloat.self) { geometry in
+                geometry.contentSize.height + geometry.contentInsets.top + geometry.contentInsets.bottom
+            } action: { _, height in
+                formHeight = height
+            }
+            .frame(maxHeight: keypadFollowsForm ? formHeight ?? .infinity : .infinity)
             .onChange(of: date) {
                 envelopeChoice = envelopeChoice.kept(among: envelopeOptions.envelopes)
             }
@@ -182,8 +194,14 @@ struct ExpenseEditorView: View {
                     onDelete: deleteExpense
                 )
             }
+
+            if keypadFollowsForm {
+                Spacer(minLength: 0)
+            }
         }
+        .readableColumn()
         .background(Theme.bg)
+        .presentationSizing(.page)
         .navigationTitle(editing == nil ? "Add Expense" : "Edit Expense")
         .navigationBarTitleDisplayMode(.inline)
         .animation(.easeInOut(duration: 0.2), value: notesFocused)

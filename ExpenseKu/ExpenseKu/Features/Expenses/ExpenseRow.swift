@@ -6,6 +6,10 @@
 //  a single grey meta line (note · account · companions), and the bold amount
 //  right-aligned with monospaced digits.
 //
+//  A plan tag gets a line of its own above the category (envelope-assignment.md §4.11):
+//  beside the meta line it took the row's middle and squeezed a long note into a narrow
+//  column of wrapped lines.
+//
 //  Search results set `dateLabel` because they span years and each row has to say
 //  when it happened; the cycle list and calendar leave it nil, where the day card's
 //  own header already answers that.
@@ -25,6 +29,10 @@ struct ExpenseRow: View {
 
     private var peopleNames: String { CompanionNames.phrase(expense.people) }
 
+    private var origin: PlanOrigin? {
+        showsPlanOriginTags ? planOrigins.origin(of: expense) : nil
+    }
+
     var body: some View {
         HStack(spacing: 12) {
             if let category = expense.category {
@@ -34,6 +42,11 @@ struct ExpenseRow: View {
             }
 
             VStack(alignment: .leading, spacing: 2) {
+                if let origin {
+                    PlanOriginTag(origin: origin)
+                        .padding(.bottom, 2)
+                }
+
                 Text(categoryName)
                     .font(.dsBody)
                     .bold()
@@ -43,8 +56,7 @@ struct ExpenseRow: View {
                 ExpenseMetaLine(
                     note: expense.note,
                     accountName: expense.account?.name,
-                    peopleNames: peopleNames,
-                    origin: showsPlanOriginTags ? planOrigins.origin(of: expense) : nil
+                    peopleNames: peopleNames
                 )
             }
 

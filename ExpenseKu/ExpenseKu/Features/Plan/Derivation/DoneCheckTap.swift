@@ -23,11 +23,17 @@ nonisolated enum DoneCheckTap: Equatable {
 
     static func of(_ item: PlanItem) -> DoneCheckTap {
         let state = DoneCheckState.state(for: item)
+        if item.isSetAside {
+            let target = SetAside.target(of: item)?.name
+            return state == .setAsideMoved
+                ? .menu([.setAsideUndo(hasAccount: item.account != nil)])
+                : .menu([.setAsideMoved(account: item.account?.name, target: target)])
+        }
         guard let account = item.account?.name else {
             switch state {
             case .done, .autoPosted: return .untick
             case .todo, .funded: return .confirmDone
-            case .auto, .autoFunded, .envelope, .envelopeFunded: return .none
+            case .auto, .autoFunded, .envelope, .envelopeFunded, .setAside, .setAsideMoved: return .none
             }
         }
         switch state {
@@ -38,6 +44,7 @@ nonisolated enum DoneCheckTap: Equatable {
         case .autoFunded: return .menu([.notCovered])
         case .envelope: return .menu([.moved(account: account)])
         case .envelopeFunded: return .menu([.notMoved])
+        case .setAside, .setAsideMoved: return .none
         }
     }
 }

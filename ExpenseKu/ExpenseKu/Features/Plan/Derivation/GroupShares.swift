@@ -23,14 +23,15 @@ nonisolated enum GroupShares {
     static let ungroupedName = "Ungrouped"
 
     static func rows(activeItems: [PlanItem], totalIncome: Decimal,
-                     paidEarly: PaidEarlyShift = .none) -> [GroupShare] {
+                     paidEarly: PaidEarlyShift = .none, setAside: SetAsideShift = .none) -> [GroupShare] {
         var planned: [String: Decimal] = [:]
         var appearance: [String: (colorHex: String?, symbol: String?)] = [:]
 
         for item in activeItems {
             let group = self.group(of: item)
             let key = group?.name ?? ungroupedName
-            planned[key, default: 0] += item.amount - paidEarly.credit(for: item)
+            planned[key, default: 0] += TransferLines.net(item, paidEarly: paidEarly.credit(for: item),
+                                                          setAside: setAside.credit(for: item))
             if let group, appearance[key] == nil {
                 appearance[key] = (group.colorHex, group.resolvedSymbol)
             }
@@ -57,8 +58,10 @@ nonisolated enum GroupShares {
     }
 
     /// The Group an item rolls up into. A Fixed item inherits its Category's; an
-    /// Envelope takes the one most of its categories share — see the file header.
+    /// Envelope takes the one most of its categories share — see the file header. A
+    /// set-aside line counts in its target envelope's (set-aside.md §4.5).
     static func group(of item: PlanItem) -> CategoryGroup? {
+        if item.isSetAside { return SetAside.target(of: item).flatMap(group(of:)) }
         guard item.isEnvelope else { return item.category?.group }
 
         var tally: [String: (group: CategoryGroup, count: Int)] = [:]

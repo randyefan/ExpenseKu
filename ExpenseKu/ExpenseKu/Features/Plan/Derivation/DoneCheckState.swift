@@ -31,9 +31,14 @@ nonisolated enum DoneCheckState: Equatable {
     case envelope
     /// An Envelope whose allowance is in its Account — its last state.
     case envelopeFunded
+    /// A set-aside line whose money has not moved yet (set-aside.md §4.4).
+    case setAside
+    /// A set-aside line whose money has moved. Drawn as Done; it created no Expense.
+    case setAsideMoved
 
     static func state(for item: PlanItem) -> DoneCheckState {
         let state = PlanItemState.of(item)
+        if item.isSetAside { return state == .done ? .setAsideMoved : .setAside }
         if item.isEnvelope { return state == .funded ? .envelopeFunded : .envelope }
         if item.isAuto {
             switch state {

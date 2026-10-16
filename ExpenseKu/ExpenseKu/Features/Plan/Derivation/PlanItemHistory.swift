@@ -30,7 +30,7 @@ nonisolated enum PlanItemHistory {
             .filter { $0.persistentModelID != current?.persistentModelID }
             .sorted { $0.cycleStart > $1.cycleStart }
             .compactMap { plan -> (Date, Decimal)? in
-                guard let item = (plan.items ?? []).first(where: { NameKey.normalized($0.name) == key }),
+                guard let item = (plan.items ?? []).first(where: { !$0.isSetAside && NameKey.normalized($0.name) == key }),
                       let expense = item.linkedExpense else { return nil }
                 return (plan.cycleStart, expense.amount)
             }

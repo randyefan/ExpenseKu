@@ -20,6 +20,9 @@ import SwiftData
 
 nonisolated struct EnvelopeDetail {
     let sections: [EnvelopeCycleSection]
+    /// Earlier plans' set-aside lines for this envelope, oldest first (set-aside.md §4.7).
+    /// Money, not spending, so never part of `expenses` or `total`.
+    let setAsideLines: [PlanItem]
 
     init(envelope: PlanItem, claims: EnvelopeClaims, cycleExpenses: [Expense],
          payday: Int, calendar: Calendar) {
@@ -36,6 +39,7 @@ nonisolated struct EnvelopeDetail {
         }
         sections = ([EnvelopeCycleSection(cycle: claims.cycle, isPaidEarly: false, expenses: own)] + earlier)
             .filter { !$0.expenses.isEmpty }
+        setAsideLines = SetAside.sources(into: envelope)
     }
 
     var expenses: [Expense] { sections.flatMap(\.expenses) }

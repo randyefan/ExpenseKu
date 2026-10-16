@@ -18,7 +18,10 @@ nonisolated enum PlanItemState: Equatable {
     case funded
     case done
 
+    /// A set-aside line is never Funded: moving its money is the whole act, so it goes
+    /// straight from Todo to Done (set-aside.md §4.4).
     static func of(_ item: PlanItem) -> PlanItemState {
+        if item.isSetAside { return item.isSetAsideMoved ? .done : .todo }
         if item.isDone { return .done }
         if item.isFunded, item.account != nil { return .funded }
         return .todo

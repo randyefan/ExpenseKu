@@ -17,6 +17,10 @@
 //  arrive through the envelope's own assignments, and `paidEarly` keeps them apart for
 //  the row's caption.
 //
+//  Money set aside for it in earlier plans (set-aside.md §4.6) is not spending and never
+//  fills the bar. It is carried beside it, so the row can say how much reached the
+//  envelope from earlier cycles and how much this cycle still puts in.
+//
 //  An expense that lands in no envelope is simply unbudgeted: it counts in the cycle's
 //  spending as it always has, and toward no envelope. That is a third way real money
 //  escapes Sisa, and it is deliberately unreported (§11.3).
@@ -37,11 +41,14 @@ nonisolated enum EnvelopeSpend {
         return envelopes.map { envelope in
             let early = envelopeClaims.paidEarly(into: envelope)
             let earlyTotal = early.reduce(Decimal(0)) { $0 + $1.amount }
+            let setAside = SetAside.sources(into: envelope)
             return EnvelopeProgress(itemID: envelope.persistentModelID,
                                     planned: envelope.amount,
                                     spent: (spent[envelope.persistentModelID] ?? 0) + earlyTotal,
                                     paidEarly: earlyTotal,
-                                    paidEarlyDates: early.map(\.date))
+                                    paidEarlyDates: early.map(\.date),
+                                    setAside: setAside.reduce(Decimal(0)) { $0 + $1.amount },
+                                    setAsideCycleStarts: setAside.compactMap(\.plan?.cycleStart))
         }
     }
 
@@ -69,6 +76,8 @@ nonisolated struct EnvelopeProgress: Identifiable, Equatable {
     let spent: Decimal
     var paidEarly: Decimal = 0
     var paidEarlyDates: [Date] = []
+    var setAside: Decimal = 0
+    var setAsideCycleStarts: [Date] = []
 
     var id: PersistentIdentifier { itemID }
 
@@ -86,16 +95,34 @@ nonisolated struct EnvelopeProgress: Identifiable, Equatable {
 
     var remainderText: String { "\(remainder.formattedIDR()) \(isOver ? "over" : "left")" }
 
-    /// "Rp 1.200.000 paid early in October" (§4.10.6): the month only when every such
-    /// expense comes from one cycle, nil when there are none.
-    func paidEarlyCaption(payday: Int, calendar: Calendar) -> String? {
-        guard paidEarly > 0 else { return nil }
-        let cycles = Set(paidEarlyDates.map { PayCycle.containing($0, payday: payday, calendar: calendar) })
+    /// The capped credit paid early brings this envelope's plan (envelope-assignment.md
+    /// §4.10.10): never more than it planned.
+    var paidEarlyCredit: Decimal { min(paidEarly, max(planned, 0)) }
+
+    /// Everything that reached the envelope from earlier cycles: expenses paid early into
+    /// it, in full, and money set aside for it (set-aside.md §4.6).
+    var fromEarlier: Decimal { paidEarly + setAside }
+
+    /// What this cycle still puts in — the figure the envelope adds to its transfer line.
+    var ownShare: Decimal { max(0, planned - paidEarlyCredit - setAside) }
+
+    /// "Rp 18.500.000 from earlier", or "… from October" when it all came from one
+    /// cycle; nil when nothing did.
+    func fromEarlierCaption(payday: Int, calendar: Calendar) -> String? {
+        guard fromEarlier > 0 else { return nil }
+        let cycles = Set(paidEarlyDates.map { PayCycle.containing($0, payday: payday, calendar: calendar) }
+            + setAsideCycleStarts.map { PayCycle.containing($0, payday: payday, calendar: calendar) })
         guard cycles.count == 1, let cycle = cycles.first else {
-            return "\(paidEarly.formattedIDR()) paid early"
+            return "\(fromEarlier.formattedIDR()) from earlier"
         }
-        let month = cycle.lastDay(calendar: calendar).formatted(.dateTime.month(.wide))
-        return "\(paidEarly.formattedIDR()) paid early in \(month)"
+        return "\(fromEarlier.formattedIDR()) from \(cycle.lastDay(calendar: calendar).formatted(.dateTime.month(.wide)))"
+    }
+
+    /// "Rp 1.500.000 from December", under the planned amount; drawn only beside the
+    /// from-earlier caption.
+    func ownShareCaption(cycle: PayCycle, calendar: Calendar) -> String? {
+        guard fromEarlier > 0 else { return nil }
+        return "\(ownShare.formattedIDR()) from \(cycle.lastDay(calendar: calendar).formatted(.dateTime.month(.wide)))"
     }
 
     /// Deliberately unclamped — past 1 the bar fills its track and recolours rather

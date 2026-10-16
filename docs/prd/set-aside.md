@@ -1,13 +1,13 @@
 # PRD — Setting money aside for a later envelope
 
-Status: Accepted — design approved 2026-10-17 (flow W)
+Status: Built — design approved and built 2026-10-17 (flow W), schema V5
 Date: 2026-10-17
 Owner: Randy Efan
 
 Companion documents: `docs/prd/payday-planning.md` (the plan this adds a third kind of
 item to), `docs/prd/envelope-assignment.md` §4.10 (Paid early, the mirror image of this),
 `docs/prd/envelope-detail.md` (the sheet that lists it), ADR-0010, `CONTEXT.md`, and
-**`design/ExpenseKu.pen`**, page `05 · Proposals — not built`, **Flow W**. Frame
+**`design/ExpenseKu.pen`**, page `02 · Pages · iPhone`, **Flow W** (moved there from `05 · Proposals` once built; the row options not chosen stay on page 05). Frame
 references appear inline as `[→ W2]`.
 
 ---
@@ -106,7 +106,7 @@ A set-aside row sits in the plan list with the other items and follows the activ
 - **Second line**: "Set aside" in caption-size secondary text, then the Account chip when there is one.
 - **Leading check**: two states (§4.4).
 - A tap on the row opens the item editor, as for every other row.
-- VoiceOver: **"Set aside for Jepang, December, Rp 5.000.000, not moved"** / "…, moved".
+- VoiceOver: the check reads **"Set aside for Jepang, December"**, value "Not moved" / "Moved"; the body reads "Set aside for Jepang, December, Rp 5.000.000, Jago".
 
 ### 4.4 Ticking it
 
@@ -356,7 +356,7 @@ Defaults chosen without asking and confirmed at the gate:
 
 ## 9. Design traceability
 
-Page `05 · Proposals — not built`, **Flow W · Set aside**.
+Page `02 · Pages · iPhone`, **Flow W · Set aside for a later envelope**. Components `PlanSetAsideRow`, `FromEarlierCaption`, `PlanKindToggle · Set aside` and `EnvelopeSetAsideSection` live on `01 · Design System`, group `Cycle plan`, row `Set aside`.
 
 | Frame | Covers |
 |---|---|
@@ -370,3 +370,20 @@ Page `05 · Proposals — not built`, **Flow W · Set aside**.
 | **W8** · October after the delete: the warned row | §4.9 |
 | **W9** · Envelope detail, SET ASIDE section | §4.7 |
 | **W10** · Editor with no later envelope | §4.2 empty case |
+
+### 9.1 Closed during implementation
+
+| Gap | Answer | Where |
+|---|---|---|
+| The menu's subtitle needs the target's month, which the pure tap derivation cannot know without the payday | "Set aside for Jepang", no month; the row above already shows "· Dec" | `FundMenuEntry.setAsideMoved`, frame W2 |
+| Three kind segments wrapped to two lines at 402pt ("Envelop/e", "Set/aside") — found in the simulator | The editor's toggle is compact: 10pt padding and a 5pt icon gap; the lens toggle keeps Label's | `SegmentedToggle.isCompact` |
+| A set-aside row with no Account shrank its amount (MoneyText's minimum scale) — found in the simulator | The amount is fixed-size; the title gives way and truncates | `PlanSetAsideRow` |
+| The row's VoiceOver read "Jepang, · Dec" | An explicit label: "Set aside for Jepang, December, Rp …, Jago" | `PlanSetAsideRow` |
+| The header's done count only counted linked expenses | A moved set-aside line counts as done, as the Status sort shows it | `PlanContents.doneCount` |
+| A set-aside line named like a Fixed item would hijack the editor's "was Rp … in ‹Month›" hint | History skips set-aside lines | `PlanItemHistory` |
+| Where a set-aside line stores its name | The target's name at save, so sorting by Name works; the row always reads the live target | `PlanItemEditorView.save()` |
+| An older build syncing a set-aside line | Reads it as Fixed (the kind's fallback): in its Total cost, no credit, until updated | ADR-0010 |
+| Envelope delete wording with both kinds of dependants | Assigned-expenses sentence first, then the set-aside one | `PlanCopy.deleteItemBody` |
+| Proving the store upgrade | `Fixtures/PlanV4.store`, written by the V4 code before the change; opens with every assignment and nothing set aside | `StoreMigrationTests` |
+| The derivation | Pure and tested against §7's sample, one test per rule | `SetAside`, `SetAsideShift`, `EnvelopeProgress`, `SetAsideTests` |
+

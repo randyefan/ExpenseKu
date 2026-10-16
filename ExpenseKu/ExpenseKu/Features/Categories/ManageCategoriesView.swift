@@ -36,6 +36,7 @@ struct ManageCategoriesView: View {
             .onDelete(perform: delete)
         }
         .listStyle(.insetGrouped)
+        .readableListMargins()
         .scrollContentBackground(.hidden)
         .background(Theme.bg)
         .navigationTitle("Categories")

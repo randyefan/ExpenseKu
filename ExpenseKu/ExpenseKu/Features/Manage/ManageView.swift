@@ -59,6 +59,7 @@ struct ManageView: View {
                         .reveal(1)
                 }
                 .padding(Metric.screenPadding)
+                .readableColumn()
             }
             .background(Theme.bg)
             .navigationBarTitleDisplayMode(.inline)

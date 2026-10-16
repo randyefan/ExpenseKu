@@ -22,9 +22,8 @@ Accounts still carry no balance, and the ledger still only records money going o
 
 ## 2. Hard platform constraints (cannot change)
 - **SwiftUI**, one codebase for **iPhone + iPad + Mac**. Any design must degrade
-  gracefully across all three (compact iPhone, wide iPad/Mac). The main list uses a
-  two-column (list + detail) layout on iPad/Mac and a single column that pushes to a
-  detail on iPhone — keep that adaptivity.
+  gracefully across all three (compact iPhone, wide iPad/Mac). Every tab is a single
+  column; on iPad/Mac it centres at a readable width (ADR-0011).
 - Charts are **Swift Charts** (bar charts).
 - Currency is **Indonesian Rupiah (IDR)**, always whole numbers, e.g. `Rp275,000`.
   Money is right-aligned and uses **monospaced digits** so columns line up. Single
@@ -58,14 +57,13 @@ Assume there is currently **no custom design system** — you are creating one.
   (“· Tarisa, Fadil”); an optional note line. Swipe-to-delete.
 - States: **no expenses at all** (“Tap + to log your first expense”), and **empty cycle**
   (“No expenses this cycle” while the header/arrows stay).
-- iPad/Mac: selecting a row opens an **editor in the right pane** (“No Expense Selected”
-  placeholder when nothing is picked).
+- Selecting a row opens the **editor as a sheet** on every device (ADR-0011).
 
 **C. Transaction Settings** (sheet from the calendar button): a single stepper
 **“Monthly Start Date” (1–31)** — the day the spending cycle resets — with a one-line
 explanation, and a Done button.
 
-**D. Expense editor** (add/edit, shown as a sheet or in the detail pane):
+**D. Expense editor** (add/edit, always shown as a sheet):
 - **Amount** (numeric, auto-focused when adding) and **Date**.
 - **Category** (required — shows “Required” until picked), **Account** (optional — “None”),
   **People** (optional — “None”), each opening a picker.
@@ -112,7 +110,7 @@ Never introduce “income”, “balance”, “budget”, “remaining”, or �
   header (no income/net line), bounded arrows.
 - Keep required-field logic: an expense needs a positive amount and a category to save.
 - Keep an **empty state for every list**.
-- Keep the iPhone-push / iPad-Mac-split adaptivity on the Expenses screen.
+- Keep the Expenses screen one column at a readable width on iPad/Mac (ADR-0011).
 - Don’t design UI that implies out-of-scope features: **no budgets/limits, no income,
   no recurring, no receipt photos, no multi-currency, no bank import, no bill-splitting.**
 

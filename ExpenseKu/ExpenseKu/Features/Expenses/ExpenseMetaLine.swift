@@ -24,7 +24,7 @@ struct ExpenseMetaLine: View {
 
     var body: some View {
         if !parts.isEmpty {
-            Text(parts.joined(separator: " · "))
+            Text(parts.joined(separator: "\u{00A0}· "))
                 .font(.dsCaption)
                 .foregroundStyle(Theme.textSecondary)
                 .lineLimit(6)

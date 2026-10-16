@@ -80,6 +80,7 @@ struct CycleLensArea<Header: View>: View {
                             )
                         }
                         .padding(.horizontal, Metric.screenPadding)
+                        .readableColumn()
                     }
                     .scrollBounceBehavior(.basedOnSize)
                 } else {

@@ -51,9 +51,6 @@ extension ExpensesView {
         case .move(let request):
             envelopeSheet = .move(request)
         case .openExpense(let expense):
-            // On iPad the editor fills the detail pane rather than a sheet, so there is
-            // no dismissal to come back from (§4.6).
-            if !editsInSheet { envelopeDetailVisit = nil }
             selection = expense
         }
     }

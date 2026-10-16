@@ -350,6 +350,10 @@ row is Outside plan.
 
 #### 4.10.6 The envelope row's caption
 
+*Superseded 2026-10-17 by `set-aside.md` §4.6:* the row now has one line for everything
+that reached it from earlier cycles, "→ Rp 1.200.000 from October", and its own cycle's
+share under the planned amount. The table below is the caption as flow S shipped it.
+
 In the envelope's own cycle, an envelope holding paid-early expenses adds a caption line
 under its bar, in secondary text: `[→ S4]`
 

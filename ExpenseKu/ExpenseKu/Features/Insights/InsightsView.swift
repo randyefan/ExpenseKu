@@ -94,6 +94,7 @@ struct InsightsView: View {
                         .reveal(5, trigger: dateRange)
                 }
                 .padding(Metric.screenPadding)
+                .readableColumn()
                 .motion(Motion.snap, value: window)
             }
             .safeAreaInset(edge: .bottom) {

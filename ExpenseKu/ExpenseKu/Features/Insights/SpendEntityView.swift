@@ -77,6 +77,7 @@ struct SpendEntityView: View {
                 }
             }
             .padding(.vertical, Metric.screenPadding)
+            .readableColumn()
             .motion(Motion.settle, value: detail.listed.count)
         }
         .safeAreaInset(edge: .bottom) {

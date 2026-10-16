@@ -46,6 +46,7 @@ struct PeopleLeaderboardView: View {
                 .id(rangeFilter)
             }
             .padding(Metric.screenPadding)
+            .readableColumn()
         }
         .background(Theme.bg)
         .navigationTitle("People leaderboard")

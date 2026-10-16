@@ -125,6 +125,7 @@ struct PersonExpensesView: View {
                 }
             }
             .padding(.vertical, Metric.screenPadding)
+            .readableColumn()
             .motion(Motion.settle, value: listed.count)
         }
         .environment(\.planOrigins, PlanOrigins(plans: plans, payday: Payday.current, calendar: calendar))

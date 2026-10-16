@@ -40,6 +40,9 @@ struct PlanTotalsCard: View {
                 if let label = totals.paidEarly.incomingLabel(payday: payday, calendar: calendar) {
                     paidEarlyRow(label, totals.paidEarly.incoming)
                 }
+                if let label = totals.setAside.incomingLabel(payday: payday, calendar: calendar) {
+                    paidEarlyRow(label, totals.setAside.incoming)
+                }
 
                 Divider().overlay(Theme.hairline).padding(.vertical, 2)
 

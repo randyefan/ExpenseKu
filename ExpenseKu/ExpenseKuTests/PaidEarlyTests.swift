@@ -241,25 +241,28 @@ nonisolated final class PaidEarlyTests: XCTestCase {
         XCTAssertEqual(farAhead.long, "November 2027")
     }
 
-    // MARK: - §4.10.6 The caption
+    // MARK: - §4.10.6 The caption (replaced by set-aside.md §4.6, decision 15)
 
     @MainActor
     func testTheCaptionNamesTheMonthOnlyWhenEveryExpenseComesFromOneCycle() throws {
         let context = try makeInMemoryContext()
         let s = try sample(in: context)
         let travelling = try progress(of: s.travelling, in: s.novPlan, cycle: november, expenses: [])
-        XCTAssertEqual(travelling.paidEarlyCaption(payday: payday, calendar: calendar),
-                       "Rp\u{00A0}1.200.000 paid early in October")
+        XCTAssertEqual(travelling.fromEarlierCaption(payday: payday, calendar: calendar),
+                       "Rp\u{00A0}1.200.000 from October")
+        XCTAssertEqual(travelling.ownShareCaption(cycle: november, calendar: calendar),
+                       "Rp\u{00A0}800.000 from November")
 
         let deposit = Expense(amount: 300_000, date: date(9, 20), note: "DP hotel")
         context.insert(deposit)
         deposit.envelope = s.travelling
         try context.save()
         let both = try progress(of: s.travelling, in: s.novPlan, cycle: november, expenses: [])
-        XCTAssertEqual(both.paidEarlyCaption(payday: payday, calendar: calendar), "Rp\u{00A0}1.500.000 paid early")
+        XCTAssertEqual(both.fromEarlierCaption(payday: payday, calendar: calendar), "Rp\u{00A0}1.500.000 from earlier")
 
         let hidup = try progress(of: s.hidup, in: s.octPlan, cycle: october, expenses: s.october)
-        XCTAssertNil(hidup.paidEarlyCaption(payday: payday, calendar: calendar))
+        XCTAssertNil(hidup.fromEarlierCaption(payday: payday, calendar: calendar))
+        XCTAssertNil(hidup.ownShareCaption(cycle: october, calendar: calendar))
     }
 
     // MARK: - §4.10.8 Move expenses here…

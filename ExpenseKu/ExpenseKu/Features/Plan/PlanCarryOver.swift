@@ -18,6 +18,9 @@
 //  and drops the clutter, and is the one place this should beat the spreadsheet rather
 //  than copy it.
 //
+//  A set-aside line is never copied (docs/prd/set-aside.md §4.8, *owner override*): it is
+//  money one cycle had to spare, and the owner adds the next one only if there is some.
+//
 //  It runs from the Plan lens for the cycle actually on screen, never speculatively:
 //  paging forward is what should create October's plan, not launching the app.
 //
@@ -41,7 +44,8 @@ enum PlanCarryOver {
         // "25 items" in the notice directly above a list headed "PLAN · 14 ITEMS",
         // and the sentence is about what the owner is being asked to adjust. A copied
         // row is dormant exactly when its amount is zero, since doneness never travels.
-        plan.copiedItemCount = (source.items ?? []).count { $0.amount > 0 }
+        let copied = (source.items ?? []).filter { !$0.isSetAside }
+        plan.copiedItemCount = copied.count { $0.amount > 0 }
         plan.copiedIncomeCount = (source.incomeLines ?? []).count
         context.insert(plan)
 
@@ -56,7 +60,7 @@ enum PlanCarryOver {
             ))
         }
 
-        for item in source.items ?? [] {
+        for item in copied {
             context.insert(PlanItem(
                 name: item.name,
                 amount: item.amount,

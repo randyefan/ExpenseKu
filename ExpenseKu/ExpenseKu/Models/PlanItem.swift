@@ -26,6 +26,8 @@ import SwiftData
 enum PlanItemKind: String, Codable, CaseIterable, Sendable {
     case fixed
     case envelope
+    /// Planned money sent to an envelope of a later cycle's plan (ADR-0010).
+    case setAside
 }
 
 @Model
@@ -87,6 +89,17 @@ final class PlanItem {
     @Relationship(deleteRule: .nullify, inverse: \Expense.envelope)
     var assignedExpenses: [Expense]? = []
 
+    /// Set aside only: the later cycle's envelope this item's amount goes to
+    /// (docs/prd/set-aside.md). Read it through `SetAside.target(of:)`, which ignores a
+    /// target that is not an envelope or not in a later cycle.
+    var setAsideTarget: PlanItem?
+    /// Envelope only: the set-aside items of earlier plans pointing here. Deleting the
+    /// envelope leaves them in their plans with no target (ADR-0001).
+    @Relationship(deleteRule: .nullify, inverse: \PlanItem.setAsideTarget)
+    var setAsideSources: [PlanItem]? = []
+    /// Set aside only: the owner has moved the money. A reported fact; no figure reads it.
+    var isSetAsideMoved: Bool = false
+
     init(
         name: String = "",
         amount: Decimal = 0,
@@ -125,6 +138,8 @@ extension PlanItem {
     }
 
     var isEnvelope: Bool { kind == .envelope }
+
+    var isSetAside: Bool { kind == .setAside }
 
     /// The one Expense this item stands behind, picking a survivor when sync has left
     /// more than one. Earliest first so the figure the owner saw first wins; the

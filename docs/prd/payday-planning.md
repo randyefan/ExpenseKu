@@ -118,6 +118,9 @@ shown in full in `I2`, and Group %, which is `GroupShareRow` in `E3`.
 
 ### 5.1 The two kinds of PlanItem
 
+*Amended 2026-10-17:* a third kind, **Set aside**, sends planned money to an envelope of a
+later cycle's plan (`docs/prd/set-aside.md`, ADR-0010). It is neither of the two below.
+
 The spreadsheet mixes them in one table, and the difference is visible in the numbers.
 Round, forward-looking amounts are **Fixed**:
 

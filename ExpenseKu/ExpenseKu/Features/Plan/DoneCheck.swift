@@ -63,7 +63,7 @@ struct DoneCheck: View {
     }
 
     private var isTicked: Bool {
-        state == .done || state == .autoPosted
+        state == .done || state == .autoPosted || state == .setAsideMoved
     }
 
     /// Spoken by VoiceOver and read by `idb ui describe-all`, which is how the flows
@@ -79,6 +79,8 @@ struct DoneCheck: View {
         case .autoPosted: "Auto — posted, needs review"
         case .envelope: "Envelope — fills from your expenses"
         case .envelopeFunded: "Envelope — moved to \(account)"
+        case .setAside: "Not moved"
+        case .setAsideMoved: "Moved"
         }
     }
 }

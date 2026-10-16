@@ -16,9 +16,10 @@
 //  An envelope with an Account (§7.6) gains one chip line above the bar naming it, and
 //  "in Jago" once the allowance is moved. Without one the row is exactly as before.
 //
-//  Expenses paid early into it from an earlier cycle (envelope-assignment.md §4.10.6) are
-//  in the bar but in no list of this cycle, so a caption under the legend says where the
-//  money came from.
+//  Money that reached it from earlier cycles — expenses paid early into it, and money set
+//  aside for it (set-aside.md §4.6) — gets one caption under the legend, and the planned
+//  amount gains a line saying what this cycle still puts in. The split is the detail's
+//  job, never the row's: two captions read as too busy.
 //
 //  ＋ beside the bar is `EnvelopeAddMenu` (envelope-assignment.md §4.5). It is a sibling
 //  of the row's Button rather than inside it, for the same accessibility reason as the
@@ -33,7 +34,8 @@ import SwiftUI
 struct PlanEnvelopeRow: View {
     let item: PlanItem
     let progress: EnvelopeProgress?
-    var paidEarlyCaption: String? = nil
+    var fromEarlierCaption: String? = nil
+    var ownShareCaption: String? = nil
     let onChooseFunding: (FundMenuEntry) -> Void
     let onSelect: () -> Void
     let onAddExpense: () -> Void
@@ -58,8 +60,17 @@ struct PlanEnvelopeRow: View {
 
                         Spacer(minLength: 8)
 
-                        MoneyText(item.amount, font: .dsBody, color: Theme.text)
-                            .layoutPriority(1)
+                        VStack(alignment: .trailing, spacing: 2) {
+                            MoneyText(item.amount, font: .dsBody, color: Theme.text)
+                            if let ownShareCaption {
+                                Text(ownShareCaption)
+                                    .font(.dsCaption)
+                                    .monospacedDigit()
+                                    .foregroundStyle(Theme.textSecondary)
+                                    .lineLimit(1)
+                            }
+                        }
+                        .layoutPriority(1)
                     }
 
                     if let account = item.account {
@@ -83,10 +94,8 @@ struct PlanEnvelopeRow: View {
                     }
                     .alignmentGuide(.envelopeBarLine) { $0[.bottom] }
 
-                    if let paidEarlyCaption {
-                        Text(paidEarlyCaption)
-                            .font(.dsCaption)
-                            .foregroundStyle(Theme.textSecondary)
+                    if let fromEarlierCaption {
+                        FromEarlierCaption(text: fromEarlierCaption)
                             .padding(.trailing, addSize + 12)
                             .padding(.top, -4)
                     }

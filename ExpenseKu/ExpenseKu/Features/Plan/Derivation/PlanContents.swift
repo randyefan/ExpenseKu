@@ -47,6 +47,7 @@ nonisolated struct PlanContents {
             cycle: cycle
         )
         envelopesByItem = Dictionary(uniqueKeysWithValues: envelopes.map { ($0.itemID, $0) })
+        let setAside = plan == nil ? .none : SetAsideShift(envelopes: envelopes)
         let paidEarly = plan == nil ? .none : PaidEarlyShift(
             cycleExpenses: cycleExpenses,
             claims: EnvelopeClaims(envelopes: split.active.filter(\.isEnvelope), cycle: cycle),
@@ -54,11 +55,11 @@ nonisolated struct PlanContents {
         )
 
         totals = PlanTotals(activeItems: split.active, incomeLines: incomeLines, envelopes: envelopes,
-                            paidEarly: paidEarly)
+                            paidEarly: paidEarly, setAside: setAside)
         transfers = TransferLines.rows(activeItems: split.active, lines: plan?.transferLines ?? [],
-                                       paidEarly: paidEarly)
+                                       paidEarly: paidEarly, setAside: setAside)
         groupShares = GroupShares.rows(activeItems: split.active, totalIncome: totals.totalIncome,
-                                       paidEarly: paidEarly)
+                                       paidEarly: paidEarly, setAside: setAside)
         review = ReviewState(cycleItems: split.active)
         funded = FundedSummary(activeItems: split.active)
     }
@@ -71,7 +72,7 @@ nonisolated struct PlanContents {
     /// after tapping "Start this cycle's plan".
     var isEmpty: Bool { activeItems.isEmpty && dormantItems.isEmpty && incomeLines.isEmpty }
 
-    var doneCount: Int { activeItems.count(where: \.isDone) }
+    var doneCount: Int { activeItems.count { PlanItemState.of($0) == .done } }
     var sectionTitle: String {
         PlanCopy.sectionTitle(itemCount: activeItems.count, doneCount: doneCount)
     }

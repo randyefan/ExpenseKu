@@ -32,6 +32,9 @@ struct SegmentedToggle<Value: Hashable>: View {
 
     @Binding var selection: Value
     let segments: [Segment]
+    /// The plan item editor's three kinds do not fit 402pt with the lens toggle's padding
+    /// and Label's icon gap, so a compact toggle tightens both.
+    var isCompact = false
 
     @Namespace private var pill
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -45,11 +48,21 @@ struct SegmentedToggle<Value: Hashable>: View {
                         selection = segment.value
                     }
                 } label: {
-                    Label(segment.title, systemImage: segment.systemImage)
+                    Group {
+                        if isCompact {
+                            HStack(spacing: 5) {
+                                Image(systemName: segment.systemImage)
+                                Text(segment.title)
+                            }
+                        } else {
+                            Label(segment.title, systemImage: segment.systemImage)
+                        }
+                    }
                         .font(.dsSubhead)
                         .fontWeight(.semibold)
                         .foregroundStyle(isSelected ? Theme.onAccent : Theme.textSecondary)
-                        .padding(.horizontal, 14)
+                        .lineLimit(1)
+                        .padding(.horizontal, isCompact ? 10 : 14)
                         .padding(.vertical, 7)
                         .background {
                             if isSelected {

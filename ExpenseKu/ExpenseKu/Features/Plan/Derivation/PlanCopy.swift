@@ -67,14 +67,33 @@ nonisolated enum PlanCopy {
     /// I7. Deleting a plan item leaves its Expense alone (§9.4, ADR-0001 nullify), and
     /// the owner has to be told so before they tap, not after. An envelope's assigned
     /// expenses survive the same way (envelope-assignment.md §4.7).
-    static func deleteItemBody(amount: Decimal?, date: Date?, assignedCount: Int = 0) -> String {
+    static func deleteItemBody(amount: Decimal?, date: Date?, assignedCount: Int = 0,
+                               setAsideCount: Int = 0, setAsideMonths: [String] = []) -> String {
+        let setAside = setAsideSentence(count: setAsideCount, months: setAsideMonths)
         if assignedCount > 0 {
             let one = assignedCount == 1
-            return "\(counted(assignedCount, "expense")) assigned to it \(one ? "stays" : "stay") in your ledger and \(one ? "goes" : "go") back to counting by category."
+            let assigned = "\(counted(assignedCount, "expense")) assigned to it \(one ? "stays" : "stay") in your ledger and \(one ? "goes" : "go") back to counting by category."
+            return [assigned, setAside].compactMap(\.self).joined(separator: " ")
         }
+        if let setAside { return setAside }
         guard let amount, let date else {
             return "The plan item goes; nothing in your ledger changes."
         }
         return "The \(amount.formattedIDR()) expense it created on \(date.formatted(.dateTime.day().month(.wide))) stays in your ledger — only the plan item goes."
+    }
+
+    /// "2 set-asides in October and November will lose their envelope." (set-aside.md §4.9)
+    static func setAsideSentence(count: Int, months: [String]) -> String? {
+        guard count > 0 else { return nil }
+        let one = count == 1
+        let place = months.isEmpty ? "" : " in " + listed(months)
+        return "\(counted(count, "set-aside"))\(place) will lose \(one ? "its" : "their") envelope."
+    }
+
+    /// "October", "October and November", "October, November and December" — joined by
+    /// hand, as `EnvelopeDetail.emptyMessage` does, so the region cannot add a comma.
+    private static func listed(_ names: [String]) -> String {
+        guard let last = names.last else { return "" }
+        return names.count == 1 ? last : names.dropLast().joined(separator: ", ") + " and " + last
     }
 }

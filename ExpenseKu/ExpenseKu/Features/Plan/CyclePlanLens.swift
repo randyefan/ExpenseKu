@@ -140,12 +140,21 @@ struct CyclePlanLens<Header: View>: View {
             Section {
                 ForEach(section.items) { item in
                     PlanListRow {
-                        if item.isEnvelope {
+                        if item.isSetAside {
+                            PlanSetAsideRow(
+                                item: item,
+                                payday: payday,
+                                calendar: calendar,
+                                onChooseFunding: { onAction(.chooseFunding(item, $0)) },
+                                onSelect: { onAction(.editPlanItem(item)) }
+                            )
+                        } else if item.isEnvelope {
+                            let progress = contents.envelope(for: item)
                             PlanEnvelopeRow(
                                 item: item,
-                                progress: contents.envelope(for: item),
-                                paidEarlyCaption: contents.envelope(for: item)?
-                                    .paidEarlyCaption(payday: payday, calendar: calendar),
+                                progress: progress,
+                                fromEarlierCaption: progress?.fromEarlierCaption(payday: payday, calendar: calendar),
+                                ownShareCaption: progress?.ownShareCaption(cycle: contents.cycle, calendar: calendar),
                                 onChooseFunding: { onAction(.chooseFunding(item, $0)) },
                                 onSelect: { onAction(.openEnvelope(item)) },
                                 onAddExpense: { onAction(.addExpense(to: item)) },

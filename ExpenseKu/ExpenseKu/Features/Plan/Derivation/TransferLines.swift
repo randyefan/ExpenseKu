@@ -32,10 +32,12 @@ nonisolated enum TransferLines {
     /// contributes through its optional Account like any Fixed item (PRD §7.6);
     /// dormant items are not in this cycle's plan and never contribute.
     static func rows(activeItems: [PlanItem], lines: [TransferLine],
-                     paidEarly: PaidEarlyShift = .none) -> [TransferRow] {
+                     paidEarly: PaidEarlyShift = .none, setAside: SetAsideShift = .none) -> [TransferRow] {
         var planned: [PersistentIdentifier: Decimal] = [:]
         var credited: [PersistentIdentifier: Decimal] = [:]
         var creditedNames: [PersistentIdentifier: [String]] = [:]
+        var setAsideIn: [PersistentIdentifier: Decimal] = [:]
+        var setAsideNames: [PersistentIdentifier: [String]] = [:]
         var names: [PersistentIdentifier: String] = [:]
         var allAuto: [PersistentIdentifier: Bool] = [:]
 
@@ -43,10 +45,15 @@ nonisolated enum TransferLines {
             guard let account = item.account else { continue }
             let id = account.persistentModelID
             let credit = paidEarly.credit(for: item)
-            planned[id, default: 0] += item.amount - credit
+            let saved = setAside.credit(for: item)
+            planned[id, default: 0] += net(item, paidEarly: credit, setAside: saved)
             if credit > 0 {
                 credited[id, default: 0] += credit
                 creditedNames[id, default: []].append(item.name)
+            }
+            if saved > 0 {
+                setAsideIn[id, default: 0] += saved
+                setAsideNames[id, default: []].append(item.name)
             }
             names[id] = account.name
             allAuto[id] = (allAuto[id] ?? true) && item.isAuto
@@ -69,13 +76,22 @@ nonisolated enum TransferLines {
                 hasTransferred: adjustments[id]?.hasTransferred ?? false,
                 allAuto: allAuto[id] ?? false,
                 paidEarly: credited[id] ?? 0,
-                paidEarlyEnvelopes: creditedNames[id] ?? []
+                paidEarlyEnvelopes: creditedNames[id] ?? [],
+                setAside: setAsideIn[id] ?? 0,
+                setAsideEnvelopes: setAsideNames[id] ?? []
             )
         }
         .sorted { a, b in
             if a.planned != b.planned { return a.planned > b.planned }
             return a.accountName < b.accountName
         }
+    }
+
+    /// An envelope's contribution net of what earlier cycles already covered, never below
+    /// zero (set-aside.md §4.6): set aside uncapped, it can exceed the plan.
+    static func net(_ item: PlanItem, paidEarly: Decimal, setAside: Decimal) -> Decimal {
+        guard paidEarly + setAside > 0 else { return item.amount }
+        return max(0, item.amount - paidEarly - setAside)
     }
 
     /// E3's "TRANSFER CHECKLIST · 2 OF 6 SENT".
@@ -99,6 +115,9 @@ nonisolated struct TransferRow: Identifiable, Equatable {
     /// The envelopes' capped paid-early credit already taken off `planned` (§4.10.10).
     var paidEarly: Decimal = 0
     var paidEarlyEnvelopes: [String] = []
+    /// What earlier plans set aside for its envelopes, also off `planned` (set-aside.md §4.6).
+    var setAside: Decimal = 0
+    var setAsideEnvelopes: [String] = []
 
     var id: PersistentIdentifier { accountID }
 
@@ -113,5 +132,21 @@ nonisolated struct TransferRow: Identifiable, Equatable {
             return "\(paidEarly.formattedIDR()) paid early"
         }
         return "\(paidEarly.formattedIDR()) paid early into \(name)"
+    }
+
+    /// "Rp 12.000.000 set aside into Jepang"; several envelopes drop the name.
+    var setAsideText: String? {
+        guard setAside > 0 else { return nil }
+        guard setAsideEnvelopes.count == 1, let name = setAsideEnvelopes.first else {
+            return "\(setAside.formattedIDR()) set aside"
+        }
+        return "\(setAside.formattedIDR()) set aside into \(name)"
+    }
+
+    /// Why `planned` is less than the items add up to. Both credits together drop the
+    /// names, so the line stays two lines at most: "Rp 6.500.000 paid early · Rp 12.000.000 set aside".
+    var creditText: String? {
+        guard paidEarly > 0, setAside > 0 else { return paidEarlyText ?? setAsideText }
+        return "\(paidEarly.formattedIDR()) paid early · \(setAside.formattedIDR()) set aside"
     }
 }

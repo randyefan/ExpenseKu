@@ -4,7 +4,8 @@
 //
 //  An envelope's detail (docs/prd/envelope-detail.md, frames T2–T6): the card, then every
 //  expense the envelope counts — its own cycle by day, unheaded, then one "Paid early ·
-//  ‹cycle›" section per earlier cycle. `EnvelopeDetail` decides what is listed, by asking
+//  ‹cycle›" section per earlier cycle — and, last, the set-aside lines of earlier plans
+//  that fund it (set-aside.md §4.7). `EnvelopeDetail` decides what is listed, by asking
 //  `EnvelopeClaims`; this view only draws it.
 //
 //  Rows carry no envelope tag: every one of them is in this envelope.
@@ -88,7 +89,7 @@ struct EnvelopeDetailSheet: View {
                 EnvelopeDetailCard(
                     envelope: envelope,
                     progress: progress,
-                    paidEarlyCaption: progress.paidEarlyCaption(payday: Payday.current, calendar: calendar),
+                    fromEarlierCaption: progress.fromEarlierCaption(payday: Payday.current, calendar: calendar),
                     onAddExpense: { onAction(.addExpense) },
                     onMoveExpenses: { onAction(.moveExpenses) }
                 )
@@ -113,6 +114,10 @@ struct EnvelopeDetailSheet: View {
                                           onOpen: { onAction(.openExpense($0)) },
                                           onDelete: delete)
                 }
+            }
+
+            if !detail.setAsideLines.isEmpty {
+                EnvelopeSetAsideSection(lines: detail.setAsideLines, payday: Payday.current, calendar: calendar)
             }
         }
         .cycleLensList()

@@ -24,8 +24,9 @@
 import Foundation
 
 nonisolated enum PlanDormancy {
+    /// A set-aside line is never dormant (set-aside.md §4.8): it is never carried over.
     static func isDormant(_ item: PlanItem) -> Bool {
-        item.carriedOver && item.amount == 0 && !item.isDone && (item.assignedExpenses ?? []).isEmpty
+        !item.isSetAside && item.carriedOver && item.amount == 0 && !item.isDone && (item.assignedExpenses ?? []).isEmpty
     }
 
     /// Active rows first, in display order; dormant rows in their own list for the

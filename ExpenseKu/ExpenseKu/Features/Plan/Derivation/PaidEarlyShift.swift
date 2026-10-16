@@ -51,7 +51,7 @@ nonisolated struct PaidEarlyShift: Equatable {
         var credits: [PersistentIdentifier: Decimal] = [:]
         var dates: [Date] = []
         for envelope in envelopes {
-            let credit = min(envelope.paidEarly, max(envelope.planned, 0))
+            let credit = envelope.paidEarlyCredit
             guard credit > 0 else { continue }
             credits[envelope.itemID] = credit
             dates += envelope.paidEarlyDates

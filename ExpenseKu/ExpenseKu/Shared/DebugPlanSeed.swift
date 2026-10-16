@@ -26,7 +26,7 @@ import Foundation
 import SwiftData
 
 enum DebugPlanSeed {
-    /// -seedPlanData normal|payday|auto-landed|overspent|travelling|paid-early|none
+    /// -seedPlanData normal|payday|auto-landed|overspent|travelling|paid-early|set-aside|none
     static var variant: String? {
         let args = ProcessInfo.processInfo.arguments
         guard let i = args.firstIndex(of: "-seedPlanData"), i + 1 < args.count else { return nil }
@@ -61,6 +61,9 @@ enum DebugPlanSeed {
         seedPreviousPlan(context, start: previous.start, categories: categories, accounts: accounts)
         if variant == "paid-early" {
             seedPaidEarly(context, plan: plan, cycle: cycle, accounts: accounts)
+        }
+        if variant == "set-aside" {
+            seedSetAside(context, plan: plan, cycle: cycle, accounts: accounts)
         }
 
         try? context.save()
@@ -108,7 +111,7 @@ enum DebugPlanSeed {
 
     private static func seedAccounts(_ context: ModelContext) -> [String: Account] {
         var made: [String: Account] = [:]
-        for name in ["BNI", "CC Danamon", "BCA", "Mandiri", "Cash"] {
+        for name in ["BNI", "CC Danamon", "BCA", "Mandiri", "Cash", "Jago"] {
             let existing = existingEntity(Account.self, matching: name, in: context)
             let account = existing ?? Account(name: name)
             if existing == nil { context.insert(account) }
@@ -288,6 +291,43 @@ enum DebugPlanSeed {
         let ticket = Expense(amount: 1_200_000, date: .now, note: "Tiket KAI ke Jakarta",
                              category: transport, account: accounts["BCA"])
         ticket.envelope = travelling
+        context.insert(ticket)
+    }
+
+    /// docs/prd/set-aside.md §7 on top of the ordinary plan: this cycle sets Rp 5.000.000
+    /// aside (moved) and the next Rp 7.000.000 (not moved) for "Jepang", Rp 20.000.000 on
+    /// Jago in the cycle after; a Rp 6.500.000 ticket bought today is paid early into it.
+    /// The plan around them is the normal seed's, so only the set-aside figures match the PRD.
+    private static func seedSetAside(_ context: ModelContext, plan: CyclePlan, cycle: PayCycle,
+                                     accounts: [String: Account]) {
+        let payday = Payday.current
+        let next = cycle.next(payday: payday, calendar: .current)
+        let afterNext = next.next(payday: payday, calendar: .current)
+        guard let nextPlan = PlanCarryOver.makePlan(for: next, from: [plan], in: context),
+              let tripPlan = PlanCarryOver.makePlan(for: afterNext, from: [plan, nextPlan], in: context)
+        else { return }
+
+        let jepang = PlanItem(name: "Jepang", amount: 20_000_000, kind: .envelope,
+                              createdAt: .now.addingTimeInterval(400), plan: tripPlan,
+                              account: accounts["Jago"])
+        context.insert(jepang)
+
+        for (owner, amount, moved) in [(plan, Decimal(5_000_000), true), (nextPlan, Decimal(7_000_000), false)] {
+            let line = PlanItem(name: "Jepang", amount: amount, kind: .setAside,
+                                createdAt: .now.addingTimeInterval(401), plan: owner,
+                                account: accounts["Jago"])
+            context.insert(line)
+            line.setAsideTarget = jepang
+            line.isSetAsideMoved = moved
+        }
+
+        let existing = existingEntity(Category.self, matching: "Transport", in: context)
+        let transport = existing ?? Category(name: "Transport", colorHex: AppearancePalette.swatches[8],
+                                             iconName: "car.fill")
+        if existing == nil { context.insert(transport) }
+        let ticket = Expense(amount: 6_500_000, date: .now, note: "Tiket Jakarta–Tokyo",
+                             category: transport, account: accounts["Jago"])
+        ticket.envelope = jepang
         context.insert(ticket)
     }
 

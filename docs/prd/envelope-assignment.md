@@ -1,8 +1,9 @@
 # PRD — Assigning an expense to an Envelope
 
-Status: Built (flows Q, R, S, U)
+Status: Built (flows Q, R, S, U, V)
 Date: 2026-10-13 · flow Q built the same day; flow R (§4.5, §4.6, §4.8, §4.9) approved and built the same day;
-flow S (§4.10) grilled, approved and built 2026-10-14; flow U (§4.10.10) grilled, approved and built 2026-10-14
+flow S (§4.10) grilled, approved and built 2026-10-14; flow U (§4.10.10) grilled, approved and built 2026-10-14;
+flow V (§4.11) grilled, approved and built 2026-10-16
 Owner: Randy Efan
 
 Companion documents: `docs/prd/payday-planning.md` (the Envelope this changes, §5.1–5.2),
@@ -441,6 +442,36 @@ zero by paying ahead shows the strip, as any other.
 - The row is not tappable; the envelope's detail (`envelope-detail.md`) lists the
   expenses.
 
+### 4.11 Where the tag sits *(flow V)*
+
+Raised by the owner on 2026-10-16 from a device: a paid-early row's note, "tiket kereta yk -
+pasar senen · BNI · Me", wrapped over five lines in a column about 90pt wide, beside a tag
+cut to "Travel ke… · Nov". The meta line put the tag and the note side by side; the tag had
+layout priority and up to 150pt, the note took what was left. Every tag kind did this;
+paid early is only the widest.
+
+A tagged row now stacks, in its text column `[→ V1]`:
+
+| Line | Content | Width |
+|---|---|---|
+| 1 | the tag — Fixed, Envelope or Paid early, styled as §5.3 and §4.10.5 | up to the whole text column |
+| 2 | the Category title | as today |
+| 3 | the meta line: note · account · people | the whole text column, as an untagged row |
+
+- **All three tag kinds** take the line; a list never mixes two layouts.
+- **The 150pt cap is gone.** The tag hugs its text and grows to the width of the text
+  column; past that the name truncates with "…", and a paid-early tag's "· ‹Mon›" never does.
+- **The meta line** keeps its line limit (six) and its truncation; it no longer has a floor,
+  since nothing beside it competes for width.
+- **Untagged rows are unchanged.** A tagged row is one tag line taller.
+- The Category icon and the amount stay centred on the whole text column.
+- The tag sits 4pt above the title; title and meta line keep their 2pt.
+- **Everywhere an `ExpenseRow` is drawn:** List and Month lenses, Search (with its date under
+  the amount), Person detail, Select mode's narrower row `[→ V2]`, Move expenses here….
+  Envelope detail still draws no tag (`envelope-detail.md` §4.4).
+- **VoiceOver** follows the visual order: the tag ("Paid early, Travelling, November";
+  "Envelope Hidup…"; "From plan"), then the Category, the meta line and the amount.
+
 ---
 
 ## 5. Lifetime
@@ -468,7 +499,8 @@ and is written only on Save.
 
 A tagged row looks exactly like an envelope row today: the outlined violet tag carries the
 envelope's name whether the expense was assigned or claimed by Category. A **No envelope**
-row carries no tag, like any Outside-plan row. `[→ Q4]`
+row carries no tag, like any Outside-plan row. `[→ Q4]` *Flow V:* the tag sits on its own
+line above the Category (§4.11).
 
 ### 5.4 Across cycles
 
@@ -674,6 +706,37 @@ Settled when the owner approved flow U on 2026-10-14:
 | 59 | The transfer row explains the net figure in its second line, sharing it with an adjustment | `U3` |
 | 60 | The transfers get their own frame, U3 | `U3` |
 
+### 8.3 Flow V — the tag gets its own line
+
+Raised by the owner on 2026-10-16 with a device screenshot. Options drawn on page 05: the
+tag above the title (A, the owner's), under the meta line (B), beside the title (C), and a
+violet prefix without a pill that wraps with the note (D). Claude recommended A.
+
+| # | Decision | Drawn in |
+|---|---|---|
+| 61 | A tagged row puts the tag on its own line **above the Category title** (option A) | `V1` |
+| 62 | It applies to all three tag kinds — Fixed, Envelope, Paid early | `V1` |
+| 63 | The 150pt cap is removed: the tag may grow to the text column's width; only the name truncates, never "· ‹Mon›" | `V1` |
+| 64 | Amendment here (§4.11), not a PRD of its own | — |
+| AC | The meta line keeps its six-line limit and gets the whole text column back; its width floor goes | `V1` |
+| AD | Untagged rows are unchanged | `V1` |
+| AE | Every `ExpenseRow` follows: List, Month, Search, Person detail, Select mode, Move expenses here…; Envelope detail stays untagged | `V2`, `V3` |
+| AF | Icon and amount stay centred on the text column | `V1` |
+| AG | 4pt between tag and title | `V1` |
+| AH | VoiceOver follows the visual order, tag first | — |
+| AI | The tag's shapes, colours and glyphs are unchanged | — |
+| AJ | Options B, C and D are not built; they stay on page 05 as not chosen | — |
+
+Settled when the owner approved flow V on 2026-10-16:
+
+| # | Decision | Drawn in |
+|---|---|---|
+| 65 | The frames use the §7.1 sample plus a Kopi logged by hand, so an untagged row sits beside the tagged ones | `V1`–`V3` |
+| 66 | The tag is leading-aligned with the title and hugs its text; it never stretches to fill the line | `V1` |
+| 67 | Select mode keeps its 84pt separator inset (Q7) | `V2` |
+| 68 | A Fixed row in Select mode stays at 40%, its tag dimmed with it (#23) | `V2` |
+| 69 | Search keeps its date under the amount; the tag line does not move it | `V3` |
+
 ## 9. Design traceability
 
 Page `02 · Pages · iPhone`, **Flow Q · Assign an expense to an Envelope**. Components
@@ -718,6 +781,16 @@ first), with the
 | **U1** · Plan lens, October — totals card | §4.10.10 the debit row, Sisa, SISA headline |
 | **U2** · Plan lens, November — totals card and Travelling | §4.10.10 the credit row, Sisa, the unchanged envelope row |
 | **U3** · Payday, November — transfers | §4.10.10 net ke BCA and its second line |
+
+**Flow V · Tagged rows — the tag gets its own line**, on page 02 after flow U (drawn on 05
+first; options B, C, D stay there as not chosen), with the
+§7.1 sample (`-seedPlanData paid-early`):
+
+| Frame | Covers |
+|---|---|
+| **V1** · List lens, October — tagged rows | §4.11 the stack, all three tag kinds, an untagged row unchanged |
+| **V2** · List lens — Select mode | §4.11 the narrower row: the tag truncates its name, the note keeps its width |
+| **V3** · Search — rows with dates | §4.11 the date under the amount beside a tagged row |
 
 ### 9.1 Closed during implementation
 
@@ -765,3 +838,15 @@ first), with the
 | No new view type | The row is a private helper of `PlanTotalsCard`; the DS `PlanTotals` component's notes describe it, and U1/U2 draw it | `.pen` page 01 |
 | The rules | Pure and tested against §7.1 | `PaidEarlyShiftTests` (10) |
 
+### 9.4 Closed during implementation — flow V
+
+| Gap | Answer | Where |
+|---|---|---|
+| Where the tag lives in code | `ExpenseRow` draws `PlanOriginTag` as the first line of its text column; `ExpenseMetaLine` no longer takes an origin, and its width floor (flow R) went with it | `ExpenseRow`, `ExpenseMetaLine` |
+| The 150pt cap was a `WidthCap` layout | Removed: on its own line a plain `HStack` hugs its text and truncates only at the column's width | `PlanOriginTag` |
+| VoiceOver order | The row reads "Paid early, Travelling, November, Transport, Tiket KAI ke Jakarta · BCA, Rp 1.200.000" (observed); the tag is one element as before | `PlanOriginTag` |
+| The text column is narrower than the row suggests: the `HStack`'s 12pt spacing sits on both sides of the trailing `Spacer(minLength: 8)` | Unchanged — row geometry is out of scope. In Move expenses here… and Select mode the ticket's tag reads "Travelli… · Nov" beside Rp 1.200.000; V2 draws that | `ExpenseRow` |
+| Every older flow on page 02 drew the tag beside the note | 66 rows in flows J, N, O, P, Q, R, S restacked to the new layout; rejected options on page 05 are left as they were | `.pen` page 02 |
+| No new view type | `ExpenseRow`'s DS note describes the tag line; V1–V3 use `ExpenseRow` instances | `.pen` page 01 |
+| Observed in the simulator (`-seedPlanData paid-early`) | List (all three kinds), an untagged August cycle, Select mode, Search with dates, Person detail (Ibu), Move expenses here…, Envelope detail without tags | — |
+| Tests | No logic changed; Debug (455) and Release suites green | — |

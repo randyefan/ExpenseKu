@@ -13,12 +13,6 @@ struct ExpenseMetaLine: View {
     let note: String
     let accountName: String?
     let peopleNames: String
-    var origin: PlanOrigin? = nil
-
-    /// The tag has layout priority, so in a narrow row — Select mode's check circle,
-    /// Move expenses here… — the text got only the leftover and broke "Cash" mid-word.
-    /// A floor keeps a word whole and makes the tag truncate instead.
-    @ScaledMetric(relativeTo: .caption) private var textFloor: CGFloat = 56
 
     private var parts: [String] {
         var parts: [String] = []
@@ -29,20 +23,6 @@ struct ExpenseMetaLine: View {
     }
 
     var body: some View {
-        if let origin {
-            HStack(spacing: 6) {
-                PlanOriginTag(origin: origin)
-                    .layoutPriority(1)
-                text
-                    .frame(minWidth: textFloor, alignment: .leading)
-            }
-        } else {
-            text
-        }
-    }
-
-    @ViewBuilder
-    private var text: some View {
         if !parts.isEmpty {
             Text(parts.joined(separator: " · "))
                 .font(.dsCaption)
@@ -59,9 +39,6 @@ struct ExpenseMetaLine: View {
         ExpenseMetaLine(note: "", accountName: "Cash", peopleNames: "")
         ExpenseMetaLine(note: "A note long enough that it has to be truncated somewhere",
                         accountName: "Bank Central Asia", peopleNames: "Tarisa, Fadil & Budi")
-        ExpenseMetaLine(note: "Kos", accountName: "BCA", peopleNames: "", origin: .fixed)
-        ExpenseMetaLine(note: "Dinner", accountName: "GoPay", peopleNames: "Tarisa & Fadil",
-                        origin: .envelope(name: "Hidup"))
     }
     .padding()
     .appBackground()

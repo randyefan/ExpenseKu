@@ -13,11 +13,11 @@ struct DoneCheckFace: View {
 
     var body: some View {
         switch state {
-        case .todo:
+        case .todo, .setAside:
             glyph("circle", tint: Theme.textSecondary.opacity(0.6))
         case .funded:
             glyph("circle.lefthalf.filled", tint: Theme.accent)
-        case .done:
+        case .done, .setAsideMoved:
             glyph("checkmark.circle.fill", tint: Theme.accent)
         case .autoPosted:
             glyph("bolt.circle.fill", tint: Theme.accent)

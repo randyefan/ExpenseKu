@@ -3,7 +3,7 @@
 //  ExpenseKu
 //
 //  The top of an envelope's detail (envelope-detail.md §4.3, frame T2): the row the owner
-//  tapped, restated — spent of planned, the same bar, legend, ＋ and paid-early caption —
+//  tapped, restated — spent of planned, the same bar, legend, ＋ and from-earlier caption —
 //  plus the one thing the row leaves out, what the envelope claims by itself.
 //
 //  Every figure is the cycle's `EnvelopeProgress`, the value that draws the row, so the
@@ -15,7 +15,7 @@ import SwiftUI
 struct EnvelopeDetailCard: View {
     let envelope: PlanItem
     let progress: EnvelopeProgress
-    let paidEarlyCaption: String?
+    let fromEarlierCaption: String?
     let onAddExpense: () -> Void
     let onMoveExpenses: () -> Void
 
@@ -47,10 +47,8 @@ struct EnvelopeDetailCard: View {
                 }
                 .alignmentGuide(.envelopeBarLine) { $0[.bottom] }
 
-                if let paidEarlyCaption {
-                    Text(paidEarlyCaption)
-                        .font(.dsCaption)
-                        .foregroundStyle(Theme.textSecondary)
+                if let fromEarlierCaption {
+                    FromEarlierCaption(text: fromEarlierCaption)
                         .padding(.trailing, EnvelopeAddMenu.size + 12)
                 }
             }

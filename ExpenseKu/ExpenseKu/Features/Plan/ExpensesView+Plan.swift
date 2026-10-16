@@ -132,6 +132,11 @@ extension ExpensesView {
     /// Funded is the owner's report, never a balance, and it leaves the transfer
     /// tick alone either way (§7.6, decision 25).
     private func chooseFunding(_ entry: FundMenuEntry, for item: PlanItem) {
+        if let moved = entry.setAsideMovedValue {
+            item.isSetAsideMoved = moved
+            try? context.save()
+            return
+        }
         guard let funded = entry.fundedValue else {
             planSheet = .confirmDone(item)
             return
@@ -257,8 +262,12 @@ private func confirmationBody(_ pending: PlanConfirmation) -> String {
         return PlanCopy.untickBody(amount: expense.amount, date: expense.date)
     case .deleteItem(let item):
         let expense = item.linkedExpense
+        let setAsides = SetAside.sources(into: item)
         return PlanCopy.deleteItemBody(amount: expense?.amount, date: expense?.date,
-                                       assignedCount: item.assignedExpenses?.count ?? 0)
+                                       assignedCount: item.assignedExpenses?.count ?? 0,
+                                       setAsideCount: setAsides.count,
+                                       setAsideMonths: SetAside.months(of: setAsides, payday: Payday.current,
+                                                                       calendar: .current))
     }
 }
 

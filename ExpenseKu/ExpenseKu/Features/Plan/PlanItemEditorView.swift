@@ -10,6 +10,9 @@
 //  take an optional Account (§7.6): where its allowance is kept, which puts it on that
 //  transfer line and lets it be marked as moved.
 //
+//  A set-aside line (docs/prd/set-aside.md §4.2) is the third kind: Amount, For and
+//  Account, and no name — the row reads its envelope's.
+//
 //  The `Auto` switch stays inert until a due day is set: an Auto item without one
 //  never fires (PRD §7.4), so an enabled switch would be a promise the app cannot
 //  keep. The hint says which way round it goes.
@@ -36,6 +39,7 @@ struct PlanItemEditorView: View {
     @State private var envelopeCategories: [Category]
     @State private var dueDay: Int?
     @State private var isAuto: Bool
+    @State private var setAsideTarget: PlanItem?
     @FocusState private var nameFocused: Bool
     private let pristine: Draft
 
@@ -55,6 +59,7 @@ struct PlanItemEditorView: View {
         _envelopeCategories = State(initialValue: editing?.envelopeCategories ?? [])
         _dueDay = State(initialValue: editing?.dueDay)
         _isAuto = State(initialValue: editing?.isAuto ?? false)
+        _setAsideTarget = State(initialValue: editing?.setAsideTarget)
         pristine = Draft(
             expression: ExpressionEvaluator(amount: editing?.amount ?? 0).raw,
             name: editing?.name ?? "",
@@ -64,7 +69,8 @@ struct PlanItemEditorView: View {
             people: Set((editing?.people ?? []).map(\.persistentModelID)),
             envelopeCategories: Set((editing?.envelopeCategories ?? []).map(\.persistentModelID)),
             dueDay: editing?.dueDay,
-            isAuto: editing?.isAuto ?? false
+            isAuto: editing?.isAuto ?? false,
+            setAsideTarget: editing?.setAsideTarget?.persistentModelID
         )
     }
 
@@ -78,6 +84,7 @@ struct PlanItemEditorView: View {
         var envelopeCategories: Set<PersistentIdentifier>
         var dueDay: Int?
         var isAuto: Bool
+        var setAsideTarget: PersistentIdentifier?
     }
 
     private var draft: Draft {
@@ -90,19 +97,24 @@ struct PlanItemEditorView: View {
             people: Set(people.map(\.persistentModelID)),
             envelopeCategories: Set(envelopeCategories.map(\.persistentModelID)),
             dueDay: dueDay,
-            isAuto: isAuto
+            isAuto: isAuto,
+            setAsideTarget: setAsideTarget?.persistentModelID
         )
     }
 
     private var resolvedAmount: Decimal { expr.committedAmount }
 
     private var canSave: Bool {
+        if kind == .setAside {
+            return setAsideTarget?.isEnvelope == true && resolvedAmount > 0
+        }
         guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return false }
         return kind == .envelope || category != nil
     }
 
     private var historyHint: String? {
-        PlanItemHistory.hint(for: name, excluding: plan, in: plans)
+        guard kind != .setAside else { return nil }
+        return PlanItemHistory.hint(for: name, excluding: plan, in: plans)
     }
 
     var body: some View {
@@ -130,19 +142,30 @@ struct PlanItemEditorView: View {
                     }
 
                     Section {
-                        TextField("Name", text: $name)
-                            .font(.dsBody)
-                            .focused($nameFocused)
-                            .listRowBackground(Theme.card)
+                        if kind != .setAside {
+                            TextField("Name", text: $name)
+                                .font(.dsBody)
+                                .focused($nameFocused)
+                                .listRowBackground(Theme.card)
+                        }
 
-                        if kind == .envelope {
+                        if kind == .setAside {
+                            setAsideForRow
+                            PlanAccountRow(account: $account)
+                        } else if kind == .envelope {
                             envelopeCategoriesRow
                             PlanAccountRow(account: $account)
                         } else {
                             fixedFields
                         }
                     } footer: {
-                        if kind == .envelope {
+                        if kind == .setAside {
+                            Text(setAsideOffer.isEmpty
+                                 ? "Page forward to a later cycle and add an envelope first. Set aside only sends money to an envelope in a plan that already exists."
+                                 : "Set aside sends planned money to an envelope in a later plan. It never creates an expense: this plan's Sisa falls by it and that plan's Sisa rises. Its Account is optional: set it and the amount joins that account's transfer line and can be marked as moved.")
+                                .font(.dsCaption)
+                                .foregroundStyle(Theme.textSecondary)
+                        } else if kind == .envelope {
                             Text("An envelope never creates an expense, so it has no due day and no Auto. Its Categories are optional: with none, it fills only from expenses you assign to it. Its Account is optional too: set it and the allowance joins that account's transfer line and can be marked as moved.")
                                 .font(.dsCaption)
                                 .foregroundStyle(Theme.textSecondary)
@@ -196,7 +219,9 @@ struct PlanItemEditorView: View {
             segments: [
                 .init(.fixed, title: "Fixed", systemImage: "checkmark.circle"),
                 .init(.envelope, title: "Envelope", systemImage: "tray.fill"),
-            ]
+                .init(.setAside, title: "Set aside", systemImage: "arrow.forward"),
+            ],
+            isCompact: true
         )
         .frame(maxWidth: .infinity)
     }
@@ -279,6 +304,54 @@ struct PlanItemEditorView: View {
         .listRowBackground(Theme.card)
     }
 
+    private var setAsideOffer: [EnvelopeSection] {
+        SetAside.offer(for: plan, plans: plans, keeping: setAsideTarget,
+                       payday: Payday.current, calendar: .current, now: .now)
+    }
+
+    @ViewBuilder
+    private var setAsideForRow: some View {
+        let sections = setAsideOffer
+        if sections.isEmpty {
+            LabeledContent("For") {
+                Text("No envelope in a later plan")
+                    .foregroundStyle(Theme.textSecondary)
+                    .lineLimit(1)
+            }
+            .font(.dsBody)
+            .listRowBackground(Theme.card)
+        } else {
+            NavigationLink {
+                SetAsidePicker(selection: $setAsideTarget, sections: sections)
+            } label: {
+                LabeledContent("For") {
+                    setAsideTargetLabel(in: sections)
+                }
+                .font(.dsBody)
+            }
+            .listRowBackground(Theme.card)
+        }
+    }
+
+    /// "Jepang · Dec" — the name truncates, never the month (§4.2).
+    @ViewBuilder
+    private func setAsideTargetLabel(in sections: [EnvelopeSection]) -> some View {
+        if let setAsideTarget, let section = sections.first(where: { $0.envelopes.contains(setAsideTarget) }) {
+            HStack(spacing: 4) {
+                Text(EnvelopeDetail.displayName(of: setAsideTarget))
+                    .foregroundStyle(Theme.text)
+                    .lineLimit(1)
+                if let label = section.label {
+                    Text("· \(label.short)")
+                        .foregroundStyle(Theme.textSecondary)
+                        .fixedSize()
+                }
+            }
+        } else {
+            Text("Required").foregroundStyle(Theme.accent)
+        }
+    }
+
     private func save() {
         guard canSave else { return }
         let target: PlanItem
@@ -293,14 +366,29 @@ struct PlanItemEditorView: View {
         target.kind = kind
         target.plan = plan
 
-        if kind == .envelope {
+        if kind != .setAside {
+            target.setAsideTarget = nil
+            target.isSetAsideMoved = false
+        }
+
+        switch kind {
+        case .setAside:
+            target.name = setAsideTarget?.name ?? ""
+            target.setAsideTarget = setAsideTarget
+            target.account = account
+            target.category = nil
+            target.people = []
+            target.envelopeCategories = []
+            target.dueDay = nil
+            target.isAuto = false
+        case .envelope:
             target.envelopeCategories = envelopeCategories
             target.category = nil
             target.account = account
             target.people = []
             target.dueDay = nil
             target.isAuto = false
-        } else {
+        case .fixed:
             target.category = category
             target.account = account
             target.people = people

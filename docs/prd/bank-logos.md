@@ -1,7 +1,7 @@
 # PRD — Bank logos for Accounts
 
 Status: Built
-Date: 2026-10-17 · design approved and built the same day (flow X)
+Date: 2026-10-17 · design approved and built the same day (flow X); the expense row's mark enlarged the same evening (flow Y)
 Owner: Randy Efan
 
 Companion documents: `CONTEXT.md` (**Account**, **Bank logo**), **ADR-0012** (the
@@ -66,6 +66,9 @@ before the SF Symbol groups. `[→ X1]`
 A logo is drawn in a **white circle** the size of the icon circle it replaces, the logo
 centred with padding so a wide wordmark fits. It is never tinted. `[→ X2, X4]`
 
+The padding is 19% of the diameter. Every catalog logo is a wide wordmark centred in a square
+image, so the padding decides how tall its letters get; a small mark takes a thinner one (§5.5).
+
 ### 5.2 Where
 
 | Surface | Account with a logo |
@@ -76,7 +79,7 @@ centred with padding so a wide wordmark fits. It is never tinted. `[→ X2, X4]`
 | Insights entity header | logo `[→ X6]` |
 | Insights proportion rows (Spend by Account, a drill-in's breakdown) | `building.columns.fill`, bar in the brand tint `[→ X6]` |
 | Filter sheet rows | logo |
-| Expense row (every list that draws `ExpenseRow`) | 14pt mark under the amount, §5.5 `[→ X9 B, X10]` |
+| Expense row (every list that draws `ExpenseRow`) | 22pt mark under the amount, §5.5 `[→ X9 B, X10, Y A]` |
 | Plan row chip, envelope detail chip | `building.columns.fill` `[→ X7]` |
 | Plan section header (sorted by Account) | `building.columns.fill` `[→ X7]` |
 
@@ -113,12 +116,16 @@ The Account moves out of the grey meta line and under the amount. `[→ X9 B]`
 |---|---|
 | Meta line | note · people — the Account is no longer in it |
 | Trailing, line 1 | the amount, unchanged |
-| Trailing, line 2 | the Account's mark at 14pt, then its name in caption grey, right-aligned |
+| Trailing, line 2 | the Account's mark at 22pt (a logo with 8% padding), then its name in caption grey, right-aligned `[→ Y A]` |
 | Trailing, line 3 | the date — Search only, as today `[→ X10]` |
 
 - Every Account gets a mark on line 2: its logo, the bank glyph (§5.3), or its own symbol
   on its pastel wash.
 - An expense with no Account (**Unassigned**) has no line 2; Search's date moves up.
+- The mark and the name's 130pt cap scale with Dynamic Type, relative to caption.
+- At 14pt with 19% padding the letters were ~2.6pt tall and Danamon and BNI read as dots on
+  the owner's iPhone 12; at 22pt with 8% padding they are ~5pt. A row whose meta line is one
+  line grows from 58 to 65pt. `[→ Y A]`
 - The Account's name is one line and truncates at its tail; the amount never truncates.
 - VoiceOver reads the row in its visual order: tag, category, note · people, amount, account (and date in Search).
 - Every list that draws `ExpenseRow` follows: the cycle List, the Month lens's day list,
@@ -234,13 +241,15 @@ reviewed flow X the same day and asked for the expense row to be redesigned with
 | 19 | Only Accounts **with** a logo get `building.columns` in Plan chips; others keep their symbol | `X7` |
 | 20 | The expense row shows the Account **under the amount** with its mark — *owner override*, against inline in the meta line (C) | `X9 B` |
 | 21 | Search keeps its date as a **third trailing line** — *owner override*, against moving it into the meta line | `X10` |
+| 22 | The row's mark grows to a **22pt circle with 8% padding** (option A) — *owner override*, against a white wordmark chip beside the name (B); badge on the category icon (C) and logo-only chip (D) not chosen | `Y A` |
 
 ---
 
 ## 10. Design traceability
 
 Page `02 · Pages · iPhone`, **Flow X · Bank logos for Accounts**. The unchosen expense-card options
-A, C and D stay on `05 · Proposals`. `BankLogoMark` and the AccountIcon states are a specimen in
+A, C and D stay on `05 · Proposals`, as do flow Y's options B, C and D (the shipped 14pt row is kept
+there for comparison). `BankLogoMark` and the AccountIcon states are a specimen in
 `01 · Design System`, group `Primitives`; the `ExpenseRow` component carries the Account line.
 
 | Frame | Covers |
@@ -256,6 +265,7 @@ A, C and D stay on `05 · Proposals`. `BankLogoMark` and the AccountIcon states 
 | **X8** · A withdrawn logo — the bank glyph fallback | §5.3, decision 8 |
 | **X9** · Expense card options A–D — **B chosen** | §5.5, decision 20 |
 | **X10** · Search results — three trailing lines | §5.5, decision 21 |
+| **Y A** · The Today card with a 22pt mark — option A, chosen | §5.1, §5.5, decision 22 |
 
 ### 10.1 Closed during implementation
 

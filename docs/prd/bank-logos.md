@@ -263,3 +263,12 @@ A, C and D stay on `05 · Proposals`. `BankLogoMark` and the AccountIcon states 
 5. **Deploy Schema Changes** to Production, which also deploys `CD_Account.CD_brandID`. Records are
    per environment: add the logos in Production too.
 
+Done on 2026-10-17. Production had no schema at all before this deploy, so the private-database
+sync of every earlier TestFlight build had nothing to write to. The Development schema lagged the
+models by six fields that no debug build had synced yet; they were added by hand as STRING (the
+type Core Data uses for strings and to-one relationships) before deploying: `CD_Account.CD_brandID`,
+`CD_Category.CD_group`, `CD_CategoryGroup.CD_colorHex` and `CD_iconName`, `CD_Person.CD_colorHex`,
+`CD_PlanItem.CD_setAsideTarget`. The eleven `BankLogo` records exist in both environments with the
+placeholder art. A future model attribute needs the same check: compare the Deploy dialog's Diff
+View with the models before deploying.
+

@@ -52,6 +52,7 @@ struct GroupPicker: View {
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showingNew) {
             NavigationStack { GroupEditorView(editing: nil) }
+                .presentationBackground(Theme.bg)
         }
     }
 

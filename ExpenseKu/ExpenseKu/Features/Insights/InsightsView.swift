@@ -123,6 +123,7 @@ struct InsightsView: View {
             }
             .sheet(isPresented: $showingFilter) {
                 FilterSheet(filter: $filter, planFilter: $planFilter, catalog: catalog)
+                    .presentationBackground(Theme.bg)
             }
             .navigationBarTitleDisplayMode(.inline)
             .background(Theme.bg)

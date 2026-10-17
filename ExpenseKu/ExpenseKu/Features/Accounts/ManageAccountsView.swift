@@ -63,6 +63,7 @@ struct ManageAccountsView: View {
                     makeNew: { Account() }
                 )
             }
+            .presentationBackground(Theme.bg)
         }
     }
 

@@ -78,6 +78,7 @@ struct ManageGroupsView: View {
             NavigationStack {
                 GroupEditorView(editing: target.group)
             }
+            .presentationBackground(Theme.bg)
         }
     }
 

@@ -77,6 +77,7 @@ struct AccountPicker: View {
                     selection = created
                 }
             }
+            .presentationBackground(Theme.bg)
         }
     }
 

@@ -208,6 +208,7 @@ extension View {
                 },
                 onFinish: { sheet.wrappedValue = nil }
             )
+            .presentationBackground(Theme.bg)
         }
     }
 

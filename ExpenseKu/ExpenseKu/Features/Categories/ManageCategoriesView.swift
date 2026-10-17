@@ -58,6 +58,7 @@ struct ManageCategoriesView: View {
             NavigationStack {
                 CategoryEditorView(editing: target.category)
             }
+            .presentationBackground(Theme.bg)
         }
     }
 

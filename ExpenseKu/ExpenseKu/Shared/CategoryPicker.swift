@@ -56,6 +56,7 @@ struct CategoryPicker: View {
                     selection = created
                 }
             }
+            .presentationBackground(Theme.bg)
         }
     }
 

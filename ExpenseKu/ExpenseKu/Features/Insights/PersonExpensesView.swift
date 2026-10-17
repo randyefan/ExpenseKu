@@ -136,7 +136,7 @@ struct PersonExpensesView: View {
                 try? context.save()
             }
         ))
-        .sheet(item: $moveRequest) { EnvelopeMoveSheet(request: $0) }
+        .sheet(item: $moveRequest) { EnvelopeMoveSheet(request: $0).presentationBackground(Theme.bg) }
         .background(Theme.bg)
         .navigationTitle(person?.name ?? "Person")
         .navigationBarTitleDisplayMode(.inline)
@@ -147,6 +147,7 @@ struct PersonExpensesView: View {
                 ExpenseEditorView(editing: expense, onFinish: { editing = nil })
             }
             .presentationDragIndicator(.visible)
+            .presentationBackground(Theme.bg)
         }
     }
 

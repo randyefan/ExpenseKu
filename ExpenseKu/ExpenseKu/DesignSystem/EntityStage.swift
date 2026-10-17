@@ -14,6 +14,7 @@ struct EntityStage: View {
     enum Mark: Hashable {
         case symbol(String)
         case initial(String)
+        case logo(BankLogo)
     }
 
     let mark: Mark
@@ -162,6 +163,9 @@ struct EntityStage: View {
                 .font(.jakarta(size * 0.38)).fontWeight(.semibold)
                 .foregroundStyle(tint)
                 .contentTransition(.opacity)
+        case .logo(let logo):
+            BankLogoMark(logo: logo, size: size)
+                .transition(.opacity)
         }
     }
 

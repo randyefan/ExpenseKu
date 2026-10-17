@@ -13,6 +13,7 @@ nonisolated struct FilterOption: Hashable, Identifiable {
     let name: String
     var symbol: String? = nil
     var colorHex: String? = nil
+    var brandID: String? = nil
 
     var id: FilterChoice { choice }
 }

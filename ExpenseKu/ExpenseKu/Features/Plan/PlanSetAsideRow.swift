@@ -55,7 +55,7 @@ struct PlanSetAsideRow: View {
                                 .foregroundStyle(Theme.textSecondary)
                         }
                         if let account = item.account {
-                            PlanChip(kind: .account, text: account.name, symbol: account.resolvedSymbol)
+                            PlanChip(kind: .account, text: account.name, symbol: account.chipSymbol)
                         }
                         Spacer(minLength: 0)
                     }

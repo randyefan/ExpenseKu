@@ -45,7 +45,7 @@ struct AccountPicker: View {
                         dismiss()
                     } label: {
                         HStack(spacing: 12) {
-                            CategoryIcon(account: account, size: 36)
+                            AccountIcon(account: account, size: 36)
                             Text(account.name)
                                 .font(.dsBody)
                                 .foregroundStyle(Theme.text)

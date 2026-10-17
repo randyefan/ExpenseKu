@@ -149,6 +149,8 @@ struct ColorWorkbench: View {
     /// Seeds the "Auto" choice so it shows the tint the name would produce. Live:
     /// it tracks the name field keystroke by keystroke.
     let previewName: String
+    /// The colour Auto stands for when it is not the name's: an Account's bank logo.
+    var autoHex: String? = nil
 
     private let dot: CGFloat = 34
 
@@ -165,6 +167,7 @@ struct ColorWorkbench: View {
 
     /// The hue the name alone would produce, so the dial starts where "Auto" is.
     private var resolvedAutoHue: Double {
+        if let autoHex, let hue = HexColor.hue(autoHex) { return hue }
         let hues: [Double] = [0.03, 0.09, 0.13, 0.33, 0.55, 0.72, 0.85]
         return hues[Theme.stableIndex(previewName, upperBound: hues.count)]
     }
@@ -191,7 +194,7 @@ struct ColorWorkbench: View {
             withAnimation(Motion.snap) { colorHex = nil }
         } label: {
             Circle()
-                .fill(Theme.categoryTint(previewName))
+                .fill(Theme.categoryTint(hex: autoHex, seed: previewName))
                 .frame(width: dot, height: dot)
                 .overlay(
                     Image(systemName: "wand.and.stars")
@@ -235,6 +238,8 @@ struct ColorWorkbench: View {
 struct AppearanceWorkbench: View {
     @Binding var colorHex: String?
     @Binding var iconName: String?
+    /// The bank logo sharing the icon slot; nil for entities that cannot wear one.
+    var brandID: Binding<String?>? = nil
 
     /// Seeds the "Auto" fallbacks so they read as they will in-app. Live: it
     /// tracks the name field keystroke by keystroke.
@@ -254,7 +259,19 @@ struct AppearanceWorkbench: View {
     private let markerInset: CGFloat = 4
     private var columns: [GridItem] { [GridItem(.adaptive(minimum: cell), spacing: 12)] }
 
-    private var previewTint: Color { Theme.categoryTint(hex: colorHex, seed: previewName) }
+    @Environment(BankLogoCatalog.self) private var bankLogos: BankLogoCatalog?
+
+    private var catalog: BankLogoCatalog { bankLogos ?? .fallback }
+
+    private var selectedBrand: String? { brandID?.wrappedValue }
+
+    private var autoHex: String? { AccountAppearance.colorHex(nil, logo: catalog.logo(for: selectedBrand)) }
+
+    private var previewTint: Color { Theme.categoryTint(hex: colorHex ?? autoHex, seed: previewName) }
+
+    private var matchingLogos: [BankLogo] {
+        brandID == nil ? [] : BankLogoRules.matching(catalog.logos, query: query)
+    }
 
     private var lensBinding: Binding<Lens> {
         Binding(
@@ -279,13 +296,14 @@ struct AppearanceWorkbench: View {
 
             Group {
                 switch lens {
-                case .color: ColorWorkbench(colorHex: $colorHex, previewName: previewName)
+                case .color: ColorWorkbench(colorHex: $colorHex, previewName: previewName, autoHex: autoHex)
                 case .icon: iconPane
                 }
             }
             .motionTransition(.page(towards: pageEdge))
         }
         .sensoryFeedback(.selection, trigger: iconName)
+        .sensoryFeedback(.selection, trigger: selectedBrand)
     }
 
     // MARK: - Icon pane
@@ -301,6 +319,15 @@ struct AppearanceWorkbench: View {
                     } header: {
                         SectionHeaderText("From the name")
                             .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }
+                if !matchingLogos.isEmpty {
+                    Section {
+                        ForEach(matchingLogos) { bankCell($0) }
+                    } header: {
+                        SectionHeaderText("Banks")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.top, 4)
                     }
                 }
                 ForEach(AppearancePalette.groups) { group in
@@ -329,7 +356,8 @@ struct AppearanceWorkbench: View {
     }
 
     private var noMatches: Bool {
-        !query.isEmpty && !AppearancePalette.symbols.contains { AppearancePalette.matches($0, query: query) }
+        !query.isEmpty && matchingLogos.isEmpty
+            && !AppearancePalette.symbols.contains { AppearancePalette.matches($0, query: query) }
     }
 
     private var searchField: some View {
@@ -372,7 +400,10 @@ struct AppearanceWorkbench: View {
     private func iconCell(_ symbol: String) -> some View {
         let isSelected = iconName == symbol
         return Button {
-            withAnimation(Motion.snap) { iconName = symbol }
+            withAnimation(Motion.snap) {
+                iconName = symbol
+                brandID?.wrappedValue = nil
+            }
         } label: {
             glyphCell(symbol, isSelected: isSelected)
         }
@@ -381,10 +412,32 @@ struct AppearanceWorkbench: View {
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
-    private var autoIconCell: some View {
-        let isSelected = iconName == nil
+    private func bankCell(_ logo: BankLogo) -> some View {
+        let isSelected = selectedBrand == logo.id
         return Button {
-            withAnimation(Motion.snap) { iconName = nil }
+            withAnimation(Motion.snap) {
+                brandID?.wrappedValue = logo.id
+                iconName = nil
+            }
+        } label: {
+            RoundedRectangle(cornerRadius: Metric.rowRadius)
+                .fill(Theme.surface)
+                .frame(width: cell, height: cell)
+                .background(iconMarker(isSelected: isSelected))
+                .overlay(BankLogoMark(logo: logo, size: 30))
+        }
+        .buttonStyle(.pressableCard)
+        .accessibilityLabel(logo.displayName)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+
+    private var autoIconCell: some View {
+        let isSelected = iconName == nil && selectedBrand == nil
+        return Button {
+            withAnimation(Motion.snap) {
+                iconName = nil
+                brandID?.wrappedValue = nil
+            }
         } label: {
             glyphCell(autoSymbol, isSelected: isSelected)
                 .overlay(alignment: .topTrailing) {

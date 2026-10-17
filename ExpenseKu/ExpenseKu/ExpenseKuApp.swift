@@ -23,7 +23,7 @@ struct StoreBootstrap {
     static func make() -> StoreBootstrap {
         // Declared through the versioned schema so the store always records which version
         // it is; see Models/ExpenseKuSchema.swift.
-        let schema = Schema(versionedSchema: ExpenseKuSchemaV5.self)
+        let schema = Schema(versionedSchema: ExpenseKuSchemaV6.self)
 
         // Primary store: persistent, CloudKit-mirrored via the container in
         // ExpenseKu.entitlements (cloudKitDatabase defaults to .automatic).
@@ -74,6 +74,7 @@ extension EnvironmentValues {
 @main
 struct ExpenseKuApp: App {
     private let store = StoreBootstrap.make()
+    @State private var bankLogos = BankLogoCatalog.live()
 
     init() {
         AppFont.registerIfNeeded()
@@ -84,6 +85,7 @@ struct ExpenseKuApp: App {
         WindowGroup {
             RootView()
                 .environment(\.isEphemeralStore, store.isEphemeral)
+                .environment(bankLogos)
         }
         .modelContainer(store.container)
     }

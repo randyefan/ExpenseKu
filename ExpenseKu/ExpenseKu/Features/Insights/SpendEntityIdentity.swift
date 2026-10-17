@@ -15,6 +15,7 @@ struct SpendEntityIdentity {
     let kind: String
     let symbol: String
     let colorHex: String?
+    var brandID: String? = nil
 
     static func resolve(_ subject: SpendSubject, in context: ModelContext) -> SpendEntityIdentity? {
         switch subject {
@@ -29,7 +30,8 @@ struct SpendEntityIdentity {
         case .account(let id):
             let account: Account? = context.existingModel(for: id)
             return account.map {
-                SpendEntityIdentity(name: $0.name, kind: "Account", symbol: $0.resolvedSymbol, colorHex: $0.colorHex)
+                SpendEntityIdentity(name: $0.name, kind: "Account", symbol: $0.resolvedSymbol, colorHex: $0.colorHex,
+                                    brandID: $0.brandID)
             }
         case .unassigned:
             return SpendEntityIdentity(name: "Unassigned", kind: "Account",

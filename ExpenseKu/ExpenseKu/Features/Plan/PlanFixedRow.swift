@@ -92,7 +92,7 @@ struct PlanFixedRow: View {
                          symbol: category.resolvedSymbol)
             }
             if let account = item.account {
-                PlanChip(kind: .account, text: account.name, symbol: account.resolvedSymbol)
+                PlanChip(kind: .account, text: account.name, symbol: account.chipSymbol)
             }
             if let dueDay = item.dueDay {
                 let label = DueDay.label(day: dueDay, in: cycle, today: today, calendar: calendar)

@@ -59,6 +59,9 @@ struct FilterOptionRow: View {
             CategoryIcon(symbol: "circle.dashed", tint: Theme.textSecondary, size: Metric.rowIconSize)
         } else if dimension == .person {
             PersonAvatar(name: option.name, colorHex: option.colorHex, size: Metric.rowIconSize)
+        } else if dimension == .account {
+            AccountIcon(name: option.name, symbol: option.symbol ?? Account.defaultSymbol,
+                        colorHex: option.colorHex, brandID: option.brandID, size: Metric.rowIconSize)
         } else {
             CategoryIcon(name: option.name, systemImage: option.symbol, colorHex: option.colorHex,
                          size: Metric.rowIconSize)

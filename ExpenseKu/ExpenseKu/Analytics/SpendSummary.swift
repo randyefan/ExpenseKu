@@ -31,6 +31,7 @@ nonisolated struct AccountSpend: Identifiable {
     /// As `CategorySpend`; nil for the "Unassigned" bucket.
     var colorHex: String? = nil
     var symbol: String? = nil
+    var brandID: String? = nil
     var accountID: PersistentIdentifier? = nil
     var id: String { accountName }
     var subject: SpendSubject { accountID.map(SpendSubject.account) ?? .unassigned }
@@ -86,13 +87,13 @@ nonisolated enum SpendSummary {
         dateRange: ClosedRange<Date>? = nil
     ) -> [AccountSpend] {
         var totals: [String: Decimal] = [:]
-        var appearance: [String: (colorHex: String?, symbol: String?, id: PersistentIdentifier)] = [:]
+        var appearance: [String: (colorHex: String?, symbol: String?, brandID: String?, id: PersistentIdentifier)] = [:]
         for expense in expenses {
             if let dateRange, !dateRange.contains(expense.date) { continue }
             let name = expense.account?.name ?? "Unassigned"
             totals[name, default: 0] += expense.amount
             if appearance[name] == nil, let account = expense.account {
-                appearance[name] = (account.colorHex, account.resolvedSymbol, account.persistentModelID)
+                appearance[name] = (account.colorHex, account.chipSymbol, account.brandID, account.persistentModelID)
             }
         }
         return totals
@@ -102,6 +103,7 @@ nonisolated enum SpendSummary {
                     total: $0.value,
                     colorHex: appearance[$0.key]?.colorHex,
                     symbol: appearance[$0.key]?.symbol,
+                    brandID: appearance[$0.key]?.brandID,
                     accountID: appearance[$0.key]?.id
                 )
             }

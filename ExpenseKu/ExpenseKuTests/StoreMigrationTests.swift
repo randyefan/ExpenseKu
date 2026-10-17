@@ -21,6 +21,10 @@
 //  October plan holding a ticket paid early from September, and one expense marked No
 //  envelope: what a 1.3 install holds before set-aside arrives.
 //
+//  `Fixtures/PlanV5.store` is the V4 fixture opened and written by the V5 code (the
+//  commit before V6), with a Rp 500.000 set-aside line in September towards October's
+//  Travelling: what a 1.4 install holds before bank logos arrive.
+//
 //  Every test opens a *copy*: SwiftData migrates in place, and the fixture has to stay
 //  a pre-change store for the next run.
 //
@@ -60,7 +64,7 @@ nonisolated final class StoreMigrationTests: XCTestCase {
     /// Opened the way `StoreBootstrap` opens the real store, minus CloudKit.
     @MainActor
     private func open(_ url: URL) throws -> ModelContainer {
-        let schema = Schema(versionedSchema: ExpenseKuSchemaV5.self)
+        let schema = Schema(versionedSchema: ExpenseKuSchemaV6.self)
         let config = ModelConfiguration(schema: schema, url: url, cloudKitDatabase: .none)
         return try ModelContainer(for: schema, migrationPlan: ExpenseKuMigrationPlan.self,
                                   configurations: [config])
@@ -273,5 +277,39 @@ nonisolated final class StoreMigrationTests: XCTestCase {
         XCTAssertEqual(line.setAsideTarget?.name, "Travelling")
         XCTAssertTrue(line.isSetAsideMoved)
         XCTAssertEqual(SetAside.target(of: line)?.name, "Travelling")
+    }
+
+    // MARK: - V5 → V6
+
+    /// **The V5 store opens**, its set-aside line intact, and no Account arrives with a logo.
+    @MainActor
+    func testAV5StoreOpensWithItsSetAsideAndNoLogos() throws {
+        let context = ModelContext(try open(try copyOfStore("PlanV5")))
+        let (september, _) = try plans(in: context)
+
+        let accounts = try context.fetch(FetchDescriptor<Account>())
+        XCTAssertEqual(Set(accounts.map(\.name)), ["BCA", "Jago", "BNI", "Mandiri"])
+        XCTAssertTrue(accounts.allSatisfy { $0.brandID == nil })
+
+        let line = try XCTUnwrap((september.items ?? []).first(where: \.isSetAside))
+        XCTAssertEqual(line.setAsideTarget?.name, "Travelling")
+        XCTAssertTrue(line.isSetAsideMoved)
+        XCTAssertEqual(try context.fetchCount(FetchDescriptor<PlanItem>()), 14)
+    }
+
+    /// Once migrated, an Account keeps the logo it was given, and the store opens again.
+    @MainActor
+    func testTheMigratedV5StoreKeepsABrandAcrossRelaunches() throws {
+        let url = try copyOfStore("PlanV5")
+        do {
+            let context = ModelContext(try open(url))
+            let bca = try XCTUnwrap(try context.fetch(FetchDescriptor<Account>()).first { $0.name == "BCA" })
+            bca.brandID = "bca"
+            try context.save()
+        }
+
+        let context = ModelContext(try open(url))
+        let bca = try XCTUnwrap(try context.fetch(FetchDescriptor<Account>()).first { $0.name == "BCA" })
+        XCTAssertEqual(bca.brandID, "bca")
     }
 }

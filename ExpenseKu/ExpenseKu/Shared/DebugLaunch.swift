@@ -91,5 +91,20 @@ enum DebugLaunch {
         // screenshot of List / Month / Insights / Manage stays byte-identical.
         DebugPlanSeed.seedIfNeeded(context)
     }
+
+    /// -brandAccounts bca,mandiri,jago gives each Account whose first word is one of
+    /// those ids that bank's logo, leaving the rest as they are.
+    @MainActor
+    static func brandAccounts(_ context: ModelContext) {
+        guard let ids = value(for: "-brandAccounts")?.split(separator: ",").map(String.init) else { return }
+        let accounts = (try? context.fetch(FetchDescriptor<Account>())) ?? []
+        for account in accounts {
+            guard let first = account.name.lowercased().split(separator: " ").first.map(String.init),
+                  ids.contains(first) else { continue }
+            account.brandID = first
+            account.iconName = nil
+        }
+        try? context.save()
+    }
 }
 #endif

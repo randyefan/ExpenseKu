@@ -1,6 +1,6 @@
 # ExpenseTracker — Context
 
-Personal, single-user expense tracker. Native Apple app (iOS / iPadOS / macOS) built with SwiftUI + SwiftData, synced privately across the owner's devices via CloudKit. No accounts, no sharing, no backend.
+Personal, single-user expense tracker. Native Apple app (iOS / iPadOS / macOS) built with SwiftUI + SwiftData, synced privately across the owner's devices via CloudKit. No accounts, no sharing, no backend for the owner's data — the only shared data is the read-only bank-logo catalog (**ADR-0012**).
 
 This document is the source of truth for the project's **ubiquitous language**. When code, issues, or specs name a concept below, use the term as defined here — don't drift to synonyms.
 
@@ -19,6 +19,7 @@ This document is the source of truth for the project's **ubiquitous language**. 
 - **Companion** — a Person tagged on an Expense because the owner was *with* them. A sub-meaning of Person, useful in prose; the app stores no flag separating it from a recipient.
 - **Account** — a reusable, owner-defined **payment source** an Expense was paid from (e.g. "Cash", "GoPay", a bank). A first-class tag-entity like Category, but **optional** on an Expense and single-select. It is a **label only** — *not* a balance-bearing ledger: no balances, income, top-ups, or reconciliation. Deleting an Account nullifies it on its expenses (ADR-0001), leaving them **Unassigned**.
   - A plan's **transfer line** groups planned spend by Account. That is a derived figure inside one plan, not a balance the app tracks.
+- **Bank logo** — an image from the developer's catalog that an Account can wear in place of its icon. The owner picks it; it never renames the Account. Stored on the Account as the catalog record's id (`brandID`), resolved every time it is drawn: a logo withdrawn from the catalog draws as a bank glyph until it returns. Drawn in a white circle wherever an Account's icon circle appears; Plan chips and section headers show the bank glyph instead (**ADR-0012**, `docs/prd/bank-logos.md`).
 - **Unassigned** — the display state of an Expense with no Account (`account = nil`), whether never set (accounts are optional at entry) or left behind by Account deletion. The Account analogue of **Uncategorized**.
 - **Expense filter** — the owner's narrowing of the Expenses tab (List and Month) or Insights to chosen **Categories, Groups, Accounts and People**, each with its empty value (Uncategorized, No group, Unassigned, No one). Each value can be shown **Only** or **Hidden**: in one dimension an expense passes when it matches any Only value (if there is one) and carries no Hidden value, and a hidden Person hides every expense that includes them; dimensions combine with AND, and with the plan filter. Session view state only, separate per tab; the Plan lens and Search ignore it (`docs/prd/expense-filter.md`).
 - **Spend attribution** — how an Expense's amount is credited to its People for ranking. Rule: **full amount to each Person**. A 100k Expense tagged with two People counts 100k toward *each*. This is a per-person ranking, not a sum, so totals can exceed the grand total by design. Attribution is computed at query time; nothing extra is stored.
@@ -53,7 +54,7 @@ This document is the source of truth for the project's **ubiquitous language**. 
 
 ## Key decisions
 
-- **Single-user, no auth.** Data is private to the owner's Apple ID via CloudKit; there is no server to run.
+- **Single-user, no auth.** Data is private to the owner's Apple ID via CloudKit; there is no server to run. The one shared dataset is the bank-logo catalog in CloudKit's public database, which the app only reads (**ADR-0012**).
 - **SwiftData + CloudKit constraints are accepted.** All model properties are optional-or-defaulted and there are **no enforced unique constraints**. Consequence: de-duplication of Category, Group, Person and Account is a **UI concern** — always pick from existing, and prompt on a case-insensitive name match rather than creating a duplicate (**ADR-0002**).
 - **Deletes nullify, never cascade** (**ADR-0001**). Deleting a Category leaves its expenses **Uncategorized**; deleting a Person removes them from expenses; deleting an Account leaves its expenses **Unassigned**; deleting a PlanItem leaves its Expense intact. Expenses are never destroyed by deleting something that references them.
 - **A plan is not a ledger** (**ADR-0005**). Analytics read Expenses only. A PlanItem never contributes to a spending total, so planned money can never be counted as spent.

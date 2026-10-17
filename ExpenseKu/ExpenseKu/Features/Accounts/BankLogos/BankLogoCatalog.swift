@@ -19,7 +19,7 @@ final class BankLogoCatalog {
     private(set) var logos: [BankLogo]
     private(set) var isFetched: Bool
 
-    @ObservationIgnored private var byID: [String: BankLogo] = [:]
+    private var byID: [String: BankLogo] = [:]
     @ObservationIgnored private var images: [String: UIImage] = [:]
     @ObservationIgnored private var lastAttempt: Date?
     @ObservationIgnored private let source: (any BankLogoSource)?

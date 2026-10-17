@@ -26,6 +26,7 @@ struct BankLogoMark: View {
                     .resizable()
                     .scaledToFit()
                     .padding(size * 0.19)
+                    .foregroundStyle(.black.opacity(0.45))
             }
             .accessibilityHidden(true)
     }

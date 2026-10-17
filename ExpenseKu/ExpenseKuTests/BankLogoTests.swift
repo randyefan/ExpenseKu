@@ -32,6 +32,10 @@ nonisolated private struct FakeSource: BankLogoSource {
     }
 }
 
+nonisolated private final class ChangeFlag: @unchecked Sendable {
+    var isSet = false
+}
+
 nonisolated final class BankLogoTests: XCTestCase {
     private var directory: URL!
 
@@ -212,5 +216,25 @@ nonisolated final class BankLogoTests: XCTestCase {
         try? FileManager.default.removeItem(at: store.imageURL(for: "bca"))
         await catalog.refreshIfDue(now: start.addingTimeInterval(60))
         XCTAssertFalse(FileManager.default.fileExists(atPath: store.imageURL(for: "bca").path()))
+    }
+
+    /// Views look a logo up by id, so a fetch that withdraws one has to reach them:
+    /// a lookup taken before the fetch is told it changed.
+    @MainActor
+    func testALookupIsToldWhenAFetchChangesIt() async {
+        let remote = BankLogo.snapshot.filter { $0.id != "mandiri" }.map { var l = $0; l.modified = .now; return l }
+        let catalog = BankLogoCatalog(source: FakeSource(logos: remote, imageDirectory: directory),
+                                      store: BankLogoStore(directory: directory.appending(path: "store")))
+        let changed = ChangeFlag()
+        withObservationTracking {
+            _ = catalog.logo(for: "mandiri")
+        } onChange: {
+            changed.isSet = true
+        }
+
+        await catalog.refreshIfDue(now: .now)
+
+        XCTAssertTrue(changed.isSet)
+        XCTAssertNil(catalog.logo(for: "mandiri"))
     }
 }

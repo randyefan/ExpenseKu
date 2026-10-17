@@ -16,6 +16,7 @@ struct AccountIcon: View {
     let colorHex: String?
     let brandID: String?
     var size: CGFloat = Metric.iconSize
+    var logoInset: CGFloat = BankLogoMark.standardInset
 
     @Environment(BankLogoCatalog.self) private var catalog: BankLogoCatalog?
 
@@ -24,7 +25,7 @@ struct AccountIcon: View {
         let logo = catalog.logo(for: brandID)
         switch AccountAppearance.mark(brandID: brandID, symbol: symbol, logo: logo) {
         case .logo(let logo):
-            BankLogoMark(logo: logo, size: size)
+            BankLogoMark(logo: logo, size: size, inset: logoInset)
         case .symbol(let symbol):
             CategoryIcon(symbol: symbol, tint: catalog.tint(colorHex: colorHex, brandID: brandID, seed: name), size: size)
         }
@@ -32,9 +33,10 @@ struct AccountIcon: View {
 }
 
 extension AccountIcon {
-    init(account: Account, size: CGFloat = Metric.iconSize) {
+    init(account: Account, size: CGFloat = Metric.iconSize,
+         logoInset: CGFloat = BankLogoMark.standardInset) {
         self.init(name: account.name, symbol: account.resolvedSymbol, colorHex: account.colorHex,
-                  brandID: account.brandID, size: size)
+                  brandID: account.brandID, size: size, logoInset: logoInset)
     }
 }
 

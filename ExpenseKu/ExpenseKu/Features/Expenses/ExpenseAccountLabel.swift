@@ -6,18 +6,21 @@
 //  (docs/prd/bank-logos.md §5.5). The name gives way before the note does, so a long
 //  Account name truncates at a capped width rather than squeezing the row's middle.
 //
+//  The mark is 22pt with a thin inset because the logos are wide wordmarks: at 14pt
+//  with the standard inset their letters were under 3pt tall (§5.5).
+//
 
 import SwiftUI
 
 struct ExpenseAccountLabel: View {
     let account: Account
 
-    @ScaledMetric(relativeTo: .caption) private var markSize: CGFloat = 14
+    @ScaledMetric(relativeTo: .caption) private var markSize: CGFloat = 22
     @ScaledMetric(relativeTo: .caption) private var nameWidth: CGFloat = 130
 
     var body: some View {
-        HStack(spacing: 4) {
-            AccountIcon(account: account, size: markSize)
+        HStack(spacing: 5) {
+            AccountIcon(account: account, size: markSize, logoInset: 0.08)
                 .accessibilityHidden(true)
             Text(account.name)
                 .font(.dsCaption)

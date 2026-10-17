@@ -2,7 +2,7 @@
 //  BankLogoTests.swift
 //  ExpenseKuTests
 //
-//  docs/prd/bank-logos.md, one test per rule, against the eight-bank snapshot the
+//  docs/prd/bank-logos.md, one test per rule, against the eleven-entry snapshot the
 //  PRD names in §6.3.
 //
 
@@ -59,17 +59,19 @@ nonisolated final class BankLogoTests: XCTestCase {
         XCTAssertEqual(ordered.map(\.displayName), ["BCA again", "BNI", "BRI"])
     }
 
-    /// The first snapshot is the PRD's eight banks, in that order.
-    func testTheSnapshotIsTheEightBanksInOrder() {
+    /// The snapshot is the PRD's eleven entries, in that order.
+    func testTheSnapshotIsTheElevenEntriesInOrder() {
         XCTAssertEqual(BankLogoRules.ordered(BankLogo.snapshot).map(\.id),
-                       ["bca", "bri", "bni", "mandiri", "bsi", "jago", "seabank", "cimb-niaga"])
+                       ["bca", "bri", "bni", "mandiri", "bsi", "jago", "seabank", "cimb-niaga",
+                        "danamon", "superbank", "dana"])
     }
 
     /// **Search matches a logo's displayName**: "bca" leaves BCA only.
     func testSearchMatchesTheDisplayName() {
         XCTAssertEqual(BankLogoRules.matching(BankLogo.snapshot, query: "bca").map(\.id), ["bca"])
         XCTAssertEqual(BankLogoRules.matching(BankLogo.snapshot, query: " Jago ").map(\.id), ["jago"])
-        XCTAssertEqual(BankLogoRules.matching(BankLogo.snapshot, query: "").count, 8)
+        XCTAssertEqual(BankLogoRules.matching(BankLogo.snapshot, query: "").count, 11)
+        XCTAssertEqual(BankLogoRules.matching(BankLogo.snapshot, query: "dana").map(\.id), ["danamon", "dana"])
         XCTAssertTrue(BankLogoRules.matching(BankLogo.snapshot, query: "kopi").isEmpty)
     }
 
@@ -144,7 +146,7 @@ nonisolated final class BankLogoTests: XCTestCase {
     func testANeverFetchedCatalogIsTheSnapshot() {
         let catalog = BankLogoCatalog(source: nil, store: BankLogoStore(directory: directory))
         XCTAssertFalse(catalog.isFetched)
-        XCTAssertEqual(catalog.logos.count, 8)
+        XCTAssertEqual(catalog.logos.count, 11)
         XCTAssertNotNil(catalog.logo(for: "mandiri"))
     }
 
@@ -161,7 +163,7 @@ nonisolated final class BankLogoTests: XCTestCase {
 
         XCTAssertTrue(catalog.isFetched)
         XCTAssertNil(catalog.logo(for: "mandiri"))
-        XCTAssertEqual(catalog.logos.count, 7)
+        XCTAssertEqual(catalog.logos.count, 10)
         XCTAssertTrue(FileManager.default.fileExists(atPath: store.imageURL(for: "bca").path()))
 
         let relaunched = BankLogoCatalog(source: nil, store: store)
@@ -178,7 +180,7 @@ nonisolated final class BankLogoTests: XCTestCase {
         await catalog.refreshIfDue(now: .now)
 
         XCTAssertFalse(catalog.isFetched)
-        XCTAssertEqual(catalog.logos.count, 8)
+        XCTAssertEqual(catalog.logos.count, 11)
     }
 
     /// A record with no image cannot be drawn, so it is left out rather than shown blank.

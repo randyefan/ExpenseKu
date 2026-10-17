@@ -20,6 +20,9 @@ extension BankLogo {
         BankLogo(id: "jago", displayName: "Bank Jago", tintHex: "E89F00", sortOrder: 60),
         BankLogo(id: "seabank", displayName: "SeaBank", tintHex: "EE5A1F", sortOrder: 70),
         BankLogo(id: "cimb-niaga", displayName: "CIMB Niaga", tintHex: "C8102E", sortOrder: 80),
+        BankLogo(id: "danamon", displayName: "Danamon", tintHex: "F28C00", sortOrder: 90),
+        BankLogo(id: "superbank", displayName: "Superbank", tintHex: "5B2C83", sortOrder: 100),
+        BankLogo(id: "dana", displayName: "DANA", tintHex: "118EEA", sortOrder: 110),
     ]
 
     nonisolated var assetName: String { "bank-logo-\(id)" }

@@ -149,6 +149,26 @@ The developer edits these in CloudKit Console. The app only reads.
 - The fetched list and its images are cached on device and survive relaunch.
 - A failed fetch keeps the last good catalog.
 
+### 6.2.1 Logo sources
+
+The images are the banks' own logos as published on Wikimedia Commons, rendered to PNG,
+trimmed and fitted to a 256×256 transparent square (2026-10-17). They are trademarks of their
+banks, shown only to mark the owner's own Accounts (ADR-0012).
+
+| id | Commons file | Licence on Commons |
+|---|---|---|
+| bca | Bank Central Asia.svg | Public domain |
+| bri | BRI 2025 (symbol).svg — the symbol alone; the wordmark is too wide | Public domain |
+| bni | Bank Negara Indonesia logo (2004).svg | Public domain |
+| mandiri | Bank Mandiri logo 2016.svg | Public domain |
+| bsi | Bank Syariah Indonesia.svg | Public domain |
+| jago | Bank Jago 2026.svg | Public domain |
+| seabank | SeaBank.svg (Indonesia, not Vietnam's SeABank) | Public domain |
+| cimb-niaga | CIMB Niaga logo.svg | Public domain |
+| danamon | Danamon (2024).svg | Public domain |
+| superbank | Superbank.svg | Public domain |
+| dana | Dana-meta-logo.png | CC BY-SA 4.0 — credit "DANA logo, Wikimedia Commons, CC BY-SA 4.0" if the app is ever distributed |
+
 ### 6.3 Snapshot
 
 The app bundles a snapshot of the catalog: the same records, with their images in the
@@ -159,7 +179,7 @@ asset catalog.
 | Never fetched (fresh install, offline) | bundled snapshot |
 | Fetched at least once | the fetched catalog only — the snapshot is ignored |
 
-The snapshot holds placeholders (the name's initials in the brand colour) for
+The snapshot holds the official logos (§6.2.1; until 2026-10-17 they were placeholders) for
 **BCA, BRI, BNI, Mandiri, BSI, Bank Jago, SeaBank, CIMB Niaga, Danamon, Superbank, DANA**, in
 that order, with ids `bca, bri, bni, mandiri, bsi, jago, seabank, cimb-niaga, danamon,
 superbank, dana` and sortOrder 10 to 110. Danamon, Superbank and DANA were added on 2026-10-17

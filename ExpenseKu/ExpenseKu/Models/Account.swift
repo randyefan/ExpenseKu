@@ -48,4 +48,7 @@ final class Account {
 
     /// The SF Symbol to render: the owner's pick, else the default card glyph.
     var resolvedSymbol: String { iconName ?? Account.defaultSymbol }
+
+    /// The glyph for spaces too small for a logo: Plan chips and section headers.
+    var chipSymbol: String { AccountAppearance.chipSymbol(brandID: brandID, symbol: resolvedSymbol) }
 }

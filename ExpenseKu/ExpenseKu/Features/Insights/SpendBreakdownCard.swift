@@ -16,6 +16,7 @@ struct SpendBreakdownCard: View {
     let onTap: (SpendSubject) -> Void
 
     @State private var growth = ChartGrowth()
+    @Environment(BankLogoCatalog.self) private var bankLogos: BankLogoCatalog?
 
     private var maxTotal: Double { max(rows.map(\.total.doubleValue).max() ?? 1, 1) }
 
@@ -43,7 +44,7 @@ struct SpendBreakdownCard: View {
                         name: row.name,
                         value: row.total,
                         fraction: row.total.doubleValue / maxTotal,
-                        tint: Theme.categoryTint(hex: row.colorHex, seed: row.name),
+                        tint: (bankLogos ?? .fallback).tint(colorHex: row.colorHex, brandID: row.brandID, seed: row.name),
                         symbol: row.resolvedSymbol,
                         growth: growth.factor,
                         mark: isNarrowed ? .check : .chevron

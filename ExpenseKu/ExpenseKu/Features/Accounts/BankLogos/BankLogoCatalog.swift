@@ -37,6 +37,11 @@ final class BankLogoCatalog {
     }
 
     static func live() -> BankLogoCatalog {
+        // The unsigned test host has no CloudKit entitlement, and CKContainer traps
+        // without one.
+        if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
+            return BankLogoCatalog(source: nil, store: nil)
+        }
         #if DEBUG
         if let source = DebugBankLogoSource.fromLaunchArguments() {
             return BankLogoCatalog(source: source, store: BankLogoStore(directory: .temporaryDirectory.appending(path: "DebugBankLogos-\(UUID().uuidString)")))

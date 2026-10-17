@@ -75,7 +75,7 @@ struct PlanEnvelopeRow: View {
 
                     if let account = item.account {
                         HStack(spacing: 6) {
-                            PlanChip(kind: .account, text: account.name, symbol: account.resolvedSymbol)
+                            PlanChip(kind: .account, text: account.name, symbol: account.chipSymbol)
                             Spacer(minLength: 0)
                             if PlanItemState.of(item) == .funded {
                                 FundedPlace(account: account.name)

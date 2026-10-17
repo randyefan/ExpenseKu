@@ -22,7 +22,7 @@ extension FilterCatalog {
             },
             accounts: accounts.map {
                 FilterOption(choice: .entity($0.persistentModelID), name: $0.name,
-                             symbol: $0.resolvedSymbol, colorHex: $0.colorHex)
+                             symbol: $0.resolvedSymbol, colorHex: $0.colorHex, brandID: $0.brandID)
             },
             people: people.map {
                 FilterOption(choice: .entity($0.persistentModelID), name: $0.name, colorHex: $0.colorHex)

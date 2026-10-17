@@ -14,6 +14,7 @@ struct SpendByAccountChart: View {
     let onSelect: (SpendSubject) -> Void
 
     @State private var growth = ChartGrowth()
+    @Environment(BankLogoCatalog.self) private var bankLogos: BankLogoCatalog?
 
     private var maxTotal: Double { max(data.map(\.total.doubleValue).max() ?? 1, 1) }
 
@@ -27,7 +28,7 @@ struct SpendByAccountChart: View {
                         name: item.accountName,
                         value: item.total,
                         fraction: item.total.doubleValue / maxTotal,
-                        tint: Theme.categoryTint(hex: item.colorHex, seed: item.accountName),
+                        tint: (bankLogos ?? .fallback).tint(colorHex: item.colorHex, brandID: item.brandID, seed: item.accountName),
                         symbol: item.symbol ?? Account.defaultSymbol,
                         growth: growth.factor,
                         mark: .chevron

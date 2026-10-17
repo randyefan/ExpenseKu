@@ -74,6 +74,7 @@ extension EnvironmentValues {
 @main
 struct ExpenseKuApp: App {
     private let store = StoreBootstrap.make()
+    @State private var bankLogos = BankLogoCatalog.live()
 
     init() {
         AppFont.registerIfNeeded()
@@ -84,6 +85,7 @@ struct ExpenseKuApp: App {
         WindowGroup {
             RootView()
                 .environment(\.isEphemeralStore, store.isEphemeral)
+                .environment(bankLogos)
         }
         .modelContainer(store.container)
     }

@@ -31,7 +31,7 @@ struct EnvelopeDetailCard: View {
 
             if let account = envelope.account {
                 HStack(spacing: 6) {
-                    PlanChip(kind: .account, text: account.name, symbol: account.resolvedSymbol)
+                    PlanChip(kind: .account, text: account.name, symbol: account.chipSymbol)
                     Spacer(minLength: 0)
                     if PlanItemState.of(envelope) == .funded {
                         FundedPlace(account: account.name)

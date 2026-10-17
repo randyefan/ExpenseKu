@@ -14,6 +14,7 @@ nonisolated struct SpendBreakdownRow: Identifiable {
     let total: Decimal
     var colorHex: String?
     var symbol: String?
+    var brandID: String?
 
     var id: SpendSubject { subject }
 
@@ -35,5 +36,6 @@ nonisolated struct SpendBreakdownRow: Identifiable {
         total = spend.total
         colorHex = spend.colorHex
         symbol = spend.symbol
+        brandID = spend.brandID
     }
 }

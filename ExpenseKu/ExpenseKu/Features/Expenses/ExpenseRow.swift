@@ -3,8 +3,8 @@
 //  ExpenseKu
 //
 //  One expense inside a day's ledger card: pastel category icon, bold category name,
-//  a single grey meta line (note · account · companions), and the bold amount
-//  right-aligned with monospaced digits.
+//  a single grey meta line (note · companions), and the bold amount right-aligned with
+//  monospaced digits, the Account under it with its mark (docs/prd/bank-logos.md §5.5).
 //
 //  A plan tag gets a line of its own above the category (envelope-assignment.md §4.11):
 //  beside the meta line it took the row's middle and squeezed a long note into a narrow
@@ -53,17 +53,17 @@ struct ExpenseRow: View {
                     .foregroundStyle(Theme.text)
                     .lineLimit(1)
 
-                ExpenseMetaLine(
-                    note: expense.note,
-                    accountName: expense.account?.name,
-                    peopleNames: peopleNames
-                )
+                ExpenseMetaLine(note: expense.note, peopleNames: peopleNames)
             }
 
             Spacer(minLength: 8)
 
             VStack(alignment: .trailing, spacing: 2) {
                 MoneyText(expense.amount, font: .dsBody, color: Theme.text)
+
+                if let account = expense.account {
+                    ExpenseAccountLabel(account: account)
+                }
 
                 if let dateLabel {
                     Text(dateLabel)

@@ -2,22 +2,21 @@
 //  ExpenseMetaLine.swift
 //  ExpenseKu
 //
-//  The quiet grey line under an expense's category: the note, which account it came
-//  from and who was there, on one line separated by middots. One line rather than
-//  three, so a day's worth of expenses fits on screen together.
+//  The quiet grey line under an expense's category: the note and who was there, on
+//  one line separated by middots. One line rather than two, so a day's worth of
+//  expenses fits on screen together. The Account sits under the amount instead
+//  (docs/prd/bank-logos.md §5.5).
 //
 
 import SwiftUI
 
 struct ExpenseMetaLine: View {
     let note: String
-    let accountName: String?
     let peopleNames: String
 
     private var parts: [String] {
         var parts: [String] = []
         if !note.isEmpty { parts.append(note) }
-        if let accountName, !accountName.isEmpty { parts.append(accountName) }
         if !peopleNames.isEmpty { parts.append(peopleNames) }
         return parts
     }
@@ -35,10 +34,10 @@ struct ExpenseMetaLine: View {
 
 #Preview {
     VStack(alignment: .leading, spacing: 8) {
-        ExpenseMetaLine(note: "Dinner", accountName: "GoPay", peopleNames: "Tarisa & Fadil")
-        ExpenseMetaLine(note: "", accountName: "Cash", peopleNames: "")
+        ExpenseMetaLine(note: "Dinner", peopleNames: "Tarisa & Fadil")
+        ExpenseMetaLine(note: "", peopleNames: "Tarisa")
         ExpenseMetaLine(note: "A note long enough that it has to be truncated somewhere",
-                        accountName: "Bank Central Asia", peopleNames: "Tarisa, Fadil & Budi")
+                        peopleNames: "Tarisa, Fadil & Budi")
     }
     .padding()
     .appBackground()

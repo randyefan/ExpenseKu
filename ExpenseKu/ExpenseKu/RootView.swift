@@ -15,6 +15,8 @@ struct RootView: View {
 
     @Environment(\.modelContext) private var modelContext
     @Environment(\.isEphemeralStore) private var isEphemeralStore
+    @Environment(\.scenePhase) private var scenePhase
+    @Environment(BankLogoCatalog.self) private var bankLogos: BankLogoCatalog?
     @State private var selection: AppTab = .expenses
     #if DEBUG
     @State private var debugScreen: DebugScreen?
@@ -41,6 +43,10 @@ struct RootView: View {
             DebugHarness(screen: screen.name)
         }
         #endif
+        .onChange(of: scenePhase, initial: true) { _, phase in
+            guard phase == .active else { return }
+            Task { await bankLogos?.refreshIfDue() }
+        }
         .task {
             Person.reconcileMe(in: modelContext)
             // Auto items materialise here, lazily: iOS does not run this in the

@@ -21,7 +21,11 @@ struct SpendEntityHeader: View {
     var isFiltered = false
     var growth: Double = 1
 
-    private var tint: Color { Theme.categoryTint(hex: identity.colorHex, seed: identity.name) }
+    @Environment(BankLogoCatalog.self) private var bankLogos: BankLogoCatalog?
+
+    private var tint: Color {
+        (bankLogos ?? .fallback).tint(colorHex: identity.colorHex, brandID: identity.brandID, seed: identity.name)
+    }
 
     private var sharePercent: Int { Int((share ?? 0) * 100 + 0.5) }
 
@@ -34,7 +38,8 @@ struct SpendEntityHeader: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(spacing: 12) {
-                CategoryIcon(symbol: identity.symbol, tint: tint, size: 52)
+                AccountIcon(name: identity.name, symbol: identity.symbol, colorHex: identity.colorHex,
+                            brandID: identity.brandID, size: 52)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(identity.name)

@@ -23,7 +23,7 @@ struct PlanSectionHeader: View {
 
     private var symbol: String {
         switch section.heading {
-        case .account(let account): account?.resolvedSymbol ?? "creditcard"
+        case .account(let account): account?.chipSymbol ?? "creditcard"
         case .group(let group): group?.resolvedSymbol ?? "tray"
         case .status(.todo): "circle"
         case .status(.funded): "arrow.down.to.line"

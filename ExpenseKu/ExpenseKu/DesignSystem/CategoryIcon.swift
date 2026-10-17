@@ -71,13 +71,6 @@ extension CategoryIcon {
                   tint: Theme.categoryTint(hex: category.colorHex, seed: category.name),
                   size: size)
     }
-
-    /// An account rendered with its owner-chosen (or auto) icon and color.
-    init(account: Account, size: CGFloat = Metric.iconSize) {
-        self.init(symbol: account.resolvedSymbol,
-                  tint: Theme.categoryTint(hex: account.colorHex, seed: account.name),
-                  size: size)
-    }
 }
 
 #Preview("Auto tints") {

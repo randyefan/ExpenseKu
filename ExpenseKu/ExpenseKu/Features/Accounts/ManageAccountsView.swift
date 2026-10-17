@@ -21,7 +21,7 @@ struct ManageAccountsView: View {
             ForEach(Array(accounts.enumerated()), id: \.element.id) { index, account in
                 Button { editor = EditorTarget(account: account) } label: {
                     HStack(spacing: 12) {
-                        CategoryIcon(account: account, size: Metric.rowIconSize)
+                        AccountIcon(account: account, size: Metric.rowIconSize)
                         Text(account.name)
                             .font(.dsBody)
                             .foregroundStyle(Theme.text)

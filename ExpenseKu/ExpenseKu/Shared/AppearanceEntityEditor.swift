@@ -19,19 +19,39 @@ import SwiftData
 protocol AppearanceEntity: NamedEntity {
     var colorHex: String? { get set }
     var iconName: String? { get set }
+    /// The bank logo sharing the icon slot. Only an Account can wear one; the others
+    /// read nil and ignore writes (docs/prd/bank-logos.md §4).
+    var brandID: String? { get set }
+    static var wearsBankLogos: Bool { get }
     /// The glyph shown when no icon is chosen, for a (possibly in-progress) name.
     nonisolated static func autoSymbol(forName name: String) -> String
 }
 
+extension AppearanceEntity {
+    static var wearsBankLogos: Bool { false }
+}
+
 extension Category: AppearanceEntity {
+    var brandID: String? {
+        get { nil }
+        set {}
+    }
+
     nonisolated static func autoSymbol(forName name: String) -> String { CategoryIcon.symbol(for: name) }
 }
 
 extension Account: AppearanceEntity {
+    static var wearsBankLogos: Bool { true }
+
     nonisolated static func autoSymbol(forName name: String) -> String { Account.defaultSymbol }
 }
 
 extension CategoryGroup: AppearanceEntity {
+    var brandID: String? {
+        get { nil }
+        set {}
+    }
+
     nonisolated static func autoSymbol(forName name: String) -> String { CategoryGroup.defaultSymbol }
 }
 
@@ -47,6 +67,9 @@ struct AppearanceEntityEditor<T: AppearanceEntity, Extras: View>: View {
 
     @State private var colorHex: String?
     @State private var iconName: String?
+    @State private var brandID: String?
+
+    @Environment(BankLogoCatalog.self) private var bankLogos: BankLogoCatalog?
 
     /// DEBUG screenshot support — see `NameEditorView.debugPrefill`.
     private let debugPrefill: String?
@@ -67,6 +90,7 @@ struct AppearanceEntityEditor<T: AppearanceEntity, Extras: View>: View {
         self.debugPrefill = debugPrefill
         _colorHex = State(initialValue: editing?.colorHex)
         _iconName = State(initialValue: editing?.iconName)
+        _brandID = State(initialValue: editing?.brandID)
     }
 
     var body: some View {
@@ -77,8 +101,8 @@ struct AppearanceEntityEditor<T: AppearanceEntity, Extras: View>: View {
             onCommit: onCommit,
             stage: { name in
                 EntityStage(
-                    mark: .symbol(iconName ?? T.autoSymbol(forName: name)),
-                    tint: Theme.categoryTint(hex: colorHex, seed: name),
+                    mark: mark(forName: name),
+                    tint: tint(forName: name),
                     name: name,
                     placeholder: "New \(T.noun.capitalized)",
                     caption: caption,
@@ -90,22 +114,38 @@ struct AppearanceEntityEditor<T: AppearanceEntity, Extras: View>: View {
                 AppearanceWorkbench(
                     colorHex: $colorHex,
                     iconName: $iconName,
+                    brandID: T.wearsBankLogos ? $brandID : nil,
                     previewName: name,
                     autoSymbol: T.autoSymbol(forName: name)
                 )
             },
-            tint: { Theme.categoryTint(hex: colorHex, seed: $0) },
+            tint: { tint(forName: $0) },
             applyExtras: { entity in
                 entity.colorHex = colorHex
                 entity.iconName = iconName
+                entity.brandID = brandID
             },
             debugPrefill: debugPrefill
         )
     }
 
+    private var catalog: BankLogoCatalog { bankLogos ?? .fallback }
+
+    private func mark(forName name: String) -> EntityStage.Mark {
+        let symbol = iconName ?? T.autoSymbol(forName: name)
+        return switch AccountAppearance.mark(brandID: brandID, symbol: symbol, logo: catalog.logo(for: brandID)) {
+        case .logo(let logo): .logo(logo)
+        case .symbol(let symbol): .symbol(symbol)
+        }
+    }
+
+    private func tint(forName name: String) -> Color {
+        catalog.tint(colorHex: colorHex, brandID: brandID, seed: name)
+    }
+
     private var caption: String {
         let colour = colorHex == nil ? "Automatic colour" : "Custom colour"
-        let icon = iconName == nil ? "automatic icon" : "custom icon"
+        let icon = brandID != nil ? "bank logo" : iconName == nil ? "automatic icon" : "custom icon"
         return "\(T.noun.capitalized) · \(colour), \(icon)"
     }
 
@@ -113,6 +153,7 @@ struct AppearanceEntityEditor<T: AppearanceEntity, Extras: View>: View {
         withAnimation(Motion.snap) {
             colorHex = AppearancePalette.swatches.randomElement()
             iconName = AppearancePalette.symbols.randomElement()
+            brandID = nil
         }
     }
 }

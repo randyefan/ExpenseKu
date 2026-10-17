@@ -1,12 +1,12 @@
 # PRD — Bank logos for Accounts
 
-Status: Accepted
-Date: 2026-10-17
+Status: Built
+Date: 2026-10-17 · design approved and built the same day (flow X)
 Owner: Randy Efan
 
 Companion documents: `CONTEXT.md` (**Account**, **Bank logo**), **ADR-0012** (the
 read-only public catalog), and **`design/ExpenseKu.pen`**, page
-`05 · Proposals — not built`, **Flow X**. Frame references appear inline as `[→ X2]`.
+`02 · Pages · iPhone`, **Flow X** (moved there from `05 · Proposals` once built). Frame references appear inline as `[→ X2]`.
 
 ---
 
@@ -73,7 +73,8 @@ centred with padding so a wide wordmark fits. It is never tinted. `[→ X2, X4]`
 | Manage › Accounts list | logo `[→ X4]` |
 | Account picker (expense editor, plan item editor) | logo `[→ X5]` |
 | Account editor stage | logo `[→ X2]` |
-| Insights: spend breakdown, entity header, chart legend | logo `[→ X6]` |
+| Insights entity header | logo `[→ X6]` |
+| Insights proportion rows (Spend by Account, a drill-in's breakdown) | `building.columns.fill`, bar in the brand tint `[→ X6]` |
 | Filter sheet rows | logo |
 | Expense row (every list that draws `ExpenseRow`) | 14pt mark under the amount, §5.5 `[→ X9 B, X10]` |
 | Plan row chip, envelope detail chip | `building.columns.fill` `[→ X7]` |
@@ -119,7 +120,7 @@ The Account moves out of the grey meta line and under the amount. `[→ X9 B]`
   on its pastel wash.
 - An expense with no Account (**Unassigned**) has no line 2; Search's date moves up.
 - The Account's name is one line and truncates at its tail; the amount never truncates.
-- VoiceOver reads the row as before: category, note, account, people, amount.
+- VoiceOver reads the row in its visual order: tag, category, note · people, amount, account (and date in Search).
 - Every list that draws `ExpenseRow` follows: the cycle List, the Month lens's day list,
   Search, and the Insights detail screens.
 
@@ -133,7 +134,7 @@ Record type `BankLogo` in the public database of `iCloud.randyefan.ExpenseKu`:
 |---|---|---|
 | `id` | String | the stable key stored in `Account.brandID`, e.g. `bca` |
 | `displayName` | String | label, search text and accessibility label |
-| `logo` | Asset | PNG 256×256 with transparency, or PDF |
+| `logo` | Asset | PNG, at least 256×256, transparent background |
 | `tint` | String | `RRGGBB` brand colour |
 | `sortOrder` | Int64 | position in the Banks section |
 
@@ -216,7 +217,9 @@ reviewed flow X the same day and asked for the expense row to be redesigned with
 
 ## 10. Design traceability
 
-Page `05 · Proposals — not built`, **Flow X · Bank logos for Accounts**.
+Page `02 · Pages · iPhone`, **Flow X · Bank logos for Accounts**. The unchosen expense-card options
+A, C and D stay on `05 · Proposals`. `BankLogoMark` and the AccountIcon states are a specimen in
+`01 · Design System`, group `Primitives`; the `ExpenseRow` component carries the Account line.
 
 | Frame | Covers |
 |---|---|
@@ -231,3 +234,29 @@ Page `05 · Proposals — not built`, **Flow X · Bank logos for Accounts**.
 | **X8** · A withdrawn logo — the bank glyph fallback | §5.3, decision 8 |
 | **X9** · Expense card options A–D — **B chosen** | §5.5, decision 20 |
 | **X10** · Search results — three trailing lines | §5.5, decision 21 |
+
+### 10.1 Closed during implementation
+
+| Gap | Answer | Where |
+|---|---|---|
+| Insights' proportion rows draw a bare 16pt glyph, not a circle | Treated like a chip: `building.columns.fill`, the bar in the brand tint | `SpendSummary.byAccount`, `SpendBreakdownCard`, `SpendByAccountChart` |
+| `UIImage` cannot load a PDF from a file | The catalog's image is PNG only | `BankLogoStore` |
+| A record with no image | Left out of the fetched catalog rather than drawn blank | `BankLogoCatalog.refreshIfDue` |
+| An id is also the cache file name | Only lowercase slug ids (`a–z`, `0–9`, `-`) are used | `BankLogoRules.isUsable` |
+| After a fetch withdrew Mandiri, its row drew an empty white circle | The id lookup is observed, so marks redraw when the catalog changes; a missing image draws a grey bank glyph | `BankLogoCatalog`, `BankLogoTests.testALookupIsToldWhenAFetchChangesIt` |
+| The unsigned test host has no CloudKit entitlement | Under XCTest the catalog is the snapshot with no source | `BankLogoCatalog.live()` |
+| A long Account name would squeeze the note | The name is capped at a Dynamic-Type-scaled 130pt and truncates | `ExpenseAccountLabel` |
+| With Auto colour, the colour pane's Auto swatch showed the name's tint | Auto shows the brand's tint when a logo is chosen | `ColorWorkbench.autoHex` |
+
+### 10.2 Owner setup in CloudKit Console
+
+1. In the **Development** environment of `iCloud.randyefan.ExpenseKu`, create record type `BankLogo`
+   with fields `id` (String), `displayName` (String), `logo` (Asset), `tint` (String),
+   `sortOrder` (Int64).
+2. Add an index: `recordName` → **Queryable** (the fetch queries every record).
+3. Security roles for `BankLogo`: `_world` can **Read**; only the developer creates and writes.
+4. Add the eight records with the snapshot's ids and order (`bca` 10 … `cimb-niaga` 80) and their
+   logos.
+5. **Deploy Schema Changes** to Production, which also deploys `CD_Account.CD_brandID`. Records are
+   per environment: add the logos in Production too.
+

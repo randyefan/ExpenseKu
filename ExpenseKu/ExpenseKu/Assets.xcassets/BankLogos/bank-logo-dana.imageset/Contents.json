@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "bank-logo-dana.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

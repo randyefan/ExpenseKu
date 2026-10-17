@@ -33,8 +33,8 @@ added, replaced or withdrawn at any time without an app release.
 - **Logos for Categories, Groups or People.** Account only.
 - **Matching a logo from the Account's name.** The owner picks; nothing is suggested.
 - **Uploading a logo from the device.** The list is the developer's.
-- **E-wallets.** The first list is banks only; an e-wallet can be added to the catalog
-  later without code.
+- **An e-wallet section.** E-wallets go in the same Banks list; DANA is the first, added
+  because the owner has a DANA Account. Others can be added to the catalog without code.
 - **Instant push.** No CloudKit subscription; the next launch or foreground is enough.
 - **Logos inside small glyphs.** Plan chips and Plan section headers keep an SF Symbol (§5).
 
@@ -159,9 +159,11 @@ asset catalog.
 | Never fetched (fresh install, offline) | bundled snapshot |
 | Fetched at least once | the fetched catalog only — the snapshot is ignored |
 
-The first snapshot holds placeholders (the bank's initials in a white circle) for
-**BCA, BRI, BNI, Mandiri, BSI, Bank Jago, SeaBank, CIMB Niaga**, in that order, with ids
-`bca, bri, bni, mandiri, bsi, jago, seabank, cimb-niaga`. Official logos replace them in
+The snapshot holds placeholders (the name's initials in the brand colour) for
+**BCA, BRI, BNI, Mandiri, BSI, Bank Jago, SeaBank, CIMB Niaga, Danamon, Superbank, DANA**, in
+that order, with ids `bca, bri, bni, mandiri, bsi, jago, seabank, cimb-niaga, danamon,
+superbank, dana` and sortOrder 10 to 110. Danamon, Superbank and DANA were added on 2026-10-17
+so every one of the owner's own Accounts has a logo; DANA is an e-wallet, listed under Banks. Official logos replace them in
 CloudKit Console and in the asset catalog.
 
 ## 7. Lifetime
@@ -201,7 +203,7 @@ reviewed flow X the same day and asked for the expense row to be redesigned with
 | 8 | A withdrawn logo falls back to `building.columns.fill`; `brandID` is kept | `X8` |
 | 9 | A bundled snapshot covers the time before the first fetch | — |
 | 10 | The first images are placeholders | `X1` |
-| 11 | The first list is eight banks: BCA, BRI, BNI, Mandiri, BSI, Bank Jago, SeaBank, CIMB Niaga | `X1` |
+| 11 | The first list is eight banks: BCA, BRI, BNI, Mandiri, BSI, Bank Jago, SeaBank, CIMB Niaga; Danamon, Superbank and DANA added the same day to cover every Account the owner has — *owner override* of the e-wallet non-goal for DANA | `X1` |
 | 12 | Auto colour takes the logo's `tint` | `X2` |
 | 13 | Shuffle never picks a logo | — |
 | 14 | Search matches a logo's `displayName` | `X3` |
@@ -255,8 +257,9 @@ A, C and D stay on `05 · Proposals`. `BankLogoMark` and the AccountIcon states 
    `sortOrder` (Int64).
 2. Add an index: `recordName` → **Queryable** (the fetch queries every record).
 3. Security roles for `BankLogo`: `_world` can **Read**; only the developer creates and writes.
-4. Add the eight records with the snapshot's ids and order (`bca` 10 … `cimb-niaga` 80) and their
-   logos.
+4. Add the eleven records with the snapshot's ids and order (`bca` 10 … `dana` 110) and their
+   logos. Done in Development on 2026-10-17 with the placeholder images; `_icloud` lost its
+   default Create on `BankLogo` so no iCloud user can add to the shared list.
 5. **Deploy Schema Changes** to Production, which also deploys `CD_Account.CD_brandID`. Records are
    per environment: add the logos in Production too.
 

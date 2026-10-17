@@ -18,6 +18,10 @@ final class Account {
     var colorHex: String?
     /// Owner-chosen SF Symbol name. `nil` means "auto" — the default card glyph.
     var iconName: String?
+    /// The id of a `BankLogo` in the public catalog. Shares the icon slot with
+    /// `iconName`: setting one clears the other. Kept when the catalog withdraws the
+    /// logo, so restoring the record restores it. docs/prd/bank-logos.md §5.3.
+    var brandID: String?
 
     // Deleting an Account nullifies each referencing expense's `account`
     // (rendered as "Unassigned") — never cascade-delete the expenses. ADR-0001.

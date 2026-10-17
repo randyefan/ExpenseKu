@@ -41,6 +41,9 @@ Carthage/Build/
 # Design snapshots — regenerated from the app, never edited by hand.
 .scratch/pen/shots/
 
+# iPad layout verification shots — throwaway, the fixes they checked are merged.
+.scratch/ipad/
+
 # Feature spikes — SwiftPM/Xcode build output. These contain checked-out package
 # repos, and git will treat each one as a submodule if it ever sees them: a broken
 # object store in any of them then breaks `git status` and `git checkout` outright.

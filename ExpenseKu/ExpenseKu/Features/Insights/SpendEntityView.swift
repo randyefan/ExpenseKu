@@ -106,6 +106,7 @@ struct SpendEntityView: View {
         }
         .sheet(isPresented: $showingFilter) {
             FilterSheet(filter: $filter, planFilter: $planFilter, catalog: catalog, hiding: route.subject.dimension)
+                .presentationBackground(Theme.bg)
         }
         .environment(\.planOrigins, origins)
         .environment(\.expenseRowActions, ExpenseRowActions(
@@ -115,7 +116,7 @@ struct SpendEntityView: View {
                 try? context.save()
             }
         ))
-        .sheet(item: $moveRequest) { EnvelopeMoveSheet(request: $0) }
+        .sheet(item: $moveRequest) { EnvelopeMoveSheet(request: $0).presentationBackground(Theme.bg) }
         .background(Theme.bg)
         .navigationTitle(identity?.name ?? (route.subject.isCategory ? "Category" : "Account"))
         .navigationBarTitleDisplayMode(.inline)
@@ -127,6 +128,7 @@ struct SpendEntityView: View {
                 ExpenseEditorView(editing: expense, onFinish: { editing = nil })
             }
             .presentationDragIndicator(.visible)
+            .presentationBackground(Theme.bg)
         }
     }
 

@@ -256,18 +256,21 @@ struct ExpensesView: View {
                     delete: deleteOne
                 ))
                 .sheet(item: $envelopeSheet, onDismiss: envelopeSheetDismissed) { sheet in
-                    switch sheet {
-                    case .move(let request):
-                        EnvelopeMoveSheet(request: request) { expenseSelection = nil }
-                    case .gather(let envelope, let cycle):
-                        EnvelopeGatherSheet(envelope: envelope, cycle: cycle)
+                    Group {
+                        switch sheet {
+                        case .move(let request):
+                            EnvelopeMoveSheet(request: request) { expenseSelection = nil }
+                        case .gather(let envelope, let cycle):
+                            EnvelopeGatherSheet(envelope: envelope, cycle: cycle)
+                                .environment(\.planOrigins, planOrigins)
+                        case .detail(let envelope, let cycle):
+                            EnvelopeDetailSheet(envelope: envelope, cycle: cycle) { action in
+                                leaveEnvelopeDetail(envelope, cycle: cycle, for: action)
+                            }
                             .environment(\.planOrigins, planOrigins)
-                    case .detail(let envelope, let cycle):
-                        EnvelopeDetailSheet(envelope: envelope, cycle: cycle) { action in
-                            leaveEnvelopeDetail(envelope, cycle: cycle, for: action)
                         }
-                        .environment(\.planOrigins, planOrigins)
                     }
+                    .presentationBackground(Theme.bg)
                 }
                 .onChange(of: shownContents.expenses.map(\.persistentModelID)) {
                     expenseSelection?.keepOnly(shownContents.expenses)
@@ -315,18 +318,22 @@ struct ExpensesView: View {
                 NavigationStack {
                     ExpenseEditorView(envelope: preset.envelope, date: preset.date)
                 }
+                .presentationBackground(Theme.bg)
             }
             .sheet(isPresented: $showingSettings) {
                 TransactionSettingsView(payday: $payday)
+                    .presentationBackground(Theme.bg)
             }
             .sheet(isPresented: $showingFilter) {
                 FilterSheet(filter: $filter, planFilter: $planFilter, catalog: catalog)
+                    .presentationBackground(Theme.bg)
             }
             .sheet(item: $selection, onDismiss: returnToEnvelopeDetail) { expense in
                 NavigationStack {
                     ExpenseEditorView(editing: expense, onFinish: { selection = nil })
                 }
                 .presentationDragIndicator(.visible)
+                .presentationBackground(Theme.bg)
             }
             .planSheet(
                 $planSheet,

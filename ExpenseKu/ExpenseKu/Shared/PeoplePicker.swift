@@ -62,6 +62,7 @@ struct PeoplePicker: View {
                     if !isSelected(created) { selection.append(created) }
                 })
             }
+            .presentationBackground(Theme.bg)
         }
     }
 

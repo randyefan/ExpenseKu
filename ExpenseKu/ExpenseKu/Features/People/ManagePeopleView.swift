@@ -56,6 +56,7 @@ struct ManagePeopleView: View {
                     editing: target.person
                 )
             }
+            .presentationBackground(Theme.bg)
         }
     }
 

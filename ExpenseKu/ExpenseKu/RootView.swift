@@ -71,6 +71,7 @@ struct RootView: View {
     #if DEBUG
     private func applyDebugLaunch() {
         DebugLaunch.seedIfNeeded(modelContext)
+        DebugLaunch.brandAccounts(modelContext)
 
         switch DebugLaunch.startTab {
         case "insights": selection = .insights

@@ -6,6 +6,9 @@
 //  (docs/prd/bank-logos.md §5.1). Most bank logos are drawn for a white page, so on
 //  the dark canvas they need their own; the logo itself is never tinted.
 //
+//  The logos are wide wordmarks, so the inset decides how big the letters get. Small
+//  marks, like the expense row's, pass a thinner one (§5.5).
+//
 //  Hidden from VoiceOver: wherever it appears the Account's name is read beside it.
 //
 
@@ -14,6 +17,9 @@ import SwiftUI
 struct BankLogoMark: View {
     let logo: BankLogo
     var size: CGFloat = Metric.iconSize
+    var inset: CGFloat = BankLogoMark.standardInset
+
+    static let standardInset: CGFloat = 0.19
 
     @Environment(BankLogoCatalog.self) private var catalog: BankLogoCatalog?
 
@@ -25,7 +31,7 @@ struct BankLogoMark: View {
                 (catalog ?? .fallback).image(for: logo)
                     .resizable()
                     .scaledToFit()
-                    .padding(size * 0.19)
+                    .padding(size * inset)
                     .foregroundStyle(.black.opacity(0.45))
             }
             .accessibilityHidden(true)

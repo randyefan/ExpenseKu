@@ -1,13 +1,13 @@
 # PRD — Bank logos for Accounts
 
-Status: Accepted · §5.6 (the Plan lens, flow AA) amended 2026-10-18; §5.5 amended and built 2026-10-18 (flow Z, the bank leads the row)
+Status: Built · §5.6 (the Plan lens, flow AA) amended and built 2026-10-18; §5.5 amended and built 2026-10-18 (flow Z, the bank leads the row)
 Date: 2026-10-17 · design approved and built the same day (flow X); the expense row's mark enlarged the same evening (flow Y); the row led by the Account on 2026-10-18 (flow Z); the Plan lens's banks on 2026-10-18 (flow AA)
 Owner: Randy Efan
 
 Companion documents: `CONTEXT.md` (**Account**, **Bank logo**), **ADR-0012** (the
 read-only public catalog), and **`design/ExpenseKu.pen`**, page
 `02 · Pages · iPhone`, **Flows X, Y and Z** (moved there from `05 · Proposals` once built), and
-**Flow AA** (frames AC1–AC4, on `05 · Proposals` until built). Frame references appear inline as `[→ X2]`.
+**Flow AA** (frames AC1–AC4). Frame references appear inline as `[→ X2]`.
 
 ---
 
@@ -172,7 +172,7 @@ same height.
 | **Unassigned** (no Account) | `creditcard` on a grey wash `[→ AC1]` |
 
 The plate is **60×28** in the section header and the checklist line, and scales with Dynamic
-Type relative to body. It is hidden from VoiceOver: the name is always read beside it.
+Type relative to body up to **34pt tall** (73 wide); past that it stops growing. It is hidden from VoiceOver: the name is always read beside it.
 
 #### 5.6.2 Sorted by Account — the bank heads its group
 
@@ -424,10 +424,12 @@ reviewed flow X the same day and asked for the expense row to be redesigned with
 
 ## 10. Design traceability
 
-Page `02 · Pages · iPhone`, **Flow X · Bank logos for Accounts**. The unchosen expense-card options
+Page `02 · Pages · iPhone`, **Flow X · Bank logos for Accounts** (and Flows Y, Z, AA after it). The unchosen expense-card options
 A, C and D stay on `05 · Proposals`, as do flow Y's options B, C and D (the shipped 14pt row is kept
 there for comparison). `BankLogoMark` and the AccountIcon states are a specimen in
 `01 · Design System`, group `Primitives`; the `ExpenseRow` component carries the Account line.
+Flow AA's `AccountPlate`, `PlanAccountChip`, `PlanAccountHeader` and `TransferRow · bank` are in
+group `Cycle plan`, row `Plan lens banks`.
 
 | Frame | Covers |
 |---|---|
@@ -470,6 +472,11 @@ there for comparison). `BankLogoMark` and the AccountIcon states are a specimen 
 | Person detail's hand-drawn divider was inset by the old 38pt icon (flow Z) | It insets by the scaled 42pt mark + 14 | `PersonDayCard` |
 | At extra-extra-large text the category name truncates beside a wide amount (flow Z) | Pre-existing (the amount takes the width); the 42pt mark narrows the column a little more. Left as is | — |
 | With Auto colour, the colour pane's Auto swatch showed the name's tint | Auto shows the brand's tint when a logo is chosen | `ColorWorkbench.autoHex` |
+| The plate scaled with Dynamic Type to ~80pt wide at the accessibility sizes and left the name beside it a letter or two (flow AA) | The plate stops growing at 34pt tall. At the largest sizes a long name still truncates beside the checklist's amount, as the share table and the expense rows already do | `AccountPlate.maxHeight` |
+| At default text size "CC Danamon" truncated beside its amount on the checklist (flow AA) | The line's spacings tightened: check → plate 10, plate → text 8, name → amount at least 6 | `TransferRowView` |
+| The transfer line had no cycle to order its due days by (flow AA) | `TransferLines.rows` takes the cycle and calendar; `PlanContents` passes them | `TransferLines.dueDays(of:cycle:calendar:)` |
+| The wordmark crop was built for flow Y's unchosen option B and never merged (flow AA) | `LogoTrim`, `UIImage.trimmedToOpaque()` and `BankLogoCatalog.wordmark(for:)` came over from that branch, cached per logo and dropped when a fetch changes it | `LogoTrimTests` |
+| Older page-02 frames (Flow E's checklist, M2, X7) draw the pre-AA header, chip and transfer line (flow AA) | Not swept, as with flow Z; the old components' context on `01 · Design System` says so | `PlanSectionHeader`, `TransferRow`, `PlanChip · Account` |
 
 ### 10.2 Owner setup in CloudKit Console
 

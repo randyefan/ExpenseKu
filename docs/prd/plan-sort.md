@@ -93,6 +93,10 @@ still shows that group's header. `[→ M2]`
 Ordering Account and Group groups by planned total makes the list read in the same order
 as the transfer checklist and the share table below it.
 
+*Amended 2026-10-18 by bank-logos.md §5.6 (flow AA): grouped by Account, the header is a bank
+header with a wordmark plate, the group's total and its state, and rows drop their Account
+chip. The paragraph below still holds for the Group and Status orders.*
+
 **Rows do not change.** Grouped by Account, every row still carries its Account chip,
 though the header already names it: a row is one component in every order, and a chip
 that comes and goes with the sort would make the same item look different between two

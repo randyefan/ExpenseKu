@@ -62,6 +62,8 @@ extension ExpensesView {
 
         case .openReview:
             planSheet = .review
+        case .lookBack:
+            planSheet = .lookBack
         case .showFunded:
             fundedFilterCycle = cycle
             planSortChoice = nil
@@ -188,6 +190,8 @@ extension View {
         confirmation: Binding<PlanConfirmation?>,
         contents: PlanContents,
         plans: [CyclePlan],
+        expenses: [Expense],
+        payday: Int,
         today: Date,
         onOpenExpense: @escaping (Expense) -> Void,
         onDismiss: @escaping () -> Void
@@ -197,6 +201,8 @@ extension View {
                 which: which,
                 contents: contents,
                 plans: plans,
+                expenses: expenses,
+                payday: payday,
                 today: today,
                 onOpenExpense: { expense in
                     sheet.wrappedValue = nil
@@ -278,6 +284,8 @@ private struct PlanSheetContent: View {
     let which: PlanSheet
     let contents: PlanContents
     let plans: [CyclePlan]
+    let expenses: [Expense]
+    let payday: Int
     let today: Date
     let onOpenExpense: (Expense) -> Void
     let onRequestDelete: (PlanItem) -> Void
@@ -315,6 +323,9 @@ private struct PlanSheetContent: View {
                     onOpenExpense: onOpenExpense,
                     onFinish: onFinish
                 )
+            case .lookBack:
+                LookBackSheet(plan: plan, onScreen: contents.cycle, plans: plans, expenses: expenses,
+                              payday: payday, calendar: .current, onFinish: onFinish)
             }
         }
     }

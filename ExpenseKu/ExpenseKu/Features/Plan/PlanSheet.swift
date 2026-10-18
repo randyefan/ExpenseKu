@@ -20,6 +20,8 @@ enum PlanSheet: Identifiable {
     /// Ticking Done: the compact confirmation that turns a plan item into an expense.
     case confirmDone(PlanItem)
     case review
+    /// look-back.md: what an earlier cycle had that this plan does not.
+    case lookBack
 
     var id: String {
         switch self {
@@ -30,6 +32,7 @@ enum PlanSheet: Identifiable {
         case .transferAdjustment(let id): "transferAdjustment-\(id)"
         case .confirmDone(let item): "confirmDone-\(item.persistentModelID)"
         case .review: "review"
+        case .lookBack: "lookBack"
         }
     }
 }

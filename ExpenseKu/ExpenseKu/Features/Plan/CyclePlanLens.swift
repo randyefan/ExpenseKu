@@ -33,6 +33,7 @@ struct CyclePlanLens<Header: View>: View {
     let dormantExpanded: Bool
     var isFundedFiltered = false
     var sort: PlanSort = .amount
+    var lookBackMonth: String?
     var revealTrigger: AnyHashable = 0
     let onAction: (PlanAction) -> Void
     @ViewBuilder let header: Header
@@ -235,6 +236,11 @@ struct CyclePlanLens<Header: View>: View {
             }
             PlanListRow(onSelect: { onAction(.addIncomeLine) }) {
                 PickerAddRow(title: "Add income line").padding(.vertical, 4)
+            }
+            if let lookBackMonth {
+                PlanListRow(onSelect: { onAction(.lookBack) }) {
+                    LookBackEntryRow(month: lookBackMonth).padding(.vertical, 4)
+                }
             }
         } footer: {
             Text("＋ in the toolbar still logs an expense. Plan items are added here.")

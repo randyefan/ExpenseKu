@@ -1,12 +1,12 @@
 # PRD — Bank logos for Accounts
 
-Status: Built
-Date: 2026-10-17 · design approved and built the same day (flow X); the expense row's mark enlarged the same evening (flow Y)
+Status: Built · §5.5 amended and built 2026-10-18 (flow Z, the bank leads the row)
+Date: 2026-10-17 · design approved and built the same day (flow X); the expense row's mark enlarged the same evening (flow Y); the row led by the Account on 2026-10-18 (flow Z)
 Owner: Randy Efan
 
 Companion documents: `CONTEXT.md` (**Account**, **Bank logo**), **ADR-0012** (the
 read-only public catalog), and **`design/ExpenseKu.pen`**, page
-`02 · Pages · iPhone`, **Flow X** (moved there from `05 · Proposals` once built). Frame references appear inline as `[→ X2]`.
+`02 · Pages · iPhone`, **Flows X, Y and Z** (moved there from `05 · Proposals` once built). Frame references appear inline as `[→ X2]`.
 
 ---
 
@@ -79,7 +79,7 @@ image, so the padding decides how tall its letters get; a small mark takes a thi
 | Insights entity header | logo `[→ X6]` |
 | Insights proportion rows (Spend by Account, a drill-in's breakdown) | `building.columns.fill`, bar in the brand tint `[→ X6]` |
 | Filter sheet rows | logo |
-| Expense row (every list that draws `ExpenseRow`) | 22pt mark under the amount, §5.5 `[→ X9 B, X10, Y A]` |
+| Expense row (every list that draws `ExpenseRow`) | 42pt leading mark with a category badge, §5.5 `[→ ZA1–ZA4]` |
 | Plan row chip, envelope detail chip | `building.columns.fill` `[→ X7]` |
 | Plan section header (sorted by Account) | `building.columns.fill` `[→ X7]` |
 
@@ -105,31 +105,48 @@ recipe so it reads like the other swatches. Otherwise it comes from the name, as
 
 ### 5.5 The expense row
 
-The Account moves out of the grey meta line and under the amount. `[→ X9 B]`
+*Amended 2026-10-18 (flow Z, option A). Until then the row led with its category and drew the
+Account as a 22pt mark under the amount (decisions 20 and 22).*
+
+The Account leads the row. Its mark takes the place of the category icon, and the category
+rides on the mark's corner as a badge. `[→ ZA1]`
 
 ```
-(icon) Makan                     Rp 85.000
-       Lunch · Tarisa       (BCA) BCA Gaji
+(BCA)  Makan                     Rp 43.000
+(  ●)  Makan siang · Tarisa       BCA Gaji
 ```
 
 | Part | Content |
 |---|---|
-| Meta line | note · people — the Account is no longer in it |
+| Leading mark | the Account's mark at 42pt: its logo in a white circle with 12% padding, the bank glyph (§5.3), or its own symbol on its pastel wash `[→ ZA1]` |
+| Category badge | an 18pt circle filled solid in the category's tint with its glyph in ink (`on-tint`), ringed 1pt in the card colour, on the mark's lower-right corner and hanging 4pt past it `[→ ZA1]` |
+| Text column | plan tag line, category name, note · people — unchanged |
 | Trailing, line 1 | the amount, unchanged |
-| Trailing, line 2 | the Account's mark at 22pt (a logo with 8% padding), then its name in caption grey, right-aligned `[→ Y A]` |
-| Trailing, line 3 | the date — Search only, as today `[→ X10]` |
+| Trailing, line 2 | the Account's name in caption grey, right-aligned, one line, truncating at its tail; no mark `[→ ZA1]` |
+| Trailing, line 3 | the date — Search only, as before `[→ ZA2]` |
 
-- Every Account gets a mark on line 2: its logo, the bank glyph (§5.3), or its own symbol
-  on its pastel wash.
-- An expense with no Account (**Unassigned**) has no line 2; Search's date moves up.
-- The mark and the name's 130pt cap scale with Dynamic Type, relative to caption.
-- At 14pt with 19% padding the letters were ~2.6pt tall and Danamon and BNI read as dots on
-  the owner's iPhone 12; at 22pt with 8% padding they are ~5pt. A row whose meta line is one
-  line grows from 58 to 65pt. `[→ Y A]`
-- The Account's name is one line and truncates at its tail; the amount never truncates.
-- VoiceOver reads the row in its visual order: tag, category, note · people, amount, account (and date in Search).
-- Every list that draws `ExpenseRow` follows: the cycle List, the Month lens's day list,
-  Search, and the Insights detail screens.
+| Expense | Leading mark | Badge | Trailing line 2 |
+|---|---|---|---|
+| Account with a logo | the logo | category | Account name |
+| Account without a logo, or its logo withdrawn | the Account's symbol, or the bank glyph (§5.3) | category | Account name |
+| No Account (**Unassigned**) | the category icon at 42pt | none | none — Search's date moves up |
+| Uncategorized, with an Account | the Account's mark | `tag` glyph in the name-seeded tint | Account name |
+
+- **Insights › one Account** keeps the category-first row: every row there would carry the same
+  logo, which the screen's header already shows. Its rows lead with the 42pt category icon, with no
+  badge and no Account name. `[→ ZA3]`
+- Every other list that draws `ExpenseRow` follows: the cycle List, the Month lens's day list,
+  Search, Person detail, the Category and Group drill-ins, Envelope detail, and the Move sheet. In
+  Select mode the selection circle stays left of the mark. `[→ ZA4]`
+- The mark and badge scale with Dynamic Type, relative to body. The mark sits 14pt from the text
+  column (12pt before), so the badge's overhang never touches the text; the separator starts after
+  the mark.
+- The Account name's 130pt cap scales with Dynamic Type, relative to caption. The amount never
+  truncates.
+- VoiceOver reads the row as before: tag, category, note · people, amount, account (and date in
+  Search). The mark and the badge are hidden from it.
+- At 42pt with 12% padding a wordmark is ~31pt wide and its letters ~7pt tall (~5pt at 22pt).
+  A row whose meta line is one line is ~62pt, against 65pt with the mark under the amount.
 
 ## 6. The catalog
 
@@ -209,7 +226,7 @@ CloudKit Console and in the asset catalog.
 - Category, Group and Person editors and marks.
 - Account names, de-duplication (ADR-0002) and delete rules (ADR-0001).
 - The expense filter's logic, the plan, transfer lines and every figure.
-- The expense row's category icon, plan tag line, category name and amount.
+- The expense row's plan tag line, category name, meta line and amount.
 
 ---
 
@@ -242,6 +259,15 @@ reviewed flow X the same day and asked for the expense row to be redesigned with
 | 20 | The expense row shows the Account **under the amount** with its mark — *owner override*, against inline in the meta line (C) | `X9 B` |
 | 21 | Search keeps its date as a **third trailing line** — *owner override*, against moving it into the meta line | `X10` |
 | 22 | The row's mark grows to a **22pt circle with 8% padding** (option A) — *owner override*, against a white wordmark chip beside the name (B); badge on the category icon (C) and logo-only chip (D) not chosen | `Y A` |
+| 23 | The **Account leads the expense row**; the category becomes a badge on its mark (flow Z option A; B–H not chosen). Supersedes the mark under the amount (20, 22) | `ZA1` |
+| 24 | The leading mark is **42pt**, the badge 20pt with its ring | `ZA1` |
+| 25 | An Account without a logo leads with its **own symbol** circle and the badge, so the leading mark is always the Account | `ZA1` |
+| 26 | The trailing line keeps the **Account name**, without a mark | `ZA1` |
+| 27 | An expense with **no Account** leads with its category icon at 42pt, no badge | `ZA1` |
+| 28 | The badge is the category tint **solid**, glyph in ink | `ZA1` |
+| 29 | **Insights › one Account** keeps the category-first row, without the Account name | `ZA3` |
+| 30 | This is an amendment of §5.5, not its own PRD | — |
+| 31 | Approved at the design gate: the 14pt gap between mark and text; the Uncategorized badge takes the name-seeded tint; ZA3's header is drawn simplified (the Insights header itself is unchanged) | `ZA1`, `ZA3` |
 
 ---
 
@@ -265,7 +291,12 @@ there for comparison). `BankLogoMark` and the AccountIcon states are a specimen 
 | **X8** · A withdrawn logo — the bank glyph fallback | §5.3, decision 8 |
 | **X9** · Expense card options A–D — **B chosen** | §5.5, decision 20 |
 | **X10** · Search results — three trailing lines | §5.5, decision 21 |
-| **Y A** · The Today card with a 22pt mark — option A, chosen | §5.1, §5.5, decision 22 |
+| **Y A** · The Today card with a 22pt mark — option A, chosen; superseded by Z | §5.1, decision 22 |
+| **Z A–H** · Bank-forward list directions, left on `05 · Proposals` — A chosen and built as Flow Z on page 02 | decision 23 |
+| **ZA1** · The cycle List: logos, a symbol Account, Unassigned, Uncategorized, a withdrawn logo | §5.5, decisions 23–28 |
+| **ZA2** · Search results — the date under the Account name | §5.5 |
+| **ZA3** · Insights › BCA Gaji — category-first rows | §5.5, decision 29 |
+| **ZA4** · Select mode — the selection circle before the mark | §5.5 |
 
 ### 10.1 Closed during implementation
 
@@ -278,6 +309,10 @@ there for comparison). `BankLogoMark` and the AccountIcon states are a specimen 
 | After a fetch withdrew Mandiri, its row drew an empty white circle | The id lookup is observed, so marks redraw when the catalog changes; a missing image draws a grey bank glyph | `BankLogoCatalog`, `BankLogoTests.testALookupIsToldWhenAFetchChangesIt` |
 | The unsigned test host has no CloudKit entitlement | Under XCTest the catalog is the snapshot with no source | `BankLogoCatalog.live()` |
 | A long Account name would squeeze the note | The name is capped at a Dynamic-Type-scaled 130pt and truncates | `ExpenseAccountLabel` |
+| A Category drill-in narrowed to one Account lists one Account's rows too (flow Z) | Treated like Insights › one Account: the category-first row | `ExpenseRowLead.accountsLead(subject:narrowing:)`, `ExpenseRowLeadTests` |
+| ZA1 draws the badge as an 18pt fill in a 20pt card-coloured frame (flow Z) | The ring is 1pt, not 2pt, and the badge hangs 4pt past the mark's corner | `ExpenseRowMark` |
+| Person detail's hand-drawn divider was inset by the old 38pt icon (flow Z) | It insets by the scaled 42pt mark + 14 | `PersonDayCard` |
+| At extra-extra-large text the category name truncates beside a wide amount (flow Z) | Pre-existing (the amount takes the width); the 42pt mark narrows the column a little more. Left as is | — |
 | With Auto colour, the colour pane's Auto swatch showed the name's tint | Auto shows the brand's tint when a logo is chosen | `ColorWorkbench.autoHex` |
 
 ### 10.2 Owner setup in CloudKit Console

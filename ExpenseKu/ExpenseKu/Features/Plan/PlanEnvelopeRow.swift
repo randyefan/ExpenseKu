@@ -43,6 +43,8 @@ struct PlanEnvelopeRow: View {
 
     private let addSize = EnvelopeAddMenu.size
 
+    @Environment(\.planRowsShowAccount) private var showsAccount
+
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             DoneCheck(state: .state(for: item), tap: .of(item), itemName: item.name,
@@ -73,9 +75,9 @@ struct PlanEnvelopeRow: View {
                         .layoutPriority(1)
                     }
 
-                    if let account = item.account {
+                    if showsAccount, let account = item.account {
                         HStack(spacing: 6) {
-                            PlanChip(kind: .account, text: account.name, symbol: account.chipSymbol)
+                            PlanAccountChip(account: account)
                             Spacer(minLength: 0)
                             if PlanItemState.of(item) == .funded {
                                 FundedPlace(account: account.name)

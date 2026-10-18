@@ -172,6 +172,7 @@ struct CyclePlanLens<Header: View>: View {
                             )
                         }
                     }
+                    .environment(\.planRowsShowAccount, !section.isAccountGroup)
                 }
             } header: {
                 VStack(alignment: .leading, spacing: 10) {

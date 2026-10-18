@@ -31,6 +31,8 @@ struct PlanFixedRow: View {
     let onChooseFunding: (FundMenuEntry) -> Void
     let onSelect: () -> Void
 
+    @Environment(\.planRowsShowAccount) private var showsAccount
+
     private var state: DoneCheckState { .state(for: item) }
 
     private var actual: Expense? { item.linkedExpense }
@@ -82,17 +84,24 @@ struct PlanFixedRow: View {
     }
 
     /// A plain HStack, never a ChipRail: that is a horizontal ScrollView, and a scroll
-    /// view inside a List row swallows the row's tap and kills the press wash.
-    @ViewBuilder
+    /// view inside a List row swallows the row's tap and kills the press wash. A line too
+    /// long for the row first drops the Account chip's name (bank-logos.md §5.6.3).
     private var chips: some View {
+        ViewThatFits(in: .horizontal) {
+            chipLine(showsAccountName: true)
+            chipLine(showsAccountName: false)
+        }
+    }
+
+    private func chipLine(showsAccountName: Bool) -> some View {
         HStack(spacing: 6) {
             if let category = item.category {
                 PlanChip(kind: .category(tint: Theme.categoryTint(hex: category.colorHex, seed: category.name)),
                          text: category.name,
                          symbol: category.resolvedSymbol)
             }
-            if let account = item.account {
-                PlanChip(kind: .account, text: account.name, symbol: account.chipSymbol)
+            if showsAccount, let account = item.account {
+                PlanAccountChip(account: account, showsName: showsAccountName)
             }
             if let dueDay = item.dueDay {
                 let label = DueDay.label(day: dueDay, in: cycle, today: today, calendar: calendar)
@@ -105,7 +114,7 @@ struct PlanFixedRow: View {
                 PlanChip(kind: .review, text: "Review")
             }
             Spacer(minLength: 0)
-            if PlanItemState.of(item) == .funded, let account = item.account {
+            if showsAccount, PlanItemState.of(item) == .funded, let account = item.account {
                 FundedPlace(account: account.name)
             }
         }

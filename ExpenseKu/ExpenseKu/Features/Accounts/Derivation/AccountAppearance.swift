@@ -25,8 +25,8 @@ nonisolated enum AccountAppearance {
         return .symbol(brandID == nil ? symbol : bankSymbol)
     }
 
-    /// Plan chips and section headers are too small for a logo; a branded Account
-    /// still reads as a bank there.
+    /// Insights' proportion rows are too small for a logo, and a plan chip whose logo
+    /// was withdrawn has none; a branded Account still reads as a bank there.
     static func chipSymbol(brandID: String?, symbol: String) -> String {
         brandID == nil ? symbol : bankSymbol
     }

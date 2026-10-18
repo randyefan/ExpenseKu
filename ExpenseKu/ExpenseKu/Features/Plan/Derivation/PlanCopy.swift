@@ -40,6 +40,33 @@ nonisolated enum PlanCopy {
         "Plan · \(shown) of " + counted(total, "item")
     }
 
+    /// "2 items", "1 envelope", "1 item, 1 envelope" (bank-logos.md §5.6.5). A set-aside
+    /// line is an item.
+    static func itemCount(items: Int, envelopes: Int) -> String {
+        switch (items, envelopes) {
+        case (_, 0): counted(items, "item")
+        case (0, _): counted(envelopes, "envelope")
+        default: counted(items, "item") + ", " + counted(envelopes, "envelope")
+        }
+    }
+
+    static func itemCount(_ planItems: [PlanItem]) -> String {
+        let envelopes = planItems.count(where: \.isEnvelope)
+        return itemCount(items: planItems.count - envelopes, envelopes: envelopes)
+    }
+
+    /// "Due 12, 20"; past three days, "Due 1, 5, 12, …". Days arrive in cycle order.
+    static func dueDays(_ days: [Int]) -> String? {
+        guard !days.isEmpty else { return nil }
+        let shown = days.prefix(3).map(String.init)
+        return "Due " + (shown + (days.count > 3 ? ["…"] : [])).joined(separator: ", ")
+    }
+
+    /// A bank header's state once nothing is left to move (bank-logos.md §5.6.2).
+    static func allIn(_ account: String) -> String {
+        "all in \(account)"
+    }
+
     /// The trailing slot of a Funded row (L1): where the money is waiting.
     static func inAccount(_ account: String) -> String {
         "in \(account)"

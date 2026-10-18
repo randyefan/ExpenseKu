@@ -325,6 +325,10 @@ collapsed section the instant the owner pages forward. `CONTEXT.md`'s AND readin
 ubiquitous language and is what ships. A row must also have been **carried over** to be
 dormant, so a Rp 0 row the owner is midway through typing stays where they can see it.
 
+*Extended 2026-10-18 by `docs/prd/look-back.md` (flow AB):* carry-over is still a one-time
+copy, but the plan's foot now offers **Look back at October**, a sheet listing what an
+earlier cycle planned or spent outside its plan that this plan lacks, each addable in one tap.
+
 ### 7.3 Completing an item
 
 **Manual (the common case).** Ticking Done opens a **compact confirmation sheet**:

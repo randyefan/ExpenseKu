@@ -14,6 +14,8 @@ struct PersonDayCard: View {
     let calendar: Calendar
     let onSelect: (Expense) -> Void
 
+    @ScaledMetric(relativeTo: .body) private var markSize: CGFloat = Metric.rowMarkSize
+
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             DayGroupHeader(
@@ -27,7 +29,7 @@ struct PersonDayCard: View {
                     if index > 0 {
                         Divider()
                             .overlay(Theme.hairline)
-                            .padding(.leading, Metric.rowIconSize + 12)
+                            .padding(.leading, markSize + 14)
                     }
 
                     Button {

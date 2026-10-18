@@ -16,6 +16,8 @@ enum Metric {
     static let screenPadding: CGFloat = 16
     static let iconSize: CGFloat = 44
     static let rowIconSize: CGFloat = 38
+    /// An expense row's leading mark: an Account's logo has to stay legible at it.
+    static let rowMarkSize: CGFloat = 42
     /// The widest a single column of cards grows on iPad before it centres instead.
     static let readableWidth: CGFloat = 720
 }

@@ -128,7 +128,8 @@ struct ExpensesView: View {
         let planContents = PlanContents(
             plan: PlanLookup.plan(for: cycle, in: plans),
             cycle: cycle,
-            cycleExpenses: contents.expenses
+            cycleExpenses: contents.expenses,
+            calendar: calendar
         )
         let planOrigins = PlanOrigins(plans: plans, payday: payday, calendar: calendar)
         let catalog = filterCatalog

@@ -29,6 +29,12 @@ nonisolated struct PlanSection: Identifiable {
     let heading: Heading?
     let items: [PlanItem]
 
+    /// A bank's group: its rows leave the Account to the header (bank-logos.md §5.6.2).
+    var isAccountGroup: Bool {
+        if case .account = heading { return true }
+        return false
+    }
+
     var title: String? {
         guard let heading else { return nil }
         let name = switch heading {

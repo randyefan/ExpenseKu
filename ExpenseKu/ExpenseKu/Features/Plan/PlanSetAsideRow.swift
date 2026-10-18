@@ -23,6 +23,8 @@ struct PlanSetAsideRow: View {
     let onChooseFunding: (FundMenuEntry) -> Void
     let onSelect: () -> Void
 
+    @Environment(\.planRowsShowAccount) private var showsAccount
+
     private var target: PlanItem? { SetAside.target(of: item) }
     private var label: PaidEarlyLabel? { SetAside.label(of: item, payday: payday, calendar: calendar) }
 
@@ -54,8 +56,8 @@ struct PlanSetAsideRow: View {
                                 .font(.dsCaption)
                                 .foregroundStyle(Theme.textSecondary)
                         }
-                        if let account = item.account {
-                            PlanChip(kind: .account, text: account.name, symbol: account.chipSymbol)
+                        if showsAccount, let account = item.account {
+                            PlanAccountChip(account: account)
                         }
                         Spacer(minLength: 0)
                     }

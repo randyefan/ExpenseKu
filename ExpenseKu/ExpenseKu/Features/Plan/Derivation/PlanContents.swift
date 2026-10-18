@@ -32,7 +32,7 @@ nonisolated struct PlanContents {
 
     private let envelopesByItem: [PersistentIdentifier: EnvelopeProgress]
 
-    init(plan: CyclePlan?, cycle: PayCycle, cycleExpenses: [Expense]) {
+    init(plan: CyclePlan?, cycle: PayCycle, cycleExpenses: [Expense], calendar: Calendar = .current) {
         self.plan = plan
         self.cycle = cycle
 
@@ -57,7 +57,7 @@ nonisolated struct PlanContents {
         totals = PlanTotals(activeItems: split.active, incomeLines: incomeLines, envelopes: envelopes,
                             paidEarly: paidEarly, setAside: setAside)
         transfers = TransferLines.rows(activeItems: split.active, lines: plan?.transferLines ?? [],
-                                       paidEarly: paidEarly, setAside: setAside)
+                                       paidEarly: paidEarly, setAside: setAside, cycle: cycle, calendar: calendar)
         groupShares = GroupShares.rows(activeItems: split.active, totalIncome: totals.totalIncome,
                                        paidEarly: paidEarly, setAside: setAside)
         review = ReviewState(cycleItems: split.active)

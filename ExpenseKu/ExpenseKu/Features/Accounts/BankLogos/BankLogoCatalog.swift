@@ -21,6 +21,7 @@ final class BankLogoCatalog {
 
     private var byID: [String: BankLogo] = [:]
     @ObservationIgnored private var images: [String: UIImage] = [:]
+    @ObservationIgnored private var wordmarks: [String: UIImage] = [:]
     @ObservationIgnored private var lastAttempt: Date?
     @ObservationIgnored private let source: (any BankLogoSource)?
     @ObservationIgnored private let store: BankLogoStore?
@@ -56,15 +57,28 @@ final class BankLogoCatalog {
     }
 
     func image(for logo: BankLogo) -> Image {
-        if let image = images[logo.id] { return Image(uiImage: image) }
+        guard let loaded = uiImage(for: logo) else { return Image(systemName: AccountAppearance.bankSymbol) }
+        return Image(uiImage: loaded)
+    }
+
+    /// The logo cropped to its opaque bounds, for the wordmark chip (§5.5).
+    func wordmark(for logo: BankLogo) -> Image {
+        if let wordmark = wordmarks[logo.id] { return Image(uiImage: wordmark) }
+        guard let loaded = uiImage(for: logo) else { return Image(systemName: AccountAppearance.bankSymbol) }
+        let trimmed = loaded.trimmedToOpaque()
+        wordmarks[logo.id] = trimmed
+        return Image(uiImage: trimmed)
+    }
+
+    private func uiImage(for logo: BankLogo) -> UIImage? {
+        if let image = images[logo.id] { return image }
         let loaded = if isFetched, let store {
             UIImage(contentsOfFile: store.imageURL(for: logo.id).path())
         } else {
             UIImage(named: logo.assetName)
         }
-        guard let loaded else { return Image(systemName: AccountAppearance.bankSymbol) }
         images[logo.id] = loaded
-        return Image(uiImage: loaded)
+        return loaded
     }
 
     func refreshIfDue(now: Date = .now) async {
@@ -91,8 +105,14 @@ final class BankLogoCatalog {
     }
 
     private func apply(_ fetched: [BankLogo], changed: Set<String>) {
-        if !isFetched { images = [:] }
-        for id in changed { images[id] = nil }
+        if !isFetched {
+            images = [:]
+            wordmarks = [:]
+        }
+        for id in changed {
+            images[id] = nil
+            wordmarks[id] = nil
+        }
         byID = Dictionary(fetched.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         isFetched = true
         logos = fetched

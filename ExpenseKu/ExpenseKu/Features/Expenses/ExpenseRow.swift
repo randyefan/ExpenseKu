@@ -2,9 +2,10 @@
 //  ExpenseRow.swift
 //  ExpenseKu
 //
-//  One expense inside a day's ledger card: pastel category icon, bold category name,
-//  a single grey meta line (note · companions), and the bold amount right-aligned with
-//  monospaced digits, the Account under it with its mark (docs/prd/bank-logos.md §5.5).
+//  One expense inside a day's ledger card, led by its Account's mark with the category
+//  as a badge on it (docs/prd/bank-logos.md §5.5, flow Z): bold category name, a single
+//  grey meta line (note · companions), and the bold amount right-aligned with monospaced
+//  digits, the Account's name under it. An Unassigned expense leads with its category.
 //
 //  A plan tag gets a line of its own above the category (envelope-assignment.md §4.11):
 //  beside the meta line it took the row's middle and squeezed a long note into a narrow
@@ -24,6 +25,7 @@ struct ExpenseRow: View {
 
     @Environment(\.planOrigins) private var planOrigins
     @Environment(\.showsPlanOriginTags) private var showsPlanOriginTags
+    @Environment(\.expenseRowAccountsLead) private var accountsLead
 
     private var categoryName: String { expense.category?.name ?? "Uncategorized" }
 
@@ -33,13 +35,13 @@ struct ExpenseRow: View {
         showsPlanOriginTags ? planOrigins.origin(of: expense) : nil
     }
 
+    private var lead: ExpenseRowLead {
+        ExpenseRowLead.resolve(hasAccount: expense.account != nil, accountsLead: accountsLead)
+    }
+
     var body: some View {
-        HStack(spacing: 12) {
-            if let category = expense.category {
-                CategoryIcon(category: category, size: Metric.rowIconSize)
-            } else {
-                CategoryIcon(name: categoryName, size: Metric.rowIconSize)
-            }
+        HStack(spacing: 14) {
+            ExpenseRowMark(expense: expense, lead: lead)
 
             VStack(alignment: .leading, spacing: 2) {
                 if let origin {
@@ -61,7 +63,7 @@ struct ExpenseRow: View {
             VStack(alignment: .trailing, spacing: 2) {
                 MoneyText(expense.amount, font: .dsBody, color: Theme.text)
 
-                if let account = expense.account {
+                if lead.showsAccountName, let account = expense.account {
                     ExpenseAccountLabel(account: account)
                 }
 

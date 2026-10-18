@@ -221,6 +221,8 @@ struct SpendEntityView: View {
                 PersonDayCard(group: group, calendar: calendar) { expense in
                     editing = expense
                 }
+                .environment(\.expenseRowAccountsLead,
+                             ExpenseRowLead.accountsLead(subject: route.subject, narrowing: narrowing))
                 .padding(.horizontal, Metric.screenPadding)
                 .reveal(index + 4, trigger: window)
             }

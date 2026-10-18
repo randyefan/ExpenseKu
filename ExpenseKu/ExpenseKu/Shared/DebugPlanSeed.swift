@@ -26,7 +26,7 @@ import Foundation
 import SwiftData
 
 enum DebugPlanSeed {
-    /// -seedPlanData normal|payday|auto-landed|overspent|travelling|paid-early|set-aside|none
+    /// -seedPlanData normal|payday|auto-landed|overspent|travelling|paid-early|set-aside|look-back|none
     static var variant: String? {
         let args = ProcessInfo.processInfo.arguments
         guard let i = args.firstIndex(of: "-seedPlanData"), i + 1 < args.count else { return nil }
@@ -64,6 +64,9 @@ enum DebugPlanSeed {
         }
         if variant == "set-aside" {
             seedSetAside(context, plan: plan, cycle: cycle, accounts: accounts)
+        }
+        if variant == "look-back" {
+            seedLookBack(context, plan: plan, cycle: cycle, categories: categories, accounts: accounts)
         }
 
         try? context.save()
@@ -328,6 +331,72 @@ enum DebugPlanSeed {
         let ticket = Expense(amount: 6_500_000, date: .now, note: "Tiket Jakarta–Tokyo",
                              category: transport, account: accounts["Jago"])
         ticket.envelope = jepang
+        context.insert(ticket)
+    }
+
+    /// docs/prd/look-back.md, flow AB: next cycle's plan is copied from this one, and then
+    /// this one moves on without it — Service motor done at Rp 475.000 on a Rp 450.000
+    /// plan, Beli kado given Rp 300.000, Makan moved into a new Jajan envelope, Galon let
+    /// out of Kebutuhan Kos — while the copy loses Service motor and Perpanjang STNK and
+    /// gains Travelling. Outside this plan: Kesehatan ×3, Hadiah, an Uncategorized
+    /// expense, Galon, and a ticket paid early into the next cycle's Travelling.
+    private static func seedLookBack(_ context: ModelContext, plan: CyclePlan, cycle: PayCycle,
+                                     categories: [String: Category], accounts: [String: Account]) {
+        let next = cycle.next(payday: Payday.current, calendar: .current)
+        try? context.save()
+        guard let nextPlan = PlanCarryOver.makePlan(for: next, from: [plan], in: context) else { return }
+        let mine = plan.items ?? []
+        let theirs = nextPlan.items ?? []
+
+        for item in theirs where ["Service motor", "Perpanjang STNK"].contains(item.name) {
+            context.delete(item)
+        }
+        let travelling = PlanItem(name: "Travelling", amount: 2_000_000, kind: .envelope,
+                                  createdAt: .now.addingTimeInterval(400), plan: nextPlan,
+                                  account: accounts["BCA"])
+        context.insert(travelling)
+
+        func category(_ name: String) -> Category {
+            if let made = categories[name] ?? existingEntity(Category.self, matching: name, in: context) { return made }
+            let made = Category(name: name)
+            context.insert(made)
+            return made
+        }
+
+        if let service = mine.first(where: { $0.name == "Service motor" }) {
+            service.amount = 450_000
+            service.carriedOver = false
+            service.category = category("Transport")
+            service.account = accounts["BCA"]
+            context.insert(Expense(amount: 475_000, date: .now, note: "Service motor",
+                                   category: service.category, account: service.account, planItem: service))
+        }
+        if let kado = mine.first(where: { $0.name == "Beli kado" }) {
+            kado.amount = 300_000
+            kado.carriedOver = false
+            kado.category = category("Hadiah")
+        }
+        let makan = category("Makan")
+        if let hidup = mine.first(where: { $0.name.hasPrefix("Hidup") }) {
+            hidup.envelopeCategories = (hidup.envelopeCategories ?? []).filter { $0.persistentModelID != makan.persistentModelID }
+        }
+        if let kos = mine.first(where: { $0.name.hasPrefix("Kebutuhan Kos") }) {
+            kos.envelopeCategories = (kos.envelopeCategories ?? []).filter { $0.name != "Galon" }
+        }
+        context.insert(PlanItem(name: "Jajan", amount: 400_000, kind: .envelope,
+                                createdAt: .now.addingTimeInterval(401), plan: plan,
+                                account: accounts["Cash"], envelopeCategories: [category("Kopi"), makan]))
+
+        for (amount, note) in [(Decimal(120_000), "Obat flu"), (300_000, "Dokter gigi"), (200_000, "Vitamin")] {
+            context.insert(Expense(amount: amount, date: .now, note: note, category: category("Kesehatan"),
+                                   account: accounts["Cash"]))
+        }
+        context.insert(Expense(amount: 250_000, date: .now, note: "Kado Rina", category: category("Hadiah"),
+                               account: accounts["Cash"]))
+        context.insert(Expense(amount: 75_000, date: .now, note: "Fotokopi", account: accounts["Cash"]))
+        let ticket = Expense(amount: 1_200_000, date: .now, note: "Tiket KAI ke Jakarta",
+                             category: category("Transport"), account: accounts["BCA"])
+        ticket.envelope = travelling
         context.insert(ticket)
     }
 

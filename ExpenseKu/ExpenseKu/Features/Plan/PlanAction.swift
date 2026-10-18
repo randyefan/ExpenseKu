@@ -40,6 +40,8 @@ enum PlanAction {
     case editAdjustment(TransferRow)
 
     case openReview
+    /// The plan's foot: Look back at the cycle before (look-back.md §4).
+    case lookBack
     /// L6: narrow the plan to its Funded Fixed items, or widen it back.
     case showFunded
     case clearFundedFilter

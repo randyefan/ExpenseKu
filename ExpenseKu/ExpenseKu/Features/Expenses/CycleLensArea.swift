@@ -54,6 +54,7 @@ struct CycleLensArea<Header: View>: View {
     let dormantExpanded: Bool
     let isFundedFiltered: Bool
     let planSort: PlanSort
+    let lookBackMonth: String?
     let onPlanAction: (PlanAction) -> Void
     @Binding var selectedDay: Date?
     let resolvedDay: Date?
@@ -111,6 +112,7 @@ struct CycleLensArea<Header: View>: View {
                     dormantExpanded: dormantExpanded,
                     isFundedFiltered: isFundedFiltered,
                     sort: planSort,
+                    lookBackMonth: lookBackMonth,
                     revealTrigger: AnyHashable(cycle),
                     onAction: onPlanAction,
                     header: { header }

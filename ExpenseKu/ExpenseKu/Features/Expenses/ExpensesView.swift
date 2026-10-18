@@ -190,6 +190,7 @@ struct ExpensesView: View {
                             dormantExpanded: dormantExpanded,
                             isFundedFiltered: isFundedFilterOn(planContents),
                             planSort: planSort,
+                            lookBackMonth: lookBackMonth(planContents),
                             onPlanAction: { perform($0, in: planContents) },
                             selectedDay: $selectedDay,
                             resolvedDay: resolvedSelectedDay(in: calendarGrid),
@@ -341,6 +342,8 @@ struct ExpensesView: View {
                 confirmation: $planConfirmation,
                 contents: planContents,
                 plans: plans,
+                expenses: expenses,
+                payday: payday,
                 today: .now,
                 onOpenExpense: { selection = $0 },
                 onDismiss: returnToEnvelopeDetail
@@ -431,6 +434,15 @@ struct ExpensesView: View {
             filter = ExpenseFilter()
         }
         cycle = current
+    }
+
+    /// The plan's foot offers Look back only with a plan on screen and an earlier cycle to
+    /// look at (look-back.md §4).
+    private func lookBackMonth(_ contents: PlanContents) -> String? {
+        guard contents.hasPlan,
+              CyclePaging.canGoBack(from: cycle, oldestExpense: expenses.last?.date,
+                                    oldestPlanStart: PlanLookup.oldestStart(in: plans)) else { return nil }
+        return LookBackCopy.month(of: cycle.previous(payday: payday, calendar: calendar), calendar: calendar)
     }
 
     /// Pages to another cycle, first recording which way the outgoing one leaves so

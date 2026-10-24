@@ -393,6 +393,9 @@ It never reads relative in a cycle that has not started, where a countdown is me
 
 ### 7.5 Payday
 
+*Amended 2026-10-24 by `partial-transfer.md` (flow AD): a line opens a sheet to move some of
+its items at a time, and its tick is derived from its items rather than set by hand.*
+
 The owner works down the transfer checklist with six banking apps open. Each line gives
 the amount and a checkbox. `[→ G1 payday morning, E3 the checklist, I2 the adjustment]` The manual adjustment covers cases like the spreadsheet's
 `ke Superbank −Rp 700.000`: money already sitting in the account, so transfer less.
@@ -418,7 +421,8 @@ A PlanItem therefore gains a middle state, **per item**: `[→ L1]`
   is Funded when its account covers the debit, and still posts itself on the due day
   (ADR-0007) whatever its funded state. An **Envelope** gains an optional Account for
   this; Funded is its last state, since it is never paid. `[→ L1, L4, L5]`
-- **The transfer line's tick stays independent.** Neither sets the other. With an
+- **The transfer line's tick stays independent.** *(Superseded 2026-10-24 by
+  `partial-transfer.md` §5.1: the tick is now read off the items.)* Neither sets the other. With an
   Account, an Envelope now adds its planned amount to that account's line, which it
   never did before — `Transfer line = Σ PlanItem.amount for that Account` already
   covers it.
@@ -545,7 +549,7 @@ not overlooked.
 | 22 | Un-ticking Done **deletes** the linked Expense, behind a confirmation | `I4` |
 | 23 | The due badge is **absolute, turning relative within three days** | `I8` · `PlanChip · Due soon` |
 | 24 | A PlanItem gains **Funded** — in its account, not yet paid — tracked **per item** (§7.6) | `L1` |
-| 25 | The transfer line's tick stays **independent** of Funded — *owner override* | — no link to draw |
+| 25 | The transfer line's tick stays **independent** of Funded — *owner override*. **Reversed** 2026-10-24 by `partial-transfer.md` decision 2 | — no link to draw |
 | 26 | Fixed manual, Fixed `Auto` **and Envelope** take part; an Envelope gains an **optional Account** | `L4`, `L5` |
 | 27 | Done may **skip** Funded; un-ticking Done lands on **Funded** | `L2`, §7.3 |
 | 28 | **No Account, no Funded** — ◯ opens `E4` directly, as before — *owner override* | `L7` |

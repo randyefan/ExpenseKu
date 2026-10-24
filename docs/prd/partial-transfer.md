@@ -1,14 +1,14 @@
 # PRD — Transferring part of an Account's line
 
-Status: Accepted
-Date: 2026-10-24 · design approved the same day (flow AD)
+Status: Built
+Date: 2026-10-24 · design approved and built the same day (flow AD)
 Owner: Randy Efan
 
 Companion documents: `docs/prd/payday-planning.md` (the Transfer checklist §6.1.4, §7.5 and
 Funded §7.6 this changes; decision 25 is reversed here), `docs/prd/bank-logos.md` §5.6.4 (the
 line's plate and caption), `docs/prd/plan-sort.md` §4.1 (due day in cycle), `CONTEXT.md`
-(ubiquitous language), and **`design/ExpenseKu.pen`**, page `05 · Proposals — not built`,
-**Flow AD**. Frame references appear inline as `[→ AD2]`.
+(ubiquitous language), and **`design/ExpenseKu.pen`**, page `02 · Pages · iPhone`,
+**Flow AD** (moved there from `05 · Proposals` once built). Frame references appear inline as `[→ AD2]`.
 
 The flow is AD, not AC: Flow AA already names its frames AC1–AC4, and `bank-logos.md` cites them.
 
@@ -239,7 +239,10 @@ superseded by entry 2; §6.1.4 and §7.5's "a checkbox" by §5.
 
 ## 11. Design traceability
 
-Page `05 · Proposals — not built`, **Flow AD · Transferring part of a line**.
+Page `02 · Pages · iPhone`, **Flow AD · Transferring part of a line**. Components
+`TransferPickRowView`, `TransferInRowView`, `TransferAdjustmentRow`, `TransferFigureRow` and
+`TransferRecordButton` live on `01 · Design System`, group `Cycle plan`, row `Partial transfer`;
+`TransferRow · bank`'s context notes the derived check.
 
 | Frame | Covers |
 |---|---|
@@ -250,3 +253,18 @@ Page `05 · Proposals — not built`, **Flow AD · Transferring part of a line**
 | **AD5** · BCA again — `Not moved yet` | §6.1 `ALREADY IN`, §6.3 Menu, decision 6 |
 | **AD6** · Transfer to Mandiri | §5.3 adjustment taken, Done read-only |
 | **AD7** · Transfer to BNI — all in | §6.1 all-in sheet, D4 |
+
+### 11.1 Closed during implementation
+
+| Gap | Answer | Where |
+|---|---|---|
+| The derivation | Pure and tested against §4's sample, one test per rule | `TransferFill`, `TransferMember`, `TransferPick`, `PartialTransferTests` |
+| A set-aside line on a transfer line has no Funded state | `Moved to …` marks it moved, i.e. Done (set-aside.md §4.4); in `ALREADY IN` it offers `Not moved yet` like its plan row | `PlanItem.recordMoved()`, `TransferMember.undoEntry` |
+| An Auto item that has posted itself | It is Done, so it sits read-only in `ALREADY IN` with `‹Category› · paid` | `TransferMember.inCaption` |
+| The Funded menu's write lived in `ExpensesView` | Shared by the plan rows and the sheet | `PlanItem.apply(_:)` |
+| Rp 0 dormant items on a line stored as Sent | §8 converts active Todo items only | `PlanMaintenance.convertSentTicks` |
+| The debug seed writes its Sent ticks after the launch's maintenance | They convert at the next launch; a real store, already on disk, converts at the first. Observed by relaunching the seeded app | `RootView`, `DebugPlanSeed` |
+| The adjustment editor from inside the sheet | Presented over the sheet; `I2` is unchanged, so its `Transfer` figure still reads the whole line (planned + adjustment) | `TransferSheet` |
+| The simulator drew the ✕ in the accent and the title in regular weight | ✕ in the text colour, the title bold, as AD2 draws them | `TransferSheet` |
+| VoiceOver and `idb` need the line's state | The line reads `Transfer to BCA` · `1 of 3 in, Rp 2.447.300` | `TransferRow.fillDescription` |
+| The V2 upgrade fixture's ticks | Read off the items now: Kos was paid, so BCA is all in too — 2 of 3 sent where the stored ticks said 1 | `StoreMigrationTests.testTransferLinesReadAsBefore` |

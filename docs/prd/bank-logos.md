@@ -305,7 +305,10 @@ The developer edits these in CloudKit Console. The app only reads.
   once every 10 minutes. A public-database query cannot report deletions, so a delta
   fetch would never notice a withdrawn logo; the list is a few dozen records.
 - A logo asset is downloaded only when its record changed since the cached copy.
-- The fetched list and its images are cached on device and survive relaunch.
+- The fetched list and its images are kept on device, in Application Support out of
+  backups, and survive relaunch. Not Caches: iOS purged it, and each purge put the bundled
+  snapshot back on screen until the next fetch (2026-10-22).
+- An image missing from disk is downloaded again on the next fetch, changed or not.
 - A failed fetch keeps the last good catalog.
 
 ### 6.2.1 Logo sources

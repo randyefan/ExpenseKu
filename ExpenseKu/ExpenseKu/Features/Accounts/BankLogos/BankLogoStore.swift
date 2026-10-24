@@ -2,18 +2,18 @@
 //  BankLogoStore.swift
 //  ExpenseKu
 //
-//  The fetched catalog on disk: the list as JSON and one PNG per logo, under Caches.
-//  Its absence means the app has never fetched, and the bundled snapshot applies
-//  (docs/prd/bank-logos.md §6.3). If iOS purges Caches the app falls back to the
-//  snapshot until the next fetch, which is the state it shipped in.
+//  The fetched catalog on disk: the list as JSON and one PNG per logo, under
+//  Application Support and kept out of backups. Its absence means the app has never
+//  fetched, and the bundled snapshot applies (docs/prd/bank-logos.md §6.3). Not Caches:
+//  iOS purges that, and every purge put the bundled logos back until the next fetch.
 //
 
-import Foundation
+import UIKit
 
 nonisolated struct BankLogoStore: Sendable {
     let directory: URL
 
-    static let live = BankLogoStore(directory: .cachesDirectory.appending(path: "BankLogos"))
+    static let live = BankLogoStore(directory: .applicationSupportDirectory.appending(path: "BankLogos"))
 
     private var listURL: URL { directory.appending(path: "catalog.json") }
 
@@ -27,16 +27,36 @@ nonisolated struct BankLogoStore: Sendable {
         return try? JSONDecoder().decode([BankLogo].self, from: data)
     }
 
+    func hasImage(for id: String) -> Bool {
+        FileManager.default.fileExists(atPath: imagePath(for: id))
+    }
+
+    func loadImage(for id: String) -> UIImage? {
+        UIImage(contentsOfFile: imagePath(for: id))
+    }
+
+    private func imagePath(for id: String) -> String {
+        imageURL(for: id).path(percentEncoded: false)
+    }
+
     func save(_ logos: [BankLogo]) throws {
-        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        try createDirectory()
         try JSONEncoder().encode(logos).write(to: listURL, options: .atomic)
     }
 
     func storeImage(from source: URL, for id: String) throws {
-        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        try createDirectory()
         let target = imageURL(for: id)
         try? FileManager.default.removeItem(at: target)
         try FileManager.default.copyItem(at: source, to: target)
+    }
+
+    private func createDirectory() throws {
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        var values = URLResourceValues()
+        values.isExcludedFromBackup = true
+        var excluded = directory
+        try excluded.setResourceValues(values)
     }
 
     func removeImages(except ids: Set<String>) {

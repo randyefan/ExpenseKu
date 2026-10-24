@@ -73,7 +73,7 @@ final class BankLogoCatalog {
     private func uiImage(for logo: BankLogo) -> UIImage? {
         if let image = images[logo.id] { return image }
         let loaded = if isFetched, let store {
-            UIImage(contentsOfFile: store.imageURL(for: logo.id).path())
+            store.loadImage(for: logo.id)
         } else {
             UIImage(named: logo.assetName)
         }
@@ -87,6 +87,7 @@ final class BankLogoCatalog {
         do {
             let remote = try await source.fetchCatalog().filter { BankLogoRules.isUsable($0.logo) }
             let needed = BankLogoRules.idsToDownload(cached: isFetched ? logos : [], remote: remote.map(\.logo))
+                .union(remote.map(\.logo.id).filter { !store.hasImage(for: $0) })
             var withImages: [BankLogo] = []
             for entry in remote {
                 if needed.contains(entry.logo.id) {

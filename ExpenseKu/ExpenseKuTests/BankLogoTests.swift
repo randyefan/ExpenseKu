@@ -6,6 +6,7 @@
 //  PRD names in §6.3.
 //
 
+import UIKit
 import XCTest
 @testable import ExpenseKu
 
@@ -40,7 +41,7 @@ nonisolated final class BankLogoTests: XCTestCase {
     private var directory: URL!
 
     override func setUpWithError() throws {
-        directory = FileManager.default.temporaryDirectory.appending(path: "BankLogoTests-\(UUID().uuidString)")
+        directory = FileManager.default.temporaryDirectory.appending(path: "Bank Logo Tests-\(UUID().uuidString)")
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     }
 
@@ -164,7 +165,7 @@ nonisolated final class BankLogoTests: XCTestCase {
         XCTAssertTrue(catalog.isFetched)
         XCTAssertNil(catalog.logo(for: "mandiri"))
         XCTAssertEqual(catalog.logos.count, 10)
-        XCTAssertTrue(FileManager.default.fileExists(atPath: store.imageURL(for: "bca").path()))
+        XCTAssertTrue(store.hasImage(for: "bca"))
 
         let relaunched = BankLogoCatalog(source: nil, store: store)
         XCTAssertTrue(relaunched.isFetched)
@@ -217,7 +218,47 @@ nonisolated final class BankLogoTests: XCTestCase {
 
         try? FileManager.default.removeItem(at: store.imageURL(for: "bca"))
         await catalog.refreshIfDue(now: start.addingTimeInterval(60))
-        XCTAssertFalse(FileManager.default.fileExists(atPath: store.imageURL(for: "bca").path()))
+        XCTAssertFalse(store.hasImage(for: "bca"))
+    }
+
+    /// An image gone from disk is downloaded again on the next fetch, though its record
+    /// has not changed.
+    @MainActor
+    func testAMissingImageIsDownloadedAgain() async {
+        let store = BankLogoStore(directory: directory.appending(path: "store"))
+        let start = Date(timeIntervalSince1970: 10_000)
+        let catalog = BankLogoCatalog(source: FakeSource(logos: [logo("bca", "BCA", order: 1, modified: start)],
+                                                         imageDirectory: directory), store: store)
+        await catalog.refreshIfDue(now: start)
+
+        try? FileManager.default.removeItem(at: store.imageURL(for: "bca"))
+        await catalog.refreshIfDue(now: start.addingTimeInterval(BankLogoRules.refreshInterval))
+
+        XCTAssertTrue(store.hasImage(for: "bca"))
+    }
+
+    /// The live store sits under "Application Support", so a path with a space in it has
+    /// to reach the file unencoded.
+    func testAStoredImageLoadsFromAPathWithASpace() throws {
+        let store = BankLogoStore(directory: directory.appending(path: "Application Support"))
+        let png = UIGraphicsImageRenderer(size: CGSize(width: 1, height: 1)).pngData { context in
+            context.fill(CGRect(x: 0, y: 0, width: 1, height: 1))
+        }
+        let source = directory.appending(path: "logo.png")
+        try png.write(to: source)
+
+        try store.storeImage(from: source, for: "bca")
+
+        XCTAssertTrue(store.hasImage(for: "bca"))
+        XCTAssertNotNil(store.loadImage(for: "bca"))
+    }
+
+    /// The store is kept out of backups, since every file in it can be fetched again.
+    func testTheStoreIsExcludedFromBackup() throws {
+        let store = BankLogoStore(directory: directory.appending(path: "store"))
+        try store.save([])
+        let values = try store.directory.resourceValues(forKeys: [.isExcludedFromBackupKey])
+        XCTAssertEqual(values.isExcludedFromBackup, true)
     }
 
     /// Views look a logo up by id, so a fetch that withdraws one has to reach them:

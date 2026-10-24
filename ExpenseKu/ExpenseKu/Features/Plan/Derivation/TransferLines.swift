@@ -20,11 +20,13 @@
 //  its rows, every cycle). There are no account types (§4).
 //
 //  Each row also carries what its plate and caption draw — the Account's look, the count
-//  and the due days — so the view never walks the items again (bank-logos.md §5.6.4).
+//  and the due days — so the view never walks the items again (bank-logos.md §5.6.4),
+//  and its members, so the line's sheet never does either (partial-transfer.md §6).
 //
 //  The Σ is derived per read, never stored, so adding or deleting an item can never
-//  leave a stale total behind. A TransferLine holds only the two facts the owner
-//  sets, and exists only once they have set one.
+//  leave a stale total behind. So is how much of the line is in: it is read off the
+//  members' states (§5.1). A TransferLine holds only the adjustment the owner sets,
+//  and exists only once they have set one.
 //
 
 import Foundation
@@ -44,6 +46,7 @@ nonisolated enum TransferLines {
         var setAsideNames: [PersistentIdentifier: [String]] = [:]
         var accounts: [PersistentIdentifier: Account] = [:]
         var members: [PersistentIdentifier: [PlanItem]] = [:]
+        var transferMembers: [PersistentIdentifier: [TransferMember]] = [:]
         var allAuto: [PersistentIdentifier: Bool] = [:]
 
         for item in activeItems {
@@ -51,7 +54,9 @@ nonisolated enum TransferLines {
             let id = account.persistentModelID
             let credit = paidEarly.credit(for: item)
             let saved = setAside.credit(for: item)
-            planned[id, default: 0] += net(item, paidEarly: credit, setAside: saved)
+            let itemNet = net(item, paidEarly: credit, setAside: saved)
+            planned[id, default: 0] += itemNet
+            transferMembers[id, default: []].append(member(item, amount: itemNet, cycle: cycle, calendar: calendar))
             if credit > 0 {
                 credited[id, default: 0] += credit
                 creditedNames[id, default: []].append(item.name)
@@ -76,12 +81,12 @@ nonisolated enum TransferLines {
         return planned.map { id, amount in
             let items = members[id] ?? []
             let account = accounts[id]
+            let toGo = items.filter { PlanItemState.of($0) == .todo }
             return TransferRow(
                 accountID: id,
                 accountName: account?.name ?? "",
                 planned: amount,
                 adjustment: adjustments[id]?.adjustment ?? 0,
-                hasTransferred: adjustments[id]?.hasTransferred ?? false,
                 allAuto: allAuto[id] ?? false,
                 paidEarly: credited[id] ?? 0,
                 paidEarlyEnvelopes: creditedNames[id] ?? [],
@@ -90,7 +95,9 @@ nonisolated enum TransferLines {
                 plate: account.map(AccountPlateStyle.init(account:)),
                 envelopeCount: items.count(where: \.isEnvelope),
                 itemCount: items.count(where: { !$0.isEnvelope }),
-                dueDays: dueDays(of: items, cycle: cycle, calendar: calendar)
+                dueDays: dueDays(of: items, cycle: cycle, calendar: calendar),
+                toGoDueDays: dueDays(of: toGo, cycle: cycle, calendar: calendar),
+                members: (transferMembers[id] ?? []).sorted(by: TransferMember.precedes)
             )
         }
         .sorted { a, b in
@@ -104,6 +111,22 @@ nonisolated enum TransferLines {
     static func net(_ item: PlanItem, paidEarly: Decimal, setAside: Decimal) -> Decimal {
         guard paidEarly + setAside > 0 else { return item.amount }
         return max(0, item.amount - paidEarly - setAside)
+    }
+
+    static func member(_ item: PlanItem, amount: Decimal, cycle: PayCycle?, calendar: Calendar) -> TransferMember {
+        TransferMember(
+            id: item.persistentModelID,
+            name: item.name,
+            categoryName: item.category?.name,
+            isAuto: item.isAuto,
+            isEnvelope: item.isEnvelope,
+            dueDay: item.dueDay,
+            dueDate: item.dueDay.flatMap { day in cycle.flatMap { DueDay.date(day: day, in: $0, calendar: calendar) } },
+            amount: amount,
+            createdAt: item.createdAt,
+            state: PlanItemState.of(item),
+            check: DoneCheckState.state(for: item)
+        )
     }
 
     /// Each day once, by where it falls in the cycle (plan-sort.md §4.1); without a
@@ -122,9 +145,10 @@ nonisolated enum TransferLines {
         .map(\.0)
     }
 
-    /// E3's "TRANSFER CHECKLIST · 2 OF 6 SENT".
+    /// E3's "TRANSFER CHECKLIST · 2 OF 6 SENT": a line is sent once all of it is in;
+    /// part in is not sent (partial-transfer.md §5.1).
     static func sentCount(_ rows: [TransferRow]) -> Int {
-        rows.count(where: \.hasTransferred)
+        rows.count(where: \.isAllIn)
     }
 }
 
@@ -136,7 +160,6 @@ nonisolated struct TransferRow: Identifiable, Equatable {
     /// Signed. Negative means "transfer less than the plan says" — money already
     /// sitting in the account.
     let adjustment: Decimal
-    let hasTransferred: Bool
     /// Every contributing item is Auto, so the row reads "keep this covered" rather
     /// than "send this". An Envelope is never Auto, so one on the line makes it "send".
     let allAuto: Bool
@@ -152,12 +175,40 @@ nonisolated struct TransferRow: Identifiable, Equatable {
     var itemCount = 0
     /// In cycle order.
     var dueDays: [Int] = []
+    /// The Todo members' due days, for a part-in caption.
+    var toGoDueDays: [Int] = []
+    /// In TO SEND's order (partial-transfer.md §6.2).
+    var members: [TransferMember] = []
 
     var id: PersistentIdentifier { accountID }
 
-    /// What the owner actually moves.
-    var transfer: Decimal { planned + adjustment }
+    var fill: TransferFill { TransferFill.of(members) }
+    var isAllIn: Bool { fill == .allIn }
+
+    /// The adjustment counts in the first round only: once any member is in, it was
+    /// moved with that round (§5.3).
+    var isAdjustmentTaken: Bool { fill != .nothingIn }
+
+    /// What is still to go: Σ of the Todo members.
+    var toGo: Decimal {
+        members.filter { !$0.isIn }.reduce(0) { $0 + $1.amount }
+    }
+
+    /// The line's figure: the whole transfer, or once part of it is in, what is still to
+    /// go (§5.1). Never below zero, whatever the adjustment.
+    var transfer: Decimal {
+        fill == .partIn ? toGo : max(0, planned + adjustment)
+    }
     var hasAdjustment: Bool { adjustment != 0 }
+
+    /// VoiceOver's value for the line, and what `idb` reads back.
+    var fillDescription: String {
+        switch fill {
+        case .nothingIn: "Nothing in yet"
+        case .partIn: "\(members.count(where: \.isIn)) of \(members.count) in"
+        case .allIn: "All in"
+        }
+    }
 
     /// "Rp 1.200.000 paid early into Travelling"; several envelopes drop the name.
     var paidEarlyText: String? {
@@ -179,8 +230,15 @@ nonisolated struct TransferRow: Identifiable, Equatable {
 
     /// The line under the Account's name (bank-logos.md §5.6.4): "2 items · Due 12, 20",
     /// then the notes the line already carried. "Keep this covered" only speaks when
-    /// nothing else does, as before.
+    /// nothing else does, as before. Part in, it names the round instead — "1 item in ·
+    /// 2 to go" — and drops the adjustment, which that round took (partial-transfer.md §5.1).
     var caption: String {
+        if fill == .partIn {
+            let inCount = members.count(where: \.isIn)
+            let round = PlanCopy.counted(inCount, "item") + " in · \(members.count - inCount) to go"
+            return [round, PlanCopy.dueDays(toGoDueDays), creditText].compactMap(\.self)
+                .joined(separator: " · ")
+        }
         let count = PlanCopy.itemCount(items: itemCount, envelopes: envelopeCount)
         let adjustmentText = hasAdjustment ? "\(adjustment.formattedIDR()) adjustment applied" : nil
         let notes = [adjustmentText, creditText].compactMap(\.self)

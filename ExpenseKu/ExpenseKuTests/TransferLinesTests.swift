@@ -101,7 +101,7 @@ nonisolated final class TransferLinesTests: XCTestCase {
 
         let row = try XCTUnwrap(TransferLines.rows(activeItems: [item], lines: []).first)
         XCTAssertEqual(row.transfer, 650_000)
-        XCTAssertFalse(row.hasTransferred)
+        XCTAssertEqual(row.fill, .nothingIn)
         XCTAssertFalse(row.hasAdjustment)
     }
 
@@ -115,7 +115,7 @@ nonisolated final class TransferLinesTests: XCTestCase {
         XCTAssertTrue(TransferLines.rows(activeItems: [item], lines: []).isEmpty)
     }
 
-    /// E3's "2 OF 6 SENT".
+    /// E3's "2 OF 6 SENT" counts the lines whose items are all in (partial-transfer.md §5.1).
     @MainActor
     func testSentCount() throws {
         let context = try makeInMemoryContext()
@@ -124,11 +124,10 @@ nonisolated final class TransferLinesTests: XCTestCase {
         let items = [PlanItem(name: "x", amount: 2, account: a),
                      PlanItem(name: "y", amount: 1, account: b)]
         items.forEach(context.insert)
-        let line = TransferLine(account: a, hasTransferred: true)
-        context.insert(line)
+        items[0].isFunded = true
         try context.save()
 
-        let rows = TransferLines.rows(activeItems: items, lines: [line])
+        let rows = TransferLines.rows(activeItems: items, lines: [])
         XCTAssertEqual(TransferLines.sentCount(rows), 1)
     }
 }

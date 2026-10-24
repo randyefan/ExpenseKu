@@ -12,29 +12,24 @@
 //  does not mean "transfer this", it means "make sure this account holds enough for
 //  the debit to clear" (ADR-0007). BNI's Rp 7.706.000 is an Auto line.
 //
+//  The check reads off the line's items — nothing in, part in, all in — and is not a
+//  control of its own: the whole line opens its sheet, where items are moved
+//  (partial-transfer.md §5.1–§5.2).
+//
 
 import SwiftUI
 
 struct TransferRowView: View {
     let row: TransferRow
-    let onToggleTransferred: () -> Void
-    let onEditAdjustment: () -> Void
+    let onOpen: () -> Void
 
     var body: some View {
-        HStack(alignment: .top, spacing: 10) {
-            Button(action: onToggleTransferred) {
-                Image(systemName: row.hasTransferred ? "checkmark.circle.fill" : "circle")
+        Button(action: onOpen) {
+            HStack(alignment: .top, spacing: 10) {
+                Image(systemName: row.fill.systemImage)
                     .font(.system(size: 22))
-                    .foregroundStyle(row.hasTransferred ? Theme.accent : Theme.textSecondary.opacity(0.6))
+                    .foregroundStyle(row.fill == .nothingIn ? Theme.textSecondary.opacity(0.6) : Theme.accent)
                     .frame(width: 30, height: 30)
-                    .contentShape(.circle)
-            }
-            .buttonStyle(.pressableCard)
-            .accessibilityLabel("Transfer to \(row.accountName)")
-            .accessibilityValue(row.hasTransferred ? "Sent" : "Not sent")
-            .accessibilityAddTraits(row.hasTransferred ? [.isButton, .isSelected] : .isButton)
-
-            Button(action: onEditAdjustment) {
                 HStack(alignment: .top, spacing: 8) {
                     AccountPlate(style: row.plate)
                         .padding(.top, 1)
@@ -54,10 +49,14 @@ struct TransferRowView: View {
                             .lineLimit(2)
                     }
                 }
-                .contentShape(.rect)
             }
-            .buttonStyle(.pressableRow)
+            .contentShape(.rect)
         }
+        .buttonStyle(.pressableRow)
         .padding(.vertical, 8)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Transfer to \(row.accountName)")
+        .accessibilityValue("\(row.fillDescription), \(row.transfer.formattedIDR())")
+        .accessibilityAddTraits(row.isAllIn ? [.isButton, .isSelected] : .isButton)
     }
 }

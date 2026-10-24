@@ -235,9 +235,10 @@ nonisolated final class FundedStateTests: XCTestCase {
         XCTAssertFalse(rows[1].allAuto, "an envelope's line reads 'send this', not 'keep this covered'")
     }
 
-    /// Funded never touches the transfer tick, either way (decision 25).
+    /// The transfer line's tick reads Funded, either way — decision 25 reversed by
+    /// partial-transfer.md decision 2.
     @MainActor
-    func testFundedIsIndependentOfTheTransferTick() throws {
+    func testFundedFillsTheTransferLine() throws {
         let context = try makeInMemoryContext()
         let mandiri = Account(name: "Mandiri")
         context.insert(mandiri)
@@ -246,15 +247,11 @@ nonisolated final class FundedStateTests: XCTestCase {
         item.isFunded = true
         try context.save()
 
-        let rows = TransferLines.rows(activeItems: [item], lines: [])
-        XCTAssertFalse(try XCTUnwrap(rows.first).hasTransferred)
+        XCTAssertTrue(try XCTUnwrap(TransferLines.rows(activeItems: [item], lines: []).first).isAllIn)
 
-        let line = TransferLine(account: mandiri, hasTransferred: true)
-        context.insert(line)
         item.isFunded = false
         try context.save()
-        XCTAssertTrue(try XCTUnwrap(TransferLines.rows(activeItems: [item], lines: [line]).first).hasTransferred)
-        XCTAssertEqual(PlanItemState.of(item), .todo)
+        XCTAssertEqual(try XCTUnwrap(TransferLines.rows(activeItems: [item], lines: []).first).fill, .nothingIn)
     }
 
     // MARK: - The funded notice
@@ -398,21 +395,26 @@ nonisolated final class FundedStateTests: XCTestCase {
     }
 
     /// An older build leaves Envelopes off its transfer lines, so it can only ever
-    /// tick an account a Fixed item uses. The tick it writes is an ordinary one here.
+    /// tick an account a Fixed item uses. Maintenance turns the tick it writes into
+    /// Funded items here, envelope included (partial-transfer.md §8).
     @MainActor
     func testATickFromAnOlderBuildStillReadsHere() throws {
         let context = try makeInMemoryContext()
         let bca = Account(name: "BCA")
+        let plan = CyclePlan(cycleStart: .now)
         context.insert(bca)
-        let items = [PlanItem(name: "Kos", amount: 2_200_000, account: bca),
-                     PlanItem(name: "Kebutuhan Kos", amount: 193_900, kind: .envelope, account: bca)]
+        context.insert(plan)
+        let items = [PlanItem(name: "Kos", amount: 2_200_000, plan: plan, account: bca),
+                     PlanItem(name: "Kebutuhan Kos", amount: 193_900, kind: .envelope, plan: plan, account: bca)]
         items.forEach(context.insert)
-        let line = TransferLine(account: bca, hasTransferred: true)
+        let line = TransferLine(account: bca, hasTransferred: true, plan: plan)
         context.insert(line)
         try context.save()
 
+        PlanMaintenance.convertSentTicks(in: [plan])
         let row = try XCTUnwrap(TransferLines.rows(activeItems: items, lines: [line]).first)
         XCTAssertEqual(row.planned, 2_393_900)
-        XCTAssertTrue(row.hasTransferred)
+        XCTAssertTrue(row.isAllIn)
+        XCTAssertFalse(line.hasTransferred)
     }
 }

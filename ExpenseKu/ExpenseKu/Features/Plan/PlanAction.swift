@@ -36,8 +36,8 @@ enum PlanAction {
     case activateDormant(PlanItem)
     case toggleDormantSection
 
-    case toggleTransferred(TransferRow)
-    case editAdjustment(TransferRow)
+    /// A transfer line: its sheet, to move some or all of its items (partial-transfer.md §5.2).
+    case openTransfer(TransferRow)
 
     case openReview
     /// The plan's foot: Look back at the cycle before (look-back.md §4).

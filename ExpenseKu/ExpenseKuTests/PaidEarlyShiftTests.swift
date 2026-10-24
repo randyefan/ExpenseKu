@@ -149,7 +149,7 @@ nonisolated final class PaidEarlyShiftTests: XCTestCase {
         let bca = Account(name: "BCA")
         context.insert(bca)
         let row = TransferRow(accountID: bca.persistentModelID, accountName: "BCA", planned: 0,
-                              adjustment: 0, hasTransferred: false, allAuto: false,
+                              adjustment: 0, allAuto: false,
                               paidEarly: 1_500_000, paidEarlyEnvelopes: ["Travelling", "Kado"])
         XCTAssertEqual(row.paidEarlyText, "Rp\u{00A0}1.500.000 paid early")
     }

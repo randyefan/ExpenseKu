@@ -169,4 +169,28 @@ extension PlanItem {
     func recordPaid() {
         if account != nil, !isFunded { isFunded = true }
     }
+
+    /// Moving the item's money into its Account from a transfer line's sheet
+    /// (partial-transfer.md §6.3). A set-aside line has no Funded state: moving it is
+    /// the whole act, so it is Done (set-aside.md §4.4).
+    func recordMoved() {
+        if isSetAside {
+            isSetAsideMoved = true
+        } else if account != nil {
+            isFunded = true
+        }
+    }
+
+    /// Applies one line of a Funded menu. "Paid…" sets nothing here — it opens E4 — so
+    /// it reports false for the caller to handle.
+    @discardableResult
+    func apply(_ entry: FundMenuEntry) -> Bool {
+        if let moved = entry.setAsideMovedValue {
+            isSetAsideMoved = moved
+            return true
+        }
+        guard let funded = entry.fundedValue else { return false }
+        isFunded = funded
+        return true
+    }
 }

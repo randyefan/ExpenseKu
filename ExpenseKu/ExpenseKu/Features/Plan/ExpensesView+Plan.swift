@@ -55,10 +55,8 @@ extension ExpensesView {
         case .toggleDormantSection:
             withAnimation(Motion.snap) { dormantExpanded.toggle() }
 
-        case .toggleTransferred(let row):
-            toggleTransferred(row, in: contents)
-        case .editAdjustment(let row):
-            planSheet = .transferAdjustment(accountID: row.accountID)
+        case .openTransfer(let row):
+            planSheet = .transfer(accountID: row.accountID)
 
         case .openReview:
             planSheet = .review
@@ -131,35 +129,12 @@ extension ExpensesView {
         }
     }
 
-    /// Funded is the owner's report, never a balance, and it leaves the transfer
-    /// tick alone either way (§7.6, decision 25).
+    /// Funded is the owner's report, never a balance. The transfer line reads it, so
+    /// its tick follows (partial-transfer.md §5.1).
     private func chooseFunding(_ entry: FundMenuEntry, for item: PlanItem) {
-        if let moved = entry.setAsideMovedValue {
-            item.isSetAsideMoved = moved
-            try? context.save()
-            return
-        }
-        guard let funded = entry.fundedValue else {
+        guard item.apply(entry) else {
             planSheet = .confirmDone(item)
             return
-        }
-        item.isFunded = funded
-        try? context.save()
-    }
-
-    /// The TransferLine is created on first use — until the owner ticks or adjusts
-    /// something there is nothing about that account worth storing.
-    private func toggleTransferred(_ row: TransferRow, in contents: PlanContents) {
-        guard let plan = contents.plan else { return }
-        if let existing = (plan.transferLines ?? []).first(
-            where: { $0.account?.persistentModelID == row.accountID }
-        ) {
-            existing.hasTransferred.toggle()
-        } else {
-            let account = (plan.items ?? [])
-                .compactMap(\.account)
-                .first { $0.persistentModelID == row.accountID }
-            context.insert(TransferLine(account: account, hasTransferred: true, plan: plan))
         }
         try? context.save()
     }
@@ -304,13 +279,14 @@ private struct PlanSheetContent: View {
                 IncomeLineEditorView(plan: plan, editing: nil, onFinish: onFinish)
             case .editIncomeLine(let line):
                 IncomeLineEditorView(plan: plan, editing: line, onFinish: onFinish)
-            case .transferAdjustment(let accountID):
+            case .transfer(let accountID):
                 if let row = contents.transfers.first(where: { $0.accountID == accountID }) {
-                    TransferAdjustmentEditorView(
+                    TransferSheet(
                         plan: plan,
                         row: row,
                         account: (plan.items ?? []).compactMap(\.account)
                             .first { $0.persistentModelID == accountID },
+                        items: contents.activeItems.filter { $0.account?.persistentModelID == accountID },
                         onFinish: onFinish
                     )
                 }

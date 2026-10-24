@@ -159,7 +159,8 @@ nonisolated final class StoreMigrationTests: XCTestCase {
     }
 
     /// The derived figures the owner sees are the ones they saw before the update:
-    /// no envelope in this store has an Account, so no transfer line moves.
+    /// no envelope in this store has an Account, so no transfer line moves. Only the
+    /// ticks differ, since they are read off the items now.
     @MainActor
     func testTransferLinesReadAsBefore() throws {
         let context = ModelContext(try open(try copyOfV2Store()))
@@ -170,7 +171,9 @@ nonisolated final class StoreMigrationTests: XCTestCase {
         XCTAssertEqual(rows.map(\.accountName), ["BNI", "BCA", "Mandiri"])
         XCTAssertEqual(rows.map(\.planned), [7_706_000, 2_200_000, 1_000_000])
         XCTAssertEqual(rows.map(\.transfer), [7_706_000, 2_200_000, 300_000])
-        XCTAssertEqual(TransferLines.sentCount(rows), 1)
+        XCTAssertEqual(rows.map(\.fillDescription), ["All in", "All in", "Nothing in yet"],
+                       "the tick reads the items now (partial-transfer.md §5.1): Kos was paid, so BCA is in too")
+        XCTAssertEqual(TransferLines.sentCount(rows), 2)
     }
 
     /// Once migrated, the store takes the new field, keeps it, and opens again —

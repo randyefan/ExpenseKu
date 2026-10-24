@@ -249,6 +249,9 @@ Kos                          Rp 2.200.000
 
 #### 5.6.4 The Transfer checklist
 
+*Amended 2026-10-24 by `partial-transfer.md` (flow AD): the check is derived (◯ · ◐ · ✓), the
+whole line opens a sheet, and a part-in line shows its Todo items' total and `1 item in · 2 to go`.*
+
 Each line leads with the Account's plate, after the ✓ Sent check, and is named by the Account
 without `ke`. `[→ AC3]`
 

@@ -23,6 +23,12 @@
 //
 //  **Fold twin plans**, for the same reason, one level up.
 //
+//  **Convert stored Sent ticks.** A transfer line's tick used to be a flag the owner set;
+//  it is now read off the line's items (partial-transfer.md §5.1, §8). A line still
+//  stored as Sent sets its Todo items Funded, then clears the flag. Clearing it is what
+//  makes this run once — and sync once — with no marker of its own, and it also absorbs
+//  a tick an older build writes on another device.
+//
 //  Deleting rows from the ledger is not something to do casually, so the fold is
 //  deliberately narrow: it only ever removes an expense that is linked to the *same
 //  PlanItem* as a survivor and is flagged needs-review — which by construction means
@@ -42,10 +48,28 @@ enum PlanMaintenance {
         materialiseAutoItems(in: plans, context: context, now: now,
                              payday: payday, calendar: calendar)
         foldTwinExpenses(in: plans, context: context)
+        convertSentTicks(in: plans)
 
         // Only save when something actually changed. This also runs from the remote
         // change handler, and a launch with nothing to do must not start a sync storm.
         if context.hasChanges { try? context.save() }
+    }
+
+    // MARK: - Sent ticks
+
+    static func convertSentTicks(in plans: [CyclePlan]) {
+        for plan in plans {
+            let active = PlanDormancy.split(plan.items ?? []).active
+            for line in plan.transferLines ?? [] where line.hasTransferred {
+                let accountID = line.account?.persistentModelID
+                for item in active where accountID != nil
+                    && item.account?.persistentModelID == accountID
+                    && PlanItemState.of(item) == .todo {
+                    item.recordMoved()
+                }
+                line.hasTransferred = false
+            }
+        }
     }
 
     // MARK: - Materialisation

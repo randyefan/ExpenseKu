@@ -108,13 +108,13 @@ struct CyclePlanLens<Header: View>: View {
                 detail: contents.funded.detail,
                 onTap: { onAction(.showFunded) }
             )
-        } else if contents.transfers.contains(where: { !$0.hasTransferred }),
+        } else if contents.transfers.contains(where: { !$0.isAllIn }),
                   contents.incomeLines.contains(where: \.hasArrived),
                   contents.doneCount == 0 {
             PlanNotice(
                 kind: .payday,
                 title: "Payday — " + PlanCopy.counted(
-                    contents.transfers.count(where: { !$0.hasTransferred }), "transfer"
+                    contents.transfers.count(where: { !$0.isAllIn }), "transfer"
                 ) + " to make",
                 detail: "Work down the checklist at the foot."
             )
@@ -256,11 +256,7 @@ struct CyclePlanLens<Header: View>: View {
             Section {
                 ForEach(contents.transfers) { row in
                     PlanListRow {
-                        TransferRowView(
-                            row: row,
-                            onToggleTransferred: { onAction(.toggleTransferred(row)) },
-                            onEditAdjustment: { onAction(.editAdjustment(row)) }
-                        )
+                        TransferRowView(row: row) { onAction(.openTransfer(row)) }
                     }
                 }
             } header: {

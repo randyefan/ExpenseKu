@@ -16,7 +16,8 @@ enum PlanSheet: Identifiable {
     case editPlanItem(PlanItem)
     case newIncomeLine
     case editIncomeLine(IncomeLine)
-    case transferAdjustment(accountID: PersistentIdentifier)
+    /// One transfer line's items, its adjustment and what to move now (partial-transfer.md §6).
+    case transfer(accountID: PersistentIdentifier)
     /// Ticking Done: the compact confirmation that turns a plan item into an expense.
     case confirmDone(PlanItem)
     case review
@@ -29,7 +30,7 @@ enum PlanSheet: Identifiable {
         case .editPlanItem(let item): "editPlanItem-\(item.persistentModelID)"
         case .newIncomeLine: "newIncomeLine"
         case .editIncomeLine(let line): "editIncomeLine-\(line.persistentModelID)"
-        case .transferAdjustment(let id): "transferAdjustment-\(id)"
+        case .transfer(let id): "transfer-\(id)"
         case .confirmDone(let item): "confirmDone-\(item.persistentModelID)"
         case .review: "review"
         case .lookBack: "lookBack"

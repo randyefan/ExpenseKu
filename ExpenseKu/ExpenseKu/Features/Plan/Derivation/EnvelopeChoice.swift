@@ -33,7 +33,13 @@ nonisolated enum EnvelopeChoice: Hashable {
         return envelopes.contains { $0.persistentModelID == id } ? self : .byCategory
     }
 
+    /// A change of envelope clears the expense's paid-elsewhere mark: the money it says
+    /// was moved was moved from the old envelope's Account (paid-elsewhere.md §4.6).
     func apply(to expense: Expense, envelopes: [PlanItem]) {
+        let before = EnvelopeChoice.of(expense)
+        defer {
+            if EnvelopeChoice.of(expense) != before { expense.isMovedFromEnvelope = false }
+        }
         switch self {
         case .byCategory:
             expense.envelope = nil

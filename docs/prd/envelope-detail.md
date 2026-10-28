@@ -13,6 +13,10 @@ language), `docs/adr/0005-plan-and-ledger-are-separate.md`,
 `02 · Pages · iPhone`, **Flow T** (moved there from `05 · Proposals` once built). Frame
 references appear inline as `[→ T2]`.
 
+*Amended 2026-10-28 by `paid-elsewhere.md` (flow AE): a PAID ELSEWHERE section sits between
+the card and the expense list when the envelope has an Account and some of its expenses were
+paid from another; its rows hand off to their own sheet under §4.6.*
+
 ---
 
 ## 1. What this is

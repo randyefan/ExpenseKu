@@ -25,6 +25,11 @@
 //  commit before V6), with a Rp 500.000 set-aside line in September towards October's
 //  Travelling: what a 1.4 install holds before bank logos arrive.
 //
+//  `Fixtures/PlanV6.store` is the V5 fixture opened and written by the V6 code (the
+//  commit before V7), with BCA and Jago wearing bank logos, Travelling kept in Jago, and
+//  its paid-early ticket on BCA — a paid-elsewhere expense: what a 1.5 install holds
+//  before paid elsewhere arrives.
+//
 //  Every test opens a *copy*: SwiftData migrates in place, and the fixture has to stay
 //  a pre-change store for the next run.
 //
@@ -64,7 +69,7 @@ nonisolated final class StoreMigrationTests: XCTestCase {
     /// Opened the way `StoreBootstrap` opens the real store, minus CloudKit.
     @MainActor
     private func open(_ url: URL) throws -> ModelContainer {
-        let schema = Schema(versionedSchema: ExpenseKuSchemaV6.self)
+        let schema = Schema(versionedSchema: ExpenseKuSchemaV7.self)
         let config = ModelConfiguration(schema: schema, url: url, cloudKitDatabase: .none)
         return try ModelContainer(for: schema, migrationPlan: ExpenseKuMigrationPlan.self,
                                   configurations: [config])
@@ -314,5 +319,46 @@ nonisolated final class StoreMigrationTests: XCTestCase {
         let context = ModelContext(try open(url))
         let bca = try XCTUnwrap(try context.fetch(FetchDescriptor<Account>()).first { $0.name == "BCA" })
         XCTAssertEqual(bca.brandID, "bca")
+    }
+
+    // MARK: - V6 → V7
+
+    /// **The V6 store opens**, its logos intact, and nothing arrives moved: the ticket paid
+    /// from BCA into Jago's Travelling still owes its move.
+    @MainActor
+    func testAV6StoreOpensWithItsLogosAndNothingMoved() throws {
+        let context = ModelContext(try open(try copyOfStore("PlanV6")))
+        let (_, october) = try plans(in: context)
+
+        let accounts = try context.fetch(FetchDescriptor<Account>())
+        XCTAssertEqual(accounts.first { $0.name == "BCA" }?.brandID, "bca")
+        XCTAssertEqual(accounts.first { $0.name == "Jago" }?.brandID, "jago")
+
+        let expenses = try context.fetch(FetchDescriptor<Expense>())
+        XCTAssertEqual(expenses.count, 5)
+        XCTAssertTrue(expenses.allSatisfy { !$0.isMovedFromEnvelope })
+
+        let travelling = try XCTUnwrap(items(in: context, plan: october)["Travelling"])
+        XCTAssertEqual(travelling.account?.name, "Jago")
+        let ticket = try XCTUnwrap(expenses.first { $0.note == "Tiket KAI" })
+        let row = try XCTUnwrap(PaidElsewhere(envelope: travelling, expenses: [ticket]).rows.first)
+        XCTAssertEqual(row.accountName, "BCA")
+        XCTAssertEqual(row.fill, .nothingIn)
+    }
+
+    /// Once migrated, a move is recorded, kept, and the store opens again.
+    @MainActor
+    func testTheMigratedV6StoreKeepsAMoveAcrossRelaunches() throws {
+        let url = try copyOfStore("PlanV6")
+        do {
+            let context = ModelContext(try open(url))
+            let ticket = try XCTUnwrap(try context.fetch(FetchDescriptor<Expense>()).first { $0.note == "Tiket KAI" })
+            ticket.isMovedFromEnvelope = true
+            try context.save()
+        }
+
+        let context = ModelContext(try open(url))
+        let ticket = try XCTUnwrap(try context.fetch(FetchDescriptor<Expense>()).first { $0.note == "Tiket KAI" })
+        XCTAssertTrue(ticket.isMovedFromEnvelope)
     }
 }

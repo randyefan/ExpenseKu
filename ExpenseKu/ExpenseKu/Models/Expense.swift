@@ -55,6 +55,11 @@ final class Expense {
     // claims its Category, and so falls Outside plan.
     var isOutsideEnvelopes: Bool = false
 
+    // Paid from an Account other than its envelope's, and the owner has since moved the
+    // money back from the envelope's Account (docs/prd/paid-elsewhere.md §4.6). Read only
+    // while that still holds; changing the Account or the envelope clears it.
+    var isMovedFromEnvelope: Bool = false
+
     // Written by an Auto item without confirmation (ADR-0007), and unconfirmed until
     // the owner clears it. The Plan lens's review notice is the only prompt, and the
     // only defence against a failed autodebit being recorded as fact.

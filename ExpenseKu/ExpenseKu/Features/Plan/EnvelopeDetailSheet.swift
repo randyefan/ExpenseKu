@@ -2,7 +2,8 @@
 //  EnvelopeDetailSheet.swift
 //  ExpenseKu
 //
-//  An envelope's detail (docs/prd/envelope-detail.md, frames T2–T6): the card, then every
+//  An envelope's detail (docs/prd/envelope-detail.md, frames T2–T6): the card, then what
+//  of it was paid from other Accounts (paid-elsewhere.md §4.3, AE1), then every
 //  expense the envelope counts — its own cycle by day, unheaded, then one "Paid early ·
 //  ‹cycle›" section per earlier cycle — and, last, the set-aside lines of earlier plans
 //  that fund it (set-aside.md §4.7). `EnvelopeDetail` decides what is listed, by asking
@@ -84,6 +85,7 @@ struct EnvelopeDetailSheet: View {
         let detail = EnvelopeDetail(envelope: envelope,
                                     claims: EnvelopeClaims(envelopes: envelopes, cycle: cycle),
                                     cycleExpenses: expenses, payday: Payday.current, calendar: calendar)
+        let paidElsewhere = PaidElsewhere(envelope: envelope, expenses: detail.expenses, calendar: calendar)
         return List {
             Section {
                 EnvelopeDetailCard(
@@ -96,6 +98,14 @@ struct EnvelopeDetailSheet: View {
                 .listRowBackground(Color.clear)
                 .listRowSeparator(.hidden)
                 .listRowInsets(EdgeInsets())
+            }
+
+            if !paidElsewhere.isEmpty {
+                PaidElsewhereSection(paidElsewhere: paidElsewhere) { row in
+                    if let account = envelope.modelContext?.model(for: row.id) as? Account {
+                        onAction(.paidElsewhere(account))
+                    }
+                }
             }
 
             if detail.isEmpty {

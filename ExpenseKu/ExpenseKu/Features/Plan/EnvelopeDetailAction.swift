@@ -15,4 +15,5 @@ enum EnvelopeDetailAction {
     case moveExpenses
     case openExpense(Expense)
     case move(EnvelopeMoveRequest)
+    case paidElsewhere(Account)
 }

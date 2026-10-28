@@ -2,8 +2,8 @@
 //  ExpensesView+EnvelopeDetail.swift
 //  ExpenseKu
 //
-//  The envelope detail's hand-offs (envelope-detail.md §4.6). Edit, ＋ and every row
-//  action close the detail, open their own sheet from here, and bring the detail back
+//  The envelope detail's hand-offs (envelope-detail.md §4.6). Edit, ＋, every row
+//  action and a PAID ELSEWHERE row (paid-elsewhere.md §4.5) close the detail, open their own sheet from here, and bring the detail back
 //  when that sheet closes — the owner chose never to stack a sheet on the detail.
 //
 //  The next sheet waits for the detail's onDismiss: presenting it while the detail is
@@ -52,6 +52,8 @@ extension ExpensesView {
             envelopeSheet = .move(request)
         case .openExpense(let expense):
             selection = expense
+        case .paidElsewhere(let account):
+            envelopeSheet = .paidElsewhere(visit.envelope, visit.cycle, account)
         }
     }
 }

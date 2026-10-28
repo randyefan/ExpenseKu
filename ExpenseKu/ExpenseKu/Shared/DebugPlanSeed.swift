@@ -26,7 +26,7 @@ import Foundation
 import SwiftData
 
 enum DebugPlanSeed {
-    /// -seedPlanData normal|payday|auto-landed|overspent|travelling|paid-early|set-aside|look-back|none
+    /// -seedPlanData normal|payday|auto-landed|overspent|travelling|paid-early|set-aside|look-back|paid-elsewhere|none
     static var variant: String? {
         let args = ProcessInfo.processInfo.arguments
         guard let i = args.firstIndex(of: "-seedPlanData"), i + 1 < args.count else { return nil }
@@ -64,6 +64,9 @@ enum DebugPlanSeed {
         }
         if variant == "set-aside" {
             seedSetAside(context, plan: plan, cycle: cycle, accounts: accounts)
+        }
+        if variant == "paid-elsewhere" {
+            seedPaidElsewhere(context, items: items, categories: categories, accounts: accounts, cycle: cycle)
         }
         if variant == "look-back" {
             seedLookBack(context, plan: plan, cycle: cycle, categories: categories, accounts: accounts)
@@ -193,7 +196,7 @@ enum DebugPlanSeed {
             ("Hidup (Makan, bensin, emoney saldo)", 938_300, ["Makan", "Bensin", "E-money"]),
             ("Kebutuhan Kos di Jkt (Tisu, sabun, galon)", 193_900, ["Tisu", "Sabun", "Galon"]),
         ]
-        let trip: [(String, Decimal, [String])] = variant == "travelling"
+        let trip: [(String, Decimal, [String])] = ["travelling", "paid-elsewhere"].contains(variant)
             ? [("Travelling", 2_000_000, [])] : []
         for (offset, spec) in (envelopes + trip).enumerated() {
             let (name, amount, categoryNames) = spec
@@ -332,6 +335,41 @@ enum DebugPlanSeed {
                              category: transport, account: accounts["Jago"])
         ticket.envelope = jepang
         context.insert(ticket)
+    }
+
+    /// docs/prd/paid-elsewhere.md §7: Travelling kept in Jago and Funded, and a trip paid
+    /// from four Accounts — CC Danamon, Cash and BCA (its ticket already moved), Jago
+    /// itself, and one expense with no Account.
+    private static func seedPaidElsewhere(_ context: ModelContext, items: [String: PlanItem],
+                                          categories: [String: Category], accounts: [String: Account],
+                                          cycle: PayCycle) {
+        guard let travelling = items["Travelling"] else { return }
+        travelling.account = accounts["Jago"]
+        travelling.isFunded = true
+
+        let existing = existingEntity(Category.self, matching: "Transport", in: context)
+        let transport = existing ?? Category(name: "Transport", colorHex: AppearancePalette.swatches[8],
+                                             iconName: "car.fill")
+        if existing == nil { context.insert(transport) }
+
+        let third = Calendar.current.date(byAdding: .day, value: 3, to: cycle.start) ?? cycle.start
+        let tripDay = min(third, .now)
+        let trip: [(String, Decimal, Category?, String?, Bool)] = [
+            ("Nasi Padang Bandung", 85_000, categories["Makan"], "Cash", false),
+            ("Bensin ke Bandung", 150_000, categories["Bensin"], "Jago", false),
+            ("Hotel Bandung", 450_000, categories["Sewa"], "CC Danamon", false),
+            ("Grab ke hotel", 65_000, transport, "CC Danamon", false),
+            ("Grab ke stasiun", 48_000, transport, "CC Danamon", false),
+            ("Oleh-oleh", 120_000, categories["Makan"], nil, false),
+            ("Tiket Kawah Putih", 35_000, categories["Hiburan"], "BCA", true),
+        ]
+        for (offset, (note, amount, category, account, moved)) in trip.enumerated() {
+            let expense = Expense(amount: amount, date: tripDay.addingTimeInterval(Double(offset * 60)),
+                                  note: note, category: category, account: account.flatMap { accounts[$0] })
+            expense.envelope = travelling
+            expense.isMovedFromEnvelope = moved
+            context.insert(expense)
+        }
     }
 
     /// docs/prd/look-back.md, flow AB: next cycle's plan is copied from this one, and then

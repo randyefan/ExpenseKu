@@ -19,9 +19,12 @@ nonisolated enum TransferFill: Equatable {
     case allIn
 
     static func of(_ members: [TransferMember]) -> TransferFill {
-        let inCount = members.count(where: \.isIn)
+        of(inCount: members.count(where: \.isIn), of: members.count)
+    }
+
+    static func of(inCount: Int, of count: Int) -> TransferFill {
         if inCount == 0 { return .nothingIn }
-        return inCount == members.count ? .allIn : .partIn
+        return inCount == count ? .allIn : .partIn
     }
 
     var systemImage: String {

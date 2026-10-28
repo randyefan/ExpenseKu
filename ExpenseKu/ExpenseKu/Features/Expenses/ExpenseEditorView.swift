@@ -231,7 +231,7 @@ struct ExpenseEditorView: View {
         target.note = note.trimmingCharacters(in: .whitespacesAndNewlines)
         target.category = category
         target.people = people
-        target.account = account
+        PaidElsewhere.setAccount(account, on: target)
         if target.planItem == nil {
             let envelopes = envelopeOptions.envelopes
             envelopeChoice.kept(among: envelopes).apply(to: target, envelopes: envelopes)

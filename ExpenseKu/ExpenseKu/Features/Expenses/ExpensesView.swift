@@ -270,6 +270,8 @@ struct ExpensesView: View {
                                 leaveEnvelopeDetail(envelope, cycle: cycle, for: action)
                             }
                             .environment(\.planOrigins, planOrigins)
+                        case .paidElsewhere(let envelope, let cycle, let account):
+                            PaidElsewhereSheet(envelope: envelope, cycle: cycle, account: account)
                         }
                     }
                     .presentationBackground(Theme.bg)

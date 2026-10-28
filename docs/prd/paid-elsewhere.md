@@ -1,15 +1,16 @@
 # PRD — Paid elsewhere
 
-Status: Accepted
-Date: 2026-10-28 · grilled and design approved the same day (flow AE)
+Status: Built
+Date: 2026-10-28 · grilled, design approved and built the same day (flow AE)
 Owner: Randy Efan
 
 Companion documents: `docs/prd/envelope-detail.md` (the sheet this adds a section to, and its
 hand-off rule §4.6), `docs/prd/partial-transfer.md` (the sheet pattern reused here, §6),
 `docs/prd/envelope-assignment.md` (where an expense counts, §4.1; paying ahead, §4.10),
 `docs/prd/payday-planning.md` (Funded, §7.6), `CONTEXT.md` (ubiquitous language),
-`docs/adr/0005-plan-and-ledger-are-separate.md`, and **`design/ExpenseKu.pen`**, page
-`05 · Proposals — not built`, **Flow AE**. Frame references appear inline as `[→ AE2]`.
+`docs/adr/0005-plan-and-ledger-are-separate.md`, `docs/adr/0013-paid-elsewhere-is-a-reported-move.md`,
+and **`design/ExpenseKu.pen`**, page `02 · Pages · iPhone`, **Flow AE** (moved there from
+`05 · Proposals` once built). Frame references appear inline as `[→ AE2]`.
 
 ---
 
@@ -245,7 +246,10 @@ owner overrides. Entries D1–D7 are defaults stated at the gate and confirmed w
 
 ## 9. Design traceability
 
-Page `05 · Proposals — not built`, **Flow AE · Paid elsewhere**.
+Page `02 · Pages · iPhone`, **Flow AE · Paid elsewhere**. Components `PaidElsewhereRowView`,
+`PaidElsewherePickRow` and `PaidElsewhereMovedRow` live on `01 · Design System`, group
+`Cycle plan`, row `Paid elsewhere`; the sheet reuses `TransferFigureRow` and
+`TransferRecordButton`.
 
 | Frame | Covers |
 |---|---|
@@ -255,3 +259,15 @@ Page `05 · Proposals — not built`, **Flow AE · Paid elsewhere**.
 | **AE4** · Back on the detail | §4.4 reorder, §4.6 derived ◐, decision 3 |
 | **AE5** · CC Danamon again — `Not moved yet` | §4.5 `ALREADY MOVED`, §4.5.1 Menu |
 | **AE6** · BCA — everything moved | §4.5 all-moved sheet |
+
+### 9.1 Closed during implementation
+
+| Gap | Answer | Where |
+|---|---|---|
+| The editor's assignment falls back to By category when a date change leaves the envelope's cycle (`envelope-assignment.md` §4.4) | That is an envelope change, so the mark clears. §4.6's "kept but unread" holds only when the envelope leaves without the expense's choice changing (the envelope deleted) | `EnvelopeChoice.apply` |
+| How a row reaches its sheet | The row carries the Account's id; the detail resolves it and hands off `EnvelopeDetailAction.paidElsewhere`, a new `EnvelopeSheet` case, under §4.6 | `EnvelopeDetailSheet`, `ExpensesView+EnvelopeDetail` |
+| `Not moved yet` must put the expense back at once | The sheet queries the cycle's expenses and rebuilds the row through `EnvelopeDetail`, as the detail does | `PaidElsewhereSheet` |
+| The caption's date | Follows the device's locale like every other short date: `28 Oct` in en-GB or id, `Oct 28` in en-US | `PaidElsewhereMember` |
+| ◯ / ◐ / ✓ | `TransferFill.of(inCount:of:)`, shared with the transfer line, so the glyphs cannot drift apart | `TransferFill`, `PaidElsewhereRow` |
+| Upgrade safety | `Fixtures/PlanV6.store` was written by the V6 code before the model changed; `StoreMigrationTests` opens it, finds nothing moved, and keeps a move across relaunches | `StoreMigrationTests` |
+| The derivation | Pure and tested against §7's own sample, one test per rule | `PaidElsewhere`, `PaidElsewhereRow`, `PaidElsewherePick`, `PaidElsewhereTests` |

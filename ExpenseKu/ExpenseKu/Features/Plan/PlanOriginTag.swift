@@ -6,8 +6,8 @@
 //  row is Outside plan in this cycle, so it must not read like an envelope tag, which is
 //  From plan. Its "· Nov" never truncates; the name gives way first.
 //
-//  The tag sits on its own line, so it hugs its text and truncates only at the width of
-//  the row's text column (envelope-assignment.md §4.11).
+//  The tag sits on its own line, so it hugs its text and truncates only at the row's
+//  full width, past the mark (envelope-assignment.md §4.11).
 //
 
 import SwiftUI

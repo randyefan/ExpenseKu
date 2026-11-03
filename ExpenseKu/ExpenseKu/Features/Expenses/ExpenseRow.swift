@@ -7,9 +7,9 @@
 //  grey meta line (note · companions), and the bold amount right-aligned with monospaced
 //  digits, the Account's name under it. An Unassigned expense leads with its category.
 //
-//  A plan tag gets a line of its own above the category (envelope-assignment.md §4.11):
-//  beside the meta line it took the row's middle and squeezed a long note into a narrow
-//  column of wrapped lines.
+//  A plan tag gets a line of its own above the category and the amount
+//  (envelope-assignment.md §4.11): beside the meta line it took the row's middle and
+//  squeezed a long note into a narrow column of wrapped lines.
 //
 //  Search results set `dateLabel` because they span years and each row has to say
 //  when it happened; the cycle list and calendar leave it nil, where the day card's
@@ -43,39 +43,42 @@ struct ExpenseRow: View {
         HStack(spacing: 14) {
             ExpenseRowMark(expense: expense, lead: lead)
 
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 4) {
                 if let origin {
                     PlanOriginTag(origin: origin)
-                        .padding(.bottom, 2)
                 }
 
-                Text(categoryName)
-                    .font(.dsBody)
-                    .bold()
-                    .foregroundStyle(Theme.text)
-                    .lineLimit(1)
+                HStack(spacing: 14) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(categoryName)
+                            .font(.dsBody)
+                            .bold()
+                            .foregroundStyle(Theme.text)
+                            .lineLimit(1)
 
-                ExpenseMetaLine(note: expense.note, peopleNames: peopleNames)
+                        ExpenseMetaLine(note: expense.note, peopleNames: peopleNames)
+                    }
+
+                    Spacer(minLength: 8)
+
+                    VStack(alignment: .trailing, spacing: 2) {
+                        MoneyText(expense.amount, font: .dsBody, color: Theme.text)
+
+                        if lead.showsAccountName, let account = expense.account {
+                            ExpenseAccountLabel(account: account)
+                        }
+
+                        if let dateLabel {
+                            Text(dateLabel)
+                                .font(.dsCaption)
+                                .monospacedDigit()
+                                .foregroundStyle(Theme.textSecondary)
+                                .lineLimit(1)
+                        }
+                    }
+                    .layoutPriority(1)
+                }
             }
-
-            Spacer(minLength: 8)
-
-            VStack(alignment: .trailing, spacing: 2) {
-                MoneyText(expense.amount, font: .dsBody, color: Theme.text)
-
-                if lead.showsAccountName, let account = expense.account {
-                    ExpenseAccountLabel(account: account)
-                }
-
-                if let dateLabel {
-                    Text(dateLabel)
-                        .font(.dsCaption)
-                        .monospacedDigit()
-                        .foregroundStyle(Theme.textSecondary)
-                        .lineLimit(1)
-                }
-            }
-            .layoutPriority(1)
         }
         .padding(.vertical, 10)
     }

@@ -454,21 +454,24 @@ cut to "Travel ke… · Nov". The meta line put the tag and the note side by sid
 layout priority and up to 150pt, the note took what was left. Every tag kind did this;
 paid early is only the widest.
 
-A tagged row now stacks, in its text column `[→ V1]`:
+A tagged row now stacks, right of the mark `[→ V1]`:
 
 | Line | Content | Width |
 |---|---|---|
-| 1 | the tag — Fixed, Envelope or Paid early, styled as §5.3 and §4.10.5 | up to the whole text column |
+| 1 | the tag — Fixed, Envelope or Paid early, styled as §5.3 and §4.10.5 | up to the row's full width, running above the amount |
 | 2 | the Category title | as today |
 | 3 | the meta line: note · account · people | the whole text column, as an untagged row |
 
 - **All three tag kinds** take the line; a list never mixes two layouts.
-- **The 150pt cap is gone.** The tag hugs its text and grows to the width of the text
-  column; past that the name truncates with "…", and a paid-early tag's "· ‹Mon›" never does.
+- **The 150pt cap is gone.** The tag hugs its text and grows to the row's width right of the
+  mark; past that the name truncates with "…", and a paid-early tag's "· ‹Mon›" never does.
+  Raised by the owner on 2026-11-03 from a device: stopping at the text column cut "Travel ke
+  Jakarta" with empty space above the amount.
 - **The meta line** keeps its line limit (six) and its truncation; it no longer has a floor,
   since nothing beside it competes for width.
 - **Untagged rows are unchanged.** A tagged row is one tag line taller.
-- The Category icon and the amount stay centred on the whole text column.
+- The mark stays centred on the whole row. The amount centres on the title and meta line,
+  under the tag's line, so a long tag can never touch it.
 - The tag sits 4pt above the title; title and meta line keep their 2pt.
 - **Everywhere an `ExpenseRow` is drawn:** List and Month lenses, Search (with its date under
   the amount), Person detail, Select mode's narrower row `[→ V2]`, Move expenses here….
@@ -720,12 +723,12 @@ violet prefix without a pill that wraps with the note (D). Claude recommended A.
 |---|---|---|
 | 61 | A tagged row puts the tag on its own line **above the Category title** (option A) | `V1` |
 | 62 | It applies to all three tag kinds — Fixed, Envelope, Paid early | `V1` |
-| 63 | The 150pt cap is removed: the tag may grow to the text column's width; only the name truncates, never "· ‹Mon›" | `V1` |
+| 63 | The 150pt cap is removed: the tag may grow to the row's width right of the mark, above the amount (widened from the text column on 2026-11-03, *owner's call*); only the name truncates, never "· ‹Mon›" | `V1` |
 | 64 | Amendment here (§4.11), not a PRD of its own | — |
 | AC | The meta line keeps its six-line limit and gets the whole text column back; its width floor goes | `V1` |
 | AD | Untagged rows are unchanged | `V1` |
 | AE | Every `ExpenseRow` follows: List, Month, Search, Person detail, Select mode, Move expenses here…; Envelope detail stays untagged | `V2`, `V3` |
-| AF | Icon and amount stay centred on the text column | `V1` |
+| AF | The mark stays centred on the row; the amount centres on the title and meta line, under the tag's line (changed 2026-11-03 with #63) | `V1` |
 | AG | 4pt between tag and title | `V1` |
 | AH | VoiceOver follows the visual order, tag first | — |
 | AI | The tag's shapes, colours and glyphs are unchanged | — |
@@ -849,7 +852,7 @@ first; options B, C, D stay there as not chosen), with the
 | Where the tag lives in code | `ExpenseRow` draws `PlanOriginTag` as the first line of its text column; `ExpenseMetaLine` no longer takes an origin, and its width floor (flow R) went with it | `ExpenseRow`, `ExpenseMetaLine` |
 | The 150pt cap was a `WidthCap` layout | Removed: on its own line a plain `HStack` hugs its text and truncates only at the column's width | `PlanOriginTag` |
 | VoiceOver order | The row reads "Paid early, Travelling, November, Transport, Tiket KAI ke Jakarta · BCA, Rp 1.200.000" (observed); the tag is one element as before | `PlanOriginTag` |
-| The text column is narrower than the row suggests: the `HStack`'s 12pt spacing sits on both sides of the trailing `Spacer(minLength: 8)` | Unchanged — row geometry is out of scope. In Move expenses here… and Select mode the ticket's tag reads "Travelli… · Nov" beside Rp 1.200.000; V2 draws that | `ExpenseRow` |
+| The text column is narrower than the row suggests: the `HStack`'s 12pt spacing sits on both sides of the trailing `Spacer(minLength: 8)` | Unchanged — row geometry is out of scope. In Move expenses here… and Select mode the ticket's tag reads "Travelli… · Nov" beside Rp 1.200.000; V2 draws that. Superseded 2026-11-03: the tag now spans the row above the amount | `ExpenseRow` |
 | Every older flow on page 02 drew the tag beside the note | 66 rows in flows J, N, O, P, Q, R, S restacked to the new layout; rejected options on page 05 are left as they were | `.pen` page 02 |
 | No new view type | `ExpenseRow`'s DS note describes the tag line; V1–V3 use `ExpenseRow` instances | `.pen` page 01 |
 | Observed in the simulator (`-seedPlanData paid-early`) | List (all three kinds), an untagged August cycle, Select mode, Search with dates, Person detail (Ibu), Move expenses here…, Envelope detail without tags | — |

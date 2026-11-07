@@ -36,12 +36,16 @@ struct EnvelopeFormRow: View {
                             .foregroundStyle(Theme.textSecondary)
                     }
                 }
+                Image(systemName: "chevron.right")
+                    .font(.dsCaption).fontWeight(.semibold)
+                    .foregroundStyle(Theme.textSecondary.opacity(0.6))
             }
             .font(.dsBody)
+            .contentShape(.rect)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Envelope")
             .accessibilityValue([field.value.name, field.value.suffix].compactMap { $0 }.joined(separator: " "))
         }
-        .listRowBackground(Theme.card)
+        .buttonStyle(.plain)
     }
 }

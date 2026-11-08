@@ -1,6 +1,6 @@
 # PRD — Reading receipts
 
-Status: Built
+Status: Built · §4.11 Reading ahead (9 Nov amendment): Accepted
 Date: 2026-11-08 · grilled, drawn (flow AG), approved and built the same day as the on-device spike (`.scratch/receipt-ai/`), on `feature/receipt-reading`, not merged until the owner says so
 Owner: Randy Efan
 
@@ -81,6 +81,7 @@ Two banners sit in **one card** under the lens toggle, above the tab's content, 
 Manage-style row: a 38 pt icon circle, a title, a caption, a chevron. The inbox row's
 icon is a receipt on the amber wash; the review row's is a clipboard-check on `surface`.
 Captions: "Shared to ExpenseKu on this iPhone" and "Saved from a receipt, not checked yet".
+While receipts are being read ahead, the inbox caption follows §4.11 instead.
 
 | Banner | Shows when | Count | Tap |
 |---|---|---|---|
@@ -127,8 +128,9 @@ typed or chose is never replaced.
 
 ### 4.5 The inbox, one receipt after another `[→ AG2, AG4, AG5]`
 
-- Tapping the inbox banner reads the oldest waiting receipt and opens **Add Expense**
-  filled from it. The navigation title carries **"Receipt 1 of 3"** as its subtitle.
+- Tapping the inbox banner opens **Add Expense** on the oldest waiting receipt, filled
+  from its reading: at once when §4.11 has already read it, after "Reading receipt…"
+  otherwise. The navigation title carries **"Receipt 1 of 3"** as its subtitle.
 - ✓ saves the expense, removes the receipt from the inbox, and opens the next one
   directly, until the inbox is empty.
 - Cancel asks, as a confirmation dialog titled "Receipt 1 of 3" with the message
@@ -211,7 +213,40 @@ receipts are read with simpler rules until the model is here:
 - The model comes from Hugging Face (`mlx-community/gemma-4-e2b-it-4bit`) and is kept in
   Application Support, excluded from backup.
 - The model is loaded into memory on the first reading and released when the app goes to
-  the background.
+  the background, or once §4.11 has read every waiting receipt and no form is reading.
+
+### 4.11 Reading ahead `[→ AG10, AG11]`
+
+*Amendment, 9 Nov 2026.* Waiting receipts are read **before the owner opens them**, so
+each form in the run opens already filled.
+
+- **When.** Each time the app comes to the foreground (launch, or back from another app),
+  it reads every waiting receipt that has no reading yet, **oldest first, one at a time**,
+  with the same reader as §4.3 (the model, or the rules without it, §4.9).
+- **Only in the foreground.** Reading stops when the app goes to the background: an
+  iPhone gives no GPU to a background app. The receipt being read is read again from the
+  start next time.
+- **Kept beside the receipt.** A reading is stored as a small file next to its receipt in
+  the inbox folder and removed with it, so a receipt is read once, across relaunches and
+  **Later**. A reading that failed is kept as an empty one, and the form opens empty, as
+  today; it is not retried.
+- **Rules, then the model.** A reading made by the rules is read again once the model is
+  ready (§4.10).
+- **The banner** keeps its title, "N receipts waiting", and only its caption changes:
+
+| Inbox state | Caption |
+|---|---|
+| reading ahead | **Reading 2 of 3…** (the receipt in hand, of those that needed a reading this time) |
+| every waiting receipt read | **Ready to check** |
+| nothing read yet, and not reading (a run was stopped mid-way by going to the background) | Shared to ExpenseKu on this iPhone |
+
+- **Tapping while it reads** starts the run at once. A receipt already read fills its form
+  at once; the one being read shows "Reading receipt…" `[→ AG3b]` until that same reading
+  ends, and is never read twice. The others keep being read behind the form.
+- **Unchanged at the form:** Looks already logged (§4.6) is checked when the form opens,
+  against the expenses as they are then. A Category the reading named that has since
+  been deleted or renamed is left empty.
+- Reading ahead also runs in Low Power Mode.
 
 ---
 
@@ -223,7 +258,8 @@ receipts are read with simpler rules until the model is here:
 | The "Receipt N of M" run | until the inbox is empty, or Later |
 | Needs review + receipt image | until checked (§4.7); synced |
 | The downloaded model | until removed in Manage, or the app is deleted |
-| The loaded model | until the app goes to the background |
+| The loaded model | until the app goes to the background, or reading ahead ends (§4.11) |
+| A receipt's reading | as long as the receipt waits; read again only when it was made by the rules and the model is now ready |
 
 ## 6. Unaffected
 
@@ -280,6 +316,11 @@ Design calls made while drawing flow AG, approved at the design gate the same da
 | 30 | Manage row glyph: scan text on the amber wash | `AG8` |
 | 31 | Receipt reading screen: explainer card, MODEL card with progress, rules footnote | `AG9` |
 | 32 | Share extension: dark sheet, thumbnail, "Saved to ExpenseKu", accent Done | `AG1` |
+| 33 | *9 Nov.* Waiting receipts are **read ahead** in the foreground, each form opening filled; nothing is saved without the form. Reading in the background is impossible on iPhone (no background GPU; a share extension gets about 120 MB) | `AG10`, `AG11` |
+| 34 | A reading is **kept beside its receipt** in the inbox folder, not in memory, so a relaunch does not read it again | — |
+| 35 | The inbox banner keeps its title; its **caption** says "Reading 2 of 3…", then "Ready to check" | `AG10`, `AG11` |
+| 36 | Tapping the banner **while it reads** starts the run at once; the receipt in hand is waited for, never read twice | `AG3b` |
+| 37 | Drawn as banner cards only (the rest of the screen is AG2); same receipt glyph, amber wash and chevron in both states, no spinner; the caption stays `textSecondary`; "2 of 3" counts the receipts this pass reads, not the whole inbox | `AG10`, `AG11` |
 
 Defaults chosen without asking, confirmed at the gate: receipt date fills the date (none →
 Now); Me stays; Envelope untouched; the Person match rule in §4.4; the note as printed;
@@ -287,6 +328,13 @@ Now); Me stays; Envelope untouched; the Person match rule in §4.4; the note as 
 background; images and PDFs accepted; Check tag and banner only for receipt expenses;
 reading on Edit also marks Needs review; its own PRD plus ADR-0014; built on
 `feature/receipt-reading` and **not merged to `main` until the owner says so**.
+
+Defaults for §4.11, confirmed at the 9 Nov gate: read on every foreground, oldest first,
+one at a time; stop in the background and restart that receipt; rules readings redone
+once the model is ready; the model released when reading ahead ends; Looks already logged
+still checked at the form; a since-deleted Category left empty; Later keeps the reading;
+a failed reading kept empty and not retried; reading in Low Power Mode too; an amendment
+to this PRD on the same branch.
 
 ---
 
@@ -307,6 +355,8 @@ FADHIL"; three receipts waiting; three receipt expenses to check.
 | **AG7** · To check sheet | §4.7, §4.8 |
 | **AG8** · Manage with Receipt reading | §4.10 row |
 | **AG9** · Receipt reading, downloading · **AG9a** not downloaded · **AG9c** ready · **AG9d** cellular confirmation | §4.10 states |
+| **AG10** · Inbox banner "Reading 2 of 3…" (card only; the screen is AG2) | §4.11 reading |
+| **AG11** · Inbox banner "Ready to check" (card only) | §4.11 read |
 
 ### 8.1 Closed during implementation
 

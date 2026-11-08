@@ -163,6 +163,8 @@ A receipt with no amount or no date is never checked.
   - opening the expense and tapping ✓, changed or not;
   - **Mark as checked** in the row's long-press menu.
 - Deleting the expense deletes its image with it.
+- An expense is "from a receipt" only while it carries its image. An Auto item's
+  expense whose item was deleted keeps Needs review with no plan item, and is not one.
 
 ### 4.8 The review sheet `[→ AG7]`
 
@@ -321,6 +323,7 @@ FADHIL"; three receipts waiting; three receipt expenses to check.
 | A paused download showed 0 %, and a half download could not be removed | Paused keeps the bytes of the file in flight; Paused offers Remove download | `ReceiptModelStore`, `ReceiptModelCard` |
 | Resume after a relaunch | Finished files are kept; the file in flight restarts, because URLSession's resume data lives in memory | `ReceiptModelStore` |
 | MLXHuggingFace needs macro packages and a hub client the app does not use | A hand-written tokenizer bridge and a refusing `Downloader` load the model from its folder; the app links MLXLLM, MLXLMCommon and Tokenizers only | `GemmaTokenizerBridge`, `LocalModelDownloader` |
+| The first device run showed "1 from receipts to check" with no receipt read | An Auto expense whose item was deleted kept Needs review and no plan item; receipts are now told apart by their image | `ReceiptCheck` |
 | Where the receipt image is stored | JPEG, at most 1600 pt on its long side, a PDF as its first page | `ReceiptImageData` |
 | The share extension and the app share the inbox code | `ReceiptInboxFolder`, `ReceiptInboxItem` and `Theme` are members of both targets | `project.pbxproj` |
 | Driving the flow in the simulator | `-seedReceipts` adds a BCA Account, two receipts drawn with SwiftUI in the inbox, and one Belanja expense to check | `DebugReceiptSeed` |

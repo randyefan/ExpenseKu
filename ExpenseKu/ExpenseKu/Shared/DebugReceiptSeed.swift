@@ -40,7 +40,7 @@ enum DebugReceiptSeed {
         }
 
         let flagged = (try? context.fetch(FetchDescriptor<Expense>(predicate: #Predicate { $0.needsReview }))) ?? []
-        if !flagged.contains(where: { $0.planItem == nil }), let shop = render(DebugReceiptImage.indomaret) {
+        if !flagged.contains(where: \.isReceiptToCheck), let shop = render(DebugReceiptImage.indomaret) {
             let date = Calendar.current.date(byAdding: .day, value: -1, to: .now) ?? .now
             let expense = Expense(amount: 28_600, date: date, note: "INDOMARET", category: belanja, needsReview: true)
             expense.receiptImage = ReceiptImageData.stored(from: shop)

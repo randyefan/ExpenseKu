@@ -3,14 +3,14 @@
 //  ExpenseKu
 //
 //  An expense saved from a receipt and not yet checked (docs/prd/receipt-reading.md §4.7).
-//  Told apart from an Auto item's Needs review by having no plan item (ADR-0014); that
-//  one is still reviewed in the Plan lens.
+//  Told apart from an Auto item's Needs review by carrying its receipt (ADR-0014), not by
+//  having no plan item: an Auto expense whose item was deleted keeps its flag too.
 //
 
 import Foundation
 
 extension Expense {
-    var isReceiptToCheck: Bool { needsReview && planItem == nil }
+    var isReceiptToCheck: Bool { needsReview && receiptImage != nil }
 
     /// Checking clears the flag and deletes the image together.
     func markReceiptChecked() {

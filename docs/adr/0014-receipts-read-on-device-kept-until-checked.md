@@ -49,7 +49,9 @@ and cannot open its containing app by any supported API.
   while its expense waits for review. There is no gallery, and an expense keeps no
   photo once checked.
 - Needs review gains a second source. Auto items keep their own review in the Plan lens.
-  Receipt expenses are told apart by having no `planItem`.
+  Receipt expenses are told apart by carrying `receiptImage`, not by having no
+  `planItem`: an Auto expense whose item was deleted keeps its flag and has no item
+  either (corrected 9 Nov 2026, after the first device run showed one as a receipt).
 - MLX cannot run in the iOS Simulator, so simulator checks cover the rules path and the
   UI. The model's accuracy is measured on the Mac with the same ReceiptKit code.
 - The app needs `com.apple.developer.kernel.increased-memory-limit` and an App Group

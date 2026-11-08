@@ -10,11 +10,8 @@
 
 import Foundation
 #if canImport(MLXLLM)
-import HuggingFace
-import MLXHuggingFace
 import MLXLLM
 import MLXLMCommon
-import Tokenizers
 #endif
 
 nonisolated final class GemmaReceiptModel: ReceiptModel {
@@ -45,7 +42,8 @@ nonisolated final class GemmaReceiptModel: ReceiptModel {
         func container() async throws -> ModelContainer {
             if let loaded { return loaded }
             let configuration = ModelConfiguration(directory: directory, extraEOSTokens: ["<turn|>"])
-            let container = try await #huggingFaceLoadModelContainer(configuration: configuration)
+            let container = try await LLMModelFactory.shared.loadContainer(
+                from: LocalModelDownloader(), using: GemmaTokenizerLoader(), configuration: configuration)
             loaded = container
             return container
         }

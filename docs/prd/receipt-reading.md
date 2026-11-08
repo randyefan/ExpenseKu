@@ -1,6 +1,6 @@
 # PRD — Reading receipts
 
-Status: Built · §4.11 Reading ahead (9 Nov amendment): Accepted · §4.3.1 View receipt (9 Nov amendment): Accepted
+Status: Built · amended 9 Nov 2026 with §4.3.1 View receipt and §4.11 Reading ahead, both built
 Date: 2026-11-08 · grilled, drawn (flow AG), approved and built the same day as the on-device spike (`.scratch/receipt-ai/`), on `feature/receipt-reading`, not merged until the owner says so
 Owner: Randy Efan
 
@@ -397,6 +397,11 @@ FADHIL"; three receipts waiting; three receipt expenses to check.
 | Resume after a relaunch | Finished files are kept; the file in flight restarts, because URLSession's resume data lives in memory | `ReceiptModelStore` |
 | MLXHuggingFace needs macro packages and a hub client the app does not use | A hand-written tokenizer bridge and a refusing `Downloader` load the model from its folder; the app links MLXLLM, MLXLMCommon and Tokenizers only | `GemmaTokenizerBridge`, `LocalModelDownloader` |
 | The first device run showed "1 from receipts to check" with no receipt read | An Auto expense whose item was deleted kept Needs review and no plan item; receipts are now told apart by their image | `ReceiptCheck` |
+| §4.11: a form's reading and the pass's next one could both reach the model at once, and so could a Photos read during a pass | One reading at a time through a first-come gate; a form waiting on its receipt goes before the pass's next one, and Photos, Camera and Paste wait their turn too | `ReceiptReadGate`, `ReceiptReadAhead` |
+| §4.11: a receipt whose file cannot be opened | Kept as an empty reading, like a failed one, so the form opens empty rather than waiting | `ReceiptReadAhead` |
+| §4.11: a form waiting on its receipt when the app goes to the background | It keeps "Reading receipt…" and asks again once the app is back in the foreground | `ExpenseEditorView.openRunReceipt` |
+| §4.3.1: two toolbar items share one glass capsule on iOS 26 | A fixed `ToolbarSpacer` keeps View receipt and Read receipt as two round buttons, as drawn | `ExpenseEditorView` |
+| The review sheet's viewer zoomed but could not move, so a corner of a long receipt stayed out of reach | Drag moves the zoomed receipt; back at 1× it re-centres | `ReceiptImageViewer` |
 | Where the receipt image is stored | JPEG, at most 1600 pt on its long side, a PDF as its first page | `ReceiptImageData` |
 | The share extension and the app share the inbox code | `ReceiptInboxFolder`, `ReceiptInboxItem` and `Theme` are members of both targets | `project.pbxproj` |
 | Driving the flow in the simulator | `-seedReceipts` adds a BCA Account, two receipts drawn with SwiftUI in the inbox, and one Belanja expense to check | `DebugReceiptSeed` |

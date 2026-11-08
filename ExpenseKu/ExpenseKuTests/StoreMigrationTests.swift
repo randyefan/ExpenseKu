@@ -30,6 +30,10 @@
 //  its paid-early ticket on BCA — a paid-elsewhere expense: what a 1.5 install holds
 //  before paid elsewhere arrives.
 //
+//  `Fixtures/PlanV7.store` is the V6 fixture opened and written by the V7 code (the
+//  commit before V8), with the Tiket KAI move recorded: what a 1.6 install holds before
+//  receipt reading arrives.
+//
 //  Every test opens a *copy*: SwiftData migrates in place, and the fixture has to stay
 //  a pre-change store for the next run.
 //
@@ -69,7 +73,7 @@ nonisolated final class StoreMigrationTests: XCTestCase {
     /// Opened the way `StoreBootstrap` opens the real store, minus CloudKit.
     @MainActor
     private func open(_ url: URL) throws -> ModelContainer {
-        let schema = Schema(versionedSchema: ExpenseKuSchemaV7.self)
+        let schema = Schema(versionedSchema: ExpenseKuSchemaV8.self)
         let config = ModelConfiguration(schema: schema, url: url, cloudKitDatabase: .none)
         return try ModelContainer(for: schema, migrationPlan: ExpenseKuMigrationPlan.self,
                                   configurations: [config])
@@ -360,5 +364,34 @@ nonisolated final class StoreMigrationTests: XCTestCase {
         let context = ModelContext(try open(url))
         let ticket = try XCTUnwrap(try context.fetch(FetchDescriptor<Expense>()).first { $0.note == "Tiket KAI" })
         XCTAssertTrue(ticket.isMovedFromEnvelope)
+    }
+
+    /// **The V7 store opens**, its move intact, and no expense arrives with a receipt.
+    @MainActor
+    func testAV7StoreOpensWithItsMoveAndNoReceipts() throws {
+        let context = ModelContext(try open(try copyOfStore("PlanV7")))
+        let expenses = try context.fetch(FetchDescriptor<Expense>())
+        XCTAssertEqual(expenses.count, 5)
+        XCTAssertTrue(expenses.allSatisfy { $0.receiptImage == nil })
+        XCTAssertEqual(expenses.filter(\.isMovedFromEnvelope).map(\.note), ["Tiket KAI"])
+    }
+
+    /// Once migrated, a receipt is attached, kept, and the store opens again.
+    @MainActor
+    func testTheMigratedV7StoreKeepsAReceiptAcrossRelaunches() throws {
+        let url = try copyOfStore("PlanV7")
+        let image = Data(repeating: 0xAB, count: 200_000)
+        do {
+            let context = ModelContext(try open(url))
+            let makan = try XCTUnwrap(try context.fetch(FetchDescriptor<Expense>()).first { $0.note == "Makan" })
+            makan.receiptImage = image
+            makan.needsReview = true
+            try context.save()
+        }
+
+        let context = ModelContext(try open(url))
+        let makan = try XCTUnwrap(try context.fetch(FetchDescriptor<Expense>()).first { $0.note == "Makan" })
+        XCTAssertEqual(makan.receiptImage, image)
+        XCTAssertTrue(makan.needsReview)
     }
 }

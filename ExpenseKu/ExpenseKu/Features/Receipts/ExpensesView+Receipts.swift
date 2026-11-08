@@ -17,7 +17,10 @@ extension ExpensesView {
     }
 
     func endReceiptRun(_ run: ReceiptRun, _ outcome: ReceiptRun.Outcome) {
-        if outcome != .later { receiptInbox.remove(run.item) }
+        if outcome != .later {
+            receiptReadAhead.forget(run.item)
+            receiptInbox.remove(run.item)
+        }
         nextReceiptRun = outcome == .later ? nil : run.next(in: receiptInbox.items)
     }
 

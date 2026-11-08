@@ -13,6 +13,10 @@ nonisolated struct ReceiptReader: Sendable {
     let model: (any ReceiptModel)?
 
     func read(_ data: Data, categories: [String]) async throws -> ReceiptReading {
+        try await reading(of: data, categories: categories).reading
+    }
+
+    func reading(of data: Data, categories: [String]) async throws -> StoredReceiptReading {
         let text = try await ReceiptOCR.read(data)
         let candidates = CandidateExtractor.extract(from: text)
         if let model {
@@ -20,9 +24,9 @@ nonisolated struct ReceiptReader: Sendable {
             if let answer = try? await model.answer(prompt) {
                 let reading = ReceiptResolver.resolve(answer: answer, receipt: text, candidates: candidates,
                                                       categories: categories)
-                if !reading.isEmpty { return reading }
+                if !reading.isEmpty { return StoredReceiptReading(reading: reading, hadModel: true) }
             }
         }
-        return ReceiptRules.read(text, candidates: candidates)
+        return StoredReceiptReading(reading: ReceiptRules.read(text, candidates: candidates), hadModel: model != nil)
     }
 }

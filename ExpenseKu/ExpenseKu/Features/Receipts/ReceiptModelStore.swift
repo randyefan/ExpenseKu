@@ -52,9 +52,11 @@ final class ReceiptModelStore {
         try? folder.setResourceValues(values)
     }
 
+    var isModelReady: Bool { phase == .ready && ReceiptModelRuntime.canRun }
+
     /// The model to read with, when it is downloaded and this device can run it.
     var model: (any ReceiptModel)? {
-        guard phase == .ready, ReceiptModelRuntime.canRun else { return nil }
+        guard isModelReady else { return nil }
         if loaded == nil { loaded = ReceiptModelRuntime.make(directory: directory) }
         return loaded
     }

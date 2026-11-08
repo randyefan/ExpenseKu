@@ -77,6 +77,7 @@ struct ExpenseKuApp: App {
     @State private var bankLogos = BankLogoCatalog.live()
     @State private var receiptInbox = ReceiptInbox()
     @State private var receiptModel = ReceiptModelStore()
+    @State private var receiptReadAhead = ReceiptReadAhead()
     @Environment(\.scenePhase) private var scenePhase
 
     init() {
@@ -91,12 +92,15 @@ struct ExpenseKuApp: App {
                 .environment(bankLogos)
                 .environment(receiptInbox)
                 .environment(receiptModel)
+                .environment(receiptReadAhead)
         }
         .modelContainer(store.container)
         .onChange(of: scenePhase) { _, phase in
             switch phase {
             case .active: receiptInbox.refresh()
-            case .background: receiptModel.unload()
+            case .background:
+                receiptReadAhead.stop()
+                receiptModel.unload()
             default: break
             }
         }

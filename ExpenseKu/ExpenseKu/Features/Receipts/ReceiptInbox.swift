@@ -30,6 +30,7 @@ final class ReceiptInbox {
     }
 
     func remove(_ item: ReceiptInboxItem) {
+        folder.removeReading(for: item)
         folder.remove(item)
         refresh()
     }

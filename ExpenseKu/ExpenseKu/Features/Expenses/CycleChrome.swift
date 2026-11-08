@@ -23,6 +23,7 @@ struct CycleChrome: View {
     let calendar: Calendar
     @Binding var lens: ExpensesView.Lens
     var receiptsWaiting = 0
+    var receiptInboxCaption = ReceiptInboxCaption.shared
     var receiptsToCheck = 0
     var onReceiptInbox: () -> Void = {}
     var onReceiptReview: () -> Void = {}
@@ -55,8 +56,8 @@ struct CycleChrome: View {
             )
             .padding(.bottom, Metric.cardGap)
 
-            ReceiptBannersCard(waiting: receiptsWaiting, toCheck: receiptsToCheck,
-                               onInbox: onReceiptInbox, onReview: onReceiptReview)
+            ReceiptBannersCard(waiting: receiptsWaiting, inboxCaption: receiptInboxCaption,
+                               toCheck: receiptsToCheck, onInbox: onReceiptInbox, onReview: onReceiptReview)
         }
     }
 }

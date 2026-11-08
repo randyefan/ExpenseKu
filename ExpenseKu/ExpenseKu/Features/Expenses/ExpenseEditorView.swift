@@ -20,6 +20,7 @@ struct ExpenseEditorView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(ReceiptModelStore.self) private var receiptModel
+    @Environment(ReceiptReadAhead.self) private var receiptReadAhead
 
     /// nil = adding a new expense; non-nil = editing an existing one.
     let editing: Expense?
@@ -425,7 +426,17 @@ struct ExpenseEditorView: View {
     private func openRunReceipt() {
         guard let receiptRun, receiptImage == nil, readingTask == nil,
               let data = try? Data(contentsOf: receiptRun.item.url) else { return }
-        read(data)
+        let categories = allCategories.map(\.name)
+        readingTask = Task {
+            var stored = await receiptReadAhead.reading(for: receiptRun.item, categories: categories, models: receiptModel)
+            while stored == nil, !Task.isCancelled {
+                try? await Task.sleep(for: .milliseconds(300))
+                stored = await receiptReadAhead.reading(for: receiptRun.item, categories: categories, models: receiptModel)
+            }
+            guard let stored, !Task.isCancelled else { return }
+            readingTask = nil
+            apply(stored.reading, from: data)
+        }
     }
 
     private func pasteReceipt() {
@@ -435,18 +446,21 @@ struct ExpenseEditorView: View {
 
     private func read(_ data: Data) {
         readingTask?.cancel()
-        let reader = ReceiptReader(model: receiptModel.model)
         let categories = allCategories.map(\.name)
         readingTask = Task {
-            let reading = (try? await reader.read(data, categories: categories)) ?? ReceiptReading()
+            let reading = await receiptReadAhead.read(data, categories: categories, models: receiptModel)
             guard !Task.isCancelled else { return }
-            let image = ReceiptImageData.stored(from: data)
             readingTask = nil
-            if let match = lookAlikeExpense(for: reading) {
-                lookAlike = ReceiptLookAlike(reading: reading, image: image, expense: match)
-            } else {
-                fill(reading, image: image)
-            }
+            apply(reading, from: data)
+        }
+    }
+
+    private func apply(_ reading: ReceiptReading, from data: Data) {
+        let image = ReceiptImageData.stored(from: data)
+        if let match = lookAlikeExpense(for: reading) {
+            lookAlike = ReceiptLookAlike(reading: reading, image: image, expense: match)
+        } else {
+            fill(reading, image: image)
         }
     }
 

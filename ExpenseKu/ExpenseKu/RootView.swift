@@ -18,6 +18,8 @@ struct RootView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Environment(BankLogoCatalog.self) private var bankLogos: BankLogoCatalog?
     @Environment(ReceiptInbox.self) private var receiptInbox
+    @Environment(ReceiptModelStore.self) private var receiptModel
+    @Environment(ReceiptReadAhead.self) private var receiptReadAhead
     @State private var selection: AppTab = .expenses
     #if DEBUG
     @State private var debugScreen: DebugScreen?
@@ -47,6 +49,7 @@ struct RootView: View {
         .onChange(of: scenePhase, initial: true) { _, phase in
             guard phase == .active else { return }
             Task { await bankLogos?.refreshIfDue() }
+            readReceiptsAhead()
         }
         .task {
             Person.reconcileMe(in: modelContext)
@@ -56,6 +59,7 @@ struct RootView: View {
             PlanMaintenance.run(in: modelContext)
             #if DEBUG
             applyDebugLaunch()
+            readReceiptsAhead()
             #endif
         }
         .task {
@@ -67,6 +71,12 @@ struct RootView: View {
                 PlanMaintenance.run(in: modelContext)
             }
         }
+    }
+
+    private func readReceiptsAhead() {
+        let categories = (try? modelContext.fetch(FetchDescriptor<Category>(sortBy: [SortDescriptor(\.name)]))) ?? []
+        receiptInbox.refresh()
+        receiptReadAhead.start(items: receiptInbox.items, categories: categories.map(\.name), models: receiptModel)
     }
 
     #if DEBUG

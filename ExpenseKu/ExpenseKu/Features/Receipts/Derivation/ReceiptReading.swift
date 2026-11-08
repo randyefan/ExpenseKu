@@ -9,7 +9,7 @@
 
 import Foundation
 
-nonisolated struct ReceiptReading: Sendable, Hashable {
+nonisolated struct ReceiptReading: Codable, Sendable, Hashable {
     var amount: Decimal?
     var fee: Decimal?
     var date: LocalDateTime?

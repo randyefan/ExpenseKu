@@ -51,6 +51,7 @@ struct ExpensesView: View {
     @State var nextReceiptRun: ReceiptRun?
     @State var showingReceiptReview = false
     @Environment(ReceiptInbox.self) var receiptInbox
+    @Environment(ReceiptReadAhead.self) var receiptReadAhead
     @State private var showingSettings = false
     @State private var payday: Int = Payday.current
     @State var cycle: PayCycle = PayCycle.containing(.now, payday: Payday.current)
@@ -223,6 +224,11 @@ struct ExpensesView: View {
                                     calendar: calendar,
                                     lens: lensBinding,
                                     receiptsWaiting: receiptInbox.items.count,
+                                    receiptInboxCaption: ReceiptInboxCaption.make(
+                                        waiting: receiptInbox.items,
+                                        readIDs: Set(receiptReadAhead.readings.keys),
+                                        progress: receiptReadAhead.progress
+                                    ),
                                     receiptsToCheck: expenses.lazy.filter(\.isReceiptToCheck).count,
                                     onReceiptInbox: startReceiptRun,
                                     onReceiptReview: { showingReceiptReview = true },

@@ -67,6 +67,7 @@ struct ExpenseEditorView: View {
     @State private var formHeight: CGFloat?
 
     @State private var receiptImage: Data?
+    @State private var viewingReceipt = false
     @State private var readingTask: Task<Void, Never>?
     @State private var lookAlike: ReceiptLookAlike?
     @State private var showingPhotos = false
@@ -207,6 +208,9 @@ struct ExpenseEditorView: View {
                     read(data)
                 }, onCancel: { showingCamera = false })
                 .ignoresSafeArea()
+            }
+            .fullScreenCover(isPresented: $viewingReceipt) {
+                if let viewableReceipt { ReceiptImageViewer(data: viewableReceipt) }
             }
             .alert("Looks already logged", isPresented: lookAlikeShown, presenting: lookAlike) { match in
                 Button(receiptRun == nil ? "Don't fill" : "Discard receipt", role: .destructive) {
@@ -364,6 +368,12 @@ struct ExpenseEditorView: View {
             .presentationBackground(Theme.bg)
         }
         .toolbar {
+            if viewableReceipt != nil, readingTask == nil {
+                ToolbarItem(placement: .primaryAction) {
+                    Button("View receipt", systemImage: "doc.text.image") { viewingReceipt = true }
+                }
+                ToolbarSpacer(.fixed, placement: .primaryAction)
+            }
             ToolbarItem(placement: .primaryAction) {
                 ReadReceiptMenu(
                     onPhotos: { showingPhotos = true },
@@ -380,6 +390,11 @@ struct ExpenseEditorView: View {
     }
 
     private var notesRowID: String { "notes" }
+
+    private var viewableReceipt: Data? {
+        ViewableReceipt.image(filledFrom: receiptImage, saved: editing?.receiptImage,
+                              savedIsToCheck: editing?.isReceiptToCheck == true)
+    }
 
     // MARK: - Actions
 

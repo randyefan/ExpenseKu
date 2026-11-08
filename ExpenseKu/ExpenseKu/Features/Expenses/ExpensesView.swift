@@ -47,6 +47,10 @@ struct ExpensesView: View {
     /// Add Expense, as an item so ＋ on an envelope row can carry its preset into the
     /// sheet: an `isPresented` sheet built its content before the preset had landed.
     @State var newExpense: NewExpensePreset?
+    @State var receiptRun: ReceiptRun?
+    @State var nextReceiptRun: ReceiptRun?
+    @State var showingReceiptReview = false
+    @Environment(ReceiptInbox.self) var receiptInbox
     @State private var showingSettings = false
     @State private var payday: Int = Payday.current
     @State var cycle: PayCycle = PayCycle.containing(.now, payday: Payday.current)
@@ -218,6 +222,10 @@ struct ExpensesView: View {
                                     canGoForward: CyclePaging.canGoForward(from: cycle),
                                     calendar: calendar,
                                     lens: lensBinding,
+                                    receiptsWaiting: receiptInbox.items.count,
+                                    receiptsToCheck: expenses.lazy.filter(\.isReceiptToCheck).count,
+                                    onReceiptInbox: startReceiptRun,
+                                    onReceiptReview: { showingReceiptReview = true },
                                     onPrevious: { page(to: cycle.previous(payday: payday, calendar: calendar), edge: .trailing) },
                                     onNext: { page(to: cycle.next(payday: payday, calendar: calendar), edge: .leading) }
                                 )
@@ -323,6 +331,16 @@ struct ExpensesView: View {
                     ExpenseEditorView(envelope: preset.envelope, date: preset.date)
                 }
                 .presentationBackground(Theme.bg)
+            }
+            .sheet(item: $receiptRun, onDismiss: continueReceiptRun) { run in
+                NavigationStack {
+                    ExpenseEditorView(receiptRun: run) { endReceiptRun(run, $0) }
+                }
+                .presentationBackground(Theme.bg)
+            }
+            .sheet(isPresented: $showingReceiptReview) {
+                ReceiptReviewSheet()
+                    .presentationBackground(Theme.bg)
             }
             .sheet(isPresented: $showingSettings) {
                 TransactionSettingsView(payday: $payday)

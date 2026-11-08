@@ -4,10 +4,12 @@
 //
 //  The long-press menu every expense row carries (frame R1): Select (List lens only),
 //  Move to envelope… (when the row's own cycle, or a later one on offer, has an envelope),
-//  Edit and Delete. A row
-//  a Fixed item created is From plan already, so it offers Edit and Delete only.
+//  Mark as checked (a receipt expense not yet checked, docs/prd/receipt-reading.md §4.7),
+//  Edit and Delete. A row a Fixed item created is From plan already, so it offers Edit
+//  and Delete only.
 //
 
+import SwiftData
 import SwiftUI
 
 struct ExpenseRowMenu: ViewModifier {
@@ -16,6 +18,7 @@ struct ExpenseRowMenu: ViewModifier {
 
     @Environment(\.expenseRowActions) private var actions
     @Environment(\.planOrigins) private var planOrigins
+    @Environment(\.modelContext) private var context
 
     func body(content: Content) -> some View {
         content.contextMenu {
@@ -25,6 +28,12 @@ struct ExpenseRowMenu: ViewModifier {
             if let move = actions.move, let cycle = planOrigins.moveTarget(for: expense, now: .now) {
                 Button("Move to envelope…", systemImage: "tray") {
                     move(EnvelopeMoveRequest(expenses: [expense], cycle: cycle))
+                }
+            }
+            if expense.isReceiptToCheck {
+                Button("Mark as checked", systemImage: "checkmark.seal") {
+                    expense.markReceiptChecked()
+                    try? context.save()
                 }
             }
             Button("Edit", systemImage: "pencil", action: onEdit)

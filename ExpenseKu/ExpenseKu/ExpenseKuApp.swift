@@ -75,6 +75,9 @@ extension EnvironmentValues {
 struct ExpenseKuApp: App {
     private let store = StoreBootstrap.make()
     @State private var bankLogos = BankLogoCatalog.live()
+    @State private var receiptInbox = ReceiptInbox()
+    @State private var receiptModel = ReceiptModelStore()
+    @Environment(\.scenePhase) private var scenePhase
 
     init() {
         AppFont.registerIfNeeded()
@@ -86,7 +89,16 @@ struct ExpenseKuApp: App {
             RootView()
                 .environment(\.isEphemeralStore, store.isEphemeral)
                 .environment(bankLogos)
+                .environment(receiptInbox)
+                .environment(receiptModel)
         }
         .modelContainer(store.container)
+        .onChange(of: scenePhase) { _, phase in
+            switch phase {
+            case .active: receiptInbox.refresh()
+            case .background: receiptModel.unload()
+            default: break
+            }
+        }
     }
 }

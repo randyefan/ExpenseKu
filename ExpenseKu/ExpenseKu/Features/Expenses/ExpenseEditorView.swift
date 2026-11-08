@@ -7,8 +7,11 @@
 //  choice made on most entries is one tap (docs/prd/quick-entry-form.md, flow AF C4):
 //  date shortcuts, a Category grid, People chips and an Account menu, then the
 //  Envelope and the note. Tapping the note swaps the keypad for the native keyboard.
+//  Read receipt fills what is still empty from a receipt, and an inbox run opens the form
+//  on a shared receipt (docs/prd/receipt-reading.md §4.3–§4.7).
 //
 
+import PhotosUI
 import SwiftUI
 import SwiftData
 
@@ -16,6 +19,7 @@ struct ExpenseEditorView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(ReceiptModelStore.self) private var receiptModel
 
     /// nil = adding a new expense; non-nil = editing an existing one.
     let editing: Expense?
@@ -24,6 +28,8 @@ struct ExpenseEditorView: View {
     /// that clears its selection instead.
     let onFinish: (() -> Void)?
     private let hasPresetDate: Bool
+    private let receiptRun: ReceiptRun?
+    private let onRunEnd: ((ReceiptRun.Outcome) -> Void)?
 
     @State private var expr: ExpressionEvaluator  // keypad-driven amount
     @State private var date: Date
@@ -59,12 +65,32 @@ struct ExpenseEditorView: View {
     @State private var scrollPosition = ScrollPosition()
     @State private var formHeight: CGFloat?
 
+    @State private var receiptImage: Data?
+    @State private var readingTask: Task<Void, Never>?
+    @State private var lookAlike: ReceiptLookAlike?
+    @State private var showingPhotos = false
+    @State private var photoItem: PhotosPickerItem?
+    @State private var showingCamera = false
+    @State private var showingRunCancel = false
+
     /// `envelope` and `date` preset a new expense from ＋ on an envelope row (frame Q5).
     init(editing: Expense? = nil, envelope: PlanItem? = nil, date: Date? = nil,
          onFinish: (() -> Void)? = nil) {
+        self.init(editing: editing, envelope: envelope, date: date, receiptRun: nil, onFinish: onFinish, onRunEnd: nil)
+    }
+
+    /// Opens on the run's receipt, reads it, and reports how the form ended (§4.5).
+    init(receiptRun: ReceiptRun, onRunEnd: @escaping (ReceiptRun.Outcome) -> Void) {
+        self.init(editing: nil, envelope: nil, date: nil, receiptRun: receiptRun, onFinish: nil, onRunEnd: onRunEnd)
+    }
+
+    private init(editing: Expense?, envelope: PlanItem?, date: Date?, receiptRun: ReceiptRun?,
+                 onFinish: (() -> Void)?, onRunEnd: ((ReceiptRun.Outcome) -> Void)?) {
         self.editing = editing
         self.onFinish = onFinish
         self.hasPresetDate = date != nil
+        self.receiptRun = receiptRun
+        self.onRunEnd = onRunEnd
         _expr = State(initialValue: ExpressionEvaluator(amount: editing?.amount ?? 0))
         _date = State(initialValue: editing?.date ?? date ?? .now)
         _note = State(initialValue: editing?.note ?? "")
@@ -157,7 +183,53 @@ struct ExpenseEditorView: View {
     var body: some View {
         editorBody
             .onAppear(perform: applyDefaultsIfNeeded)
-            .confirmsDiscard(when: hasChanges, onDiscard: finish)
+            .confirmsDiscard(when: hasChanges && receiptRun == nil, onDiscard: finish)
+            .interactiveDismissDisabled(receiptRun != nil)
+            .overlay {
+                if readingTask != nil {
+                    ReadingReceiptOverlay(onCancel: cancelReading)
+                }
+            }
+            .animation(.easeInOut(duration: 0.2), value: readingTask == nil)
+            .task { openRunReceipt() }
+            .photosPicker(isPresented: $showingPhotos, selection: $photoItem, matching: .images)
+            .onChange(of: photoItem) { _, item in
+                guard let item else { return }
+                photoItem = nil
+                Task {
+                    if let data = try? await item.loadTransferable(type: Data.self) { read(data) }
+                }
+            }
+            .fullScreenCover(isPresented: $showingCamera) {
+                DocumentCameraView(onScan: { data in
+                    showingCamera = false
+                    read(data)
+                }, onCancel: { showingCamera = false })
+                .ignoresSafeArea()
+            }
+            .alert("Looks already logged", isPresented: lookAlikeShown, presenting: lookAlike) { match in
+                Button(receiptRun == nil ? "Don't fill" : "Discard receipt", role: .destructive) {
+                    lookAlike = nil
+                    if receiptRun != nil { endRun(.discarded) }
+                }
+                Button(receiptRun == nil ? "Fill anyway" : "Log anyway") {
+                    lookAlike = nil
+                    fill(match.reading, image: match.image)
+                }
+            } message: { match in
+                Text(match.description)
+            }
+            .confirmationDialog(receiptRun?.subtitle ?? "", isPresented: $showingRunCancel, titleVisibility: .visible) {
+                Button("Discard receipt", role: .destructive) { endRun(.discarded) }
+                Button("Later") { endRun(.later) }
+                Button("Keep editing", role: .cancel) {}
+            } message: {
+                Text("Discard this receipt, or keep it in the inbox for later?")
+            }
+    }
+
+    private var lookAlikeShown: Binding<Bool> {
+        Binding(get: { lookAlike != nil }, set: { if !$0 { lookAlike = nil } })
     }
 
     /// Runs once. A new expense starts tagged "Me", on the Account last logged by hand,
@@ -260,7 +332,7 @@ struct ExpenseEditorView: View {
                     canSave: canSave,
                     showsDelete: editing != nil,
                     onSave: save,
-                    onCancel: finish,
+                    onCancel: cancel,
                     onDelete: deleteExpense
                 )
             }
@@ -273,6 +345,7 @@ struct ExpenseEditorView: View {
         .background(Theme.bg)
         .presentationSizing(.page)
         .navigationTitle(editing == nil ? "Add Expense" : "Edit Expense")
+        .navigationSubtitle(receiptRun?.subtitle ?? "")
         .navigationBarTitleDisplayMode(.inline)
         .animation(.easeInOut(duration: 0.2), value: notesFocused)
         .navigationDestination(item: $picker) { destination in
@@ -290,6 +363,14 @@ struct ExpenseEditorView: View {
             .presentationBackground(Theme.bg)
         }
         .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                ReadReceiptMenu(
+                    onPhotos: { showingPhotos = true },
+                    onCamera: { showingCamera = true },
+                    onPaste: pasteReceipt
+                )
+                .disabled(readingTask != nil)
+            }
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
                 Button("Done") { notesFocused = false }
@@ -320,8 +401,110 @@ struct ExpenseEditorView: View {
             let envelopes = envelopeOptions.envelopes
             envelopeChoice.kept(among: envelopes).apply(to: target, envelopes: envelopes)
         }
+        if let receiptImage {
+            target.needsReview = true
+            target.receiptImage = receiptImage
+        } else if target.isReceiptToCheck {
+            target.markReceiptChecked()
+        }
         try? context.save()
-        finish()
+        if receiptRun != nil { endRun(.saved) } else { finish() }
+    }
+
+    private func cancel() {
+        if receiptRun != nil { showingRunCancel = true } else { finish() }
+    }
+
+    private func endRun(_ outcome: ReceiptRun.Outcome) {
+        onRunEnd?(outcome)
+        dismiss()
+    }
+
+    // MARK: - Reading a receipt (§4.3–§4.6)
+
+    private func openRunReceipt() {
+        guard let receiptRun, receiptImage == nil, readingTask == nil,
+              let data = try? Data(contentsOf: receiptRun.item.url) else { return }
+        read(data)
+    }
+
+    private func pasteReceipt() {
+        guard let data = UIPasteboard.general.image?.pngData() else { return }
+        read(data)
+    }
+
+    private func read(_ data: Data) {
+        readingTask?.cancel()
+        let reader = ReceiptReader(model: receiptModel.model)
+        let categories = allCategories.map(\.name)
+        readingTask = Task {
+            let reading = (try? await reader.read(data, categories: categories)) ?? ReceiptReading()
+            guard !Task.isCancelled else { return }
+            let image = ReceiptImageData.stored(from: data)
+            readingTask = nil
+            if let match = lookAlikeExpense(for: reading) {
+                lookAlike = ReceiptLookAlike(reading: reading, image: image, expense: match)
+            } else {
+                fill(reading, image: image)
+            }
+        }
+    }
+
+    private func cancelReading() {
+        readingTask?.cancel()
+        readingTask = nil
+    }
+
+    private func lookAlikeExpense(for reading: ReceiptReading) -> Expense? {
+        guard let day = reading.date?.date(keepingClockOf: .now, calendar: .current) else { return nil }
+        let start = Calendar.current.startOfDay(for: day)
+        guard let end = Calendar.current.date(byAdding: .day, value: 1, to: start) else { return nil }
+        let editingID = editing?.persistentModelID
+        let sameDay = (try? context.fetch(FetchDescriptor<Expense>(
+            predicate: #Predicate { $0.date >= start && $0.date < end }))) ?? []
+        let logged = sameDay
+            .filter { $0.persistentModelID != editingID }
+            .map { ReceiptDuplicate.Logged(id: $0.persistentModelID, amount: $0.amount, date: $0.date) }
+        let id = ReceiptDuplicate.match(reading, in: logged, calendar: .current)
+        return sameDay.first { $0.persistentModelID == id }
+    }
+
+    private func fill(_ reading: ReceiptReading, image: Data) {
+        let result = ReceiptFill<PersistentIdentifier>(
+            reading: reading,
+            form: .init(
+                amountIsEmpty: resolvedAmount == 0,
+                dateIsUntouched: !hasPresetDate && date == pristine?.date && editing == nil,
+                accountIsDefault: account?.persistentModelID == pristine?.account,
+                note: note,
+                hasCategory: category != nil,
+                people: people.map(\.persistentModelID),
+                clock: date
+            ),
+            accounts: allAccounts.map { candidate in
+                let id = candidate.persistentModelID
+                return .init(id: id, brandID: candidate.brandID,
+                             uses: recent.count { $0.account?.persistentModelID == id })
+            },
+            people: allPeople.map { .init(id: $0.persistentModelID, name: $0.name) },
+            categories: allCategories.map { .init(id: $0.persistentModelID, name: $0.name) },
+            calendar: .current
+        )
+        guard result.fillsAnything else { return }
+        if let expression = result.expression { expr = ExpressionEvaluator(expression) }
+        if let filled = result.date {
+            date = filled
+            whenTap = nil
+        }
+        if case .set(let id) = result.account {
+            account = id.flatMap { id in allAccounts.first { $0.persistentModelID == id } }
+        }
+        if let filled = result.note { note = filled }
+        if let id = result.addedPerson, let person = allPeople.first(where: { $0.persistentModelID == id }) {
+            people.append(person)
+        }
+        if let id = result.category { category = allCategories.first { $0.persistentModelID == id } }
+        receiptImage = image
     }
 
     private func deleteExpense() {

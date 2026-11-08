@@ -17,6 +17,7 @@ struct RootView: View {
     @Environment(\.isEphemeralStore) private var isEphemeralStore
     @Environment(\.scenePhase) private var scenePhase
     @Environment(BankLogoCatalog.self) private var bankLogos: BankLogoCatalog?
+    @Environment(ReceiptInbox.self) private var receiptInbox
     @State private var selection: AppTab = .expenses
     #if DEBUG
     @State private var debugScreen: DebugScreen?
@@ -72,6 +73,7 @@ struct RootView: View {
     private func applyDebugLaunch() {
         DebugLaunch.seedIfNeeded(modelContext)
         DebugLaunch.brandAccounts(modelContext)
+        DebugReceiptSeed.seedIfNeeded(modelContext, inbox: receiptInbox)
 
         switch DebugLaunch.startTab {
         case "insights": selection = .insights
@@ -88,7 +90,7 @@ struct RootView: View {
             selection = .expenses
         case "leaderboard", "person-detail":
             selection = .insights
-        case "categories", "people", "accounts", "groups":
+        case "categories", "people", "accounts", "groups", "receipt-reading":
             selection = .manage
         default:
             break

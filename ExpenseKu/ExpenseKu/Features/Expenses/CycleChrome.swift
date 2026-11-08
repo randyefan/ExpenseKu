@@ -3,7 +3,8 @@
 //  ExpenseKu
 //
 //  The Expenses tab's header block: the cycle pager and its labelled figure, then the
-//  List / Month / Plan toggle. Handed to whichever lens is showing so it scrolls with that lens's
+//  List / Month / Plan toggle, then the receipt banners (docs/prd/receipt-reading.md
+//  §4.2), which every lens shows. Handed to whichever lens is showing so it scrolls with that lens's
 //  content — pinned above the list it overflowed and clipped at accessibility
 //  text sizes, where the cycle title wraps to two lines.
 //
@@ -21,6 +22,10 @@ struct CycleChrome: View {
     let canGoForward: Bool
     let calendar: Calendar
     @Binding var lens: ExpensesView.Lens
+    var receiptsWaiting = 0
+    var receiptsToCheck = 0
+    var onReceiptInbox: () -> Void = {}
+    var onReceiptReview: () -> Void = {}
     let onPrevious: () -> Void
     let onNext: () -> Void
 
@@ -49,6 +54,9 @@ struct CycleChrome: View {
                 ]
             )
             .padding(.bottom, Metric.cardGap)
+
+            ReceiptBannersCard(waiting: receiptsWaiting, toCheck: receiptsToCheck,
+                               onInbox: onReceiptInbox, onReview: onReceiptReview)
         }
     }
 }

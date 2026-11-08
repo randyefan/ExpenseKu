@@ -13,10 +13,15 @@ struct ManageMenuRow: View {
     let title: String
     let systemImage: String
     let subtitle: LocalizedStringKey
+    var tint: Color? = nil
 
     var body: some View {
         HStack(spacing: 12) {
-            CategoryIcon(name: title, systemImage: systemImage, size: Metric.iconSize)
+            if let tint {
+                CategoryIcon(symbol: systemImage, tint: tint, size: Metric.iconSize)
+            } else {
+                CategoryIcon(name: title, systemImage: systemImage, size: Metric.iconSize)
+            }
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(.dsBody).fontWeight(.semibold)

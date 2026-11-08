@@ -306,6 +306,10 @@ a cycle containing only a plan would be unreachable.
 
 ### 7.2 Carry-over
 
+*Amended 2026-11-09 by `docs/prd/clear-plan.md` (flow AH): carry-over no longer runs on
+arrival. A cycle with no plan offers **Copy from <Month>**, which runs the copy below, or
+**Start empty**; an upcoming plan can be cleared from the Plan lens's `…` menu.*
+
 A new cycle's plan starts as a **full copy** of the previous cycle's — every PlanItem
 and every IncomeLine, amounts included. `[→ E5]` What is copied is the plan, not its
 progress: *has arrived*, the transfer ticks and **Funded** (§7.6) all start clear. An item

@@ -34,6 +34,7 @@ struct CyclePlanLens<Header: View>: View {
     var isFundedFiltered = false
     var sort: PlanSort = .amount
     var lookBackMonth: String?
+    var copySourceMonth: String?
     var revealTrigger: AnyHashable = 0
     let onAction: (PlanAction) -> Void
     @ViewBuilder let header: Header
@@ -63,7 +64,11 @@ struct CyclePlanLens<Header: View>: View {
                 }
             } else {
                 Section {
-                    PlanEmptyState { onAction(.startPlan) }
+                    PlanEmptyState(
+                        copySourceMonth: copySourceMonth,
+                        onCopy: { onAction(.copyPlan) },
+                        onStart: { onAction(.startPlan) }
+                    )
                         .listRowBackground(Color.clear)
                         .listRowSeparator(.hidden)
                         .listRowInsets(EdgeInsets())

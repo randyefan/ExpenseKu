@@ -15,6 +15,8 @@ import Foundation
 
 enum PlanAction {
     case startPlan
+    /// Copy from <Month> on a cycle with no plan: carry-over, run by the owner (clear-plan.md §4.4).
+    case copyPlan
 
     case addIncomeLine
     case editIncomeLine(IncomeLine)

@@ -53,7 +53,7 @@ struct ExpensesView: View {
     @Environment(ReceiptInbox.self) var receiptInbox
     @Environment(ReceiptReadAhead.self) var receiptReadAhead
     @State private var showingSettings = false
-    @State private var payday: Int = Payday.current
+    @State var payday: Int = Payday.current
     @State var cycle: PayCycle = PayCycle.containing(.now, payday: Payday.current)
     @State var lens: Lens = .list
     /// The day the calendar has selected. Nil (or stale after paging) means
@@ -99,7 +99,7 @@ struct ExpensesView: View {
     @State private var debugSelectHeaviest = false
     #endif
 
-    private var calendar: Calendar { .current }
+    var calendar: Calendar { .current }
 
     /// Driven by the text, not by `@Environment(\.isSearching)`: the rule is "an
     /// empty query shows the cycle", which is a statement about what was typed,
@@ -196,6 +196,7 @@ struct ExpensesView: View {
                             isFundedFiltered: isFundedFilterOn(planContents),
                             planSort: planSort,
                             lookBackMonth: lookBackMonth(planContents),
+                            copySourceMonth: copySourceMonth(planContents),
                             onPlanAction: { perform($0, in: planContents) },
                             selectedDay: $selectedDay,
                             resolvedDay: resolvedSelectedDay(in: calendarGrid),
@@ -324,6 +325,15 @@ struct ExpensesView: View {
                             }
                         }
                     }
+                    if canClearPlan {
+                        ToolbarItem(placement: .primaryAction) {
+                            Menu("Plan options", systemImage: "ellipsis") {
+                                Button("Clear Plan", systemImage: "trash", role: .destructive,
+                                       action: requestClearPlan)
+                            }
+                            .tint(Theme.text)
+                        }
+                    }
                     ToolbarItem(placement: .primaryAction) {
                         Button("Add Expense", systemImage: "plus") {
                             newExpense = NewExpensePreset()
@@ -377,7 +387,6 @@ struct ExpensesView: View {
             .sensoryFeedback(.selection, trigger: cycle)
             .sensoryFeedback(.selection, trigger: lens)
             .onAppear { resetToCurrentCycle() }
-            .task(id: CarryOverKey(cycle: cycle, isPlan: lens == .plan)) { carryOverIfNeeded() }
             .onChange(of: planConfirmation == nil) { _, isClear in
                 if isClear { returnToEnvelopeDetail() }
             }
@@ -431,7 +440,8 @@ struct ExpensesView: View {
         }
         // A level above the editors: stacked presentation modifiers do not all fire,
         // and this one was swallowed behind them.
-        .planConfirmation($planConfirmation, onUntick: confirmUntick, onDeleteItem: confirmDeleteItem)
+        .planConfirmation($planConfirmation, onUntick: confirmUntick, onDeleteItem: confirmDeleteItem,
+                          onClearPlan: confirmClearPlan)
     }
 
     // MARK: - Calendar state
@@ -520,14 +530,6 @@ struct ExpensesView: View {
         // Outside the loop: one transaction for the whole swipe batch.
         try? context.save()
     }
-}
-
-/// What a carry-over check depends on: which cycle is showing, and whether the Plan
-/// lens is the one asking. A `.task(id:)` over this re-runs on exactly those changes
-/// and on nothing else.
-private struct CarryOverKey: Hashable {
-    let cycle: PayCycle
-    let isPlan: Bool
 }
 
 private extension View {

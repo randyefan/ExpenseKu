@@ -40,8 +40,8 @@ enum PlanSheet: Identifiable {
 
 import SwiftData
 
-/// A destructive confirmation waiting on the owner. Both of these delete something,
-/// and each names exactly what (frames I4 and I7).
+/// A destructive confirmation waiting on the owner. Each of these deletes something,
+/// and each names exactly what (frames I4, I7 and AH2).
 enum PlanConfirmation: Identifiable {
     /// Un-ticking Done deletes the Expense it created (§7.3). Unlinking without
     /// deleting was rejected: the orphan would keep counting in its envelope and in
@@ -49,17 +49,14 @@ enum PlanConfirmation: Identifiable {
     case untick(PlanItem)
     /// Deleting the item leaves its Expense alone (§9.4, ADR-0001).
     case deleteItem(PlanItem)
+    /// Clearing an upcoming cycle's plan (clear-plan.md §4.2).
+    case clearPlan(CyclePlan)
 
     var id: String {
         switch self {
         case .untick(let item): "untick-\(item.persistentModelID)"
         case .deleteItem(let item): "deleteItem-\(item.persistentModelID)"
-        }
-    }
-
-    var item: PlanItem {
-        switch self {
-        case .untick(let item), .deleteItem(let item): item
+        case .clearPlan(let plan): "clearPlan-\(plan.persistentModelID)"
         }
     }
 }

@@ -84,6 +84,15 @@ nonisolated enum PlanCopy {
             + "Adjust the amounts and watch the Sisa."
     }
 
+    /// The Plan lens with no plan (clear-plan.md §4.4): what an earlier plan offers, or
+    /// what starting the first one leads to.
+    static func noPlanMessage(copyFrom month: String?) -> String {
+        guard let month else {
+            return "Start one for this cycle. Every cycle after it can copy it in one tap."
+        }
+        return "Copy \(month)\u{2019}s plan and adjust it, or start from nothing."
+    }
+
     /// I4. Un-ticking Done deletes the Expense it created, so the confirmation names
     /// the amount and the date — unlinking without deleting was rejected, because the
     /// orphan would keep counting in its envelope and in every cycle total (§7.3).

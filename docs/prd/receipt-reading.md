@@ -1,7 +1,7 @@
 # PRD — Reading receipts
 
-Status: Accepted
-Date: 2026-11-08 · grilled, drawn (flow AG) and approved the same day as the on-device spike (`.scratch/receipt-ai/`)
+Status: Built
+Date: 2026-11-08 · grilled, drawn (flow AG), approved and built the same day as the on-device spike (`.scratch/receipt-ai/`), on `feature/receipt-reading`, not merged until the owner says so
 Owner: Randy Efan
 
 Companion documents: `CONTEXT.md` (ubiquitous language), `docs/prd/quick-entry-form.md`
@@ -305,3 +305,24 @@ FADHIL"; three receipts waiting; three receipt expenses to check.
 | **AG7** · To check sheet | §4.7, §4.8 |
 | **AG8** · Manage with Receipt reading | §4.10 row |
 | **AG9** · Receipt reading, downloading · **AG9a** not downloaded · **AG9c** ready · **AG9d** cellular confirmation | §4.10 states |
+
+### 8.1 Closed during implementation
+
+| Gap | Answer | Where |
+|---|---|---|
+| A reading the owner cannot see is filled silently, so a wrong value would land unseen | `ReceiptSanity` drops an amount under Rp 1.000 (the owner's "Rp 300 transfer") and a fee that is zero or not below the amount, on both the model and the rules path | `ReceiptSanity` |
+| Rules: a label whose value is on the next row (Superbank's "Jumlah Transfer" over "Rp 100.000") | A label row with no value of its own reads the row under it | `ReceiptRules` |
+| Rules: "Nominal" and "Total" both labelled, with different values | Not sure, so no amount | `ReceiptRules` |
+| A receipt that names no bank (a shop receipt paid in cash) | Keeps the form's default Account; None only when a bank is named and no Account wears its logo | `ReceiptFill` |
+| §4.6 "before the form opens" for the inbox | The form opens under the "Reading receipt…" card, and the alert appears before anything is filled | `ExpenseEditorView.read` |
+| A system Cancel appeared as a third button on Looks already logged | Log anyway / Fill anyway carries the cancel role | `ExpenseEditorView` |
+| iOS 26 draws the run's confirmation dialog as a popover | Keep editing is its cancel: a tap outside it | `ExpenseEditorView` |
+| Thumbnails of wide receipts lost their labels | Cropped to the top-leading corner | `ReceiptThumbnail` |
+| A paused download showed 0 %, and a half download could not be removed | Paused keeps the bytes of the file in flight; Paused offers Remove download | `ReceiptModelStore`, `ReceiptModelCard` |
+| Resume after a relaunch | Finished files are kept; the file in flight restarts, because URLSession's resume data lives in memory | `ReceiptModelStore` |
+| MLXHuggingFace needs macro packages and a hub client the app does not use | A hand-written tokenizer bridge and a refusing `Downloader` load the model from its folder; the app links MLXLLM, MLXLMCommon and Tokenizers only | `GemmaTokenizerBridge`, `LocalModelDownloader` |
+| Where the receipt image is stored | JPEG, at most 1600 pt on its long side, a PDF as its first page | `ReceiptImageData` |
+| The share extension and the app share the inbox code | `ReceiptInboxFolder`, `ReceiptInboxItem` and `Theme` are members of both targets | `project.pbxproj` |
+| Driving the flow in the simulator | `-seedReceipts` adds a BCA Account, two receipts drawn with SwiftUI in the inbox, and one Belanja expense to check | `DebugReceiptSeed` |
+| Before TestFlight | Deploy the V8 field (`receiptImage`) to CloudKit Production; register the App Group through automatic signing on a device build | — |
+

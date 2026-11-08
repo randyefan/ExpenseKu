@@ -27,10 +27,14 @@ struct ShareSavedView: View {
             HStack(spacing: 14) {
                 thumbnail
                 VStack(alignment: .leading, spacing: 4) {
-                    Label(title, systemImage: symbol)
-                        .font(.headline)
-                        .foregroundStyle(Theme.text)
-                        .labelStyle(.titleAndIcon)
+                    HStack(spacing: 6) {
+                        Image(systemName: symbol)
+                            .foregroundStyle(symbolColor)
+                            .accessibilityHidden(true)
+                        Text(title)
+                            .foregroundStyle(Theme.text)
+                    }
+                    .font(.headline)
                     Text(detail)
                         .font(.subheadline)
                         .foregroundStyle(Theme.textSecondary)
@@ -79,6 +83,14 @@ struct ShareSavedView: View {
         case .saving: "hourglass"
         case .saved: "checkmark.circle.fill"
         case .failed: "exclamationmark.triangle.fill"
+        }
+    }
+
+    private var symbolColor: Color {
+        switch state {
+        case .saving: Theme.textSecondary
+        case .saved: Theme.positive
+        case .failed: Theme.negative
         }
     }
 

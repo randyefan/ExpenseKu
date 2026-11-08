@@ -30,6 +30,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/xcode-env.sh"
 ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 PROJECT="$ROOT/ExpenseKu/ExpenseKu.xcodeproj"
 SCHEME="ExpenseKu"
@@ -67,12 +68,15 @@ frontmost() {
   }
 }
 
+UDID="$(xcrun simctl list devices available | grep -F "$DEVICE (" | head -1 | grep -oE '[0-9A-F-]{36}')"
+[[ -z "$UDID" ]] && { echo "no available simulator matching '$DEVICE'" >&2; exit 1; }
+
 # --- test mode ---------------------------------------------------------------
 if [[ "$MODE" == "test" ]]; then
   echo "==> xcodebuild test ($DEVICE)"
   frontmost
   xcodebuild test -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
-    -destination "platform=iOS Simulator,name=$DEVICE" \
+    -destination "id=$UDID" \
     -derivedDataPath "$DERIVED" -quiet
   exit $?
 fi
@@ -80,9 +84,7 @@ fi
 [[ -z "$NAME" ]] && { echo "usage: shot.sh <name> [-a] [-d device] [-- launch args]" >&2; exit 2; }
 mkdir -p "$SHOTS"
 
-# --- resolve + boot device ---------------------------------------------------
-UDID="$(xcrun simctl list devices available | grep -F "$DEVICE (" | head -1 | grep -oE '[0-9A-F-]{36}')"
-[[ -z "$UDID" ]] && { echo "no available simulator matching '$DEVICE'" >&2; exit 1; }
+# --- boot device -------------------------------------------------------------
 echo "==> device $DEVICE ($UDID)"
 if ! xcrun simctl list devices | grep -F "$UDID" | grep -q "(Booted)"; then
   echo "==> booting"; xcrun simctl boot "$UDID" 2>/dev/null || true; sleep 3

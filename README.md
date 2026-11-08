@@ -39,10 +39,10 @@ AGENTS.md               Conventions for agent-assisted work
 
 ## Build & test
 
-Open `ExpenseKu/ExpenseKu.xcodeproj` in Xcode, or from the command line:
+Open `ExpenseKu/ExpenseKu.xcodeproj` in Xcode 27.2, or from the command line:
 
 ```sh
-xcodebuild test \
+DEVELOPER_DIR=/Applications/Xcode-27.2.app/Contents/Developer xcodebuild test \
   -project ExpenseKu/ExpenseKu.xcodeproj \
   -scheme ExpenseKu \
   -destination 'platform=iOS Simulator,name=iPhone 17'

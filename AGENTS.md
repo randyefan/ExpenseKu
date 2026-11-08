@@ -90,6 +90,7 @@ If SwiftData is configured to use CloudKit:
 - Break different types up into different Swift files rather than placing multiple structs, classes, or enums into a single file.
 - Write unit tests for core application logic.
 - Before archiving for TestFlight/App Store, run `scripts/test-release.sh`: the suite under the Release configuration. SwiftData can pass in Debug and trap once optimized.
+- Build with Xcode 27.2: the app target's `Require Xcode 27.2` build phase fails under any other version, while `xcode-select` stays on 26.6 for other projects. Upgrading means changing that phase, `scripts/xcode-env.sh`, and `env` in `.claude/settings.json` together.
 - Only write UI tests if unit tests are not possible.
 - Add code comments and documentation comments as needed.
 - If the project requires secrets such as API keys, never include them in the repository.

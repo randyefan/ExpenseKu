@@ -90,6 +90,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 93A540F33027BB2E00297F0F /* Build configuration list for PBXNativeTarget "ExpenseKu" */;
 			buildPhases = (
+				FEED0000000000000000AA0C /* Require Xcode 27.2 */,
 				93A540E13027BB2D00297F0F /* Sources */,
 				93A540E23027BB2D00297F0F /* Frameworks */,
 				93A540E33027BB2D00297F0F /* Resources */,
@@ -186,6 +187,29 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		FEED0000000000000000AA0C /* Require Xcode 27.2 */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Require Xcode 27.2";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "case \"$XCODE_VERSION_ACTUAL\" in\n  272*) ;;\n  *)\n    echo \"error: ExpenseKu builds only with Xcode 27.2, but this build uses $DEVELOPER_DIR. Open the project in /Applications/Xcode-27.2.app, or prefix the command with DEVELOPER_DIR=/Applications/Xcode-27.2.app/Contents/Developer.\"\n    exit 1\n    ;;\nesac\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		93A540E13027BB2D00297F0F /* Sources */ = {

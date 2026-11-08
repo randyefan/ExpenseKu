@@ -1,6 +1,6 @@
 # PRD — Reading receipts
 
-Status: Built · §4.11 Reading ahead (9 Nov amendment): Accepted
+Status: Built · §4.11 Reading ahead (9 Nov amendment): Accepted · §4.3.1 View receipt (9 Nov amendment): Accepted
 Date: 2026-11-08 · grilled, drawn (flow AG), approved and built the same day as the on-device spike (`.scratch/receipt-ai/`), on `feature/receipt-reading`, not merged until the owner says so
 Owner: Randy Efan
 
@@ -105,6 +105,20 @@ and is not counted here (§6).
   and **Cancel** `[→ AG3b]`;
   the keypad and fields do not take input until it finishes. Cancel leaves the form as
   it was.
+
+#### 4.3.1 View receipt `[→ AG12]`
+
+*Amendment, 9 Nov 2026.* The owner checks what was filled against the receipt itself,
+from the form.
+
+- A second round glass button, **View receipt**, sits to the leading side of Read
+  receipt, **only while the form carries a receipt**: once a reading has filled it (the
+  inbox run, Photos, Camera or Paste), and on Edit of an expense still to check (its
+  saved image). An expense already checked has no image, so no button. It is hidden
+  while "Reading receipt…" shows.
+- It opens the receipt full screen, the same viewer as the review sheet (§4.8): black,
+  pinch to zoom from 1× to 5×, **drag to move while zoomed**, Done to close. Viewing
+  changes nothing in the form.
 
 ### 4.4 Filling the form `[→ AG4]`
 
@@ -321,6 +335,9 @@ Design calls made while drawing flow AG, approved at the design gate the same da
 | 35 | The inbox banner keeps its title; its **caption** says "Reading 2 of 3…", then "Ready to check" | `AG10`, `AG11` |
 | 36 | Tapping the banner **while it reads** starts the run at once; the receipt in hand is waited for, never read twice | `AG3b` |
 | 37 | Drawn as banner cards only (the rest of the screen is AG2); same receipt glyph, amber wash and chevron in both states, no spinner; the caption stays `textSecondary`; "2 of 3" counts the receipts this pass reads, not the whole inbox | `AG10`, `AG11` |
+| 38 | *9 Nov.* **View receipt** is its own toolbar button beside Read receipt, not a menu item and not a thumbnail in the form | `AG12` |
+| 39 | It shows on Edit of an expense still to check too, with the saved image | `AG12` |
+| 40 | View receipt's glyph is a document with a picture (`doc.text.image`), apart from Read receipt's receipt; both round `surface` buttons with a hairline, 8 pt apart; drawn as the nav bar only (the form is AG4) | `AG12`, `AG12b` |
 
 Defaults chosen without asking, confirmed at the gate: receipt date fills the date (none →
 Now); Me stays; Envelope untouched; the Person match rule in §4.4; the note as printed;
@@ -335,6 +352,11 @@ once the model is ready; the model released when reading ahead ends; Looks alrea
 still checked at the form; a since-deleted Category left empty; Later keeps the reading;
 a failed reading kept empty and not retried; reading in Low Power Mode too; an amendment
 to this PRD on the same branch.
+
+Defaults for §4.3.1, confirmed at the 9 Nov gate: the review sheet's full-screen viewer,
+which gains drag-to-move while zoomed (for the review sheet too); the button hidden while
+reading and shown for a receipt from any source; no button once checked; viewing leaves
+the form as it was; an amendment on the same branch.
 
 ---
 
@@ -355,6 +377,7 @@ FADHIL"; three receipts waiting; three receipt expenses to check.
 | **AG7** · To check sheet | §4.7, §4.8 |
 | **AG8** · Manage with Receipt reading | §4.10 row |
 | **AG9** · Receipt reading, downloading · **AG9a** not downloaded · **AG9c** ready · **AG9d** cellular confirmation | §4.10 states |
+| **AG12** · Form filled from the BCA receipt with View receipt beside Read receipt · **AG12b** · the receipt full screen, zoomed | §4.3.1 |
 | **AG10** · Inbox banner "Reading 2 of 3…" (card only; the screen is AG2) | §4.11 reading |
 | **AG11** · Inbox banner "Ready to check" (card only) | §4.11 read |
 

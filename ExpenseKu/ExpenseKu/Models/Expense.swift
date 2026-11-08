@@ -65,6 +65,11 @@ final class Expense {
     // only defence against a failed autodebit being recorded as fact.
     var needsReview: Bool = false
 
+    // The receipt this expense was read from, kept only while it is Needs review and
+    // deleted when the owner checks it (ADR-0014). External storage, so CloudKit carries
+    // it as an asset instead of inside the record.
+    @Attribute(.externalStorage) var receiptImage: Data?
+
     init(
         amount: Decimal = 0,
         date: Date = .now,

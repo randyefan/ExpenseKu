@@ -17,6 +17,9 @@ struct RootView: View {
     @Environment(\.isEphemeralStore) private var isEphemeralStore
     @Environment(\.scenePhase) private var scenePhase
     @Environment(BankLogoCatalog.self) private var bankLogos: BankLogoCatalog?
+    @Environment(ReceiptInbox.self) private var receiptInbox
+    @Environment(ReceiptModelStore.self) private var receiptModel
+    @Environment(ReceiptReadAhead.self) private var receiptReadAhead
     @State private var selection: AppTab = .expenses
     #if DEBUG
     @State private var debugScreen: DebugScreen?
@@ -46,6 +49,7 @@ struct RootView: View {
         .onChange(of: scenePhase, initial: true) { _, phase in
             guard phase == .active else { return }
             Task { await bankLogos?.refreshIfDue() }
+            readReceiptsAhead()
         }
         .task {
             Person.reconcileMe(in: modelContext)
@@ -55,6 +59,7 @@ struct RootView: View {
             PlanMaintenance.run(in: modelContext)
             #if DEBUG
             applyDebugLaunch()
+            readReceiptsAhead()
             #endif
         }
         .task {
@@ -68,10 +73,17 @@ struct RootView: View {
         }
     }
 
+    private func readReceiptsAhead() {
+        let categories = (try? modelContext.fetch(FetchDescriptor<Category>(sortBy: [SortDescriptor(\.name)]))) ?? []
+        receiptInbox.refresh()
+        receiptReadAhead.start(items: receiptInbox.items, categories: categories.map(\.name), models: receiptModel)
+    }
+
     #if DEBUG
     private func applyDebugLaunch() {
         DebugLaunch.seedIfNeeded(modelContext)
         DebugLaunch.brandAccounts(modelContext)
+        DebugReceiptSeed.seedIfNeeded(modelContext, inbox: receiptInbox)
 
         switch DebugLaunch.startTab {
         case "insights": selection = .insights
@@ -88,7 +100,7 @@ struct RootView: View {
             selection = .expenses
         case "leaderboard", "person-detail":
             selection = .insights
-        case "categories", "people", "accounts", "groups":
+        case "categories", "people", "accounts", "groups", "receipt-reading":
             selection = .manage
         default:
             break

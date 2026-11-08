@@ -6,7 +6,21 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		798487F2BF1AE52AE110B8F1 /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = F88E4988A795A9A30FAC1A7D /* MLXLLM */; };
+		ABAA8EC4D61BE1D9D4AC48AD /* ExpenseKuShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 66E9F809BE01F4ED9FCAAA4C /* ExpenseKuShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		DB6C2731138054617498EED5 /* Tokenizers in Frameworks */ = {isa = PBXBuildFile; productRef = 47D3061A3ECFBE3E46660341 /* Tokenizers */; };
+		F2D1B15472E3C2287D4CE7B1 /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 303EBC7FA9C84E1FD50F3D87 /* MLXLMCommon */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
+		1D2C220CAA2A05FC1A57044E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 93A540DD3027BB2D00297F0F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 89238FE27B6A4988354C0AA6;
+			remoteInfo = ExpenseKuShare;
+		};
 		FEED0000000000000000AA0B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 93A540DD3027BB2D00297F0F /* Project object */;
@@ -16,18 +30,49 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		C73BADD213A79D2E7AF2E4E4 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				ABAA8EC4D61BE1D9D4AC48AD /* ExpenseKuShare.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		66E9F809BE01F4ED9FCAAA4C /* ExpenseKuShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ExpenseKuShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		93A540E53027BB2D00297F0F /* ExpenseKu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ExpenseKu.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FEED0000000000000000AA02 /* ExpenseKuTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExpenseKuTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		1C821590DFC477CEE90B7435 /* Exceptions for "ExpenseKuShare" folder in "ExpenseKuShare" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 89238FE27B6A4988354C0AA6 /* ExpenseKuShare */;
+		};
 		93A540F23027BB2E00297F0F /* Exceptions for "ExpenseKu" folder in "ExpenseKu" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
 			target = 93A540E43027BB2D00297F0F /* ExpenseKu */;
+		};
+		A408423FE41100A73041C8FC /* Exceptions for "ExpenseKu" folder in "ExpenseKuShare" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				DesignSystem/Theme.swift,
+				Features/Receipts/ReceiptInboxFolder.swift,
+				Features/Receipts/ReceiptInboxItem.swift,
+			);
+			target = 89238FE27B6A4988354C0AA6 /* ExpenseKuShare */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -36,22 +81,43 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				93A540F23027BB2E00297F0F /* Exceptions for "ExpenseKu" folder in "ExpenseKu" target */,
+				A408423FE41100A73041C8FC /* Exceptions for "ExpenseKu" folder in "ExpenseKuShare" target */,
 			);
 			path = ExpenseKu;
 			sourceTree = "<group>";
 		};
+		DDBC12F55E8781CAC5B9AA60 /* ExpenseKuShare */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				1C821590DFC477CEE90B7435 /* Exceptions for "ExpenseKuShare" folder in "ExpenseKuShare" target */,
+			);
+			path = ExpenseKuShare;
+			sourceTree = "<group>";
+		};
 		FEED0000000000000000AA09 /* ExpenseKuTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = ExpenseKuTests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		6B8436B5A5745F911C1DB0AE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		93A540E23027BB2D00297F0F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				798487F2BF1AE52AE110B8F1 /* MLXLLM in Frameworks */,
+				F2D1B15472E3C2287D4CE7B1 /* MLXLMCommon in Frameworks */,
+				DB6C2731138054617498EED5 /* Tokenizers in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,6 +137,7 @@
 				93A540E73027BB2D00297F0F /* ExpenseKu */,
 				FEED0000000000000000AA09 /* ExpenseKuTests */,
 				93A540E63027BB2D00297F0F /* Products */,
+				DDBC12F55E8781CAC5B9AA60 /* ExpenseKuShare */,
 			);
 			sourceTree = "<group>";
 		};
@@ -79,6 +146,7 @@
 			children = (
 				93A540E53027BB2D00297F0F /* ExpenseKu.app */,
 				FEED0000000000000000AA02 /* ExpenseKuTests.xctest */,
+				66E9F809BE01F4ED9FCAAA4C /* ExpenseKuShare.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -86,23 +154,49 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		93A540E43027BB2D00297F0F /* ExpenseKu */ = {
+		89238FE27B6A4988354C0AA6 /* ExpenseKuShare */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 93A540F33027BB2E00297F0F /* Build configuration list for PBXNativeTarget "ExpenseKu" */;
+			buildConfigurationList = A2C7DA0A21C05DEB61EC80EC /* Build configuration list for PBXNativeTarget "ExpenseKuShare" */;
 			buildPhases = (
-				93A540E13027BB2D00297F0F /* Sources */,
-				93A540E23027BB2D00297F0F /* Frameworks */,
-				93A540E33027BB2D00297F0F /* Resources */,
+				9F935390EED51055ADCA93E8 /* Sources */,
+				6B8436B5A5745F911C1DB0AE /* Frameworks */,
+				D81C9763B1CEC2B93A2429A3 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				DDBC12F55E8781CAC5B9AA60 /* ExpenseKuShare */,
+			);
+			name = ExpenseKuShare;
+			productName = ExpenseKuShare;
+			productReference = 66E9F809BE01F4ED9FCAAA4C /* ExpenseKuShare.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		93A540E43027BB2D00297F0F /* ExpenseKu */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 93A540F33027BB2E00297F0F /* Build configuration list for PBXNativeTarget "ExpenseKu" */;
+			buildPhases = (
+				FEED0000000000000000AA0C /* Require Xcode 27.2 */,
+				93A540E13027BB2D00297F0F /* Sources */,
+				93A540E23027BB2D00297F0F /* Frameworks */,
+				93A540E33027BB2D00297F0F /* Resources */,
+				C73BADD213A79D2E7AF2E4E4 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7218E9058F8CFC895E4C3C93 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
 				93A540E73027BB2D00297F0F /* ExpenseKu */,
 			);
 			name = ExpenseKu;
 			packageProductDependencies = (
+				F88E4988A795A9A30FAC1A7D /* MLXLLM */,
+				303EBC7FA9C84E1FD50F3D87 /* MLXLMCommon */,
+				47D3061A3ECFBE3E46660341 /* Tokenizers */,
 			);
 			productName = ExpenseKu;
 			productReference = 93A540E53027BB2D00297F0F /* ExpenseKu.app */;
@@ -125,8 +219,6 @@
 				FEED0000000000000000AA09 /* ExpenseKuTests */,
 			);
 			name = ExpenseKuTests;
-			packageProductDependencies = (
-			);
 			productName = ExpenseKuTests;
 			productReference = FEED0000000000000000AA02 /* ExpenseKuTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -159,6 +251,10 @@
 			);
 			mainGroup = 93A540DC3027BB2D00297F0F;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				948DFE0912AF3194FEAEB48A /* XCRemoteSwiftPackageReference "mlx-swift-lm" */,
+				92E08B8E9FD3B52D4F10007B /* XCRemoteSwiftPackageReference "swift-transformers" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 93A540E63027BB2D00297F0F /* Products */;
 			projectDirPath = "";
@@ -166,12 +262,20 @@
 			targets = (
 				93A540E43027BB2D00297F0F /* ExpenseKu */,
 				FEED0000000000000000AA01 /* ExpenseKuTests */,
+				89238FE27B6A4988354C0AA6 /* ExpenseKuShare */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		93A540E33027BB2D00297F0F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D81C9763B1CEC2B93A2429A3 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -187,8 +291,38 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		FEED0000000000000000AA0C /* Require Xcode 27.2 */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Require Xcode 27.2";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "case \"$XCODE_VERSION_ACTUAL\" in\n  272*) ;;\n  *)\n    echo \"error: ExpenseKu builds only with Xcode 27.2, but this build uses $DEVELOPER_DIR. Open the project in /Applications/Xcode-27.2.app, or prefix the command with DEVELOPER_DIR=/Applications/Xcode-27.2.app/Contents/Developer.\"\n    exit 1\n    ;;\nesac\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		93A540E13027BB2D00297F0F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9F935390EED51055ADCA93E8 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -205,6 +339,12 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		7218E9058F8CFC895E4C3C93 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ExpenseKuShare;
+			target = 89238FE27B6A4988354C0AA6 /* ExpenseKuShare */;
+			targetProxy = 1D2C220CAA2A05FC1A57044E /* PBXContainerItemProxy */;
+		};
 		FEED0000000000000000AA0A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 93A540E43027BB2D00297F0F /* ExpenseKu */;
@@ -213,6 +353,67 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		1ADCB0EFA6074E74FBE49D3C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = ExpenseKuShare/ExpenseKuShare.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 4;
+				DEVELOPMENT_TEAM = 33Z87RYAC2;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ExpenseKuShare/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ExpenseKu;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = randyefan.ExpenseKu.Share;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		451E4EFAD492A49669A84E16 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = ExpenseKuShare/ExpenseKuShare.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 4;
+				DEVELOPMENT_TEAM = 33Z87RYAC2;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ExpenseKuShare/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ExpenseKu;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = randyefan.ExpenseKu.Share;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		93A540F43027BB2E00297F0F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -471,6 +672,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		A2C7DA0A21C05DEB61EC80EC /* Build configuration list for PBXNativeTarget "ExpenseKuShare" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				451E4EFAD492A49669A84E16 /* Release */,
+				1ADCB0EFA6074E74FBE49D3C /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		FEED0000000000000000AA08 /* Build configuration list for PBXNativeTarget "ExpenseKuTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -481,6 +691,43 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		92E08B8E9FD3B52D4F10007B /* XCRemoteSwiftPackageReference "swift-transformers" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/huggingface/swift-transformers";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.0;
+			};
+		};
+		948DFE0912AF3194FEAEB48A /* XCRemoteSwiftPackageReference "mlx-swift-lm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ml-explore/mlx-swift-lm";
+			requirement = {
+				kind = exactVersion;
+				version = 3.32.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		303EBC7FA9C84E1FD50F3D87 /* MLXLMCommon */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 948DFE0912AF3194FEAEB48A /* XCRemoteSwiftPackageReference "mlx-swift-lm" */;
+			productName = MLXLMCommon;
+		};
+		47D3061A3ECFBE3E46660341 /* Tokenizers */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 92E08B8E9FD3B52D4F10007B /* XCRemoteSwiftPackageReference "swift-transformers" */;
+			productName = Tokenizers;
+		};
+		F88E4988A795A9A30FAC1A7D /* MLXLLM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 948DFE0912AF3194FEAEB48A /* XCRemoteSwiftPackageReference "mlx-swift-lm" */;
+			productName = MLXLLM;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 93A540DD3027BB2D00297F0F /* Project object */;
 }

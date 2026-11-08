@@ -50,11 +50,16 @@ struct ExpenseRow: View {
 
                 HStack(spacing: 14) {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(categoryName)
-                            .font(.dsBody)
-                            .bold()
-                            .foregroundStyle(Theme.text)
-                            .lineLimit(1)
+                        HStack(spacing: 6) {
+                            Text(categoryName)
+                                .font(.dsBody)
+                                .bold()
+                                .foregroundStyle(Theme.text)
+                                .lineLimit(1)
+                            if expense.isReceiptToCheck {
+                                ReceiptCheckTag()
+                            }
+                        }
 
                         ExpenseMetaLine(note: expense.note, peopleNames: peopleNames)
                     }

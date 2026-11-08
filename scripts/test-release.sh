@@ -12,9 +12,12 @@
 #
 set -euo pipefail
 
+source "$(dirname "$0")/xcode-env.sh"
+
 cd "$(dirname "$0")/../ExpenseKu"
 
 DEVICE="${DEVICE:-iPhone 17 Pro}"
+UDID="$(xcrun simctl list devices available | grep -F "$DEVICE (" | head -1 | grep -oE '[0-9A-F-]{36}')"
 ONLY=()
 if [[ $# -gt 0 ]]; then
   ONLY=(-only-testing:"ExpenseKuTests/$1")
@@ -25,7 +28,7 @@ xcodebuild test \
   -scheme ExpenseKu \
   -configuration Release \
   ENABLE_TESTABILITY=YES \
-  -destination "platform=iOS Simulator,name=$DEVICE" \
+  -destination "id=$UDID" \
   -only-testing:ExpenseKuTests \
   "${ONLY[@]+"${ONLY[@]}"}" \
   | grep -iE "error:|test case .* failed|crashed|restarting after unexpected exit|\*\* TEST (SUCCEEDED|FAILED) \*\*"

@@ -2,15 +2,16 @@
 //  ExpenseKuSchema.swift
 //  ExpenseKu
 //
-//  The versioned schema and its migration plan. V7 is the shape the app writes today:
+//  The versioned schema and its migration plan. V8 is the shape the app writes today:
 //  Expense, Category, Person, Account with nullify delete rules (ADR-0001), the cycle
 //  plan (docs/prd/payday-planning.md), `PlanItem.isFunded` (§7.6), an expense's
 //  envelope assignment (docs/prd/envelope-assignment.md), a set-aside item's
 //  target (docs/prd/set-aside.md), an Account's bank logo (docs/prd/bank-logos.md), and
 //  whether a paid-elsewhere expense's money was moved from its envelope's Account
-//  (docs/prd/paid-elsewhere.md).
+//  (docs/prd/paid-elsewhere.md), and the receipt an expense was read from until it is
+//  checked (docs/prd/receipt-reading.md).
 //
-//  There is deliberately no V1, V2, V3, V4, V5 or V6 listed. A VersionedSchema's checksum comes from the
+//  There is deliberately no V1, V2, V3, V4, V5, V6 or V7 listed. A VersionedSchema's checksum comes from the
 //  model types it lists *as compiled today*, and `Schema` pulls in every model
 //  reachable through a relationship — so a V1 listing only the four 1.x models still
 //  resolves to all nine entities and checksums identically to V2. Core Data rejects a
@@ -18,7 +19,7 @@
 //  detected"). A past version can therefore only appear here as frozen copies of the
 //  old model types; since every step so far was purely additive, none needs a stage
 //  and SwiftData infers the migration from any earlier store on its own.
-//  `StoreMigrationTests` opens stores the V2, V3, V4, V5 and V6 code wrote and holds that to account.
+//  `StoreMigrationTests` opens stores the V2, V3, V4, V5, V6 and V7 code wrote and holds that to account.
 //
 //  The identifier still moves with the shape, so a store records which shape it
 //  holds and a later stage can name its source exactly. For a purely additive change
@@ -41,9 +42,10 @@ import SwiftData
 /// `Category.group` and `Category.envelopes` (V2) — plus `PlanItem.isFunded` (V3),
 /// `Expense.envelope` with `Expense.isOutsideEnvelopes` (V4),
 /// `PlanItem.setAsideTarget`, its inverse and `PlanItem.isSetAsideMoved` (V5),
-/// `Account.brandID` (V6), and `Expense.isMovedFromEnvelope` (V7).
-enum ExpenseKuSchemaV7: VersionedSchema {
-    static let versionIdentifier = Schema.Version(7, 0, 0)
+/// `Account.brandID` (V6), `Expense.isMovedFromEnvelope` (V7), and
+/// `Expense.receiptImage` (V8).
+enum ExpenseKuSchemaV8: VersionedSchema {
+    static let versionIdentifier = Schema.Version(8, 0, 0)
 
     static var models: [any PersistentModel.Type] {
         [Expense.self, Category.self, Person.self, Account.self,
@@ -53,7 +55,7 @@ enum ExpenseKuSchemaV7: VersionedSchema {
 
 enum ExpenseKuMigrationPlan: SchemaMigrationPlan {
     static var schemas: [any VersionedSchema.Type] {
-        [ExpenseKuSchemaV7.self]
+        [ExpenseKuSchemaV8.self]
     }
 
     static var stages: [MigrationStage] { [] }

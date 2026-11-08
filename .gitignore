@@ -37,6 +37,12 @@ Carthage/Build/
 !.scratch/revamp*/refs/**
 !.scratch/revamp*/before/**
 !.scratch/revamp*/after/**
+# The directory re-include above also re-includes DerivedData, so the global DerivedData/
+# rule never applies here and its package checkouts surface as nested repos.
+.scratch/revamp*/DerivedData/
+
+# Receipt AI spike — model weights, receipt samples and per-model run output.
+.scratch/receipt-ai/
 
 # Design snapshots — regenerated from the app, never edited by hand.
 .scratch/pen/shots/

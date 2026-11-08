@@ -19,6 +19,8 @@ extension ExpensesView {
         switch action {
         case .startPlan:
             startPlan()
+        case .copyPlan:
+            PlanCarryOver.makePlan(for: cycle, from: plans, in: context)
 
         case .addIncomeLine:
             planSheet = .newIncomeLine
@@ -83,19 +85,6 @@ extension ExpensesView {
         return planSortChoice.sort
     }
 
-    /// Fills a forward cycle's plan from the previous one, on arrival (PRD §7.2).
-    ///
-    /// Only ever **forward**, never for a cycle older than the newest plan. Carry-over
-    /// is a write, and paging back through history to look at what happened must not
-    /// silently manufacture plans for cycles the owner never planned.
-    func carryOverIfNeeded() {
-        guard lens == .plan,
-              PlanLookup.plan(for: cycle, in: plans) == nil,
-              let newest = plans.map(\.cycleStart).max(),
-              cycle.start > newest else { return }
-        PlanCarryOver.makePlan(for: cycle, from: plans, in: context)
-    }
-
     /// The carry-over notice has done its job once the owner starts adjusting, which
     /// is what it asks them to do.
     private func markCarryOverSeen(_ contents: PlanContents) {
@@ -106,8 +95,6 @@ extension ExpensesView {
 
     // MARK: - Writes
 
-    /// Only reachable for the owner's very first cycle: every later one arrives by
-    /// carry-over (PRD §7.2).
     private func startPlan() {
         let plan = CyclePlan(cycleStart: cycle.start)
         context.insert(plan)
@@ -154,6 +141,30 @@ extension ExpensesView {
         context.delete(item)
         try? context.save()
     }
+
+    /// AH2. The plan's own parts cascade with it; every link from outside it nullifies,
+    /// so no Expense goes (clear-plan.md §4.3).
+    func confirmClearPlan(_ plan: CyclePlan) {
+        context.delete(plan)
+        try? context.save()
+    }
+
+    var canClearPlan: Bool {
+        lens == .plan && PlanClearing.canClear(PlanLookup.plan(for: cycle, in: plans), cycle: cycle,
+                                               today: .now, payday: payday, calendar: calendar)
+    }
+
+    func requestClearPlan() {
+        guard let plan = PlanLookup.plan(for: cycle, in: plans) else { return }
+        planConfirmation = .clearPlan(plan)
+    }
+
+    /// The month Copy from names: the latest plan before this cycle, gaps skipped.
+    func copySourceMonth(_ contents: PlanContents) -> String? {
+        guard !contents.hasPlan, let source = PlanLookup.source(before: cycle, in: plans) else { return nil }
+        return LookBackCopy.month(of: PayCycle.containing(source.cycleStart, payday: payday, calendar: calendar),
+                                  calendar: calendar)
+    }
 }
 
 // MARK: - Presentation
@@ -193,7 +204,7 @@ extension View {
         }
     }
 
-    /// The two destructive confirmations (frames I4 and I7).
+    /// The plan's destructive confirmations (frames I4, I7 and AH2).
     ///
     /// An `.alert`, not a `.confirmationDialog`: the design draws a centred dialog, and
     /// each of these has a sentence of consequence to read before the owner taps —
@@ -206,7 +217,8 @@ extension View {
     func planConfirmation(
         _ confirmation: Binding<PlanConfirmation?>,
         onUntick: @escaping (PlanItem) -> Void,
-        onDeleteItem: @escaping (PlanItem) -> Void
+        onDeleteItem: @escaping (PlanItem) -> Void,
+        onClearPlan: @escaping (CyclePlan) -> Void
     ) -> some View {
         self.alert(
             confirmationTitle(confirmation.wrappedValue),
@@ -221,6 +233,8 @@ extension View {
                 Button("Delete expense", role: .destructive) { onUntick(item) }
             case .deleteItem(let item):
                 Button("Delete plan item", role: .destructive) { onDeleteItem(item) }
+            case .clearPlan(let plan):
+                Button("Clear Plan", role: .destructive) { onClearPlan(plan) }
             }
             Button("Cancel", role: .cancel) {}
         } message: { pending in
@@ -233,6 +247,9 @@ private func confirmationTitle(_ pending: PlanConfirmation?) -> String {
     switch pending {
     case .untick: "Delete the expense too?"
     case .deleteItem: "Delete this plan item?"
+    case .clearPlan(let plan):
+        PlanClearing.title(month: LookBackCopy.month(
+            of: PayCycle.containing(plan.cycleStart, payday: Payday.current), calendar: .current))
     case nil: ""
     }
 }
@@ -250,6 +267,8 @@ private func confirmationBody(_ pending: PlanConfirmation) -> String {
                                        setAsideCount: setAsides.count,
                                        setAsideMonths: SetAside.months(of: setAsides, payday: Payday.current,
                                                                        calendar: .current))
+    case .clearPlan(let plan):
+        return PlanClearing.message(PlanClearing.reach(of: plan, payday: Payday.current, calendar: .current))
     }
 }
 

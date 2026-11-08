@@ -2,15 +2,17 @@
 //  PlanEmptyState.swift
 //  ExpenseKu
 //
-//  The Plan lens with no plan at all (frame I5). Only reachable for the owner's first
-//  cycle, because every later one arrives already populated by carry-over (PRD §7.2) —
-//  which is what the message says, so the button does not look like a chore they will
-//  be repeating every month.
+//  The Plan lens with no plan (frames AH3 and AH4). Carry-over no longer runs on
+//  arrival (clear-plan.md §4.4), so this is what every cycle without a plan shows:
+//  a copy of the latest earlier plan, or a blank one. A cleared cycle must stay
+//  empty when the owner pages away and back, which an automatic copy could not allow.
 //
 
 import SwiftUI
 
 struct PlanEmptyState: View {
+    let copySourceMonth: String?
+    let onCopy: () -> Void
     let onStart: () -> Void
 
     var body: some View {
@@ -18,17 +20,15 @@ struct PlanEmptyState: View {
             EmptyStateView(
                 title: "No plan yet",
                 systemImage: "list.clipboard",
-                message: "Start one for this cycle, then every cycle after it is copied forward automatically."
+                message: PlanCopy.noPlanMessage(copyFrom: copySourceMonth)
             )
 
-            Button("Start this cycle's plan", action: onStart)
-                .font(.dsBody).bold()
-                .foregroundStyle(Theme.onAccent)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
-                .background(Theme.accent, in: .capsule)
-                .buttonStyle(.pressableCard)
-                .padding(.horizontal, Metric.cardPadding)
+            if let copySourceMonth {
+                PlanEmptyStateButton(title: "Copy from \(copySourceMonth)", action: onCopy)
+                PlanEmptyStateButton(title: "Start empty", isPrimary: false, action: onStart)
+            } else {
+                PlanEmptyStateButton(title: "Start this cycle's plan", action: onStart)
+            }
         }
     }
 }

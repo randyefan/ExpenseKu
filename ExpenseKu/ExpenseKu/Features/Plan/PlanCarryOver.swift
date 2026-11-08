@@ -21,8 +21,9 @@
 //  A set-aside line is never copied (docs/prd/set-aside.md §4.8, *owner override*): it is
 //  money one cycle had to spare, and the owner adds the next one only if there is some.
 //
-//  It runs from the Plan lens for the cycle actually on screen, never speculatively:
-//  paging forward is what should create October's plan, not launching the app.
+//  It runs only when the owner taps Copy from <Month> on a cycle with no plan
+//  (clear-plan.md §4.4). Running it on arrival would refill a plan the owner had just
+//  cleared the moment they paged back to it.
 //
 
 import Foundation

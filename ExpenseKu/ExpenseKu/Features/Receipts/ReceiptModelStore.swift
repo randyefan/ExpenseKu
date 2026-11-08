@@ -32,6 +32,7 @@ final class ReceiptModelStore {
         self.directory = directory
         if FileManager.default.fileExists(atPath: completeMarker.path(percentEncoded: false)) {
             phase = .ready
+            excludeFromBackup()
         } else if let received = try? downloadedBytes(), received > 0 {
             phase = .paused(received: received, total: Self.expectedBytes, error: nil)
         }
@@ -43,6 +44,13 @@ final class ReceiptModelStore {
     }
 
     private var completeMarker: URL { directory.appending(path: ".complete") }
+
+    private func excludeFromBackup() {
+        var values = URLResourceValues()
+        values.isExcludedFromBackup = true
+        var folder = directory
+        try? folder.setResourceValues(values)
+    }
 
     /// The model to read with, when it is downloaded and this device can run it.
     var model: (any ReceiptModel)? {
@@ -80,10 +88,7 @@ final class ReceiptModelStore {
     private func runDownload(allowingCellular: Bool) async {
         do {
             try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-            var values = URLResourceValues()
-            values.isExcludedFromBackup = true
-            var folder = directory
-            try? folder.setResourceValues(values)
+            excludeFromBackup()
 
             let files = try await listing()
             let total = files.reduce(0) { $0 + $1.size }

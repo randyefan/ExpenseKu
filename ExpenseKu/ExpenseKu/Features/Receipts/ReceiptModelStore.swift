@@ -107,7 +107,8 @@ final class ReceiptModelStore {
                 } catch {
                     resumeData[file.path] = download.resumeData
                     let cancelled = (error as? URLError)?.code == .cancelled
-                    phase = .paused(received: done, total: total, error: cancelled ? nil : error.localizedDescription)
+                    let received = if case .downloading(let received, _) = phase { received } else { done }
+                    phase = .paused(received: received, total: total, error: cancelled ? nil : error.localizedDescription)
                     self.download = nil
                     return
                 }

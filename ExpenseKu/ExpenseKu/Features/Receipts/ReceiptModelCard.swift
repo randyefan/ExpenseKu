@@ -3,7 +3,8 @@
 //  ExpenseKu
 //
 //  The MODEL card on Receipt reading, one shape per phase: Download, progress with
-//  Pause, Resume with the error, or Remove (docs/prd/receipt-reading.md §4.10, AG9).
+//  Pause, Resume with the error, or Remove (docs/prd/receipt-reading.md §4.10, AG9). A
+//  paused download can be removed too, so a half-finished one never strands its space.
 //
 
 import SwiftUI
@@ -74,6 +75,10 @@ struct ReceiptModelCard: View {
                 wideButton("Download model", systemImage: "arrow.down.circle", prominent: true, action: onDownload)
             case .paused:
                 wideButton("Resume", systemImage: "arrow.clockwise", prominent: true, action: onDownload)
+                Button("Remove download", role: .destructive, action: onRemove)
+                    .font(.dsSubhead.weight(.semibold))
+                    .foregroundStyle(Theme.negative)
+                    .frame(maxWidth: .infinity)
             case .ready:
                 Button(action: onRemove) {
                     Text("Remove model")

@@ -2,8 +2,9 @@
 //  ReceiptThumbnail.swift
 //  ExpenseKu
 //
-//  A receipt image at a fixed size, cropped to its top, which is where a receipt says
-//  who and how much.
+//  A receipt image at a fixed size, cropped to its top-leading corner, which is where a
+//  receipt says who and how much (a wide receipt cropped from its centre lost its labels
+//  in the simulator).
 //
 
 import SwiftUI
@@ -19,7 +20,7 @@ struct ReceiptThumbnail: View {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFill()
-                    .frame(width: width, height: height, alignment: .top)
+                    .frame(width: width, height: height, alignment: .topLeading)
             } else {
                 Theme.surface
                     .overlay {

@@ -212,7 +212,7 @@ struct ExpenseEditorView: View {
                     lookAlike = nil
                     if receiptRun != nil { endRun(.discarded) }
                 }
-                Button(receiptRun == nil ? "Fill anyway" : "Log anyway") {
+                Button(receiptRun == nil ? "Fill anyway" : "Log anyway", role: .cancel) {
                     lookAlike = nil
                     fill(match.reading, image: match.image)
                 }

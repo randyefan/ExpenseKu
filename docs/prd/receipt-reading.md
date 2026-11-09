@@ -136,7 +136,9 @@ typed or chose is never replaced.
 | Envelope | untouched | — |
 
 - The form is filled **silently**: no card, no badge, no highlight — *owner override*
-  (decision 6). The only sign is the filled values themselves.
+  (decision 6). The only sign is the filled values themselves. *Amended 9 Nov 2026: a card
+  now says who read the receipt (`docs/prd/reading-source.md`); the fields are still not
+  marked.*
 - A field the reading could not settle stays as it was. Amount 0 or no Category still
   blocks Save, as today.
 
@@ -206,7 +208,9 @@ unambiguous:
 | Note | the text after *Tujuan, Penerima, Nama Penerima, Ke, Beneficiary* on the same or the next row |
 | Category | not filled |
 
-The owner is not told which path read the receipt.
+The owner is not told which path read the receipt. *Superseded 9 Nov 2026 by
+`docs/prd/reading-source.md`: the form and the To check sheet now say whether Gemma (AI) or
+OCR (not AI) read it.*
 
 ### 4.10 Receipt reading in Manage `[→ AG8, AG9]`
 

@@ -1,7 +1,7 @@
 # PRD — Who read the receipt
 
-Status: Accepted — design approved, building
-Date: 2026-11-09 · grilled, drawn (flow AI) and approved the same day, on `feature/reading-source`
+Status: Built
+Date: 2026-11-09 · grilled, drawn (flow AI), approved and built the same day, on `feature/reading-source`
 Owner: Randy Efan
 
 Companion documents: `docs/prd/receipt-reading.md` (the reading this labels; this PRD amends its
@@ -78,7 +78,8 @@ shaped like a receipt banner row: an icon circle, a title, a caption.
 ### 4.3 Saving the source `[→ AI5]`
 
 - An expense saved from a receipt keeps the reading's source beside its receipt image
-  (`Expense.receiptSource`, schema **V9**).
+  (`Expense.receiptSourceValue`, a `ReceiptReadingSource` raw value read through
+  `Expense.receiptSource`; schema **V9**).
 - The source clears with the image, by any of the ways that check an expense
   (receipt-reading.md §4.7).
 - A receipt expense saved before V9 has no source.
@@ -144,3 +145,13 @@ model, so Category is required; three receipt expenses to check.
 | **AI2** · Form with the OCR, no model card · **AI2 states** · the three cards | §4.1, §4.2 |
 | **AI5** · To check sheet, two Gemma AI tags and one OCR, no AI | §4.3, §4.4 |
 | AI1, AI3, AI4 · options not chosen | — |
+
+### 8.1 Closed during implementation
+
+| Gap | Answer | Where |
+|---|---|---|
+| At the accessibility text sizes the no-model caption alone filled the screen and pushed the amount under the keypad | The card's Dynamic Type is capped at XXXL | `ReceiptSourceCard` |
+| A reading from Photos, Camera or Paste came back without knowing who read it | The form's own reads return the same kept shape as the inbox's, source included | `ReceiptReadAhead.read` |
+| "Looks already logged" held only the reading, so Fill anyway lost the source | The look-alike carries the source too | `ReceiptLookAlike` |
+| MLX cannot run in the simulator, so no Gemma reading can be made there | `-seedReceipts` saves its receipt expense still to check as read by Gemma; the sheet tag and the Edit card show it. The reader's three outcomes are tested with literal model answers | `DebugReceiptSeed`, `ReceiptReadingSourceTests` |
+| Unreachable in the simulator: "Gemma couldn't read it", and the no-model card once the model is ready | Unit tests | `ReceiptReadingSourceTests` |

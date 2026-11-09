@@ -62,5 +62,8 @@ struct ReceiptSourceCard: View {
                 .stroke(Theme.hairline, lineWidth: 1)
         }
         .accessibilityElement(children: .combine)
+        // At the accessibility sizes the caption alone outgrew the screen and pushed the
+        // amount under the keypad.
+        .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
     }
 }

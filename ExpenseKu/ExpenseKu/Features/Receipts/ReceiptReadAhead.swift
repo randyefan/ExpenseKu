@@ -72,10 +72,11 @@ final class ReceiptReadAhead {
 
     /// A receipt from Photos, the camera or the clipboard: read in turn with the inbox,
     /// and not kept.
-    func read(_ data: Data, categories: [String], models: ReceiptModelStore) async -> ReceiptReading {
+    func read(_ data: Data, categories: [String], models: ReceiptModelStore) async -> StoredReceiptReading {
         let reader = ReceiptReader(model: models.model)
         await gate.acquire()
-        let reading = (try? await reader.read(data, categories: categories)) ?? ReceiptReading()
+        let reading = (try? await reader.reading(of: data, categories: categories))
+            ?? StoredReceiptReading(reading: ReceiptReading(), hadModel: reader.model != nil)
         await gate.release()
         return reading
     }

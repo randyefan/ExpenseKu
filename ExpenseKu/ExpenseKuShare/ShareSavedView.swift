@@ -58,7 +58,11 @@ struct ShareSavedView: View {
         .padding(.horizontal, 20)
         .padding(.top, 12)
         .padding(.bottom, 24)
-        .background(Theme.bg, in: .rect(topLeadingRadius: 34, topTrailingRadius: 34))
+        .background {
+            UnevenRoundedRectangle(topLeadingRadius: 34, topTrailingRadius: 34)
+                .fill(Theme.bg)
+                .ignoresSafeArea(edges: .bottom)
+        }
         .preferredColorScheme(.dark)
     }
 

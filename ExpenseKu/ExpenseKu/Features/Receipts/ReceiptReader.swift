@@ -3,8 +3,8 @@
 //  ExpenseKu
 //
 //  One reading: OCR, candidates, then the model's grounded answer, or the rules when
-//  there is no model or it answers nothing usable. The owner is never told which path
-//  read the receipt (docs/prd/receipt-reading.md §4.9).
+//  there is no model or it answers nothing usable. The reading says which of the three
+//  happened (docs/prd/reading-source.md §4.1).
 //
 
 import Foundation
@@ -12,21 +12,26 @@ import Foundation
 nonisolated struct ReceiptReader: Sendable {
     let model: (any ReceiptModel)?
 
-    func read(_ data: Data, categories: [String]) async throws -> ReceiptReading {
-        try await reading(of: data, categories: categories).reading
-    }
-
     func reading(of data: Data, categories: [String]) async throws -> StoredReceiptReading {
         let text = try await ReceiptOCR.read(data)
         let candidates = CandidateExtractor.extract(from: text)
+        var answer: String?
         if let model {
             let prompt = ExtractionPrompt.make(receipt: text, candidates: candidates, categories: categories)
-            if let answer = try? await model.answer(prompt) {
-                let reading = ReceiptResolver.resolve(answer: answer, receipt: text, candidates: candidates,
-                                                      categories: categories)
-                if !reading.isEmpty { return StoredReceiptReading(reading: reading, hadModel: true) }
-            }
+            answer = try? await model.answer(prompt)
         }
-        return StoredReceiptReading(reading: ReceiptRules.read(text, candidates: candidates), hadModel: model != nil)
+        return Self.reading(of: text, candidates: candidates, categories: categories,
+                            hadModel: model != nil, answer: answer)
+    }
+
+    static func reading(of text: ReceiptText, candidates: ReceiptCandidates, categories: [String],
+                        hadModel: Bool, answer: String?) -> StoredReceiptReading {
+        if let answer {
+            let reading = ReceiptResolver.resolve(answer: answer, receipt: text, candidates: candidates,
+                                                  categories: categories)
+            if !reading.isEmpty { return StoredReceiptReading(reading: reading, hadModel: true, source: .gemma) }
+        }
+        return StoredReceiptReading(reading: ReceiptRules.read(text, candidates: candidates), hadModel: hadModel,
+                                    source: hadModel ? .ocrModelFailed : .ocrNoModel)
     }
 }

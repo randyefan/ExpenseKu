@@ -10,6 +10,7 @@ import Foundation
 
 struct ReceiptLookAlike {
     let reading: ReceiptReading
+    let source: ReceiptReadingSource?
     let image: Data
     let expense: Expense
 

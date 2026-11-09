@@ -34,6 +34,10 @@
 //  commit before V8), with the Tiket KAI move recorded: what a 1.6 install holds before
 //  receipt reading arrives.
 //
+//  `Fixtures/PlanV8.store` is the V7 fixture opened and written by the V8 code (the
+//  commit before V9), with Makan saved from a receipt and still to check: what a 1.7
+//  install holds before an expense keeps who read its receipt.
+//
 //  Every test opens a *copy*: SwiftData migrates in place, and the fixture has to stay
 //  a pre-change store for the next run.
 //
@@ -73,7 +77,7 @@ nonisolated final class StoreMigrationTests: XCTestCase {
     /// Opened the way `StoreBootstrap` opens the real store, minus CloudKit.
     @MainActor
     private func open(_ url: URL) throws -> ModelContainer {
-        let schema = Schema(versionedSchema: ExpenseKuSchemaV8.self)
+        let schema = Schema(versionedSchema: ExpenseKuSchemaV9.self)
         let config = ModelConfiguration(schema: schema, url: url, cloudKitDatabase: .none)
         return try ModelContainer(for: schema, migrationPlan: ExpenseKuMigrationPlan.self,
                                   configurations: [config])
@@ -393,5 +397,32 @@ nonisolated final class StoreMigrationTests: XCTestCase {
         let makan = try XCTUnwrap(try context.fetch(FetchDescriptor<Expense>()).first { $0.note == "Makan" })
         XCTAssertEqual(makan.receiptImage, image)
         XCTAssertTrue(makan.needsReview)
+    }
+
+    /// **The V8 store opens**, its receipt still to check, and no receipt has a source.
+    @MainActor
+    func testAV8StoreOpensWithItsReceiptAndNoSource() throws {
+        let context = ModelContext(try open(try copyOfStore("PlanV8")))
+        let expenses = try context.fetch(FetchDescriptor<Expense>())
+        XCTAssertEqual(expenses.count, 5)
+        XCTAssertEqual(expenses.filter(\.isReceiptToCheck).map(\.note), ["Makan"])
+        XCTAssertTrue(expenses.allSatisfy { $0.receiptSource == nil })
+    }
+
+    /// Once migrated, a receipt's source is saved, kept, and the store opens again.
+    @MainActor
+    func testTheMigratedV8StoreKeepsAReceiptSourceAcrossRelaunches() throws {
+        let url = try copyOfStore("PlanV8")
+        do {
+            let context = ModelContext(try open(url))
+            let makan = try XCTUnwrap(try context.fetch(FetchDescriptor<Expense>()).first { $0.note == "Makan" })
+            makan.receiptSource = .ocrModelFailed
+            try context.save()
+        }
+
+        let context = ModelContext(try open(url))
+        let makan = try XCTUnwrap(try context.fetch(FetchDescriptor<Expense>()).first { $0.note == "Makan" })
+        XCTAssertEqual(makan.receiptSource, .ocrModelFailed)
+        XCTAssertTrue(makan.isReceiptToCheck)
     }
 }

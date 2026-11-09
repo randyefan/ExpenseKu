@@ -70,6 +70,10 @@ final class Expense {
     // it as an asset instead of inside the record.
     @Attribute(.externalStorage) var receiptImage: Data?
 
+    // Who read that receipt, kept and cleared with it (docs/prd/reading-source.md §4.3).
+    // A `ReceiptReadingSource` raw value; nil for a receipt saved before V9.
+    var receiptSourceValue: String?
+
     init(
         amount: Decimal = 0,
         date: Date = .now,

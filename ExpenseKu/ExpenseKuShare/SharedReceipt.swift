@@ -29,6 +29,9 @@ enum SharedReceipt {
                 if let image = try? await provider.loadObject(ofClass: UIImage.self), let data = image.pngData() {
                     return Payload(data: data, fileExtension: "png")
                 }
+                if let data = await provider.loadImageItemAsPNG() {
+                    return Payload(data: data, fileExtension: "png")
+                }
             }
         }
         return nil
@@ -36,6 +39,14 @@ enum SharedReceipt {
 }
 
 private extension NSItemProvider {
+    func loadImageItemAsPNG() async -> Data? {
+        await withCheckedContinuation { continuation in
+            loadItem(forTypeIdentifier: UTType.image.identifier, options: nil) { item, _ in
+                continuation.resume(returning: (item as? UIImage)?.pngData())
+            }
+        }
+    }
+
     func loadDataRepresentation(for type: UTType) async throws -> Data {
         try await withCheckedThrowingContinuation { continuation in
             _ = loadDataRepresentation(for: type) { data, error in

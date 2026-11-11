@@ -8,7 +8,8 @@
 //  date shortcuts, a Category grid, People chips and an Account menu, then the
 //  Envelope and the note. Tapping the note swaps the keypad for the native keyboard.
 //  Read receipt fills what is still empty from a receipt, and an inbox run opens the form
-//  on a shared receipt (docs/prd/receipt-reading.md §4.3–§4.7).
+//  on a shared receipt (docs/prd/receipt-reading.md §4.3–§4.7); a card above the amount
+//  says whether Gemma or OCR read it (docs/prd/reading-source.md §4.2).
 //
 
 import PhotosUI
@@ -67,6 +68,7 @@ struct ExpenseEditorView: View {
     @State private var formHeight: CGFloat?
 
     @State private var receiptImage: Data?
+    @State private var receiptSource: ReceiptReadingSource?
     @State private var viewingReceipt = false
     @State private var readingTask: Task<Void, Never>?
     @State private var lookAlike: ReceiptLookAlike?
@@ -99,6 +101,7 @@ struct ExpenseEditorView: View {
         _category = State(initialValue: editing?.category)
         _people = State(initialValue: editing?.people ?? [])
         _account = State(initialValue: editing?.account)
+        _receiptSource = State(initialValue: editing?.isReceiptToCheck == true ? editing?.receiptSource : nil)
         _envelopeChoice = State(initialValue: editing.map(EnvelopeChoice.of)
                                 ?? envelope.map { .envelope($0.persistentModelID) } ?? .byCategory)
         let since = QuickPicks.windowStart(now: .now, calendar: .current)
@@ -109,6 +112,7 @@ struct ExpenseEditorView: View {
     private enum EditorPicker: Hashable {
         case categories
         case people
+        case receiptReading
     }
 
     /// The amount that will be saved.
@@ -219,7 +223,7 @@ struct ExpenseEditorView: View {
                 }
                 Button(receiptRun == nil ? AppLocalization.string(.fillAnyway) : AppLocalization.string(.logAnyway), role: .cancel) {
                     lookAlike = nil
-                    fill(match.reading, image: match.image)
+                    fill(match.reading, source: match.source, image: match.image)
                 }
             } message: { match in
                 Text(match.description)
@@ -282,6 +286,13 @@ struct ExpenseEditorView: View {
         VStack(spacing: 0) {
             ScrollView {
                 VStack(spacing: 18) {
+                    if let receiptSource, readingTask == nil {
+                        ReceiptSourceCard(source: receiptSource, modelIsReady: receiptModel.isModelReady) {
+                            picker = .receiptReading
+                        }
+                        .padding(.horizontal, Metric.screenPadding)
+                    }
+
                     AmountHero(displayExpression: expr.displayExpression, amount: resolvedAmount)
                         .padding(.horizontal, Metric.screenPadding)
 
@@ -357,6 +368,7 @@ struct ExpenseEditorView: View {
             switch destination {
             case .categories: CategoryPicker(selection: $category)
             case .people: PeoplePicker(selection: $people)
+            case .receiptReading: ReceiptReadingView()
             }
         }
         .sheet(isPresented: $showingNewAccount) {
@@ -420,6 +432,7 @@ struct ExpenseEditorView: View {
         if let receiptImage {
             target.needsReview = true
             target.receiptImage = receiptImage
+            target.receiptSource = receiptSource
         } else if target.isReceiptToCheck {
             target.markReceiptChecked()
         }
@@ -450,7 +463,7 @@ struct ExpenseEditorView: View {
             }
             guard let stored, !Task.isCancelled else { return }
             readingTask = nil
-            apply(stored.reading, from: data)
+            apply(stored, from: data)
         }
     }
 
@@ -463,19 +476,19 @@ struct ExpenseEditorView: View {
         readingTask?.cancel()
         let categories = allCategories.map(\.name)
         readingTask = Task {
-            let reading = await receiptReadAhead.read(data, categories: categories, models: receiptModel)
+            let stored = await receiptReadAhead.read(data, categories: categories, models: receiptModel)
             guard !Task.isCancelled else { return }
             readingTask = nil
-            apply(reading, from: data)
+            apply(stored, from: data)
         }
     }
 
-    private func apply(_ reading: ReceiptReading, from data: Data) {
+    private func apply(_ stored: StoredReceiptReading, from data: Data) {
         let image = ReceiptImageData.stored(from: data)
-        if let match = lookAlikeExpense(for: reading) {
-            lookAlike = ReceiptLookAlike(reading: reading, image: image, expense: match)
+        if let match = lookAlikeExpense(for: stored.reading) {
+            lookAlike = ReceiptLookAlike(reading: stored.reading, source: stored.shownSource, image: image, expense: match)
         } else {
-            fill(reading, image: image)
+            fill(stored.reading, source: stored.shownSource, image: image)
         }
     }
 
@@ -498,7 +511,7 @@ struct ExpenseEditorView: View {
         return sameDay.first { $0.persistentModelID == id }
     }
 
-    private func fill(_ reading: ReceiptReading, image: Data) {
+    private func fill(_ reading: ReceiptReading, source: ReceiptReadingSource?, image: Data) {
         let result = ReceiptFill<PersistentIdentifier>(
             reading: reading,
             form: .init(
@@ -534,6 +547,7 @@ struct ExpenseEditorView: View {
         }
         if let id = result.category { category = allCategories.first { $0.persistentModelID == id } }
         receiptImage = image
+        receiptSource = source
     }
 
     private func deleteExpense() {

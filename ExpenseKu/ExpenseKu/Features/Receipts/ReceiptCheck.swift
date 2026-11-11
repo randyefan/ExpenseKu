@@ -12,9 +12,16 @@ import Foundation
 extension Expense {
     var isReceiptToCheck: Bool { needsReview && receiptImage != nil }
 
-    /// Checking clears the flag and deletes the image together.
+    /// Who read the receipt (docs/prd/reading-source.md §4.3).
+    var receiptSource: ReceiptReadingSource? {
+        get { receiptSourceValue.flatMap(ReceiptReadingSource.init(rawValue:)) }
+        set { receiptSourceValue = newValue?.rawValue }
+    }
+
+    /// Checking clears the flag and deletes the image, and who read it, together.
     func markReceiptChecked() {
         needsReview = false
         receiptImage = nil
+        receiptSourceValue = nil
     }
 }

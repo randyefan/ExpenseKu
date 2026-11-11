@@ -30,6 +30,19 @@ final class ShareViewController: UIViewController {
         }
     }
 
+    // iOS ignores an extension's own modalPresentationStyle and wraps it in a full-height
+    // sheet whose views live in this process, which showed as an empty system-coloured
+    // sheet behind the card. Its detents can't be changed from here, so it is cleared.
+    override func viewIsAppearing(_ animated: Bool) {
+        super.viewIsAppearing(animated)
+        var container = view.superview
+        while let current = container, !(current is UIWindow) {
+            current.backgroundColor = .clear
+            current.layer.shadowOpacity = 0
+            container = current.superview
+        }
+    }
+
     private func show(_ state: ShareSavedView.State) {
         let root = ShareSavedView(state: state) { [weak self] in
             self?.extensionContext?.completeRequest(returningItems: nil)

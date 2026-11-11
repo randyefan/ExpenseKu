@@ -3,7 +3,8 @@
 //  ExpenseKu
 //
 //  One receipt expense on the review sheet: the receipt beside what was saved, then Edit
-//  and Looks right (docs/prd/receipt-reading.md §4.8, frame AG7).
+//  and Looks right (docs/prd/receipt-reading.md §4.8, frame AG7), with who read it
+//  (docs/prd/reading-source.md §4.4, frame AI5).
 //
 
 import SwiftUI
@@ -29,6 +30,9 @@ struct ReceiptCheckCard: View {
                     Text(expense.date.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated).hour().minute().locale(AppLocalization.locale)))
                         .font(.dsSubhead)
                         .foregroundStyle(Theme.textSecondary)
+                    if let source = expense.receiptSource {
+                        ReceiptSourceTag(source: source)
+                    }
                     ReceiptFieldRow(label: AppLocalization.string(.account), value: expense.account?.name ?? AppLocalization.string(.none))
                     ReceiptFieldRow(label: AppLocalization.string(.category), value: expense.category?.name ?? AppLocalization.string(.uncategorized))
                     if !expense.note.isEmpty {

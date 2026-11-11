@@ -23,7 +23,7 @@ struct EnvelopeDetailCard: View {
         VStack(alignment: .leading, spacing: 8) {
             VStack(alignment: .leading, spacing: 2) {
                 MoneyText(progress.spent, font: .dsLargeTitle.bold(), color: Theme.text)
-                Text("spent of \(progress.planned.formattedIDR())")
+                Text(appLocalized: .envelopeSpentCaption(progress.planned.formattedIDR()))
                     .font(.dsSubhead)
                     .foregroundStyle(Theme.textSecondary)
             }

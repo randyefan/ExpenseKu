@@ -25,7 +25,7 @@ extension FilterCatalog {
                              symbol: $0.resolvedSymbol, colorHex: $0.colorHex, brandID: $0.brandID)
             },
             people: people.map {
-                FilterOption(choice: .entity($0.persistentModelID), name: $0.name, colorHex: $0.colorHex)
+                FilterOption(choice: .entity($0.persistentModelID), name: $0.displayName, colorHex: $0.colorHex)
             }
         )
     }

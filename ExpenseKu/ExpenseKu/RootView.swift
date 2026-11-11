@@ -27,13 +27,13 @@ struct RootView: View {
 
     var body: some View {
         TabView(selection: $selection) {
-            Tab("Expenses", systemImage: "list.bullet", value: AppTab.expenses) {
+            Tab(AppLocalization.string(.expenses), systemImage: "list.bullet", value: AppTab.expenses) {
                 ExpensesView()
             }
-            Tab("Insights", systemImage: "chart.pie", value: AppTab.insights) {
+            Tab(AppLocalization.string(.insights), systemImage: "chart.pie", value: AppTab.insights) {
                 InsightsView()
             }
-            Tab("Manage", systemImage: "folder", value: AppTab.manage) {
+            Tab(AppLocalization.string(.manage), systemImage: "folder", value: AppTab.manage) {
                 ManageView()
             }
         }

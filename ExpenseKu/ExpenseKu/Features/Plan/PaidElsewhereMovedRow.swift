@@ -17,7 +17,7 @@ struct PaidElsewhereMovedRow: View {
         Menu {
             Button(action: onUndo) {
                 Text(FundMenuEntry.notMoved.title)
-                Text("Back to To move")
+                Text(appLocalized: .backToToMove)
                 Image(systemName: FundMenuEntry.notMoved.systemImage)
             }
         } label: {
@@ -47,6 +47,6 @@ struct PaidElsewhereMovedRow: View {
         }
         .buttonStyle(.pressableRow)
         .accessibilityLabel(member.name)
-        .accessibilityValue("Moved, \(member.amount.formattedIDR())")
+        .accessibilityValue(AppLocalization.string(.movedAmountDescription(member.amount.formattedIDR())))
     }
 }

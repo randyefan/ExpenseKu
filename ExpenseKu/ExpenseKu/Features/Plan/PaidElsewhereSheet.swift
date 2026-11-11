@@ -54,17 +54,17 @@ struct PaidElsewhereSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Close", systemImage: "xmark") { dismiss() }
+                    Button(AppLocalization.string(.close), systemImage: "xmark") { dismiss() }
                         .tint(Theme.text)
                 }
                 ToolbarItem(placement: .principal) {
                     HStack(spacing: 8) {
                         AccountPlate(style: AccountPlateStyle(account: account))
                         VStack(alignment: .leading, spacing: 1) {
-                            Text("Move from \(envelope.account?.name ?? "")")
+                            Text(appLocalized: .moveFrom(envelope.account?.name ?? ""))
                                 .font(.dsHeadline).bold()
                                 .foregroundStyle(Theme.text)
-                            Text("to \(account.name)")
+                            Text(appLocalized: .to(account.name))
                                 .font(.dsCaption)
                                 .foregroundStyle(Theme.textSecondary)
                         }

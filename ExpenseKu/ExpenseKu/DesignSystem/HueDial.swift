@@ -51,8 +51,8 @@ struct HueDial: View {
         .frame(height: track)
         .sensoryFeedback(.selection, trigger: nearestSnapIndex)
         .accessibilityElement()
-        .accessibilityLabel("Colour")
-        .accessibilityValue("\(Int(hue * 360)) degrees")
+        .accessibilityLabel(AppLocalization.string(.colour))
+        .accessibilityValue(AppLocalization.string(.degrees(String(Int(hue * 360)))))
         .accessibilityAdjustableAction { direction in
             let step = 1.0 / 24
             switch direction {

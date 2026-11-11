@@ -140,7 +140,7 @@ nonisolated final class PaidEarlyShiftTests: XCTestCase {
 
         XCTAssertEqual(row.accountName, s.bca.name)
         XCTAssertEqual(row.planned, 800_000)
-        XCTAssertEqual(row.paidEarlyText, "Rp\u{00A0}1.200.000 paid early into Travelling")
+        XCTAssertEqual(row.paidEarlyText, "\(Decimal(1_200_000).formattedIDR()) paid early into Travelling")
     }
 
     @MainActor
@@ -151,7 +151,7 @@ nonisolated final class PaidEarlyShiftTests: XCTestCase {
         let row = TransferRow(accountID: bca.persistentModelID, accountName: "BCA", planned: 0,
                               adjustment: 0, allAuto: false,
                               paidEarly: 1_500_000, paidEarlyEnvelopes: ["Travelling", "Kado"])
-        XCTAssertEqual(row.paidEarlyText, "Rp\u{00A0}1.500.000 paid early")
+        XCTAssertEqual(row.paidEarlyText, "\(Decimal(1_500_000).formattedIDR()) paid early")
     }
 
     @MainActor

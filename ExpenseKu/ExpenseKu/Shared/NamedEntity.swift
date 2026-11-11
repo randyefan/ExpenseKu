@@ -20,20 +20,20 @@ protocol NamedEntity: PersistentModel {
 }
 
 extension Category: NamedEntity {
-    nonisolated static var noun: String { "category" }
+    nonisolated static var noun: String { AppLocalization.string(.categoryNoun) }
 }
 
 extension Person: NamedEntity {
-    nonisolated static var noun: String { "person" }
+    nonisolated static var noun: String { AppLocalization.string(.personNoun) }
 }
 
 extension Account: NamedEntity {
-    nonisolated static var noun: String { "account" }
+    nonisolated static var noun: String { AppLocalization.string(.accountNoun) }
 }
 
 // The owner reads "group" everywhere; only the type avoids shadowing SwiftUI.Group.
 extension CategoryGroup: NamedEntity {
-    nonisolated static var noun: String { "group" }
+    nonisolated static var noun: String { AppLocalization.string(.groupNoun) }
 }
 
 nonisolated enum NameKey {

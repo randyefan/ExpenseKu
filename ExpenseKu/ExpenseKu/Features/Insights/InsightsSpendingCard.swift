@@ -18,7 +18,7 @@ struct InsightsSpendingCard: View {
 
     var body: some View {
         VStack(spacing: 2) {
-            SectionHeaderText("Spending")
+            SectionHeaderText(.spending)
             MoneyText(split.total, font: .dsHero, color: Theme.text, rolls: true)
             if let ofTotal {
                 OfTotalText(total: ofTotal)

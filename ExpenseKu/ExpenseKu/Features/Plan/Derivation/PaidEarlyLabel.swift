@@ -18,7 +18,9 @@ nonisolated struct PaidEarlyLabel: Equatable {
         let last = target.lastDay(calendar: calendar)
         let months = calendar.dateComponents([.month], from: cycle.lastDay(calendar: calendar), to: last).month ?? 0
         let showsYear = months >= 12
-        short = last.formatted(showsYear ? .dateTime.month(.abbreviated).year() : .dateTime.month(.abbreviated))
-        long = last.formatted(showsYear ? .dateTime.month(.wide).year() : .dateTime.month(.wide))
+        let shortFormat = showsYear ? Date.FormatStyle.dateTime.month(.abbreviated).year() : .dateTime.month(.abbreviated)
+        let longFormat = showsYear ? Date.FormatStyle.dateTime.month(.wide).year() : .dateTime.month(.wide)
+        short = last.formatted(shortFormat.locale(AppLocalization.locale))
+        long = last.formatted(longFormat.locale(AppLocalization.locale))
     }
 }

@@ -22,7 +22,7 @@ struct EnvelopeNoteCard: View {
                     .fill(Theme.hairline)
                     .frame(height: 1)
             }
-            TextField("Add a note…", text: $note, axis: .vertical)
+            TextField(AppLocalization.string(.addANote), text: $note, axis: .vertical)
                 .font(.dsBody)
                 .focused(notesFocused)
                 .padding(.vertical, 14)

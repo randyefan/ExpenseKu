@@ -40,25 +40,25 @@ struct ManageAccountsView: View {
         .readableListMargins()
         .scrollContentBackground(.hidden)
         .background(Theme.bg)
-        .navigationTitle("Accounts")
+        .navigationTitle(AppLocalization.string(.accounts))
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button { editor = EditorTarget(account: nil) } label: {
-                    Label("Add Account", systemImage: "plus")
+                    Label(AppLocalization.string(.addAccount), systemImage: "plus")
                 }
                 .accentCircleButton()
             }
         }
         .overlay {
             if accounts.isEmpty {
-                EmptyStateView(title: "No Accounts", systemImage: "creditcard",
-                    message: "Add one with the + button.")
+                EmptyStateView(title: AppLocalization.string(.noAccounts), systemImage: "creditcard",
+                    message: AppLocalization.string(.addOneWithTheButton))
             }
         }
         .sheet(item: $editor) { target in
             NavigationStack {
                 AppearanceEntityEditor(
-                    title: target.account == nil ? "New Account" : "Edit Account",
+                    title: target.account == nil ? AppLocalization.string(.newAccount) : AppLocalization.string(.editAccount),
                     editing: target.account,
                     makeNew: { Account() }
                 )

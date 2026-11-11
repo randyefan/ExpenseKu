@@ -33,10 +33,10 @@ nonisolated enum AccountGroupState: Equatable {
 
     func text(accountName: String) -> String {
         switch self {
-        case .nothingIn: "nothing in yet"
-        case .toGo(let amount): "\(amount.formattedIDR()) to go"
+        case .nothingIn: AppLocalization.string(.nothingInYet)
+        case .toGo(let amount): AppLocalization.string(.toGo(amount.formattedIDR()))
         case .allIn: PlanCopy.allIn(accountName)
-        case .allPaid: "all paid"
+        case .allPaid: AppLocalization.string(.allPaid)
         }
     }
 }

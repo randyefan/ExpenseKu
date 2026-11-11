@@ -126,7 +126,7 @@ struct NameEditorView<T: NamedEntity, Stage: View, Workbench: View>: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") { dismiss() }
+                Button(AppLocalization.string(.cancel)) { dismiss() }
             }
         }
     }
@@ -160,7 +160,7 @@ struct NameEditorView<T: NamedEntity, Stage: View, Workbench: View>: View {
     /// on this screen the keyboard's arrival is acknowledged.
     private var nameField: some View {
         VStack(alignment: .leading, spacing: 8) {
-            SectionHeaderText("Name")
+            SectionHeaderText(.name)
 
             HStack(spacing: 8) {
                 TextField(T.noun.capitalized, text: $name)
@@ -187,7 +187,7 @@ struct NameEditorView<T: NamedEntity, Stage: View, Workbench: View>: View {
                     }
                     .buttonStyle(.plain)
                     .motionTransition(.opacity)
-                    .accessibilityLabel("Clear name")
+                    .accessibilityLabel(AppLocalization.string(.clearName))
                 }
             }
 
@@ -210,7 +210,7 @@ struct NameEditorView<T: NamedEntity, Stage: View, Workbench: View>: View {
 
     private var savePill: some View {
         Button(action: attemptSave) {
-            Text("Save")
+            Text(appLocalized: .save)
                 .font(.dsHeadline).fontWeight(.semibold)
                 .foregroundStyle(canSave ? Theme.onTint : Theme.textSecondary)
                 .frame(maxWidth: .infinity)

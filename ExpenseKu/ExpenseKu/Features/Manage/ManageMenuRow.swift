@@ -12,8 +12,9 @@ import SwiftUI
 struct ManageMenuRow: View {
     let title: String
     let systemImage: String
-    let subtitle: LocalizedStringKey
+    let subtitle: String
     var tint: Color? = nil
+    var accessory: String = "chevron.right"
 
     var body: some View {
         HStack(spacing: 12) {
@@ -31,7 +32,7 @@ struct ManageMenuRow: View {
                     .foregroundStyle(Theme.textSecondary)
             }
             Spacer()
-            Image(systemName: "chevron.right")
+            Image(systemName: accessory)
                 .font(.dsSubhead.weight(.semibold))
                 .foregroundStyle(Theme.textSecondary)
         }
@@ -43,10 +44,10 @@ struct ManageMenuRow: View {
 #Preview {
     VStack(spacing: 0) {
         ManageMenuRow(title: "Categories", systemImage: "folder.fill",
-                      subtitle: "^[3 category](inflect: true)")
+                      subtitle: AppLocalization.string(.categoryCount(3)))
         Divider().overlay(Theme.hairline)
         ManageMenuRow(title: "People", systemImage: "person.2.fill",
-                      subtitle: "^[1 person](inflect: true)")
+                      subtitle: AppLocalization.string(.personCount(1)))
     }
     .cardStyle()
     .padding()

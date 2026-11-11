@@ -216,12 +216,12 @@ struct ExpenseEditorView: View {
             .fullScreenCover(isPresented: $viewingReceipt) {
                 if let viewableReceipt { ReceiptImageViewer(data: viewableReceipt) }
             }
-            .alert("Looks already logged", isPresented: lookAlikeShown, presenting: lookAlike) { match in
-                Button(receiptRun == nil ? "Don't fill" : "Discard receipt", role: .destructive) {
+            .alert(AppLocalization.string(.looksAlreadyLogged), isPresented: lookAlikeShown, presenting: lookAlike) { match in
+                Button(receiptRun == nil ? AppLocalization.string(.donTFill) : AppLocalization.string(.discardReceipt), role: .destructive) {
                     lookAlike = nil
                     if receiptRun != nil { endRun(.discarded) }
                 }
-                Button(receiptRun == nil ? "Fill anyway" : "Log anyway", role: .cancel) {
+                Button(receiptRun == nil ? AppLocalization.string(.fillAnyway) : AppLocalization.string(.logAnyway), role: .cancel) {
                     lookAlike = nil
                     fill(match.reading, source: match.source, image: match.image)
                 }
@@ -229,11 +229,11 @@ struct ExpenseEditorView: View {
                 Text(match.description)
             }
             .confirmationDialog(receiptRun?.subtitle ?? "", isPresented: $showingRunCancel, titleVisibility: .visible) {
-                Button("Discard receipt", role: .destructive) { endRun(.discarded) }
-                Button("Later") { endRun(.later) }
-                Button("Keep editing", role: .cancel) {}
+                Button(AppLocalization.string(.discardReceipt), role: .destructive) { endRun(.discarded) }
+                Button(AppLocalization.string(.later)) { endRun(.later) }
+                Button(AppLocalization.string(.keepEditing), role: .cancel) {}
             } message: {
-                Text("Discard this receipt, or keep it in the inbox for later?")
+                Text(appLocalized: .discardThisReceiptOrKeepItInTheInboxForLater)
             }
     }
 
@@ -360,7 +360,7 @@ struct ExpenseEditorView: View {
         .readableColumn()
         .background(Theme.bg)
         .presentationSizing(.page)
-        .navigationTitle(editing == nil ? "Add Expense" : "Edit Expense")
+        .navigationTitle(editing == nil ? AppLocalization.string(.addExpense) : AppLocalization.string(.editExpense))
         .navigationSubtitle(receiptRun?.subtitle ?? "")
         .navigationBarTitleDisplayMode(.inline)
         .animation(.easeInOut(duration: 0.2), value: notesFocused)
@@ -373,7 +373,7 @@ struct ExpenseEditorView: View {
         }
         .sheet(isPresented: $showingNewAccount) {
             NavigationStack {
-                AppearanceEntityEditor(title: "New Account", makeNew: { Account() }) { created in
+                AppearanceEntityEditor(title: AppLocalization.string(.newAccount), makeNew: { Account() }) { created in
                     account = created
                 }
             }
@@ -382,7 +382,7 @@ struct ExpenseEditorView: View {
         .toolbar {
             if viewableReceipt != nil, readingTask == nil {
                 ToolbarItem(placement: .primaryAction) {
-                    Button("View receipt", systemImage: "doc.text.image") { viewingReceipt = true }
+                    Button(AppLocalization.string(.viewReceipt), systemImage: "doc.text.image") { viewingReceipt = true }
                 }
                 ToolbarSpacer(.fixed, placement: .primaryAction)
             }
@@ -396,7 +396,7 @@ struct ExpenseEditorView: View {
             }
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
-                Button("Done") { notesFocused = false }
+                Button(AppLocalization.string(.done)) { notesFocused = false }
             }
         }
     }

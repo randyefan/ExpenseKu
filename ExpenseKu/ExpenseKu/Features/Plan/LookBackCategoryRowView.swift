@@ -49,17 +49,17 @@ struct LookBackCategoryRowView: View {
                 LookBackActionPill(style: .done(mark.label))
             }
             .buttonStyle(.pressableCard)
-            .accessibilityLabel("Undo \(mark.caption(planMonth: planMonth))")
+            .accessibilityLabel(AppLocalization.string(.undo(mark.caption(planMonth: planMonth))))
         } else if row.canAdd {
             Menu {
                 Section(LookBackCopy.menuTitle(row.name, total: row.total, month: month)) {
                     Button { onNew(.envelope) } label: {
-                        Text("New envelope")
+                        Text(appLocalized: .newEnvelope)
                         Text(row.total.formattedIDR())
                         Image(systemName: "tray")
                     }
                     Button { onNew(.fixed) } label: {
-                        Text("New fixed item")
+                        Text(appLocalized: .newFixedItem)
                         Text(row.total.formattedIDR())
                         Image(systemName: "circle")
                     }
@@ -67,14 +67,14 @@ struct LookBackCategoryRowView: View {
                 if !envelopes.isEmpty {
                     Section(LookBackCopy.addToEnvelope) {
                         ForEach(envelopes, id: \.persistentModelID) { envelope in
-                            Button("Add to \(envelope.name)", systemImage: "plus") { onAddTo(envelope) }
+                            Button(AppLocalization.string(.addTo(envelope.name)), systemImage: "plus") { onAddTo(envelope) }
                         }
                     }
                 }
             } label: {
                 LookBackActionPill(style: .addMenu)
             }
-            .accessibilityLabel("Add \(row.name)")
+            .accessibilityLabel(AppLocalization.string(.addNamedItem(row.name)))
         }
     }
 }

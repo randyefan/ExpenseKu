@@ -27,7 +27,7 @@ struct ExpenseRow: View {
     @Environment(\.showsPlanOriginTags) private var showsPlanOriginTags
     @Environment(\.expenseRowAccountsLead) private var accountsLead
 
-    private var categoryName: String { expense.category?.name ?? "Uncategorized" }
+    private var categoryName: String { expense.category?.name ?? AppLocalization.string(.uncategorized) }
 
     private var peopleNames: String { CompanionNames.phrase(expense.people) }
 

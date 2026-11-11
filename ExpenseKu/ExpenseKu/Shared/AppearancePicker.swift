@@ -43,40 +43,40 @@ nonisolated enum AppearancePalette {
     /// A curated glyph set covering the common spend categories and payment
     /// sources, grouped so a long catalogue stays scannable. Superset of
     /// `CategoryIcon.symbol(for:)`'s table.
-    static let groups: [IconGroup] = [
-        .init(title: "Food & drink", symbols: [
+    static var groups: [IconGroup] { [
+        .init(title: AppLocalization.string(.foodDrink), symbols: [
             "fork.knife", "cup.and.saucer.fill", "takeoutbag.and.cup.and.straw.fill",
             "wineglass.fill", "birthday.cake.fill", "carrot.fill",
         ]),
-        .init(title: "Shopping", symbols: [
+        .init(title: AppLocalization.string(.shopping), symbols: [
             "bag.fill", "cart.fill", "tshirt.fill",
             "gift.fill", "tag.fill", "shippingbox.fill",
         ]),
-        .init(title: "Getting around", symbols: [
+        .init(title: AppLocalization.string(.gettingAround), symbols: [
             "car.fill", "fuelpump.fill", "tram.fill",
             "airplane", "bicycle", "bus.fill",
         ]),
-        .init(title: "Home & bills", symbols: [
+        .init(title: AppLocalization.string(.homeBills), symbols: [
             "house.fill", "bolt.fill", "wifi",
             "drop.fill", "flame.fill", "trash.fill",
         ]),
-        .init(title: "Health", symbols: [
+        .init(title: AppLocalization.string(.health), symbols: [
             "cross.case.fill", "heart.fill", "dumbbell.fill",
             "pills.fill", "pawprint.fill", "leaf.fill",
         ]),
-        .init(title: "Fun", symbols: [
+        .init(title: AppLocalization.string(.fun), symbols: [
             "gamecontroller.fill", "film.fill", "book.fill",
             "music.note", "ticket.fill", "camera.fill",
         ]),
-        .init(title: "Money", symbols: [
+        .init(title: AppLocalization.string(.money), symbols: [
             "creditcard.fill", "banknote.fill", "wallet.pass.fill",
             "building.columns.fill", "chart.line.uptrend.xyaxis", "arrow.left.arrow.right",
         ]),
-        .init(title: "Work & study", symbols: [
+        .init(title: AppLocalization.string(.workStudy), symbols: [
             "briefcase.fill", "graduationcap.fill", "phone.fill",
             "desktopcomputer", "pencil.and.ruler.fill", "envelope.fill",
         ]),
-    ]
+    ] }
 
     static let symbols: [String] = groups.flatMap(\.symbols)
 
@@ -204,7 +204,7 @@ struct ColorWorkbench: View {
                 .overlay(selectionRing(colorHex == nil))
         }
         .buttonStyle(.pressableCard)
-        .accessibilityLabel("Automatic colour")
+        .accessibilityLabel(AppLocalization.string(.automaticColour))
         .accessibilityAddTraits(colorHex == nil ? .isSelected : [])
     }
 
@@ -219,7 +219,7 @@ struct ColorWorkbench: View {
                 .overlay(selectionRing(isSelected))
         }
         .buttonStyle(.pressableCard)
-        .accessibilityLabel("Colour \(hex)")
+        .accessibilityLabel(AppLocalization.string(.colourDescription(hex)))
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
@@ -288,8 +288,8 @@ struct AppearanceWorkbench: View {
             SegmentedToggle(
                 selection: lensBinding,
                 segments: [
-                    .init(.color, title: "Colour", systemImage: "paintpalette.fill"),
-                    .init(.icon, title: "Icon", systemImage: "square.grid.2x2.fill"),
+                    .init(.color, title: AppLocalization.string(.colour), systemImage: "paintpalette.fill"),
+                    .init(.icon, title: AppLocalization.string(.icon), systemImage: "square.grid.2x2.fill"),
                 ]
             )
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -317,7 +317,7 @@ struct AppearanceWorkbench: View {
                     Section {
                         autoIconCell
                     } header: {
-                        SectionHeaderText("From the name")
+                        SectionHeaderText(.fromTheName)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
@@ -325,7 +325,7 @@ struct AppearanceWorkbench: View {
                     Section {
                         ForEach(matchingLogos) { bankCell($0) }
                     } header: {
-                        SectionHeaderText("Banks")
+                        SectionHeaderText(.banks)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.top, 4)
                     }
@@ -346,7 +346,7 @@ struct AppearanceWorkbench: View {
             .motion(Motion.snap, value: query)
 
             if noMatches {
-                Text("No icon matches “\(query)”.")
+                Text(appLocalized: .noIconMatches(query))
                     .font(.dsSubhead)
                     .foregroundStyle(Theme.textSecondary)
                     .frame(maxWidth: .infinity, alignment: .center)
@@ -366,7 +366,7 @@ struct AppearanceWorkbench: View {
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundStyle(Theme.textSecondary)
 
-            TextField("Search icons", text: $query)
+            TextField(AppLocalization.string(.searchIcons), text: $query)
                 .font(.dsBody)
                 .foregroundStyle(Theme.text)
                 .focused($searchFocused)
@@ -384,7 +384,7 @@ struct AppearanceWorkbench: View {
                 }
                 .buttonStyle(.plain)
                 .motionTransition(.opacity)
-                .accessibilityLabel("Clear icon search")
+                .accessibilityLabel(AppLocalization.string(.clearIconSearch))
             }
         }
         .padding(.horizontal, 12)
@@ -450,7 +450,7 @@ struct AppearanceWorkbench: View {
                 }
         }
         .buttonStyle(.pressableCard)
-        .accessibilityLabel("Automatic icon")
+        .accessibilityLabel(AppLocalization.string(.automaticIconLabel))
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 

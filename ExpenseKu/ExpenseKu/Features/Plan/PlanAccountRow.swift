@@ -14,8 +14,8 @@ struct PlanAccountRow: View {
         NavigationLink {
             AccountPicker(selection: $account)
         } label: {
-            LabeledContent("Account") {
-                Text(account?.name ?? "None")
+            LabeledContent(AppLocalization.string(.account)) {
+                Text(account?.name ?? AppLocalization.string(.none))
                     .foregroundStyle(account == nil ? Theme.textSecondary : Theme.text)
             }
             .font(.dsBody)

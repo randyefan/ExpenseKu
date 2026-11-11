@@ -17,7 +17,7 @@ struct LookBackRowBody: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(name.isEmpty ? "Untitled" : name)
+            Text(name.isEmpty ? AppLocalization.string(.untitled) : name)
                 .font(.dsBody).fontWeight(.semibold)
                 .foregroundStyle(isDimmed ? Theme.textSecondary.opacity(0.6) : Theme.text)
                 .lineLimit(1)

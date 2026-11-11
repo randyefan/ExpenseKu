@@ -19,7 +19,7 @@ nonisolated struct InsightsWindow: Hashable {
     var cycle: PayCycle?
 
     static func chipLabel(for preset: DateRangeFilter) -> String {
-        preset == .payPeriod ? "Pay period" : preset.label
+        preset == .payPeriod ? AppLocalization.string(.payPeriod) : preset.label
     }
 
     func payCycle(now: Date = .now, payday: Int, calendar: Calendar = .current) -> PayCycle {
@@ -51,6 +51,6 @@ nonisolated struct InsightsWindow: Hashable {
     /// The window worded to sit inside a sentence.
     func phrase(now: Date = .now, payday: Int, calendar: Calendar = .current) -> String {
         guard preset == .payPeriod else { return preset.phrase }
-        return "in \(label(now: now, payday: payday, calendar: calendar))"
+        return AppLocalization.string(.inAccountCaption(String(label(now: now, payday: payday, calendar: calendar))))
     }
 }

@@ -21,23 +21,23 @@ struct ExpenseSearchFilters: View {
         ScrollView(.horizontal) {
             HStack(spacing: 8) {
                 Menu {
-                    Button("All") { categoryName = nil }
+                    Button(AppLocalization.string(.allItems)) { categoryName = nil }
                     Divider()
                     ForEach(categoryNames, id: \.self) { name in
                         Button(name) { categoryName = name }
                     }
                 } label: {
-                    FilterChip(label: "Category", value: categoryName ?? "All")
+                    FilterChip(label: AppLocalization.string(.category), value: categoryName ?? AppLocalization.string(.allItems))
                 }
 
                 Menu {
-                    Picker("Period", selection: $range) {
+                    Picker(AppLocalization.string(.period), selection: $range) {
                         ForEach(DateRangeFilter.allCases) { filter in
                             Text(filter.label).tag(filter)
                         }
                     }
                 } label: {
-                    FilterChip(label: "Period", value: range.label)
+                    FilterChip(label: AppLocalization.string(.period), value: range.label)
                 }
             }
             .padding(.horizontal, Metric.screenPadding)

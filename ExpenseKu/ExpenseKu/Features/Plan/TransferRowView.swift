@@ -55,7 +55,7 @@ struct TransferRowView: View {
         .buttonStyle(.pressableRow)
         .padding(.vertical, 8)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Transfer to \(row.accountName)")
+        .accessibilityLabel(AppLocalization.string(.transferTo(row.accountName)))
         .accessibilityValue("\(row.fillDescription), \(row.transfer.formattedIDR())")
         .accessibilityAddTraits(row.isAllIn ? [.isButton, .isSelected] : .isButton)
     }

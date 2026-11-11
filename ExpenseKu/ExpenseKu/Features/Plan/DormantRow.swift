@@ -25,7 +25,7 @@ struct DormantRow: View {
                 .frame(width: 30)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(item.name.isEmpty ? "Untitled" : item.name)
+                Text(item.name.isEmpty ? AppLocalization.string(.untitled) : item.name)
                     .font(.dsBody)
                     .foregroundStyle(Theme.textSecondary)
                     .lineLimit(1)
@@ -37,14 +37,14 @@ struct DormantRow: View {
 
             Spacer(minLength: 8)
 
-            Button("Activate", action: onActivate)
+            Button(AppLocalization.string(.activate), action: onActivate)
                 .font(.dsCaption).bold()
                 .foregroundStyle(Theme.accentText)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 6)
                 .background(Theme.accent.opacity(Theme.tintFillOpacity), in: .capsule)
                 .buttonStyle(.pressableCard)
-                .accessibilityLabel("Activate \(item.name)")
+                .accessibilityLabel(AppLocalization.string(.activateItem(item.name)))
         }
         .padding(.vertical, 8)
     }
@@ -52,6 +52,6 @@ struct DormantRow: View {
     private var subtitle: String {
         guard let last = item.lastUsedCycleStart else { return item.amount.formattedIDR() }
         let cycle = PayCycle.containing(last, payday: payday, calendar: calendar)
-        return "\(item.amount.formattedIDR()) · last used \(cycle.title(calendar: calendar))"
+        return AppLocalization.string(.lastUsed(item.amount.formattedIDR(), cycle.title(calendar: calendar)))
     }
 }

@@ -20,7 +20,7 @@ struct EnvelopeFormRow: View {
             EnvelopePicker(selection: field.choice, offer: field.offer, category: category)
         } label: {
             HStack(spacing: 8) {
-                Text("Envelope")
+                Text(appLocalized: .envelopeKind)
                     .foregroundStyle(Theme.text)
                     .layoutPriority(1)
                 Spacer(minLength: 8)
@@ -43,7 +43,7 @@ struct EnvelopeFormRow: View {
             .font(.dsBody)
             .contentShape(.rect)
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel("Envelope")
+            .accessibilityLabel(AppLocalization.string(.envelopeKind))
             .accessibilityValue([field.value.name, field.value.suffix].compactMap { $0 }.joined(separator: " "))
         }
         .buttonStyle(.plain)

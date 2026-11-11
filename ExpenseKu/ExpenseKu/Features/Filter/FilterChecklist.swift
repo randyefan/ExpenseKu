@@ -30,7 +30,7 @@ struct FilterChecklist: View {
                 ForEach(empty) { row($0) }
             }
             Section {
-                Button("Clear \(dimension.title)") { filter.clear(dimension) }
+                Button(AppLocalization.string(.clear(dimension.title))) { filter.clear(dimension) }
                     .font(.dsBody.weight(.semibold))
                     .foregroundStyle(Theme.accent)
                     .frame(maxWidth: .infinity)
@@ -45,7 +45,7 @@ struct FilterChecklist: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                Button("Done", action: onDone)
+                Button(AppLocalization.string(.done), action: onDone)
             }
         }
         .sensoryFeedback(.selection, trigger: filter)

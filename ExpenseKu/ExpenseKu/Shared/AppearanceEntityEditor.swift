@@ -104,7 +104,7 @@ struct AppearanceEntityEditor<T: AppearanceEntity, Extras: View>: View {
                     mark: mark(forName: name),
                     tint: tint(forName: name),
                     name: name,
-                    placeholder: "New \(T.noun.capitalized)",
+                    placeholder: AppLocalization.string(.new(T.noun.capitalized)),
                     caption: caption,
                     onShuffle: shuffle
                 )
@@ -144,8 +144,8 @@ struct AppearanceEntityEditor<T: AppearanceEntity, Extras: View>: View {
     }
 
     private var caption: String {
-        let colour = colorHex == nil ? "Automatic colour" : "Custom colour"
-        let icon = brandID != nil ? "bank logo" : iconName == nil ? "automatic icon" : "custom icon"
+        let colour = colorHex == nil ? AppLocalization.string(.automaticColour) : AppLocalization.string(.customColour)
+        let icon = brandID != nil ? AppLocalization.string(.bankLogo) : iconName == nil ? AppLocalization.string(.automaticIcon) : AppLocalization.string(.customIcon)
         return "\(T.noun.capitalized) · \(colour), \(icon)"
     }
 

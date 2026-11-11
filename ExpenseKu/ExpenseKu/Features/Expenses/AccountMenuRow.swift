@@ -25,7 +25,7 @@ struct AccountMenuRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Text("Account")
+            Text(appLocalized: .account)
                 .textCase(.uppercase)
                 .font(.dsCaption).fontWeight(.semibold)
                 .tracking(0.5)
@@ -33,25 +33,25 @@ struct AccountMenuRow: View {
                 .accessibilityHidden(true)
 
             Menu {
-                Picker("Account", selection: selectedID) {
+                Picker(AppLocalization.string(.account), selection: selectedID) {
                     ForEach(accounts) { account in
                         Label(account.name, systemImage: account.chipSymbol)
                             .tag(Optional(account.persistentModelID))
                     }
-                    Label("None", systemImage: "nosign")
+                    Label(AppLocalization.string(.none), systemImage: "nosign")
                         .tag(PersistentIdentifier?.none)
                 }
                 .pickerStyle(.inline)
                 Divider()
-                Button("New Account…", systemImage: "plus", action: onNewAccount)
+                Button(AppLocalization.string(.newAccountMenuAction), systemImage: "plus", action: onNewAccount)
             } label: {
                 HStack(spacing: 8) {
                     if let selection {
                         AccountIcon(account: selection, size: 28)
                     } else {
-                        CategoryIcon(name: "None", systemImage: "nosign", size: 28)
+                        CategoryIcon(name: AppLocalization.string(.none), systemImage: "nosign", size: 28)
                     }
-                    Text(selection?.name ?? "None")
+                    Text(selection?.name ?? AppLocalization.string(.none))
                         .font(.dsBody).fontWeight(.semibold)
                         .foregroundStyle(selection == nil ? Theme.textSecondary : Theme.text)
                         .lineLimit(1)
@@ -69,8 +69,8 @@ struct AccountMenuRow: View {
                 }
                 .contentShape(.capsule)
             }
-            .accessibilityLabel("Account")
-            .accessibilityValue(selection?.name ?? "None")
+            .accessibilityLabel(AppLocalization.string(.account))
+            .accessibilityValue(selection?.name ?? AppLocalization.string(.none))
         }
         .padding(.leading, Metric.screenPadding + 4)
         .padding(.trailing, Metric.screenPadding)

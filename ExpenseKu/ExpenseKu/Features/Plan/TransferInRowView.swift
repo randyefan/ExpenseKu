@@ -20,7 +20,7 @@ struct TransferInRowView: View {
             Menu {
                 Button { onUndo(entry) } label: {
                     Text(entry.title)
-                    Text("Back to To send")
+                    Text(appLocalized: .backToToSend)
                     Image(systemName: entry.systemImage)
                 }
             } label: {

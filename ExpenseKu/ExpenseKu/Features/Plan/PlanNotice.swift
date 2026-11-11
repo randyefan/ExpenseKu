@@ -94,6 +94,6 @@ struct PlanNotice: View {
     }
 
     private var hint: String {
-        kind == .funded ? "Shows only these items" : "Opens the posted expenses"
+        kind == .funded ? AppLocalization.string(.showsOnlyTheseItems) : AppLocalization.string(.opensThePostedExpenses)
     }
 }

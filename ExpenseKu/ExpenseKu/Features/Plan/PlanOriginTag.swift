@@ -58,7 +58,7 @@ struct PlanOriginTag: View {
 
     private var title: String {
         switch origin {
-        case .fixed: "Plan"
+        case .fixed: AppLocalization.string(.plan)
         case .envelope(let name): name
         case .paidEarly(let name, _): name
         }
@@ -74,9 +74,9 @@ struct PlanOriginTag: View {
 
     private var accessibilityTitle: String {
         switch origin {
-        case .fixed: "From plan"
-        case .envelope(let name): "Envelope \(name)"
-        case .paidEarly(let name, let label): "Paid early, \(name), \(label.long)"
+        case .fixed: AppLocalization.string(.fromPlan)
+        case .envelope(let name): AppLocalization.string(.envelopeDescription(name))
+        case .paidEarly(let name, let label): AppLocalization.string(.paidEarlyDescription(name, label.long))
         }
     }
 }

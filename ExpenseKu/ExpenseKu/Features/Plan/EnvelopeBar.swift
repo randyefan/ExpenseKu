@@ -53,7 +53,7 @@ struct EnvelopeBar: View {
             }
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Spent \(progress.spent.formattedIDR()) of \(progress.planned.formattedIDR())")
+        .accessibilityLabel(AppLocalization.string(.spentOf(progress.spent.formattedIDR(), progress.planned.formattedIDR())))
         .accessibilityValue(progress.remainderText)
     }
 

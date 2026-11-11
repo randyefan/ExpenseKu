@@ -19,7 +19,7 @@ struct DueDayStepper: View {
         HStack(spacing: 4) {
             stepButton("minus", enabled: day != nil) { step(-1) }
 
-            Text(day.map(String.init) ?? "None")
+            Text(day.map(String.init) ?? AppLocalization.string(.none))
                 .font(.dsBody).bold()
                 .monospacedDigit()
                 .foregroundStyle(day == nil ? Theme.textSecondary : Theme.text)
@@ -30,8 +30,8 @@ struct DueDayStepper: View {
         .padding(4)
         .background(Theme.textSecondary.opacity(0.1), in: .capsule)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Due day")
-        .accessibilityValue(day.map { "Day \($0) of the month" } ?? "None")
+        .accessibilityLabel(AppLocalization.string(.dueDay))
+        .accessibilityValue(day.map { AppLocalization.string(.dayOfTheMonth(String($0))) } ?? AppLocalization.string(.none))
         .accessibilityAdjustableAction { direction in
             switch direction {
             case .increment: step(1)

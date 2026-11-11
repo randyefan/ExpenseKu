@@ -15,6 +15,7 @@ final class ShareViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        LanguageSettings.shared.refresh()
         view.backgroundColor = .clear
         show(.saving)
         let items = extensionContext?.inputItems as? [NSExtensionItem] ?? []

@@ -23,22 +23,22 @@ struct ExpenseRowMenu: ViewModifier {
     func body(content: Content) -> some View {
         content.contextMenu {
             if let startSelecting = actions.startSelecting, ExpenseSelection.isSelectable(expense) {
-                Button("Select", systemImage: "checkmark.circle") { startSelecting(expense) }
+                Button(AppLocalization.string(.select), systemImage: "checkmark.circle") { startSelecting(expense) }
             }
             if let move = actions.move, let cycle = planOrigins.moveTarget(for: expense, now: .now) {
-                Button("Move to envelope…", systemImage: "tray") {
+                Button(AppLocalization.string(.moveToEnvelope), systemImage: "tray") {
                     move(EnvelopeMoveRequest(expenses: [expense], cycle: cycle))
                 }
             }
             if expense.isReceiptToCheck {
-                Button("Mark as checked", systemImage: "checkmark.seal") {
+                Button(AppLocalization.string(.markAsChecked), systemImage: "checkmark.seal") {
                     expense.markReceiptChecked()
                     try? context.save()
                 }
             }
-            Button("Edit", systemImage: "pencil", action: onEdit)
+            Button(AppLocalization.string(.edit), systemImage: "pencil", action: onEdit)
             if let delete = actions.delete {
-                Button("Delete", systemImage: "trash", role: .destructive) { delete(expense) }
+                Button(AppLocalization.string(.delete), systemImage: "trash", role: .destructive) { delete(expense) }
             }
         }
     }

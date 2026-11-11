@@ -20,7 +20,7 @@ struct ReceiptSourceCard: View {
                 content(showsChevron: true)
             }
             .buttonStyle(.pressableCard)
-            .accessibilityHint("Opens Receipt reading")
+            .accessibilityHint(AppLocalization.string(.opensReceiptReading))
         } else {
             content(showsChevron: false)
         }

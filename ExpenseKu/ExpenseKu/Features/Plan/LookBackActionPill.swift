@@ -52,8 +52,8 @@ struct LookBackActionPill: View {
 
     private var title: String {
         switch style {
-        case .add, .addMenu: "Add"
-        case .wake: "Wake"
+        case .add, .addMenu: AppLocalization.string(.add)
+        case .wake: AppLocalization.string(.wake)
         case .done(let label): label
         }
     }

@@ -50,7 +50,7 @@ struct ReceiptImageViewer: View {
             .background(Color.black)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
+                    Button(AppLocalization.string(.done)) { dismiss() }
                 }
             }
         }

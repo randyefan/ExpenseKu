@@ -174,7 +174,7 @@ nonisolated final class SetAsideTests: XCTestCase {
         XCTAssertEqual(dec.totals.setAside.incoming, 21_000_000)
         XCTAssertEqual(dec.totals.sisa, 18_000_000 - 25_200_000 + 6_500_000 + 21_000_000)
         XCTAssertEqual(dec.envelope(for: s.jepang)?.ownShareCaption(cycle: december, calendar: calendar),
-                       "Rp\u{00A0}0 from December")
+                       "\(Decimal(0).formattedIDR()) from December")
         XCTAssertEqual(dec.transfers.first { $0.accountName == "Jago" }?.transfer, 0)
     }
 
@@ -201,11 +201,11 @@ nonisolated final class SetAsideTests: XCTestCase {
         let jepang = try XCTUnwrap(contents(s.dec, december).envelope(for: s.jepang))
 
         XCTAssertEqual(jepang.spent, 6_500_000, "the ticket is spent; the set-aside money is not")
-        XCTAssertEqual(jepang.remainderText, "Rp\u{00A0}13.500.000 left")
+        XCTAssertEqual(jepang.remainderText, "\(Decimal(13_500_000).formattedIDR()) left")
         XCTAssertEqual(jepang.fromEarlierCaption(payday: payday, calendar: calendar),
-                       "Rp\u{00A0}18.500.000 from earlier")
+                       "\(Decimal(18_500_000).formattedIDR()) from earlier")
         XCTAssertEqual(jepang.ownShareCaption(cycle: december, calendar: calendar),
-                       "Rp\u{00A0}1.500.000 from December")
+                       "\(Decimal(1_500_000).formattedIDR()) from December")
     }
 
     /// Paid early and set aside both from October name the month.
@@ -218,7 +218,7 @@ nonisolated final class SetAsideTests: XCTestCase {
         let jepang = try XCTUnwrap(contents(s.dec, december).envelope(for: s.jepang))
 
         XCTAssertEqual(jepang.fromEarlierCaption(payday: payday, calendar: calendar),
-                       "Rp\u{00A0}11.500.000 from October")
+                       "\(Decimal(11_500_000).formattedIDR()) from October")
     }
 
     /// Decision 7: ke Jago counts Jepang net, and says why on one line.
@@ -229,7 +229,7 @@ nonisolated final class SetAsideTests: XCTestCase {
         let jago = try XCTUnwrap(contents(s.dec, december).transfers.first { $0.accountName == "Jago" })
 
         XCTAssertEqual(jago.transfer, 1_500_000)
-        XCTAssertEqual(jago.creditText, "Rp\u{00A0}6.500.000 paid early · Rp\u{00A0}12.000.000 set aside")
+        XCTAssertEqual(jago.creditText, "\(Decimal(6_500_000).formattedIDR()) paid early · \(Decimal(12_000_000).formattedIDR()) set aside")
     }
 
     @MainActor
@@ -241,7 +241,7 @@ nonisolated final class SetAsideTests: XCTestCase {
         let jago = try XCTUnwrap(contents(s.dec, december).transfers.first { $0.accountName == "Jago" })
 
         XCTAssertEqual(jago.transfer, 8_000_000)
-        XCTAssertEqual(jago.creditText, "Rp\u{00A0}12.000.000 set aside into Jepang")
+        XCTAssertEqual(jago.creditText, "\(Decimal(12_000_000).formattedIDR()) set aside into Jepang")
     }
 
     /// October's own line joins its Account's transfer line in full.

@@ -63,7 +63,7 @@ struct PersonExpensesView: View {
             VStack(alignment: .leading, spacing: Metric.cardGap) {
                 if let person {
                     PersonSpendHeader(
-                        name: person.name,
+                        name: person.displayName,
                         colorHex: person.colorHex,
                         total: total,
                         count: listed.count,
@@ -78,7 +78,7 @@ struct PersonExpensesView: View {
                         .reveal(1)
 
                     if let filterSummary {
-                        Text("Also filtered by \(filterSummary)")
+                        Text(appLocalized: .alsoFilteredBy(filterSummary))
                             .font(.dsCaption)
                             .foregroundStyle(Theme.textSecondary)
                             .padding(.horizontal, Metric.screenPadding + 2)
@@ -87,10 +87,10 @@ struct PersonExpensesView: View {
 
                     if listed.isEmpty {
                         EmptyStateView(
-                            title: "Nothing in This Window",
+                            title: AppLocalization.string(.nothingInThisWindow),
                             systemImage: "person.2.slash",
                             message: Self.emptyMessage(
-                                name: person.name,
+                                name: person.displayName,
                                 filterSummary: filterSummary,
                                 range: range
                             )
@@ -107,7 +107,7 @@ struct PersonExpensesView: View {
                             .reveal(index + 3, trigger: range)
                         }
 
-                        Text("Each shared expense credits \(person.name) the full amount.")
+                        Text(appLocalized: .eachSharedExpenseCreditsTheFullAmount(person.displayName))
                             .font(.dsCaption)
                             .foregroundStyle(Theme.textSecondary)
                             .multilineTextAlignment(.center)
@@ -117,9 +117,9 @@ struct PersonExpensesView: View {
                     }
                 } else {
                     EmptyStateView(
-                        title: "Person Removed",
+                        title: AppLocalization.string(.personRemoved),
                         systemImage: "person.slash",
-                        message: "This person was deleted, so there is nothing left to show here."
+                        message: AppLocalization.string(.thisPersonWasDeletedSoThereIsNothingLeftToShow)
                     )
                     .frame(minHeight: 320)
                 }
@@ -138,7 +138,7 @@ struct PersonExpensesView: View {
         ))
         .sheet(item: $moveRequest) { EnvelopeMoveSheet(request: $0).presentationBackground(Theme.bg) }
         .background(Theme.bg)
-        .navigationTitle(person?.name ?? "Person")
+        .navigationTitle(person?.displayName ?? AppLocalization.string(.person))
         .navigationBarTitleDisplayMode(.inline)
         .growsOnAppear(growth, trigger: range)
         .sensoryFeedback(.selection, trigger: range)
@@ -166,8 +166,8 @@ struct PersonExpensesView: View {
 
     static func emptyMessage(name: String, filterSummary: String?, range: DateRangeFilter) -> String {
         if let filterSummary {
-            return "\(name) has no expenses matching \(filterSummary) \(range.phrase)."
+            return AppLocalization.string(.hasNoExpensesMatching(name, filterSummary, range.phrase))
         }
-        return "\(name) has no expenses \(range.phrase)."
+        return AppLocalization.string(.personEmptyExpenses(name, range.phrase))
     }
 }

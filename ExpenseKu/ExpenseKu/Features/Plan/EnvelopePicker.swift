@@ -34,6 +34,6 @@ struct EnvelopePicker: View {
             selection = choice
             dismiss()
         }
-        .navigationTitle("Envelope")
+        .navigationTitle(AppLocalization.string(.envelopeKind))
     }
 }

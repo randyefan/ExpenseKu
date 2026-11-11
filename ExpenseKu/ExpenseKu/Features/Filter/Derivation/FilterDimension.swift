@@ -22,19 +22,19 @@ nonisolated enum FilterDimension: Int, CaseIterable, Hashable, Comparable {
 
     var title: String {
         switch self {
-        case .category: "Category"
-        case .group: "Group"
-        case .account: "Account"
-        case .person: "Person"
+        case .category: AppLocalization.string(.category)
+        case .group: AppLocalization.string(.group)
+        case .account: AppLocalization.string(.account)
+        case .person: AppLocalization.string(.person)
         }
     }
 
     var emptyName: String {
         switch self {
-        case .category: "Uncategorized"
-        case .group: "No group"
-        case .account: "Unassigned"
-        case .person: "No one"
+        case .category: AppLocalization.string(.uncategorized)
+        case .group: AppLocalization.string(.noGroup)
+        case .account: AppLocalization.string(.unassigned)
+        case .person: AppLocalization.string(.noOne)
         }
     }
 

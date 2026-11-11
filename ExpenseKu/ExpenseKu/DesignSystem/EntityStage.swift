@@ -68,8 +68,8 @@ struct EntityStage: View {
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(displayName)
-        .accessibilityHint(showsContext ? "Showing how it looks in a list. Double tap to flip back."
-                                        : "Double tap to see how it looks in a list.")
+        .accessibilityHint(showsContext ? AppLocalization.string(.showingHowItLooksInAListDoubleTapToFlip)
+                                        : AppLocalization.string(.doubleTapToSeeHowItLooksInAList))
         .accessibilityAddTraits(.isButton)
     }
 
@@ -108,7 +108,7 @@ struct EntityStage: View {
 
     private var contextFace: some View {
         VStack(spacing: 12) {
-            Text("In your ledger")
+            Text(appLocalized: .inYourLedger)
                 .font(.dsCaption).fontWeight(.semibold)
                 .foregroundStyle(Theme.textSecondary)
                 .tracking(0.5)
@@ -125,7 +125,7 @@ struct EntityStage: View {
                         .font(.dsBody).fontWeight(.semibold)
                         .foregroundStyle(Theme.text)
                         .lineLimit(1)
-                    Text("Today")
+                    Text(appLocalized: .today)
                         .font(.dsCaption)
                         .foregroundStyle(Theme.textSecondary)
                 }
@@ -141,7 +141,7 @@ struct EntityStage: View {
                     .fill(Theme.surface)
             }
 
-            Text("Tap to flip back")
+            Text(appLocalized: .tapToFlipBack)
                 .font(.dsCaption)
                 .foregroundStyle(Theme.textSecondary.opacity(0.7))
         }
@@ -186,7 +186,7 @@ struct EntityStage: View {
             }
             .buttonStyle(.pressableCard)
             .padding(10)
-            .accessibilityLabel("Shuffle appearance")
+            .accessibilityLabel(AppLocalization.string(.shuffleAppearance))
         }
     }
 

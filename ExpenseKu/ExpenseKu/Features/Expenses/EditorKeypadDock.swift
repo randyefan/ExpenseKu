@@ -11,7 +11,7 @@ import SwiftUI
 struct EditorKeypadDock: View {
     @Binding var expr: ExpressionEvaluator
     /// Passed through to the keypad's ✓ key — see `CalculatorKeypad.saveLabel`.
-    var saveLabel: String = "Save expense"
+    var saveLabel: String = AppLocalization.string(.saveExpense)
     let canSave: Bool
     let showsDelete: Bool
     let onSave: () -> Void
@@ -33,7 +33,7 @@ struct EditorKeypadDock: View {
             )
 
             if showsDelete {
-                Button("Delete Expense", role: .destructive, action: onDelete)
+                Button(AppLocalization.string(.deleteExpense), role: .destructive, action: onDelete)
                     .font(.dsSubhead)
                     .foregroundStyle(Theme.accent)
                     .padding(.top, 4)

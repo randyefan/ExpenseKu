@@ -10,7 +10,7 @@ import SwiftUI
 
 struct PaydayStepper: View {
     @Binding var payday: Int
-    var accessibilityTitle: String = "Monthly Start Date"
+    var accessibilityTitle: String = AppLocalization.string(.monthlyStartDate)
 
     var body: some View {
         HStack(spacing: 0) {
@@ -31,7 +31,7 @@ struct PaydayStepper: View {
         .background(Theme.textSecondary.opacity(0.1), in: Capsule())
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(accessibilityTitle)
-        .accessibilityValue("Day \(payday)")
+        .accessibilityValue(AppLocalization.string(.day(String(payday))))
         .accessibilityAdjustableAction { direction in
             switch direction {
             case .increment: payday = min(Payday.range.upperBound, payday + 1)

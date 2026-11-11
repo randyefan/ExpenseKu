@@ -40,16 +40,16 @@ nonisolated struct PlanSection: Identifiable {
         let name = switch heading {
         case .account(let account): account?.name ?? PlanSections.unassignedName
         case .group(let group): group?.name ?? GroupShares.ungroupedName
-        case .status(.todo): "Todo"
-        case .status(.funded): "Funded"
-        case .status(.done): "Done"
+        case .status(.todo): AppLocalization.string(.todo)
+        case .status(.funded): AppLocalization.string(.funded)
+        case .status(.done): AppLocalization.string(.paymentDone)
         }
-        return name + " · " + PlanCopy.counted(items.count, "item")
+        return name + " · " + PlanCopy.counted(items.count, .item)
     }
 }
 
 nonisolated enum PlanSections {
-    static let unassignedName = "Unassigned"
+    static var unassignedName: String { AppLocalization.string(.unassigned) }
 
     static func sections(_ items: [PlanItem], by sort: PlanSort,
                          cycle: PayCycle, calendar: Calendar) -> [PlanSection] {

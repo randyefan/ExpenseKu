@@ -102,13 +102,13 @@ struct TransferSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Close", systemImage: "xmark", action: onFinish)
+                    Button(AppLocalization.string(.close), systemImage: "xmark", action: onFinish)
                         .tint(Theme.text)
                 }
                 ToolbarItem(placement: .principal) {
                     HStack(spacing: 8) {
                         AccountPlate(style: row.plate)
-                        Text("Transfer to \(row.accountName)")
+                        Text(appLocalized: .transferTo(row.accountName))
                             .font(.dsHeadline).bold()
                             .foregroundStyle(Theme.text)
                             .lineLimit(1)

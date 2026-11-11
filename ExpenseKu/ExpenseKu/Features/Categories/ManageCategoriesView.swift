@@ -39,19 +39,19 @@ struct ManageCategoriesView: View {
         .readableListMargins()
         .scrollContentBackground(.hidden)
         .background(Theme.bg)
-        .navigationTitle("Categories")
+        .navigationTitle(AppLocalization.string(.categories))
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button { editor = EditorTarget(category: nil) } label: {
-                    Label("Add Category", systemImage: "plus")
+                    Label(AppLocalization.string(.addCategory), systemImage: "plus")
                 }
                 .accentCircleButton()
             }
         }
         .overlay {
             if categories.isEmpty {
-                EmptyStateView(title: "No Categories", systemImage: "folder",
-                    message: "Add one with the + button.")
+                EmptyStateView(title: AppLocalization.string(.noCategories), systemImage: "folder",
+                    message: AppLocalization.string(.addOneWithTheButton))
             }
         }
         .sheet(item: $editor) { target in

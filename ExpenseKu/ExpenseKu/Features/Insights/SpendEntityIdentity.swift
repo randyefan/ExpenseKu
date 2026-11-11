@@ -6,6 +6,7 @@
 //  Unassigned borrow their Insights row's look, since no entity stands behind them.
 //
 
+import Foundation
 import SwiftData
 
 /// How a drill-in names and draws its subject. Nil from `resolve` when the entity was
@@ -22,19 +23,19 @@ struct SpendEntityIdentity {
         case .category(let id):
             let category: Category? = context.existingModel(for: id)
             return category.map {
-                SpendEntityIdentity(name: $0.name, kind: "Category", symbol: $0.resolvedSymbol, colorHex: $0.colorHex)
+                SpendEntityIdentity(name: $0.name, kind: AppLocalization.string(.category), symbol: $0.resolvedSymbol, colorHex: $0.colorHex)
             }
         case .uncategorized:
-            return SpendEntityIdentity(name: "Uncategorized", kind: "Category",
-                                       symbol: CategoryIcon.symbol(for: "Uncategorized"), colorHex: nil)
+            return SpendEntityIdentity(name: AppLocalization.string(.uncategorized), kind: AppLocalization.string(.category),
+                                       symbol: CategoryIcon.symbol(for: AppLocalization.string(.uncategorized)), colorHex: nil)
         case .account(let id):
             let account: Account? = context.existingModel(for: id)
             return account.map {
-                SpendEntityIdentity(name: $0.name, kind: "Account", symbol: $0.resolvedSymbol, colorHex: $0.colorHex,
+                SpendEntityIdentity(name: $0.name, kind: AppLocalization.string(.account), symbol: $0.resolvedSymbol, colorHex: $0.colorHex,
                                     brandID: $0.brandID)
             }
         case .unassigned:
-            return SpendEntityIdentity(name: "Unassigned", kind: "Account",
+            return SpendEntityIdentity(name: AppLocalization.string(.unassigned), kind: AppLocalization.string(.account),
                                        symbol: Account.defaultSymbol, colorHex: nil)
         }
     }

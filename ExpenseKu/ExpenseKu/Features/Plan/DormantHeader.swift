@@ -25,7 +25,7 @@ struct DormantHeader: View {
                     .font(.dsCaption.weight(.semibold))
                     .foregroundStyle(Theme.textSecondary)
                     .rotationEffect(.degrees(isExpanded ? 90 : 0))
-                SectionHeaderText("From last cycle")
+                SectionHeaderText(.fromLastCycleHeading)
                 Text("\(count)")
                     .font(.dsCaption).fontWeight(.semibold)
                     .monospacedDigit()
@@ -39,8 +39,8 @@ struct DormantHeader: View {
         }
         .buttonStyle(.plain)
         .motion(Motion.snap, value: isExpanded)
-        .accessibilityLabel("From last cycle, \(count) items")
-        .accessibilityValue(isExpanded ? "Expanded" : "Collapsed")
+        .accessibilityLabel(AppLocalization.string(.fromLastCycleItems(String(count))))
+        .accessibilityValue(isExpanded ? AppLocalization.string(.expanded) : AppLocalization.string(.collapsed))
         .accessibilityAddTraits(.isButton)
     }
 }

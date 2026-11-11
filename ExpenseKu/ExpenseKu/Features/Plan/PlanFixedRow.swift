@@ -52,7 +52,7 @@ struct PlanFixedRow: View {
             Button(action: onSelect) {
                 VStack(alignment: .leading, spacing: 6) {
                     HStack(alignment: .lastTextBaseline, spacing: 8) {
-                        Text(item.name.isEmpty ? "Untitled" : item.name)
+                        Text(item.name.isEmpty ? AppLocalization.string(.untitled) : item.name)
                             .font(.dsBody).bold()
                             .foregroundStyle(Theme.text)
                             .lineLimit(1)
@@ -62,7 +62,7 @@ struct PlanFixedRow: View {
 
                         VStack(alignment: .trailing, spacing: 2) {
                             if hasDrifted {
-                                Text("plan was \(item.amount.formattedIDR())")
+                                Text(appLocalized: .planWas(item.amount.formattedIDR()))
                                     .font(.dsCaption)
                                     .monospacedDigit()
                                     .foregroundStyle(Theme.textSecondary)
@@ -108,10 +108,10 @@ struct PlanFixedRow: View {
                 PlanChip(kind: label.isSoon ? .dueSoon : .due, text: label.text)
             }
             if item.isAuto {
-                PlanChip(kind: .auto, text: "Auto", symbol: "bolt.fill")
+                PlanChip(kind: .auto, text: AppLocalization.string(.auto), symbol: "bolt.fill")
             }
             if actual?.needsReview == true {
-                PlanChip(kind: .review, text: "Review")
+                PlanChip(kind: .review, text: AppLocalization.string(.review))
             }
             Spacer(minLength: 0)
             if showsAccount, PlanItemState.of(item) == .funded, let account = item.account {

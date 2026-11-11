@@ -41,7 +41,7 @@ struct GroupShareRowView: View {
         .padding(.vertical, 8)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(share.groupName)
-        .accessibilityValue("\(share.planned.formattedIDR()), \(Int((share.share * 100).rounded())) percent of income")
+        .accessibilityValue(AppLocalization.string(.percentOfIncome(share.planned.formattedIDR(), String(Int((share.share * 100).rounded())))))
     }
 
     private var tint: Color {

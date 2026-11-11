@@ -40,8 +40,8 @@ nonisolated enum PlanItemHistory {
         guard actuals.count > 1 || distinct.count > 1 else { return nil }
 
         let phrases = actuals.prefix(2).map { start, amount in
-            "\(amount.formattedIDR()) in \(start.formatted(.dateTime.month(.wide)))"
+            AppLocalization.string(.amountInMonth(amount.formattedIDR(), start.formatted(.dateTime.month(.wide).locale(AppLocalization.locale))))
         }
-        return "was " + phrases.joined(separator: ", ")
+        return AppLocalization.string(.was) + phrases.joined(separator: ", ")
     }
 }

@@ -12,6 +12,7 @@ import Foundation
 nonisolated struct ReceiptReader: Sendable {
     let model: (any ReceiptModel)?
 
+    @concurrent
     func reading(of data: Data, categories: [String]) async throws -> StoredReceiptReading {
         let text = try await ReceiptOCR.read(data)
         let candidates = CandidateExtractor.extract(from: text)

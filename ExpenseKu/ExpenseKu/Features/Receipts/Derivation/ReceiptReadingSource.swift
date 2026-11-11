@@ -23,25 +23,25 @@ nonisolated enum ReceiptReadingSource: String, Codable, Sendable, Hashable {
     }
 
     var title: String {
-        isAI ? "Read by Gemma AI" : "Read by OCR, no AI"
+        AppLocalization.string(isAI ? .readByGemmaAI : .readByOCRNoAI)
     }
 
     func caption(modelIsReady: Bool) -> String {
         switch self {
         case .gemma:
-            "Gemma is an AI model running on this iPhone. It picked these values from the receipt — check them before you save."
+            AppLocalization.string(.gemmaReadingCaption)
         case .ocrNoModel where offersDownload(modelIsReady: modelIsReady):
-            "OCR only recognises text — it isn't AI, so Category is left for you. Download Gemma, the AI model, in Receipt reading."
+            AppLocalization.string(.ocrNoModelDownloadCaption)
         case .ocrNoModel:
-            "OCR only recognises text — it isn't AI, so Category is left for you."
+            AppLocalization.string(.ocrNoModelCaption)
         case .ocrModelFailed:
-            "Gemma, the AI model, couldn't read this receipt. OCR (text recognition, not AI) filled only what it was sure of."
+            AppLocalization.string(.ocrModelFailedCaption)
         }
     }
 
     /// The To check sheet's tag, which drops the reason (§4.4).
     var tag: String {
-        isAI ? "Gemma AI" : "OCR, no AI"
+        AppLocalization.string(isAI ? .gemmaAI : .ocrNoAI)
     }
 
     var systemImage: String {

@@ -10325,6 +10325,69 @@
           }
         }
       }
+    },
+    "readByGemmaAI": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Read by Gemma AI" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Dibaca oleh Gemma AI" } }
+      }
+    },
+    "readByOCRNoAI": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Read by OCR, no AI" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Dibaca oleh OCR, tanpa AI" } }
+      }
+    },
+    "gemmaReadingCaption": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Gemma is an AI model running on this iPhone. It picked these values from the receipt — check them before you save." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Gemma adalah model AI yang berjalan di iPhone ini. Gemma memilih nilai-nilai ini dari bukti pembayaran — periksa sebelum menyimpan." } }
+      }
+    },
+    "ocrNoModelDownloadCaption": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "OCR only recognises text — it isn't AI, so Category is left for you. Download Gemma, the AI model, in Receipt reading." } },
+        "id": { "stringUnit": { "state": "translated", "value": "OCR hanya mengenali teks — bukan AI, jadi Kategori kamu isi sendiri. Unduh Gemma, model AI-nya, di Pembacaan bukti pembayaran." } }
+      }
+    },
+    "ocrNoModelCaption": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "OCR only recognises text — it isn't AI, so Category is left for you." } },
+        "id": { "stringUnit": { "state": "translated", "value": "OCR hanya mengenali teks — bukan AI, jadi Kategori kamu isi sendiri." } }
+      }
+    },
+    "ocrModelFailedCaption": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Gemma, the AI model, couldn't read this receipt. OCR (text recognition, not AI) filled only what it was sure of." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Gemma, model AI-nya, tidak bisa membaca bukti pembayaran ini. OCR (pengenalan teks, bukan AI) hanya mengisi yang pasti." } }
+      }
+    },
+    "gemmaAI": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Gemma AI" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Gemma AI" } }
+      }
+    },
+    "ocrNoAI": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "OCR, no AI" } },
+        "id": { "stringUnit": { "state": "translated", "value": "OCR, tanpa AI" } }
+      }
+    },
+    "opensReceiptReading": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Opens Receipt reading" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Membuka Pembacaan bukti pembayaran" } }
+      }
     }
   },
   "version": "1.1"

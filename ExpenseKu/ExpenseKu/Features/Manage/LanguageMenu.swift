@@ -16,7 +16,8 @@ struct LanguageMenu: View {
         }
         .buttonStyle(.pressableRow)
         .accessibilityIdentifier("languageMenu")
-        .cardStyle()
+        .padding(.horizontal, Metric.cardPadding)
+        .cardStyle(padding: 0)
         .popover(isPresented: $showsChoices, arrowEdge: .bottom) {
             LanguageChoices(selected: settings.language) { language in
                 showsChoices = false

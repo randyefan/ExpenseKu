@@ -184,7 +184,8 @@ nonisolated final class PaidElsewhereTests: XCTestCase {
         XCTAssertEqual(pick.title, "Move from Jago")
         XCTAssertEqual(pick.subtitle, "to CC Danamon")
         XCTAssertEqual(pick.recordTitle, "Moved from Jago")
-        XCTAssertEqual(pick.toMove.first?.caption, "Oct 28 · Sewa")
+        let day = date(10, 28).formatted(.dateTime.day().month(.abbreviated).locale(AppLocalization.locale))
+        XCTAssertEqual(pick.toMove.first?.caption, "\(day) · Sewa")
     }
 
     /// AE3 and D5 of AD: unchoosing one drops it from Move now; nothing chosen records nothing.

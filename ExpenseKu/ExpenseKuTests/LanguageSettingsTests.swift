@@ -46,6 +46,12 @@ nonisolated final class LanguageSettingsTests: XCTestCase {
         }
     }
 
+    func testEnglishOnAnIndonesianDeviceWritesDatesTheIndonesianWay() throws {
+        let date = try XCTUnwrap(Calendar(identifier: .gregorian).date(from: DateComponents(year: 2026, month: 10, day: 5)))
+        let locale = AppLanguage.english.locale(systemLocale: Locale(identifier: "en_ID"), preferredLanguages: ["en-ID"])
+        XCTAssertEqual(date.formatted(.dateTime.day().month(.wide).locale(locale)), "5 October")
+    }
+
     @MainActor
     func testAnExistingResourceResolvesInTheNewLanguageImmediately() throws {
         let suite = "LanguageSettingsTests.\(UUID().uuidString)"

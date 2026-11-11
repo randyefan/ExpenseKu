@@ -17,7 +17,7 @@ nonisolated enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
         }
         var components = Locale.Components(identifier: systemLocale.identifier)
         components.region = systemLocale.region
-        components.languageComponents = Locale.Language.Components(languageCode: .init(code))
+        components.languageComponents = Locale.Language.Components(languageCode: .init(code), region: systemLocale.region)
         return Locale(components: components)
     }
 }

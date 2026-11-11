@@ -67,11 +67,11 @@ struct SpendEntityView: View {
                     content(identity: identity, detail: detail, filter: activeFilter, payday: payday)
                 } else {
                     EmptyStateView(
-                        title: route.subject.isCategory ? "Category Removed" : "Account Removed",
+                        title: route.subject.isCategory ? AppLocalization.string(.categoryRemoved) : AppLocalization.string(.accountRemoved),
                         systemImage: route.subject.isCategory ? "tag.slash" : "creditcard.trianglebadge.exclamationmark",
                         message: route.subject.isCategory
-                            ? "This category was deleted, so there is nothing left to show here."
-                            : "This account was deleted, so there is nothing left to show here."
+                            ? AppLocalization.string(.thisCategoryWasDeletedSoThereIsNothingLeftToShow)
+                            : AppLocalization.string(.thisAccountWasDeletedSoThereIsNothingLeftToShow)
                     )
                     .frame(minHeight: 320)
                 }
@@ -118,7 +118,7 @@ struct SpendEntityView: View {
         ))
         .sheet(item: $moveRequest) { EnvelopeMoveSheet(request: $0).presentationBackground(Theme.bg) }
         .background(Theme.bg)
-        .navigationTitle(identity?.name ?? (route.subject.isCategory ? "Category" : "Account"))
+        .navigationTitle(identity?.name ?? (route.subject.isCategory ? AppLocalization.string(.category) : AppLocalization.string(.account)))
         .navigationBarTitleDisplayMode(.inline)
         .growsOnAppear(growth, trigger: window)
         .sensoryFeedback(.selection, trigger: window)
@@ -179,7 +179,7 @@ struct SpendEntityView: View {
 
         if let focus {
             HStack(spacing: 8) {
-                Text("Narrowed to")
+                Text(appLocalized: .narrowedTo)
                     .font(.dsCaption)
                     .foregroundStyle(Theme.textSecondary)
                 FocusChip(title: focus.name, systemImage: focus.symbol,
@@ -193,7 +193,7 @@ struct SpendEntityView: View {
 
         if !detail.breakdown.isEmpty {
             SpendBreakdownCard(
-                title: "\(identity.name) by \(route.subject.isCategory ? "account" : "category")",
+                title: AppLocalization.string(.entityBreakdownTitle(identity.name, route.subject.isCategory ? AppLocalization.string(.accountNoun) : AppLocalization.string(.categoryNoun))),
                 rows: detail.breakdown,
                 narrowing: narrowing
             ) { subject in

@@ -34,25 +34,25 @@ struct ManagePeopleView: View {
         .readableListMargins()
         .scrollContentBackground(.hidden)
         .background(Theme.bg)
-        .navigationTitle("People")
+        .navigationTitle(AppLocalization.string(.people))
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button { editor = EditorTarget(person: nil) } label: {
-                    Label("Add Person", systemImage: "plus")
+                    Label(AppLocalization.string(.addPerson), systemImage: "plus")
                 }
                 .accentCircleButton()
             }
         }
         .overlay {
             if people.isEmpty {
-                EmptyStateView(title: "No People", systemImage: "person.2",
-                    message: "Add one with the + button.")
+                EmptyStateView(title: AppLocalization.string(.noPeople), systemImage: "person.2",
+                    message: AppLocalization.string(.addOneWithTheButton))
             }
         }
         .sheet(item: $editor) { target in
             NavigationStack {
                 PersonEditorView(
-                    title: target.person == nil ? "New Person" : "Edit Person",
+                    title: target.person == nil ? AppLocalization.string(.newPerson) : AppLocalization.string(.editPerson),
                     editing: target.person
                 )
             }
@@ -66,11 +66,11 @@ struct ManagePeopleView: View {
         if person.isMe {
             HStack(spacing: 12) {
                 PersonAvatar(person: person, size: Metric.rowIconSize)
-                Text(person.name)
+                Text(person.displayName)
                     .font(.dsBody)
                     .foregroundStyle(Theme.text)
                 Spacer()
-                Text("You")
+                Text(appLocalized: .you)
                     .font(.dsSubhead)
                     .foregroundStyle(Theme.textSecondary)
             }
@@ -78,7 +78,7 @@ struct ManagePeopleView: View {
             Button { editor = EditorTarget(person: person) } label: {
                 HStack(spacing: 12) {
                     PersonAvatar(person: person, size: Metric.rowIconSize)
-                    Text(person.name)
+                    Text(person.displayName)
                         .font(.dsBody)
                         .foregroundStyle(Theme.text)
                     Spacer()

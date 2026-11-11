@@ -28,7 +28,7 @@ struct PeoplePicker: View {
                     } label: {
                         HStack(spacing: 12) {
                             PersonAvatar(person: person, size: Metric.rowIconSize)
-                            Text(person.name)
+                            Text(person.displayName)
                                 .font(.dsBody)
                                 .foregroundStyle(Theme.text)
                             Spacer()
@@ -42,7 +42,7 @@ struct PeoplePicker: View {
             }
             Section {
                 Button { showingNew = true } label: {
-                    PickerAddRow(title: "New Person")
+                    PickerAddRow(title: AppLocalization.string(.newPerson))
                 }
                 .listRowBackground(Theme.card)
             }
@@ -50,15 +50,15 @@ struct PeoplePicker: View {
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
         .background(Theme.bg)
-        .navigationTitle("People")
+        .navigationTitle(AppLocalization.string(.people))
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                Button("Done") { dismiss() }
+                Button(AppLocalization.string(.done)) { dismiss() }
             }
         }
         .sheet(isPresented: $showingNew) {
             NavigationStack {
-                PersonEditorView(title: "New Person", onCommit: { created in
+                PersonEditorView(title: AppLocalization.string(.newPerson), onCommit: { created in
                     if !isSelected(created) { selection.append(created) }
                 })
             }

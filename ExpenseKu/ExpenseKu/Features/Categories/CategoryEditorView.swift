@@ -28,7 +28,7 @@ struct CategoryEditorView: View {
 
     var body: some View {
         AppearanceEntityEditor(
-            title: editing == nil ? "New Category" : "Edit Category",
+            title: editing == nil ? AppLocalization.string(.newCategory) : AppLocalization.string(.editCategory),
             editing: editing,
             makeNew: { Category() },
             onCommit: { category in
@@ -41,12 +41,12 @@ struct CategoryEditorView: View {
 
     private var groupRow: some View {
         VStack(alignment: .leading, spacing: 8) {
-            SectionHeaderText("Group")
+            SectionHeaderText(.group)
             NavigationLink {
                 GroupPicker(selection: $group)
             } label: {
-                LabeledContent("Group") {
-                    Text(group?.name ?? "None")
+                LabeledContent(AppLocalization.string(.group)) {
+                    Text(group?.name ?? AppLocalization.string(.none))
                         .foregroundStyle(group == nil ? Theme.textSecondary : Theme.text)
                 }
                 .font(.dsBody)
@@ -56,7 +56,7 @@ struct CategoryEditorView: View {
             }
             .buttonStyle(.pressableRow)
 
-            Text("Coarser than a category: what the money is for. Only a plan's share-of-income table reads it.")
+            Text(appLocalized: .coarserThanACategoryWhatTheMoneyIsForOnlyA)
                 .font(.dsCaption)
                 .foregroundStyle(Theme.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)

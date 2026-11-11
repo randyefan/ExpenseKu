@@ -32,8 +32,8 @@ struct PlanTotalsCard: View {
                     Divider().overlay(Theme.hairline)
                 }
 
-                summaryRow("Total income", totals.totalIncome)
-                summaryRow("Total cost", -totals.totalCost)
+                summaryRow(AppLocalization.string(.totalIncome), totals.totalIncome)
+                summaryRow(AppLocalization.string(.totalCost), -totals.totalCost)
                 if let label = totals.paidEarly.outgoingLabel(payday: payday, calendar: calendar) {
                     paidEarlyRow(label, -totals.paidEarly.outgoing)
                 }
@@ -47,7 +47,7 @@ struct PlanTotalsCard: View {
                 Divider().overlay(Theme.hairline).padding(.vertical, 2)
 
                 HStack {
-                    Text("Sisa")
+                    Text(appLocalized: .remainingFunds)
                         .font(.dsBody).bold()
                         .foregroundStyle(Theme.text)
                     Spacer(minLength: 8)

@@ -17,7 +17,7 @@ struct SpendSplitCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            SectionHeaderText("\(subjectName) by plan")
+            SectionHeaderText(.byPlan(subjectName))
             SpendingSplitView(split: split, filter: filter, onTap: onTap)
         }
         .cardStyle()

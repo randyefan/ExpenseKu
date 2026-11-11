@@ -26,17 +26,17 @@ enum ReceiptModelPhase: Equatable {
     var subtitle: String {
         switch self {
         case .notDownloaded:
-            "Model not downloaded"
+            AppLocalization.string(.modelNotDownloaded)
         case .downloading(let received, let total):
-            "\(fraction.formatted(.percent.precision(.fractionLength(0)))) · \(Self.gigabytes(received)) of \(Self.gigabytes(total))"
+            AppLocalization.string(.modelDownloadProgress(fraction.formatted(.percent.precision(.fractionLength(0)).locale(AppLocalization.locale)), Self.gigabytes(received), Self.gigabytes(total)))
         case .paused:
-            "Paused at \(fraction.formatted(.percent.precision(.fractionLength(0))))"
+            AppLocalization.string(.pausedAt(fraction.formatted(.percent.precision(.fractionLength(0)).locale(AppLocalization.locale))))
         case .ready:
-            "Gemma 4 E2B · on this iPhone"
+            AppLocalization.string(.receiptModelReady)
         }
     }
 
     static func gigabytes(_ bytes: Int64) -> String {
-        (Double(bytes) / 1_000_000_000).formatted(.number.precision(.fractionLength(1))) + " GB"
+        (Double(bytes) / 1_000_000_000).formatted(.number.precision(.fractionLength(1)).locale(AppLocalization.locale)) + " GB"
     }
 }

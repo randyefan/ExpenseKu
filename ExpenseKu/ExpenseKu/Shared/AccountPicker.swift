@@ -25,8 +25,8 @@ struct AccountPicker: View {
                     dismiss()
                 } label: {
                     HStack(spacing: 12) {
-                        CategoryIcon(name: "None", systemImage: "nosign", size: 36)
-                        Text("None")
+                        CategoryIcon(name: AppLocalization.string(.none), systemImage: "nosign", size: 36)
+                        Text(appLocalized: .none)
                             .font(.dsBody)
                             .foregroundStyle(Theme.text)
                         Spacer()
@@ -62,7 +62,7 @@ struct AccountPicker: View {
             }
             Section {
                 Button { showingNew = true } label: {
-                    PickerAddRow(title: "New Account")
+                    PickerAddRow(title: AppLocalization.string(.newAccount))
                 }
                 .listRowBackground(Theme.card)
             }
@@ -70,10 +70,10 @@ struct AccountPicker: View {
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
         .background(Theme.bg)
-        .navigationTitle("Account")
+        .navigationTitle(AppLocalization.string(.account))
         .sheet(isPresented: $showingNew) {
             NavigationStack {
-                AppearanceEntityEditor(title: "New Account", makeNew: { Account() }) { created in
+                AppearanceEntityEditor(title: AppLocalization.string(.newAccount), makeNew: { Account() }) { created in
                     selection = created
                 }
             }

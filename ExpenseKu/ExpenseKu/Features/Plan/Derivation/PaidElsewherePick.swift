@@ -34,14 +34,14 @@ nonisolated struct PaidElsewherePick {
 
     var moveNow: Decimal { chosenMembers.reduce(0) { $0 + $1.amount } }
 
-    var title: String { "Move from \(row.homeName)" }
-    var subtitle: String { "to \(row.accountName)" }
-    var recordTitle: String { "Moved from \(row.homeName)" }
-    var toMoveTitle: String { "To move · \(chosenMembers.count) of \(toMove.count)" }
-    var alreadyMovedTitle: String { "Already moved" }
-    var allMovedMessage: String { "Everything on \(row.accountName) is moved." }
+    var title: String { AppLocalization.string(.moveFrom(row.homeName)) }
+    var subtitle: String { AppLocalization.string(.to(row.accountName)) }
+    var recordTitle: String { AppLocalization.string(.movedFrom(row.homeName)) }
+    var toMoveTitle: String { AppLocalization.string(.toMoveOf(String(chosenMembers.count), String(toMove.count))) }
+    var alreadyMovedTitle: String { AppLocalization.string(.alreadyMoved) }
+    var allMovedMessage: String { AppLocalization.string(.everythingOnIsMoved(row.accountName)) }
 
     /// With everything moved there is nothing to move now; the figure is the row's total.
-    var figureTitle: String { toMove.isEmpty ? "Total" : "Move now" }
+    var figureTitle: String { toMove.isEmpty ? AppLocalization.string(.total) : AppLocalization.string(.moveNow) }
     var figure: Decimal { toMove.isEmpty ? row.total : moveNow }
 }

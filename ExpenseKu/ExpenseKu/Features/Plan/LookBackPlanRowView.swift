@@ -53,8 +53,8 @@ struct LookBackPlanRowView: View {
     }
 
     private var accessibilityLabel: String {
-        if let mark { return "Undo \(mark.label.lowercased()) \(row.source.name)" }
-        if case .wake = row.action { return "Wake \(row.source.name)" }
-        return "Add \(row.source.name)"
+        if let mark { return AppLocalization.string(.undoNamedChange(mark.label.lowercased(), row.source.name)) }
+        if case .wake = row.action { return AppLocalization.string(.wakePlanItem(row.source.name)) }
+        return AppLocalization.string(.addNamedItem(row.source.name))
     }
 }

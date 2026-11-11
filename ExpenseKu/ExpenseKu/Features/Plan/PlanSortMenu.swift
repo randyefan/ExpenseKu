@@ -15,7 +15,7 @@ struct PlanSortMenu: View {
 
     var body: some View {
         Menu {
-            Section("Order the plan by") {
+            Section(AppLocalization.string(.orderThePlanBy)) {
                 ForEach(PlanSort.allCases) { option in
                     Toggle(isOn: Binding(get: { sort == option }, set: { _ in onChoose(option) })) {
                         Label(option.title, systemImage: option.systemImage)
@@ -32,7 +32,7 @@ struct PlanSortMenu: View {
             .padding(.vertical, 4)
             .contentShape(.rect)
         }
-        .accessibilityLabel("Order the plan by")
+        .accessibilityLabel(AppLocalization.string(.orderThePlanBy))
         .accessibilityValue(sort.title)
     }
 }

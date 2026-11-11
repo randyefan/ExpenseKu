@@ -20,12 +20,12 @@ struct EnvelopeAddMenu: View {
     var body: some View {
         Menu {
             Button(action: onAddExpense) {
-                Label("New expense", systemImage: "plus")
-                Text("Logged straight into \(name)")
+                Label(AppLocalization.string(.newExpense), systemImage: "plus")
+                Text(appLocalized: .loggedStraightInto(name))
             }
             Button(action: onMoveExpenses) {
-                Label("Move expenses here…", systemImage: "checklist")
-                Text("Pick from this cycle's expenses")
+                Label(AppLocalization.string(.moveExpensesHere), systemImage: "checklist")
+                Text(appLocalized: .pickFromThisCycleSExpenses)
             }
         } label: {
             Image(systemName: "plus")
@@ -35,6 +35,6 @@ struct EnvelopeAddMenu: View {
                 .background(Theme.planWash, in: .circle)
                 .contentShape(.circle)
         }
-        .accessibilityLabel("Add to \(name)")
+        .accessibilityLabel(AppLocalization.string(.addTo(name)))
     }
 }

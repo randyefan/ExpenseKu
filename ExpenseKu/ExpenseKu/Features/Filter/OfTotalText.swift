@@ -12,7 +12,7 @@ struct OfTotalText: View {
     let total: Decimal
 
     var body: some View {
-        Text("of \(total.formattedIDR())")
+        Text(appLocalized: .of(total.formattedIDR()))
             .font(.dsSubhead).fontWeight(.semibold)
             .foregroundStyle(Theme.textSecondary)
             .contentTransition(.numericText())

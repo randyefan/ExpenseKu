@@ -61,10 +61,10 @@ struct CycleCalendarLens<Header: View>: View {
             } else if contents.isEmpty {
                 Section {
                     InlineMessageCard(
-                        title: storeIsEmpty ? "No expenses yet" : "No expenses this cycle",
+                        title: storeIsEmpty ? AppLocalization.string(.noExpensesYet) : AppLocalization.string(.noExpensesThisCycle),
                         detail: storeIsEmpty
-                            ? "Tap + to log your first expense."
-                            : "Nothing logged for \(cycle.rangeText(calendar: calendar))."
+                            ? AppLocalization.string(.tapToLogYourFirstExpense)
+                            : AppLocalization.string(.nothingLoggedFor(cycle.rangeText(calendar: calendar)))
                     )
                 }
             } else if let day = resolvedDay {
@@ -83,8 +83,8 @@ struct CycleCalendarLens<Header: View>: View {
                         InlineMessageCard(notice, onClearFilters: onClearFilters)
                     } else {
                         InlineMessageCard(
-                            title: "No expenses \(DayLabel.phrase(day, calendar: calendar))",
-                            detail: "Tap + to log one."
+                            title: AppLocalization.string(.noExpenses(DayLabel.phrase(day, calendar: calendar))),
+                            detail: AppLocalization.string(.tapToLogOne)
                         )
                     }
                 } header: {

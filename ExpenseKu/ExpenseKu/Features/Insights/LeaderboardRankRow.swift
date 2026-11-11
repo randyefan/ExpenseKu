@@ -32,11 +32,11 @@ struct LeaderboardRankRow: View {
                 PersonAvatar(person: entry.person, size: 40)
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(entry.person.name)
+                    Text(entry.person.displayName)
                         .font(.dsBody).fontWeight(.semibold)
                         .foregroundStyle(Theme.text)
                         .lineLimit(1)
-                    Text("^[\(entry.sharedCount) expense](inflect: true)")
+                    Text(appLocalized: .expense(entry.sharedCount))
                         .font(.dsCaption)
                         .foregroundStyle(Theme.textSecondary)
                 }
@@ -56,7 +56,7 @@ struct LeaderboardRankRow: View {
                 .overlay(alignment: .leading) {
                     GeometryReader { proxy in
                         Capsule()
-                            .fill(rank == 1 ? Theme.accent : Theme.categoryTint(entry.person.name))
+                            .fill(rank == 1 ? Theme.accent : Theme.categoryTint(entry.person.displayName))
                             .frame(
                                 width: max(6, proxy.size.width * min(max(fraction, 0), 1) * growth),
                                 height: 6

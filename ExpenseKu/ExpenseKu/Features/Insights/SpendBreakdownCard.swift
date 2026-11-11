@@ -21,8 +21,8 @@ struct SpendBreakdownCard: View {
     private var maxTotal: Double { max(rows.map(\.total.doubleValue).max() ?? 1, 1) }
 
     private var hint: String {
-        guard let narrowing, let row = rows.first(where: { $0.subject == narrowing }) else { return "Tap to narrow" }
-        return "\(row.name) only"
+        guard let narrowing, let row = rows.first(where: { $0.subject == narrowing }) else { return AppLocalization.string(.tapToNarrow) }
+        return AppLocalization.string(.onlyNamedValue(row.name))
     }
 
     var body: some View {

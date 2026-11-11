@@ -10,7 +10,7 @@
 import SwiftUI
 
 struct EmptyChartMessage: View {
-    var message = "No spending in this period."
+    var message = AppLocalization.string(.noSpendingInThisPeriod)
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {

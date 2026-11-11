@@ -66,15 +66,15 @@ struct IncomeLineEditorView: View {
                     }
 
                     Section {
-                        TextField("Name", text: $name)
+                        TextField(AppLocalization.string(.name), text: $name)
                             .font(.dsBody)
                             .focused($nameFocused)
                             .listRowBackground(Theme.card)
 
                         Toggle(isOn: $hasArrived) {
                             VStack(alignment: .leading, spacing: 2) {
-                                Text("Sudah masuk").font(.dsBody)
-                                Text("Money has landed. This does not change the Sisa.")
+                                Text(appLocalized: .incomeArrived).font(.dsBody)
+                                Text(appLocalized: .moneyHasLandedThisDoesNotChangeTheSisa)
                                     .font(.dsCaption)
                                     .foregroundStyle(Theme.textSecondary)
                             }
@@ -85,7 +85,7 @@ struct IncomeLineEditorView: View {
 
                     if editing != nil {
                         Section {
-                            Button("Delete income line", role: .destructive, action: delete)
+                            Button(AppLocalization.string(.deleteIncomeLine), role: .destructive, action: delete)
                                 .font(.dsBody)
                                 .listRowBackground(Theme.card)
                         }
@@ -99,7 +99,7 @@ struct IncomeLineEditorView: View {
                 if !nameFocused {
                     EditorKeypadDock(
                         expr: $expr,
-                        saveLabel: "Save income line",
+                        saveLabel: AppLocalization.string(.saveIncomeLine),
                         canSave: canSave,
                         showsDelete: false,
                         onSave: save,
@@ -109,15 +109,15 @@ struct IncomeLineEditorView: View {
                 }
             }
             .background(Theme.bg)
-            .navigationTitle("Income line")
+            .navigationTitle(AppLocalization.string(.incomeLineLabel))
             .navigationBarTitleDisplayMode(.inline)
             .animation(.easeInOut(duration: 0.2), value: nameFocused)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel", action: onFinish).tint(Theme.accentText)
+                    Button(AppLocalization.string(.cancel), action: onFinish).tint(Theme.accentText)
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save", action: save).tint(Theme.accentText).disabled(!canSave)
+                    Button(AppLocalization.string(.save), action: save).tint(Theme.accentText).disabled(!canSave)
                 }
             }
         }

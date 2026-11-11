@@ -47,9 +47,9 @@ struct LeaderboardRanking: View {
 
         if ranked.isEmpty {
             EmptyStateView(
-                title: "No People Yet",
+                title: AppLocalization.string(.noPeopleYet),
                 systemImage: "person.2",
-                message: "Tag expenses with the people you were with to see who you spend the most with."
+                message: AppLocalization.string(.tagExpensesWithThePeopleYouWereWithToSeeWho)
             )
             .frame(minHeight: 360)
         } else {
@@ -81,7 +81,7 @@ struct LeaderboardRanking: View {
             .cardStyle(padding: Metric.cardPadding)
             .growsOnAppear(growth, trigger: ranked.map(\.id))
 
-            Text("Totals may exceed your grand total as each companion is credited the full shared amount.")
+            Text(appLocalized: .totalsMayExceedYourGrandTotalAsEachCompanionIsCredited)
                 .font(.dsCaption)
                 .foregroundStyle(Theme.textSecondary)
                 .multilineTextAlignment(.center)

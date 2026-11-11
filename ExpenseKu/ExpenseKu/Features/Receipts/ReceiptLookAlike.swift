@@ -10,13 +10,14 @@ import Foundation
 
 struct ReceiptLookAlike {
     let reading: ReceiptReading
+    let source: ReceiptReadingSource?
     let image: Data
     let expense: Expense
 
     var description: String {
         var parts = [expense.amount.formattedIDR(),
-                     expense.date.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated))]
+                     expense.date.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated).locale(AppLocalization.locale))]
         if !expense.note.isEmpty { parts.append(expense.note) }
-        return parts.joined(separator: " · ") + " is already an expense."
+        return AppLocalization.string(.receiptAlreadyLogged(parts.joined(separator: " · ")))
     }
 }

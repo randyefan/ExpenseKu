@@ -186,7 +186,7 @@ nonisolated struct ExpressionEvaluator: Equatable {
         let parts = token.split(separator: ".", maxSplits: 1, omittingEmptySubsequences: false)
         let intPart = String(parts.first ?? "")
         let grouped = (Decimal(string: intPart) ?? 0)
-            .formatted(.number.precision(.fractionLength(0)))
+            .formatted(.number.precision(.fractionLength(0)).locale(AppLocalization.locale))
         if token.contains(".") {
             let frac = parts.count > 1 ? String(parts[1]) : ""
             return "\(grouped).\(frac)"

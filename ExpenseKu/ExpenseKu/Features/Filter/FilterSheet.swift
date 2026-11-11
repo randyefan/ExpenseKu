@@ -28,13 +28,13 @@ struct FilterSheet: View {
     @State private var path: [FilterSheetPage] = []
     @State private var detent: PresentationDetent = .medium
 
-    static let help = "Tap once to show only, twice to hide. An expense shows when it matches a shown value in each row that has one, and no hidden value."
+    static var help: String { AppLocalization.string(.tapOnceToShowOnlyTwiceToHideAnExpenseShows) }
 
     var body: some View {
         NavigationStack(path: $path) {
             List {
                 Section {
-                    row("Plan", value: planFilter?.title ?? "All", isOn: planFilter != nil, page: .plan)
+                    row(AppLocalization.string(.plan), value: planFilter?.title ?? AppLocalization.string(.allItems), isOn: planFilter != nil, page: .plan)
                     ForEach(FilterDimension.allCases.filter { $0 != hiding }, id: \.self) { dimension in
                         row(dimension.title,
                             value: catalog.summary(of: filter, in: dimension),
@@ -50,18 +50,18 @@ struct FilterSheet: View {
             .listStyle(.insetGrouped)
             .scrollContentBackground(.hidden)
             .background(Theme.bg)
-            .navigationTitle("Filter")
+            .navigationTitle(AppLocalization.string(.filter))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Clear All") {
+                    Button(AppLocalization.string(.clearAll)) {
                         filter = ExpenseFilter()
                         planFilter = nil
                     }
                     .disabled(filter.isEmpty && planFilter == nil)
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
+                    Button(AppLocalization.string(.done)) { dismiss() }
                 }
             }
             .navigationDestination(for: FilterSheetPage.self) { page in

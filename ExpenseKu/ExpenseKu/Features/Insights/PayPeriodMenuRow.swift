@@ -19,7 +19,7 @@ struct PayPeriodMenuRow: View {
 
     var body: some View {
         Menu {
-            Section("Pay period") {
+            Section(AppLocalization.string(.payPeriod)) {
                 ForEach(cycles) { cycle in
                     Toggle(isOn: Binding(get: { cycle == selected }, set: { _ in onSelect(cycle) })) {
                         Text(cycle.title(calendar: calendar))
@@ -29,7 +29,7 @@ struct PayPeriodMenuRow: View {
             }
         } label: {
             HStack(spacing: 10) {
-                Label("Pay period", systemImage: "calendar")
+                Label(AppLocalization.string(.payPeriod), systemImage: "calendar")
                     .font(.dsBody)
                     .foregroundStyle(Theme.text)
                 Spacer(minLength: 8)
@@ -45,7 +45,7 @@ struct PayPeriodMenuRow: View {
             .contentShape(.rect)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Pay period")
+        .accessibilityLabel(AppLocalization.string(.payPeriod))
         .accessibilityValue(selected.title(calendar: calendar))
     }
 }

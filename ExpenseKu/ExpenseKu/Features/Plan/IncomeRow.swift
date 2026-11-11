@@ -27,13 +27,13 @@ struct IncomeRow: View {
                     .contentShape(.circle)
             }
             .buttonStyle(.pressableCard)
-            .accessibilityLabel(line.name.isEmpty ? "Income line" : line.name)
-            .accessibilityValue(line.hasArrived ? "Arrived" : "Not arrived yet")
+            .accessibilityLabel(line.name.isEmpty ? AppLocalization.string(.incomeLineLabel) : line.name)
+            .accessibilityValue(line.hasArrived ? AppLocalization.string(.arrived) : AppLocalization.string(.notArrivedYet))
             .accessibilityAddTraits(line.hasArrived ? [.isButton, .isSelected] : .isButton)
 
             Button(action: onEdit) {
                 HStack(spacing: 8) {
-                    Text(line.name.isEmpty ? "Untitled" : line.name)
+                    Text(line.name.isEmpty ? AppLocalization.string(.untitled) : line.name)
                         .font(.dsBody)
                         .foregroundStyle(Theme.text)
                         .lineLimit(1)

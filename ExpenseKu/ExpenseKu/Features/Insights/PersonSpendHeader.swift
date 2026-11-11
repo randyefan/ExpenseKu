@@ -45,7 +45,7 @@ struct PersonSpendHeader: View {
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
 
-                    Text("^[\(count) expense](inflect: true) · \(rangeLabel)")
+                    Text(appLocalized: .expenseCountInRange(count, rangeLabel))
                         .font(.dsCaption)
                         .foregroundStyle(Theme.textSecondary)
                         .lineLimit(1)
@@ -71,13 +71,13 @@ struct PersonSpendHeader: View {
                             .frame(height: 8)
                         }
 
-                    Text("\(sharePercent)% of what you spent in this window")
+                    Text(appLocalized: .ofWhatYouSpentInThisWindow(String(sharePercent)))
                         .font(.dsCaption)
                         .foregroundStyle(Theme.textSecondary)
                 }
                 .accessibilityElement(children: .ignore)
-                .accessibilityLabel("Share of spending")
-                .accessibilityValue("\(sharePercent) percent")
+                .accessibilityLabel(AppLocalization.string(.shareOfSpending))
+                .accessibilityValue(AppLocalization.string(.percent(String(sharePercent))))
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

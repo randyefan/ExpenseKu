@@ -21,10 +21,10 @@ struct EnvelopeChoiceList: View {
     var body: some View {
         List {
             Section {
-                EnvelopeChoiceRow(title: "By category", detail: byCategoryDetail,
+                EnvelopeChoiceRow(title: AppLocalization.string(.byCategoryLabel), detail: byCategoryDetail,
                                   symbol: "tag", tint: Theme.textSecondary,
                                   isChosen: chosen == .byCategory) { onPick(.byCategory) }
-                EnvelopeChoiceRow(title: "No envelope", detail: EnvelopeOptions.noEnvelopeDetail,
+                EnvelopeChoiceRow(title: AppLocalization.string(.noEnvelope), detail: EnvelopeOptions.noEnvelopeDetail,
                                   symbol: "nosign", tint: Theme.textSecondary,
                                   isChosen: chosen == .noEnvelope) { onPick(.noEnvelope) }
             }
@@ -34,7 +34,7 @@ struct EnvelopeChoiceList: View {
                     ForEach(section.envelopes) { envelope in
                         let choice = EnvelopeChoice.envelope(envelope.persistentModelID)
                         let progress = options.progress(of: envelope)
-                        EnvelopeChoiceRow(title: envelope.name.isEmpty ? "Untitled" : envelope.name,
+                        EnvelopeChoiceRow(title: envelope.name.isEmpty ? AppLocalization.string(.untitled) : envelope.name,
                                           detail: progress?.remainderText ?? "",
                                           detailIsOver: progress?.isOver ?? false,
                                           symbol: "tray", tint: Theme.plan,
@@ -42,8 +42,8 @@ struct EnvelopeChoiceList: View {
                     }
                 } header: {
                     SectionHeaderText(section.isPaidEarly
-                                      ? "\(section.cycle.title()) · Paid early"
-                                      : "Envelopes")
+                                      ? AppLocalization.string(.paidEarlyMonthHeading(section.cycle.title()))
+                                      : AppLocalization.string(.envelopes))
                         .textCase(nil)
                 }
             }

@@ -23,7 +23,7 @@ struct StoreBootstrap {
     static func make() -> StoreBootstrap {
         // Declared through the versioned schema so the store always records which version
         // it is; see Models/ExpenseKuSchema.swift.
-        let schema = Schema(versionedSchema: ExpenseKuSchemaV8.self)
+        let schema = Schema(versionedSchema: ExpenseKuSchemaV9.self)
 
         // Primary store: persistent, CloudKit-mirrored via the container in
         // ExpenseKu.entitlements (cloudKitDatabase defaults to .automatic).
@@ -88,6 +88,8 @@ struct ExpenseKuApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
+                .environment(LanguageSettings.shared)
+                .environment(\.locale, LanguageSettings.shared.locale)
                 .environment(\.isEphemeralStore, store.isEphemeral)
                 .environment(bankLogos)
                 .environment(receiptInbox)
@@ -97,7 +99,9 @@ struct ExpenseKuApp: App {
         .modelContainer(store.container)
         .onChange(of: scenePhase) { _, phase in
             switch phase {
-            case .active: receiptInbox.refresh()
+            case .active:
+                LanguageSettings.shared.refresh()
+                receiptInbox.refresh()
             case .background:
                 receiptReadAhead.stop()
                 receiptModel.unload()

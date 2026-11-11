@@ -55,7 +55,7 @@ struct PlanEnvelopeRow: View {
             Button(action: onSelect) {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack(spacing: 8) {
-                        Text(item.name.isEmpty ? "Untitled" : item.name)
+                        Text(item.name.isEmpty ? AppLocalization.string(.untitled) : item.name)
                             .font(.dsBody).bold()
                             .foregroundStyle(Theme.text)
                             .lineLimit(1)
@@ -105,7 +105,7 @@ struct PlanEnvelopeRow: View {
                 .contentShape(.rect)
             }
             .buttonStyle(.pressableRow)
-            .accessibilityHint("Shows its expenses")
+            .accessibilityHint(AppLocalization.string(.showsItsExpenses))
         }
         .overlay(alignment: Alignment(horizontal: .trailing, vertical: .envelopeBarLine)) {
             EnvelopeAddMenu(name: item.name, onAddExpense: onAddExpense, onMoveExpenses: onMoveExpenses)

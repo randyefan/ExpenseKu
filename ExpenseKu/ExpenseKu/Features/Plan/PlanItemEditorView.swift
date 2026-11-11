@@ -143,7 +143,7 @@ struct PlanItemEditorView: View {
 
                     Section {
                         if kind != .setAside {
-                            TextField("Name", text: $name)
+                            TextField(AppLocalization.string(.name), text: $name)
                                 .font(.dsBody)
                                 .focused($nameFocused)
                                 .listRowBackground(Theme.card)
@@ -161,12 +161,12 @@ struct PlanItemEditorView: View {
                     } footer: {
                         if kind == .setAside {
                             Text(setAsideOffer.isEmpty
-                                 ? "Page forward to a later cycle and add an envelope first. Set aside only sends money to an envelope in a plan that already exists."
-                                 : "Set aside sends planned money to an envelope in a later plan. It never creates an expense: this plan's Sisa falls by it and that plan's Sisa rises. Its Account is optional: set it and the amount joins that account's transfer line and can be marked as moved.")
+                                 ? AppLocalization.string(.pageForwardToALaterCycleAndAddAnEnvelopeFirst)
+                                 : AppLocalization.string(.setAsideSendsPlannedMoneyToAnEnvelopeInALater))
                                 .font(.dsCaption)
                                 .foregroundStyle(Theme.textSecondary)
                         } else if kind == .envelope {
-                            Text("An envelope never creates an expense, so it has no due day and no Auto. Its Categories are optional: with none, it fills only from expenses you assign to it. Its Account is optional too: set it and the allowance joins that account's transfer line and can be marked as moved.")
+                            Text(appLocalized: .anEnvelopeNeverCreatesAnExpenseSoItHasNoDue)
                                 .font(.dsCaption)
                                 .foregroundStyle(Theme.textSecondary)
                         }
@@ -174,7 +174,7 @@ struct PlanItemEditorView: View {
 
                     if let editing {
                         Section {
-                            Button("Delete plan item", role: .destructive) { onDelete(editing) }
+                            Button(AppLocalization.string(.deletePlanItem), role: .destructive) { onDelete(editing) }
                                 .font(.dsBody)
                                 .listRowBackground(Theme.card)
                         }
@@ -188,7 +188,7 @@ struct PlanItemEditorView: View {
                 if !nameFocused {
                     EditorKeypadDock(
                         expr: $expr,
-                        saveLabel: "Save plan item",
+                        saveLabel: AppLocalization.string(.savePlanItem),
                         canSave: canSave,
                         showsDelete: false,
                         onSave: save,
@@ -198,15 +198,15 @@ struct PlanItemEditorView: View {
                 }
             }
             .background(Theme.bg)
-            .navigationTitle(editing == nil ? "New plan item" : "Plan item")
+            .navigationTitle(editing == nil ? AppLocalization.string(.newPlanItem) : AppLocalization.string(.planItem))
             .navigationBarTitleDisplayMode(.inline)
             .animation(.easeInOut(duration: 0.2), value: nameFocused)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel", action: onFinish).tint(Theme.accentText)
+                    Button(AppLocalization.string(.cancel), action: onFinish).tint(Theme.accentText)
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save", action: save).tint(Theme.accentText).disabled(!canSave)
+                    Button(AppLocalization.string(.save), action: save).tint(Theme.accentText).disabled(!canSave)
                 }
             }
         }
@@ -217,9 +217,9 @@ struct PlanItemEditorView: View {
         SegmentedToggle(
             selection: $kind,
             segments: [
-                .init(.fixed, title: "Fixed", systemImage: "checkmark.circle"),
-                .init(.envelope, title: "Envelope", systemImage: "tray.fill"),
-                .init(.setAside, title: "Set aside", systemImage: "arrow.forward"),
+                .init(.fixed, title: AppLocalization.string(.fixedKindChoice), systemImage: "checkmark.circle"),
+                .init(.envelope, title: AppLocalization.string(.envelopeKindChoice), systemImage: "tray.fill"),
+                .init(.setAside, title: AppLocalization.string(.setAside), systemImage: "arrow.forward"),
             ],
             isCompact: true
         )
@@ -231,8 +231,8 @@ struct PlanItemEditorView: View {
         NavigationLink {
             CategoryPicker(selection: $category)
         } label: {
-            LabeledContent("Category") {
-                Text(category?.name ?? "Required")
+            LabeledContent(AppLocalization.string(.category)) {
+                Text(category?.name ?? AppLocalization.string(.requiredLabel))
                     .foregroundStyle(category == nil ? Theme.accent : Theme.text)
             }
             .font(.dsBody)
@@ -244,8 +244,8 @@ struct PlanItemEditorView: View {
         NavigationLink {
             PeoplePicker(selection: $people)
         } label: {
-            LabeledContent("People") {
-                Text(people.isEmpty ? "None" : people.map(\.name).sorted().joined(separator: ", "))
+            LabeledContent(AppLocalization.string(.people)) {
+                Text(people.isEmpty ? AppLocalization.string(.none) : people.map(\.displayName).sorted().joined(separator: ", "))
                     .foregroundStyle(people.isEmpty ? Theme.textSecondary : Theme.text)
                     .lineLimit(1)
             }
@@ -255,8 +255,8 @@ struct PlanItemEditorView: View {
 
         HStack(spacing: 8) {
             VStack(alignment: .leading, spacing: 2) {
-                Text("Due day").font(.dsBody)
-                Text("Day-of-month, not a date. 29–31 clamp to short months.")
+                Text(appLocalized: .dueDay).font(.dsBody)
+                Text(appLocalized: .dayOfMonthNotADate2931ClampToShort)
                     .font(.dsCaption)
                     .foregroundStyle(Theme.textSecondary)
             }
@@ -268,10 +268,10 @@ struct PlanItemEditorView: View {
 
         Toggle(isOn: $isAuto) {
             VStack(alignment: .leading, spacing: 2) {
-                Text("Auto").font(.dsBody)
+                Text(appLocalized: .auto).font(.dsBody)
                 Text(dueDay == nil
-                     ? "Set a due day first — Auto items only fire on one."
-                     : "Writes its own expense on the due day, without confirmation.")
+                     ? AppLocalization.string(.setADueDayFirstAutoItemsOnlyFireOnOne)
+                     : AppLocalization.string(.writesItsOwnExpenseOnTheDueDayWithoutConfirmation))
                     .font(.dsCaption)
                     .foregroundStyle(dueDay == nil ? Theme.accentText : Theme.textSecondary)
             }
@@ -292,9 +292,9 @@ struct PlanItemEditorView: View {
                 envelopeName: name
             )
         } label: {
-            LabeledContent("Categories") {
+            LabeledContent(AppLocalization.string(.categories)) {
                 Text(envelopeCategories.isEmpty
-                     ? "None"
+                     ? AppLocalization.string(.none)
                      : envelopeCategories.map(\.name).sorted().joined(separator: ", "))
                     .foregroundStyle(envelopeCategories.isEmpty ? Theme.textSecondary : Theme.text)
                     .lineLimit(1)
@@ -313,8 +313,8 @@ struct PlanItemEditorView: View {
     private var setAsideForRow: some View {
         let sections = setAsideOffer
         if sections.isEmpty {
-            LabeledContent("For") {
-                Text("No envelope in a later plan")
+            LabeledContent(AppLocalization.string(.targetLabel)) {
+                Text(appLocalized: .noEnvelopeInALaterPlan)
                     .foregroundStyle(Theme.textSecondary)
                     .lineLimit(1)
             }
@@ -324,7 +324,7 @@ struct PlanItemEditorView: View {
             NavigationLink {
                 SetAsidePicker(selection: $setAsideTarget, sections: sections)
             } label: {
-                LabeledContent("For") {
+                LabeledContent(AppLocalization.string(.targetLabel)) {
                     setAsideTargetLabel(in: sections)
                 }
                 .font(.dsBody)
@@ -348,7 +348,7 @@ struct PlanItemEditorView: View {
                 }
             }
         } else {
-            Text("Required").foregroundStyle(Theme.accent)
+            Text(appLocalized: .requiredLabel).foregroundStyle(Theme.accent)
         }
     }
 

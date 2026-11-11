@@ -22,12 +22,12 @@ nonisolated enum PlanSort: CaseIterable, Identifiable, Hashable {
 
     var title: String {
         switch self {
-        case .amount: "Amount"
-        case .account: "Account"
-        case .group: "Group"
-        case .dueDay: "Due day"
-        case .status: "Status"
-        case .name: "Name"
+        case .amount: AppLocalization.string(.amount)
+        case .account: AppLocalization.string(.account)
+        case .group: AppLocalization.string(.group)
+        case .dueDay: AppLocalization.string(.dueDay)
+        case .status: AppLocalization.string(.status)
+        case .name: AppLocalization.string(.name)
         }
     }
 

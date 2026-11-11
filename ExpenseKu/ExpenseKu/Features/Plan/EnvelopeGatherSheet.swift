@@ -30,7 +30,7 @@ struct EnvelopeGatherSheet: View {
         _expenses = Query(filter: #Predicate<Expense> { $0.date >= start && $0.date < end })
     }
 
-    private var name: String { envelope.name.isEmpty ? "Untitled" : envelope.name }
+    private var name: String { envelope.name.isEmpty ? AppLocalization.string(.untitled) : envelope.name }
 
     var body: some View {
         let envelopes = EnvelopeOffer.activeEnvelopes(of: envelope.plan)
@@ -46,9 +46,9 @@ struct EnvelopeGatherSheet: View {
         NavigationStack {
             Group {
                 if candidates.isEmpty {
-                    EmptyStateView(title: "Nothing to move",
+                    EmptyStateView(title: AppLocalization.string(.nothingToMove),
                                    systemImage: "tray",
-                                   message: "Everything this cycle is already in \(name).")
+                                   message: AppLocalization.string(.everythingThisCycleIsAlreadyIn(name)))
                 } else {
                     List {
                         ForEach(sections) { section in
@@ -64,7 +64,7 @@ struct EnvelopeGatherSheet: View {
                                 } header: {
                                     VStack(alignment: .leading, spacing: 10) {
                                         if section.isPaidEarly, index == 0 {
-                                            SectionHeaderText("Paid early · \(section.cycle.title(calendar: calendar))")
+                                            SectionHeaderText(.paidEarlySectionHeading(section.cycle.title(calendar: calendar)))
                                         }
                                         DayGroupHeader(title: DayLabel.title(group.day, calendar: calendar),
                                                        total: group.total)
@@ -81,7 +81,7 @@ struct EnvelopeGatherSheet: View {
             .background(Theme.bg)
             .safeAreaInset(edge: .bottom) {
                 if !candidates.isEmpty {
-                    Button("Move \(PlanCopy.counted(selection.count, "expense"))", systemImage: "tray") {
+                    Button(AppLocalization.string(.move(PlanCopy.counted(selection.count, .expense))), systemImage: "tray") {
                         EnvelopeChoice.envelope(envelope.persistentModelID)
                             .apply(to: selection.expenses(in: candidates), envelopes: [envelope])
                         try? context.save()
@@ -100,11 +100,11 @@ struct EnvelopeGatherSheet: View {
             }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Close", systemImage: "xmark") { dismiss() }
+                    Button(AppLocalization.string(.close), systemImage: "xmark") { dismiss() }
                 }
                 ToolbarItem(placement: .principal) {
                     VStack(spacing: 2) {
-                        Text("Move to \(name)")
+                        Text(appLocalized: .moveTo(name))
                             .font(.dsBody).bold()
                             .foregroundStyle(Theme.text)
                             .lineLimit(1)

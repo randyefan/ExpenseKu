@@ -61,7 +61,7 @@ nonisolated enum SpendSummary {
         var appearance: [String: (colorHex: String?, symbol: String?, id: PersistentIdentifier)] = [:]
         for expense in expenses {
             if let dateRange, !dateRange.contains(expense.date) { continue }
-            let name = expense.category?.name ?? "Uncategorized"
+            let name = expense.category?.name ?? AppLocalization.string(.uncategorized)
             totals[name, default: 0] += expense.amount
             if appearance[name] == nil, let category = expense.category {
                 appearance[name] = (category.colorHex, category.resolvedSymbol, category.persistentModelID)
@@ -90,7 +90,7 @@ nonisolated enum SpendSummary {
         var appearance: [String: (colorHex: String?, symbol: String?, brandID: String?, id: PersistentIdentifier)] = [:]
         for expense in expenses {
             if let dateRange, !dateRange.contains(expense.date) { continue }
-            let name = expense.account?.name ?? "Unassigned"
+            let name = expense.account?.name ?? AppLocalization.string(.unassigned)
             totals[name, default: 0] += expense.amount
             if appearance[name] == nil, let account = expense.account {
                 appearance[name] = (account.colorHex, account.chipSymbol, account.brandID, account.persistentModelID)

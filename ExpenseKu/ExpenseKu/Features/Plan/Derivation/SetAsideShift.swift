@@ -48,7 +48,7 @@ nonisolated struct SetAsideShift: Equatable {
     func incomingLabel(payday: Int, calendar: Calendar) -> String? {
         guard incoming > 0 else { return nil }
         let cycles = Set(sourceCycleStarts.map { PayCycle.containing($0, payday: payday, calendar: calendar) })
-        guard cycles.count == 1, let cycle = cycles.first else { return "Set aside earlier" }
-        return "Set aside in \(cycle.lastDay(calendar: calendar).formatted(.dateTime.month(.wide)))"
+        guard cycles.count == 1, let cycle = cycles.first else { return AppLocalization.string(.setAsideEarlier) }
+        return AppLocalization.string(.setAsideIn(cycle.lastDay(calendar: calendar).formatted(.dateTime.month(.wide).locale(AppLocalization.locale))))
     }
 }

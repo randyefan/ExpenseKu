@@ -10,8 +10,8 @@ import Foundation
 
 nonisolated extension Decimal {
     /// The amount formatted as Indonesian Rupiah, e.g. "Rp100,000".
-    func formattedIDR() -> String {
-        formatted(.currency(code: "IDR").precision(.fractionLength(0)))
+    func formattedIDR(locale: Locale = AppLocalization.locale) -> String {
+        formatted(.currency(code: "IDR").precision(.fractionLength(0)).locale(locale))
     }
 
     /// A short form for tight spots such as a chart callout, e.g. "220RB" or
@@ -19,12 +19,13 @@ nonisolated extension Decimal {
     /// round thousands stay clean, and no currency mark: a bar label has one
     /// slot's width to live in, and every amount in the app is rupiah.
     /// Locale decides the suffix, so this stays correct outside id-ID.
-    func compactAmount() -> String {
+    func compactAmount(locale: Locale = AppLocalization.locale) -> String {
         formatted(
             .number
                 .precision(.fractionLength(0...1))
                 .rounded(rule: .toNearestOrAwayFromZero)
                 .notation(.compactName)
+                .locale(locale)
         )
     }
 

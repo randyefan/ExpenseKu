@@ -88,10 +88,10 @@ nonisolated final class EnvelopeAssignmentTests: XCTestCase {
         let s = try sample(in: try makeInMemoryContext())
 
         XCTAssertEqual(try progress(s, s.travelling).spent, 685_000)
-        XCTAssertEqual(try progress(s, s.travelling).remainderText, "Rp\u{00A0}1.315.000 left")
+        XCTAssertEqual(try progress(s, s.travelling).remainderText, "\(Decimal(1_315_000).formattedIDR()) left")
         XCTAssertEqual(try progress(s, s.hidup).spent, 711_400)
-        XCTAssertEqual(try progress(s, s.hidup).remainderText, "Rp\u{00A0}226.900 left")
-        XCTAssertEqual(try progress(s, s.kos).remainderText, "Rp\u{00A0}48.300 over")
+        XCTAssertEqual(try progress(s, s.hidup).remainderText, "\(Decimal(226_900).formattedIDR()) left")
+        XCTAssertEqual(try progress(s, s.kos).remainderText, "\(Decimal(48_300).formattedIDR()) over")
     }
 
     /// **No envelope** takes a Makan out of Hidup and out of the plan altogether.

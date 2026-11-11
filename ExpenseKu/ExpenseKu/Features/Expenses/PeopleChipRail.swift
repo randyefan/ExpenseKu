@@ -17,10 +17,10 @@ struct PeopleChipRail: View {
     let onEditPeople: () -> Void
 
     var body: some View {
-        QuickEntrySection(title: "People") {
+        QuickEntrySection(title: AppLocalization.string(.people)) {
             ChipRail(fade: Metric.screenPadding) {
                 ForEach(rail) { person in
-                    QuickChip(title: person.name, isSelected: isSelected(person)) {
+                    QuickChip(title: person.displayName, isSelected: isSelected(person)) {
                         toggle(person)
                     } lead: {
                         PersonAvatar(person: person, size: 28)
@@ -29,18 +29,18 @@ struct PeopleChipRail: View {
                 }
                 Menu {
                     ForEach(everyone) { person in
-                        Toggle(person.name, isOn: Binding(
+                        Toggle(person.displayName, isOn: Binding(
                             get: { isSelected(person) },
                             set: { _ in toggle(person) }
                         ))
                         .menuActionDismissBehavior(.disabled)
                     }
                     Divider()
-                    Button("Edit People…", systemImage: "person.2", action: onEditPeople)
+                    Button(AppLocalization.string(.editPeople), systemImage: "person.2", action: onEditPeople)
                 } label: {
-                    QuickChipLabel(title: "All…", isSelected: false, isMuted: true)
+                    QuickChipLabel(title: AppLocalization.string(.all), isSelected: false, isMuted: true)
                 }
-                .accessibilityLabel("All people")
+                .accessibilityLabel(AppLocalization.string(.allPeople))
             }
         }
     }

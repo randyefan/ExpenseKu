@@ -46,7 +46,7 @@ struct PlanFilterPill: View {
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Clear filter")
+        .accessibilityLabel(AppLocalization.string(.clearFilter))
         .accessibilityValue(filter.pillTitle)
         .accessibilityAddTraits(.isButton)
     }

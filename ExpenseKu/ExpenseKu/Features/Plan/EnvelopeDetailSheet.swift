@@ -50,7 +50,7 @@ struct EnvelopeDetailSheet: View {
             .background(Theme.bg)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Close", systemImage: "xmark") { dismiss() }
+                    Button(AppLocalization.string(.close), systemImage: "xmark") { dismiss() }
                 }
                 ToolbarItem(placement: .principal) {
                     VStack(spacing: 2) {
@@ -65,7 +65,7 @@ struct EnvelopeDetailSheet: View {
                     .accessibilityElement(children: .combine)
                 }
                 ToolbarItem(placement: .primaryAction) {
-                    Button("Edit") { onAction(.edit) }
+                    Button(AppLocalization.string(.edit)) { onAction(.edit) }
                 }
             }
             .navigationBarTitleDisplayMode(.inline)

@@ -21,7 +21,7 @@ struct PaidElsewhereSection: View {
                 }
             }
         } header: {
-            SectionHeaderText("Paid elsewhere")
+            SectionHeaderText(.paidElsewhere)
                 .textCase(nil)
                 .listRowInsets(EdgeInsets(top: 14, leading: 4, bottom: 6, trailing: 4))
         }

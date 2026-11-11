@@ -23,7 +23,7 @@ struct InlineMessageCard: View {
 
     init(_ notice: EmptyNotice, onClearFilters: @escaping () -> Void) {
         self.init(title: notice.title, detail: notice.detail,
-                  actionTitle: notice.offersClearFilters ? "Clear Filters" : nil,
+                  actionTitle: notice.offersClearFilters ? AppLocalization.string(.clearFilters) : nil,
                   action: onClearFilters)
     }
 

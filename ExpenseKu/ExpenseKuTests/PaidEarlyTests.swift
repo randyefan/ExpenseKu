@@ -95,7 +95,7 @@ nonisolated final class PaidEarlyTests: XCTestCase {
 
         XCTAssertEqual(travelling.spent, 1_200_000)
         XCTAssertEqual(travelling.paidEarly, 1_200_000)
-        XCTAssertEqual(travelling.remainderText, "Rp\u{00A0}800.000 left")
+        XCTAssertEqual(travelling.remainderText, "\(Decimal(800_000).formattedIDR()) left")
     }
 
     /// In October the ticket is listed and totalled but counts in no envelope, and the
@@ -133,7 +133,7 @@ nonisolated final class PaidEarlyTests: XCTestCase {
         try context.save()
 
         let hidup = try progress(of: s.hidup, in: s.octPlan, cycle: october, expenses: s.october + [bekal])
-        XCTAssertEqual(hidup.remainderText, "Rp\u{00A0}226.900 left")
+        XCTAssertEqual(hidup.remainderText, "\(Decimal(226_900).formattedIDR()) left")
         let travelling = try progress(of: s.travelling, in: s.novPlan, cycle: november, expenses: [])
         XCTAssertEqual(travelling.spent, 1_260_000)
     }
@@ -209,7 +209,7 @@ nonisolated final class PaidEarlyTests: XCTestCase {
 
         XCTAssertEqual(options.value(for: .envelope(s.travelling.persistentModelID), category: nil),
                        EnvelopeRowValue(name: "Travelling", suffix: "· Nov", isChosen: true))
-        XCTAssertEqual(options.progress(of: s.travelling)?.remainderText, "Rp\u{00A0}800.000 left",
+        XCTAssertEqual(options.progress(of: s.travelling)?.remainderText, "\(Decimal(800_000).formattedIDR()) left",
                        "the picker's remainder counts what was already paid early")
     }
 
@@ -249,16 +249,16 @@ nonisolated final class PaidEarlyTests: XCTestCase {
         let s = try sample(in: context)
         let travelling = try progress(of: s.travelling, in: s.novPlan, cycle: november, expenses: [])
         XCTAssertEqual(travelling.fromEarlierCaption(payday: payday, calendar: calendar),
-                       "Rp\u{00A0}1.200.000 from October")
+                       "\(Decimal(1_200_000).formattedIDR()) from October")
         XCTAssertEqual(travelling.ownShareCaption(cycle: november, calendar: calendar),
-                       "Rp\u{00A0}800.000 from November")
+                       "\(Decimal(800_000).formattedIDR()) from November")
 
         let deposit = Expense(amount: 300_000, date: date(9, 20), note: "DP hotel")
         context.insert(deposit)
         deposit.envelope = s.travelling
         try context.save()
         let both = try progress(of: s.travelling, in: s.novPlan, cycle: november, expenses: [])
-        XCTAssertEqual(both.fromEarlierCaption(payday: payday, calendar: calendar), "Rp\u{00A0}1.500.000 from earlier")
+        XCTAssertEqual(both.fromEarlierCaption(payday: payday, calendar: calendar), "\(Decimal(1_500_000).formattedIDR()) from earlier")
 
         let hidup = try progress(of: s.hidup, in: s.octPlan, cycle: october, expenses: s.october)
         XCTAssertNil(hidup.fromEarlierCaption(payday: payday, calendar: calendar))

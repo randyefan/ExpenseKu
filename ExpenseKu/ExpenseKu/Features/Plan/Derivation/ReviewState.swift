@@ -28,14 +28,14 @@ nonisolated struct ReviewState: Equatable {
 
     /// The notice headline. Plural and singular both have to read naturally, because
     /// one item posting is as common as five.
-    var title: String { PlanCopy.counted(postedCount, "Auto item") + " posted" }
+    var title: String { AppLocalization.string(.postedAutoItems(postedCount)) }
 
     /// The second line. It changes with the burst, because "while you were away" is
     /// a lie when a single item fired this morning.
     var detail: String {
         postedCount > 1
-            ? "Written without confirmation while you were away. Check the amounts."
-            : "Written without confirmation. Check the amount."
+            ? AppLocalization.string(.writtenWithoutConfirmationWhileYouWereAwayCheckTheAmounts)
+            : AppLocalization.string(.writtenWithoutConfirmationCheckTheAmount)
     }
 
     init(cycleItems: [PlanItem]) {

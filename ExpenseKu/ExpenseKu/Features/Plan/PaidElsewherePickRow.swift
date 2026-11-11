@@ -38,7 +38,7 @@ struct PaidElsewherePickRow: View {
         .buttonStyle(.pressableRow)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(member.name)
-        .accessibilityValue("\(isChosen ? "Chosen" : "Not chosen"), \(member.amount.formattedIDR())")
+        .accessibilityValue("\(isChosen ? AppLocalization.string(.chosen) : AppLocalization.string(.notChosen)), \(member.amount.formattedIDR())")
         .accessibilityAddTraits(isChosen ? [.isButton, .isSelected] : .isButton)
     }
 }

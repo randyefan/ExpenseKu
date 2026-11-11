@@ -158,15 +158,15 @@ struct CycleEmptyState: View {
     var body: some View {
         if storeIsEmpty {
             EmptyStateView(
-                title: "No expenses yet",
+                title: AppLocalization.string(.noExpensesYet),
                 systemImage: "doc.text",
-                message: "Tap + to log your first expense."
+                message: AppLocalization.string(.tapToLogYourFirstExpense)
             )
         } else {
             EmptyStateView(
-                title: "No expenses this cycle",
+                title: AppLocalization.string(.noExpensesThisCycle),
                 systemImage: "calendar",
-                message: "Nothing logged for \(cycle.rangeText(calendar: calendar))."
+                message: AppLocalization.string(.nothingLoggedFor(cycle.rangeText(calendar: calendar)))
             )
         }
     }

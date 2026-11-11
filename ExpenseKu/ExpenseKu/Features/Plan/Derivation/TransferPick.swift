@@ -50,15 +50,15 @@ nonisolated struct TransferPick {
         return allAuto ? .covered(account: row.accountName) : .moved(account: row.accountName)
     }
 
-    var sendTitle: String { "To send · \(chosenMembers.count) of \(toSend.count)" }
-    var alreadyInTitle: String { "Already in \(row.accountName)" }
-    var allInMessage: String { "Everything for \(row.accountName) is in." }
+    var sendTitle: String { AppLocalization.string(.toSendOf(String(chosenMembers.count), String(toSend.count))) }
+    var alreadyInTitle: String { AppLocalization.string(.alreadyIn(row.accountName)) }
+    var allInMessage: String { AppLocalization.string(.everythingForIsIn(row.accountName)) }
 
     /// Once all of it is in there is nothing to send now; the figure is the line's total.
-    var figureTitle: String { toSend.isEmpty ? "Total" : "Transfer now" }
+    var figureTitle: String { toSend.isEmpty ? AppLocalization.string(.total) : AppLocalization.string(.transferNow) }
     var figure: Decimal { toSend.isEmpty ? row.transfer : transferNow }
 
     var adjustmentNote: String? {
-        row.hasAdjustment && row.isAdjustmentTaken ? "Taken with the first transfer" : nil
+        row.hasAdjustment && row.isAdjustmentTaken ? AppLocalization.string(.takenWithTheFirstTransfer) : nil
     }
 }

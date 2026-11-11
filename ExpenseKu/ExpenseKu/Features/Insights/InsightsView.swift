@@ -127,7 +127,7 @@ struct InsightsView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .background(Theme.bg)
-            .navigationTitle("Insights")
+            .navigationTitle(AppLocalization.string(.insights))
             .navigationDestination(for: Destination.self) { destination in
                 switch destination {
                 case .leaderboard:

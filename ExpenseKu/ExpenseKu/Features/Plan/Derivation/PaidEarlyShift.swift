@@ -69,23 +69,23 @@ nonisolated struct PaidEarlyShift: Equatable {
     func outgoingLabel(payday: Int, calendar: Calendar) -> String? {
         guard outgoing > 0 else { return nil }
         guard let month = Self.month(of: outgoingCycleStarts, payday: payday, calendar: calendar) else {
-            return "Paid early for later cycles"
+            return AppLocalization.string(.paidEarlyForLaterCycles)
         }
-        return "Paid early for \(month)"
+        return AppLocalization.string(.paidEarlyFor(month))
     }
 
     /// "Paid early in October", or "Paid early"; nil at Rp 0.
     func incomingLabel(payday: Int, calendar: Calendar) -> String? {
         guard incoming > 0 else { return nil }
         guard let month = Self.month(of: incomingDates, payday: payday, calendar: calendar) else {
-            return "Paid early"
+            return AppLocalization.string(.paidEarly)
         }
-        return "Paid early in \(month)"
+        return AppLocalization.string(.paidEarlyIn(month))
     }
 
     private static func month(of dates: [Date], payday: Int, calendar: Calendar) -> String? {
         let cycles = Set(dates.map { PayCycle.containing($0, payday: payday, calendar: calendar) })
         guard cycles.count == 1, let cycle = cycles.first else { return nil }
-        return cycle.lastDay(calendar: calendar).formatted(.dateTime.month(.wide))
+        return cycle.lastDay(calendar: calendar).formatted(.dateTime.month(.wide).locale(AppLocalization.locale))
     }
 }

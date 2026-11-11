@@ -17,11 +17,11 @@ struct ReadReceiptMenu: View {
     @State private var pasteboardHasImage = UIPasteboard.general.hasImages
 
     var body: some View {
-        Menu("Read receipt", systemImage: "receipt") {
-            Button("Photos", systemImage: "photo", action: onPhotos)
-            Button("Camera", systemImage: "camera", action: onCamera)
+        Menu(AppLocalization.string(.readReceipt), systemImage: "receipt") {
+            Button(AppLocalization.string(.photos), systemImage: "photo", action: onPhotos)
+            Button(AppLocalization.string(.camera), systemImage: "camera", action: onCamera)
                 .disabled(!DocumentCameraView.isSupported)
-            Button("Paste", systemImage: "doc.on.clipboard", action: onPaste)
+            Button(AppLocalization.string(.paste), systemImage: "doc.on.clipboard", action: onPaste)
                 .disabled(!pasteboardHasImage)
         }
         .onAppear { pasteboardHasImage = UIPasteboard.general.hasImages }

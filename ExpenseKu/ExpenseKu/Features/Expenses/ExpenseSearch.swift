@@ -30,6 +30,7 @@ nonisolated enum ExpenseSearchMatch {
         var parts = [expense.note]
         if let name = expense.category?.name { parts.append(name) }
         parts.append(contentsOf: (expense.people ?? []).map(\.name))
+        parts.append(contentsOf: (expense.people ?? []).filter(\.isMe).map(\.displayName))
         if let name = expense.account?.name { parts.append(name) }
         return fold(parts.joined(separator: " "))
     }

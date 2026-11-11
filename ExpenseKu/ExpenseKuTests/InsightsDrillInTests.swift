@@ -272,7 +272,7 @@ nonisolated final class InsightsDrillInTests: XCTestCase {
 
     func testMenuItemsShowTheTitleOverTheRange() {
         XCTAssertEqual(cycle(7, 15).title(calendar: calendar), "July 2026")
-        XCTAssertEqual(cycle(7, 15).rangeText(calendar: calendar), "30/06/2026 ~ 30/07/2026")
+        XCTAssertEqual(cycle(7, 15).rangeText(calendar: calendar, locale: Locale(identifier: "id_ID")), "30/06/2026 ~ 30/07/2026")
     }
 
     // MARK: - §5.3 The window

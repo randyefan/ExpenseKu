@@ -69,18 +69,18 @@ struct DoneCheck: View {
     /// Spoken by VoiceOver and read by `idb ui describe-all`, which is how the flows
     /// get verified — a control with no value is invisible to both.
     private var accessibilityValue: String {
-        let account = accountName ?? "the account"
+        let account = accountName ?? AppLocalization.string(.theAccount)
         return switch state {
-        case .todo: "Not done"
-        case .funded: "In \(account), not paid yet"
-        case .done: "Done"
-        case .auto: "Auto — posts on its due day"
-        case .autoFunded: "Auto — covered in \(account)"
-        case .autoPosted: "Auto — posted, needs review"
-        case .envelope: "Envelope — fills from your expenses"
-        case .envelopeFunded: "Envelope — moved to \(account)"
-        case .setAside: "Not moved"
-        case .setAsideMoved: "Moved"
+        case .todo: AppLocalization.string(.notDone)
+        case .funded: AppLocalization.string(.inNotPaidYet(account))
+        case .done: AppLocalization.string(.paymentDone)
+        case .auto: AppLocalization.string(.autoPostsOnItsDueDay)
+        case .autoFunded: AppLocalization.string(.autoCoveredIn(account))
+        case .autoPosted: AppLocalization.string(.autoPostedNeedsReview)
+        case .envelope: AppLocalization.string(.envelopeFillsFromYourExpenses)
+        case .envelopeFunded: AppLocalization.string(.envelopeMovedTo(account))
+        case .setAside: AppLocalization.string(.notMoved)
+        case .setAsideMoved: AppLocalization.string(.moved)
         }
     }
 }

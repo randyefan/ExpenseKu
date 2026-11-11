@@ -5,7 +5,9 @@
 //  DEBUG-only: -seedReceipts puts flow AG's sample on the simulator (receipt-reading.md
 //  §8). A BCA Account wearing its logo, a Lovely Support Category, two synthetic receipts
 //  in the inbox (the BCA transfer and an Indomaret shop receipt, drawn with SwiftUI so OCR
-//  has real pixels to read), and one Belanja expense from a receipt still to check.
+//  has real pixels to read), and one Belanja expense from a receipt still to check, read by
+//  Gemma (reading-source.md §8) — the only Gemma reading the simulator can show, since MLX
+//  cannot run there.
 //
 
 #if DEBUG
@@ -44,6 +46,7 @@ enum DebugReceiptSeed {
             let date = Calendar.current.date(byAdding: .day, value: -1, to: .now) ?? .now
             let expense = Expense(amount: 28_600, date: date, note: "INDOMARET", category: belanja, needsReview: true)
             expense.receiptImage = ReceiptImageData.stored(from: shop)
+            expense.receiptSource = .gemma
             context.insert(expense)
         }
         try? context.save()

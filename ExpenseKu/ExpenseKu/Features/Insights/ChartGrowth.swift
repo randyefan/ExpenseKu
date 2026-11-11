@@ -17,8 +17,16 @@ import SwiftUI
 @MainActor
 final class ChartGrowth {
     private(set) var factor: Double = 0
+    @ObservationIgnored private var grownFor: AnyHashable?
 
-    func run(reduceMotion: Bool, delay: Double = 0.05) async {
+    func appear(with trigger: AnyHashable, reduceMotion: Bool) {
+        grownFor = trigger
+        grow(reduceMotion: reduceMotion)
+    }
+
+    func regrow(for trigger: AnyHashable, reduceMotion: Bool, delay: Double = 0.05) async {
+        guard trigger != grownFor else { return }
+        grownFor = trigger
         guard !reduceMotion else {
             factor = 1
             return
@@ -26,7 +34,16 @@ final class ChartGrowth {
         factor = 0
         try? await Task.sleep(for: .seconds(delay))
         guard !Task.isCancelled else { return }
-        withAnimation(Motion.chartGrow) { factor = 1 }
+        grow(reduceMotion: false)
+    }
+
+    private func grow(reduceMotion: Bool) {
+        guard factor < 1 else { return }
+        if reduceMotion {
+            factor = 1
+        } else {
+            withAnimation(Motion.chartGrow) { factor = 1 }
+        }
     }
 }
 
@@ -37,14 +54,16 @@ private struct GrowsOnAppear: ViewModifier {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     func body(content: Content) -> some View {
-        content.task(id: trigger) {
-            await growth.run(reduceMotion: reduceMotion)
-        }
+        content
+            .onAppear { growth.appear(with: trigger, reduceMotion: reduceMotion) }
+            .task(id: trigger) {
+                await growth.regrow(for: trigger, reduceMotion: reduceMotion)
+            }
     }
 }
 
 extension View {
-    /// Re-runs `growth` whenever `trigger` changes, and once on appear.
+    /// Grows `growth` as soon as the view appears, and again whenever `trigger` changes.
     func growsOnAppear(_ growth: ChartGrowth, trigger: some Hashable) -> some View {
         modifier(GrowsOnAppear(growth: growth, trigger: AnyHashable(trigger)))
     }

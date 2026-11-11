@@ -101,7 +101,7 @@ nonisolated final class EnvelopeChoiceTests: XCTestCase {
         XCTAssertEqual(options.envelopes.map(\.name),
                        ["Travelling", "Hidup (Makan, bensin, emoney saldo)", "Kebutuhan Kos di Jkt (Tisu, sabun, galon)"])
         XCTAssertEqual(options.envelopes.map { options.progress(of: $0)?.remainderText },
-                       ["Rp\u{00A0}1.315.000 left", "Rp\u{00A0}226.900 left", "Rp\u{00A0}48.300 over"])
+                       ["\(Decimal(1_315_000).formattedIDR()) left", "\(Decimal(226_900).formattedIDR()) left", "\(Decimal(48_300).formattedIDR()) over"])
         XCTAssertEqual(options.byCategoryDetail(category: s.makan), "Makan counts in Hidup (Makan, bensin, emoney saldo)")
         XCTAssertEqual(options.byCategoryDetail(category: s.parkir), "Outside plan")
         XCTAssertEqual(options.byCategoryDetail(category: nil), "Choose a category first")

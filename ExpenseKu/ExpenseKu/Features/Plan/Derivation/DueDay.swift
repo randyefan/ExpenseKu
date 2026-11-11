@@ -41,7 +41,7 @@ nonisolated enum DueDay {
     /// and the date is within three days, because a countdown in a cycle that has not
     /// started is meaningless.
     static func label(day: Int, in cycle: PayCycle, today: Date, calendar: Calendar) -> DueLabel {
-        let absolute = DueLabel(text: "Due \(max(range.lowerBound, min(range.upperBound, day)))", isSoon: false)
+        let absolute = DueLabel(text: AppLocalization.string(.due(String(max(range.lowerBound, min(range.upperBound, day))))), isSoon: false)
         guard cycle.contains(today), let due = date(day: day, in: cycle, calendar: calendar) else {
             return absolute
         }
@@ -50,8 +50,8 @@ nonisolated enum DueDay {
               (0...3).contains(days) else {
             return absolute
         }
-        if days == 0 { return DueLabel(text: "due today", isSoon: true) }
-        return DueLabel(text: "due in " + PlanCopy.counted(days, "day"), isSoon: true)
+        if days == 0 { return DueLabel(text: AppLocalization.string(.dueToday), isSoon: true) }
+        return DueLabel(text: AppLocalization.string(.dueInDays(days)), isSoon: true)
     }
 }
 

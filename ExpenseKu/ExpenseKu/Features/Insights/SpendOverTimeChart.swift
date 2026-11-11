@@ -51,8 +51,8 @@ struct SpendOverTimeChart: View {
     private func chart(slotWidth: CGFloat) -> some View {
         Chart(data) { item in
             BarMark(
-                x: .value("Period", item.date, unit: calendarUnit),
-                y: .value("Amount", item.total.doubleValue * growth.factor),
+                x: .value(AppLocalization.string(.period), item.date, unit: calendarUnit),
+                y: .value(AppLocalization.string(.amount), item.total.doubleValue * growth.factor),
                 width: .ratio(0.55)
             )
             .foregroundStyle(item.date == currentPeriod ? Theme.accent : Theme.textSecondary.opacity(0.45))
@@ -65,7 +65,7 @@ struct SpendOverTimeChart: View {
         .chartYAxis(.hidden)
         .chartXAxis {
             AxisMarks(values: .stride(by: calendarUnit)) { _ in
-                AxisValueLabel(format: labelFormat)
+                AxisValueLabel(format: labelFormat.locale(AppLocalization.locale))
                     .font(.dsCaption)
                     .foregroundStyle(Theme.textSecondary)
             }

@@ -23,7 +23,7 @@ struct GroupPicker: View {
     var body: some View {
         List {
             Section {
-                row(name: "None", symbol: "minus.circle", isSelected: selection == nil) {
+                row(name: AppLocalization.string(.none), symbol: "minus.circle", isSelected: selection == nil) {
                     selection = nil
                     dismiss()
                 }
@@ -39,7 +39,7 @@ struct GroupPicker: View {
 
             Section {
                 Button { showingNew = true } label: {
-                    PickerAddRow(title: "New Group")
+                    PickerAddRow(title: AppLocalization.string(.newGroup))
                 }
                 .buttonStyle(.pressableRow)
                 .listRowBackground(Theme.card)
@@ -48,7 +48,7 @@ struct GroupPicker: View {
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
         .background(Theme.bg)
-        .navigationTitle("Group")
+        .navigationTitle(AppLocalization.string(.group))
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showingNew) {
             NavigationStack { GroupEditorView(editing: nil) }

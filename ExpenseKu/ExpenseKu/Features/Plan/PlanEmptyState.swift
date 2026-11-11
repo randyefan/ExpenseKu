@@ -18,16 +18,16 @@ struct PlanEmptyState: View {
     var body: some View {
         VStack(spacing: Metric.cardGap) {
             EmptyStateView(
-                title: "No plan yet",
+                title: AppLocalization.string(.noPlanYet),
                 systemImage: "list.clipboard",
                 message: PlanCopy.noPlanMessage(copyFrom: copySourceMonth)
             )
 
             if let copySourceMonth {
-                PlanEmptyStateButton(title: "Copy from \(copySourceMonth)", action: onCopy)
-                PlanEmptyStateButton(title: "Start empty", isPrimary: false, action: onStart)
+                PlanEmptyStateButton(title: AppLocalization.string(.copyFrom(copySourceMonth)), action: onCopy)
+                PlanEmptyStateButton(title: AppLocalization.string(.startEmpty), isPrimary: false, action: onStart)
             } else {
-                PlanEmptyStateButton(title: "Start this cycle's plan", action: onStart)
+                PlanEmptyStateButton(title: AppLocalization.string(.startThisCycleSPlan), action: onStart)
             }
         }
     }

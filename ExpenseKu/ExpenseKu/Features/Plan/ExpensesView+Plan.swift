@@ -230,13 +230,13 @@ extension View {
         ) { pending in
             switch pending {
             case .untick(let item):
-                Button("Delete expense", role: .destructive) { onUntick(item) }
+                Button(AppLocalization.string(.deleteExpenseRecord), role: .destructive) { onUntick(item) }
             case .deleteItem(let item):
-                Button("Delete plan item", role: .destructive) { onDeleteItem(item) }
+                Button(AppLocalization.string(.deletePlanItem), role: .destructive) { onDeleteItem(item) }
             case .clearPlan(let plan):
-                Button("Clear Plan", role: .destructive) { onClearPlan(plan) }
+                Button(AppLocalization.string(.clearPlan), role: .destructive) { onClearPlan(plan) }
             }
-            Button("Cancel", role: .cancel) {}
+            Button(AppLocalization.string(.cancel), role: .cancel) {}
         } message: { pending in
             Text(confirmationBody(pending))
         }
@@ -245,8 +245,8 @@ extension View {
 
 private func confirmationTitle(_ pending: PlanConfirmation?) -> String {
     switch pending {
-    case .untick: "Delete the expense too?"
-    case .deleteItem: "Delete this plan item?"
+    case .untick: AppLocalization.string(.deleteTheExpenseToo)
+    case .deleteItem: AppLocalization.string(.deleteThisPlanItem)
     case .clearPlan(let plan):
         PlanClearing.title(month: LookBackCopy.month(
             of: PayCycle.containing(plan.cycleStart, payday: Payday.current), calendar: .current))

@@ -17,7 +17,7 @@ struct TransferAdjustmentRow: View {
     var body: some View {
         HStack(spacing: 8) {
             VStack(alignment: .leading, spacing: 2) {
-                Text("Adjustment")
+                Text(appLocalized: .adjustment)
                     .font(.dsBody)
                     .foregroundStyle(Theme.text)
                 if let note {
@@ -28,7 +28,7 @@ struct TransferAdjustmentRow: View {
             }
             Spacer(minLength: 8)
             if adjustment == 0 {
-                Text("None")
+                Text(appLocalized: .none)
                     .font(.dsBody)
                     .foregroundStyle(Theme.textSecondary)
             } else {

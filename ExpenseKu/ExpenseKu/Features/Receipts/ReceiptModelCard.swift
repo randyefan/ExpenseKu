@@ -17,10 +17,10 @@ struct ReceiptModelCard: View {
 
     private var status: String {
         switch phase {
-        case .notDownloaded: "3.6 GB · not downloaded"
-        case .downloading: "3.6 GB · downloading"
-        case .paused(_, _, let error): error ?? "Paused"
-        case .ready: "On this iPhone · 3.6 GB"
+        case .notDownloaded: AppLocalization.string(.receiptModelNotDownloaded)
+        case .downloading: AppLocalization.string(.receiptModelDownloading)
+        case .paused(_, _, let error): error ?? AppLocalization.string(.paused)
+        case .ready: AppLocalization.string(.receiptModelOnDevice)
         }
     }
 
@@ -43,7 +43,7 @@ struct ReceiptModelCard: View {
                 }
                 Spacer(minLength: 8)
                 if case .downloading = phase {
-                    Button("Pause", systemImage: "pause.fill", action: onPause)
+                    Button(AppLocalization.string(.pause), systemImage: "pause.fill", action: onPause)
                         .font(.dsSubhead.weight(.semibold))
                         .foregroundStyle(Theme.text)
                         .padding(.horizontal, 14)
@@ -72,16 +72,16 @@ struct ReceiptModelCard: View {
 
             switch phase {
             case .notDownloaded:
-                wideButton("Download model", systemImage: "arrow.down.circle", prominent: true, action: onDownload)
+                wideButton(AppLocalization.string(.downloadModel), systemImage: "arrow.down.circle", prominent: true, action: onDownload)
             case .paused:
-                wideButton("Resume", systemImage: "arrow.clockwise", prominent: true, action: onDownload)
-                Button("Remove download", role: .destructive, action: onRemove)
+                wideButton(AppLocalization.string(.resume), systemImage: "arrow.clockwise", prominent: true, action: onDownload)
+                Button(AppLocalization.string(.removeDownload), role: .destructive, action: onRemove)
                     .font(.dsSubhead.weight(.semibold))
                     .foregroundStyle(Theme.negative)
                     .frame(maxWidth: .infinity)
             case .ready:
                 Button(action: onRemove) {
-                    Text("Remove model")
+                    Text(appLocalized: .removeModel)
                         .font(.dsSubhead).fontWeight(.semibold)
                         .foregroundStyle(Theme.negative)
                         .frame(maxWidth: .infinity, minHeight: 44)
@@ -103,7 +103,7 @@ struct ReceiptModelCard: View {
     private var progressBytes: String {
         switch phase {
         case .downloading(let received, let total), .paused(let received, let total, _):
-            "\(ReceiptModelPhase.gigabytes(received)) of \(ReceiptModelPhase.gigabytes(total))"
+            AppLocalization.string(.modelBytesProgress(ReceiptModelPhase.gigabytes(received), String(ReceiptModelPhase.gigabytes(total))))
         default: ""
         }
     }

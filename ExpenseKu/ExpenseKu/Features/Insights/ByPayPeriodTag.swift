@@ -12,7 +12,7 @@ import SwiftUI
 
 struct ByPayPeriodTag: View {
     var body: some View {
-        Text("By pay period")
+        Text(appLocalized: .byPayPeriod)
             .font(.dsCaption).fontWeight(.semibold)
             .foregroundStyle(Theme.textSecondary)
             .padding(.horizontal, 10).padding(.vertical, 4)

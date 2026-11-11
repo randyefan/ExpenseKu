@@ -61,14 +61,16 @@ nonisolated struct PayCycle: Hashable, Identifiable {
 
     /// The cycle's title, named by the month it *ends* in (Q4): the cycle
     /// 25 Jul → 24 Aug is titled "August 2026".
-    func title(calendar: Calendar = .current) -> String {
-        lastDay(calendar: calendar).formatted(.dateTime.month(.wide).year())
+    func title(calendar: Calendar = .current, locale: Locale = AppLocalization.locale) -> String {
+        lastDay(calendar: calendar).formatted(.dateTime.month(.wide).year().locale(locale))
     }
 
-    /// The closed span as "25/07/2026 ~ 24/08/2026" (start → last included day).
-    func rangeText(calendar: Calendar = .current) -> String {
-        let f = Self.rangeFormatter(calendar: calendar)
-        return "\(f.string(from: start)) ~ \(f.string(from: lastDay(calendar: calendar)))"
+    func rangeText(calendar: Calendar = .current, locale: Locale = AppLocalization.locale) -> String {
+        let format = Date.FormatStyle(
+            date: .numeric, time: .omitted, locale: locale,
+            calendar: calendar, timeZone: calendar.timeZone
+        ).day(.twoDigits).month(.twoDigits).year()
+        return "\(start.formatted(format)) ~ \(lastDay(calendar: calendar).formatted(format))"
     }
 
     // MARK: - Boundary math (the single clamp source of truth)
@@ -95,11 +97,4 @@ nonisolated struct PayCycle: Hashable, Identifiable {
         return paydayDate(inMonthContaining: previousMonth, payday: payday, calendar: calendar)
     }
 
-    private static func rangeFormatter(calendar: Calendar) -> DateFormatter {
-        let f = DateFormatter()
-        f.calendar = calendar
-        f.locale = Locale(identifier: "en_US_POSIX")
-        f.dateFormat = "dd/MM/yyyy"
-        return f
-    }
 }

@@ -38,7 +38,7 @@ struct FilterPill: View {
         .buttonStyle(.plain)
         .padding(.horizontal, Metric.screenPadding)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Clear filters")
+        .accessibilityLabel(AppLocalization.string(.clearExpenseFilters))
         .accessibilityValue(text)
         .accessibilityAddTraits(.isButton)
     }

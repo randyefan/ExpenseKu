@@ -29,8 +29,8 @@ nonisolated struct TransferMember: Identifiable, Equatable {
 
     /// TO SEND's caption: "Kesehatan · Auto · Due 1".
     var caption: String {
-        let kind = isEnvelope ? "Envelope" : categoryName
-        return [kind, isAuto ? "Auto" : nil, dueDay.map { "Due \($0)" }]
+        let kind = isEnvelope ? AppLocalization.string(.envelopeKind) : categoryName
+        return [kind, isAuto ? AppLocalization.string(.auto) : nil, dueDay.map { AppLocalization.string(.due(String($0))) }]
             .compactMap(\.self)
             .joined(separator: " · ")
     }
@@ -38,9 +38,9 @@ nonisolated struct TransferMember: Identifiable, Equatable {
     /// ALREADY IN's caption: the plan row's own words while Funded, "paid" once Done.
     func inCaption(accountName: String) -> String {
         switch check {
-        case .autoFunded: "covered in \(accountName)"
+        case .autoFunded: AppLocalization.string(.coveredInCaption(accountName))
         case .funded, .envelopeFunded: PlanCopy.inAccount(accountName)
-        case .setAsideMoved: "moved to \(accountName)"
+        case .setAsideMoved: AppLocalization.string(.movedToCaption(accountName))
         default: [categoryName, "paid"].compactMap(\.self).joined(separator: " · ")
         }
     }

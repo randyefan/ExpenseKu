@@ -19,11 +19,11 @@ nonisolated enum DateRangeFilter: String, CaseIterable, Identifiable {
 
     var label: String {
         switch self {
-        case .allTime: "All time"
-        case .last30Days: "Last 30 days"
-        case .thisMonth: "This month"
-        case .payPeriod: "This pay period"
-        case .thisYear: "This year"
+        case .allTime: AppLocalization.string(.allTime)
+        case .last30Days: AppLocalization.string(.last30Days)
+        case .thisMonth: AppLocalization.string(.thisMonth)
+        case .payPeriod: AppLocalization.string(.thisPayPeriod)
+        case .thisYear: AppLocalization.string(.thisYear)
         }
     }
 
@@ -31,11 +31,11 @@ nonisolated enum DateRangeFilter: String, CaseIterable, Identifiable {
     /// not: "no expenses in all time" and "no expenses in this month" both misread.
     var phrase: String {
         switch self {
-        case .allTime: "at all"
-        case .last30Days: "in the last 30 days"
-        case .thisMonth: "this month"
-        case .payPeriod: "this pay period"
-        case .thisYear: "this year"
+        case .allTime: AppLocalization.string(.atAll)
+        case .last30Days: AppLocalization.string(.inTheLast30Days)
+        case .thisMonth: AppLocalization.string(.thisMonthPhrase)
+        case .payPeriod: AppLocalization.string(.thisPayPeriodPhrase)
+        case .thisYear: AppLocalization.string(.thisYearPhrase)
         }
     }
 

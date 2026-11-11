@@ -16,10 +16,10 @@ nonisolated enum WhenShortcut: CaseIterable, Hashable, Sendable {
 
     var title: String {
         switch self {
-        case .now: "Now"
-        case .oneHourAgo: "1h ago"
-        case .threeHoursAgo: "3h ago"
-        case .yesterday: "Yesterday"
+        case .now: AppLocalization.string(.now)
+        case .oneHourAgo: AppLocalization.string(.oneHourAgo)
+        case .threeHoursAgo: AppLocalization.string(.threeHoursAgo)
+        case .yesterday: AppLocalization.string(.yesterday)
         }
     }
 

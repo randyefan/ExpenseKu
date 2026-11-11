@@ -13,9 +13,9 @@ struct FilterButton: View {
     let action: () -> Void
 
     var body: some View {
-        Button("Filter", systemImage: "line.3.horizontal.decrease", action: action)
+        Button(AppLocalization.string(.filter), systemImage: "line.3.horizontal.decrease", action: action)
             .tint(activeCount > 0 ? Theme.accent : Theme.textSecondary)
             .badge(activeCount)
-            .accessibilityValue(activeCount > 0 ? "\(activeCount) on" : "Off")
+            .accessibilityValue(activeCount > 0 ? AppLocalization.string(.activeFilterCount(String(activeCount))) : AppLocalization.string(.off))
     }
 }

@@ -13,6 +13,8 @@ struct ReceiptCheckTag: View {
         Text("Check")
             .font(.dsCaption).fontWeight(.semibold)
             .foregroundStyle(Theme.accentText)
+            .lineLimit(1)
+            .fixedSize(horizontal: false, vertical: true)
             .padding(.horizontal, 7)
             .padding(.vertical, 2)
             .background(Theme.accent.opacity(Theme.tintFillOpacity), in: .capsule)

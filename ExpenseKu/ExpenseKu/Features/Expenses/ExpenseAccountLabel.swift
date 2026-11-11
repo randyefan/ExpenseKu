@@ -22,6 +22,7 @@ struct ExpenseAccountLabel: View {
             .lineLimit(1)
             .truncationMode(.tail)
             .frame(maxWidth: nameWidth, alignment: .trailing)
+            .fixedSize(horizontal: true, vertical: false)
     }
 }
 

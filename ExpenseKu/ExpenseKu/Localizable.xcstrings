@@ -2928,6 +2928,24 @@
       },
       "comment": "A budget allowance that groups expenses. Not a mail envelope."
     },
+    "envelopeKindChoice": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Envelope"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anggarkan"
+          }
+        }
+      },
+      "comment": "Short segment label in the plan item editor's kind toggle, choosing a budget allowance that groups expenses. Kept short so the three kinds fit one line."
+    },
     "envelopeMovedTo": {
       "extractionState": "manual",
       "localizations": {
@@ -3333,6 +3351,24 @@
         }
       },
       "comment": "Plan item for a single payment. Its actual amount can differ from the planned amount."
+    },
+    "fixedKindChoice": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fixed"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bayar"
+          }
+        }
+      },
+      "comment": "Short segment label in the plan item editor's kind toggle, choosing a single-payment plan item. Kept short so the three kinds fit one line."
     },
     "foodDrink": {
       "extractionState": "manual",

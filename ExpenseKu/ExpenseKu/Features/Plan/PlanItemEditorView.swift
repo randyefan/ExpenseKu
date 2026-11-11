@@ -217,8 +217,8 @@ struct PlanItemEditorView: View {
         SegmentedToggle(
             selection: $kind,
             segments: [
-                .init(.fixed, title: AppLocalization.string(.fixed), systemImage: "checkmark.circle"),
-                .init(.envelope, title: AppLocalization.string(.envelopeKind), systemImage: "tray.fill"),
+                .init(.fixed, title: AppLocalization.string(.fixedKindChoice), systemImage: "checkmark.circle"),
+                .init(.envelope, title: AppLocalization.string(.envelopeKindChoice), systemImage: "tray.fill"),
                 .init(.setAside, title: AppLocalization.string(.setAside), systemImage: "arrow.forward"),
             ],
             isCompact: true

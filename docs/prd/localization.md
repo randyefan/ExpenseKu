@@ -64,7 +64,7 @@ The Indonesia and UK PNG images are bundled in Assets.xcassets/LanguageFlags fro
 
 Plan counts use a typed PlanCount noun and catalog plural variants. Destructive confirmations translate complete sentences rather than inserting English verbs or possessives into Indonesian text. Separate keys distinguish closing a sheet from completing a payment, and a set-aside action from allocated funds.
 
-The existing SegmentedToggle now chooses a stacked icon-and-label layout when its compact horizontal layout does not fit. SegmentedToggleOptions contains the shared rendering and selection behavior for both layouts. This keeps Indonesian kind labels legible without splitting Pembayaran or removing the icons.
+The plan item editor's kind toggle uses short Indonesian verbs, Bayar · Anggarkan · Sisihkan, from its own fixedKindChoice and envelopeKindChoice keys, so the three kinds fit one icon-and-label line as in English (Flow AK, option AK3). Elsewhere the glossary nouns Pembayaran and Pos anggaran stay. The existing SegmentedToggle still falls back to a stacked icon-and-label layout when even that line does not fit, such as at large Dynamic Type sizes. SegmentedToggleOptions contains the shared rendering and selection behavior for both layouts.
 
 ## Verification notes
 

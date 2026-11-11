@@ -26,7 +26,7 @@ struct EnvelopeDetailSection: View {
             } header: {
                 VStack(alignment: .leading, spacing: 10) {
                     if section.isPaidEarly, index == 0 {
-                        SectionHeaderText("Paid early · \(section.cycle.title(calendar: calendar))")
+                        SectionHeaderText(.paidEarlySectionHeading(section.cycle.title(calendar: calendar)))
                     }
                     DayGroupHeader(title: DayLabel.title(group.day, calendar: calendar), total: group.total)
                 }

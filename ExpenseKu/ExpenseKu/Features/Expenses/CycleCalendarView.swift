@@ -161,10 +161,9 @@ private struct DayCell: View {
     }
 
     private var accessibilityLabel: String {
-        let date = day.date.formatted(.dateTime.weekday(.wide).day().month(.wide))
-        if !day.inCycle { return "\(date), outside this pay cycle" }
-        guard day.hasExpenses else { return "\(date), no expenses" }
-        let unit = day.count == 1 ? "expense" : "expenses"
-        return "\(date), \(day.total.formattedIDR()), \(day.count) \(unit)"
+        let date = day.date.formatted(.dateTime.weekday(.wide).day().month(.wide).locale(AppLocalization.locale))
+        if !day.inCycle { return AppLocalization.string(.outsideThisPayCycle(date)) }
+        guard day.hasExpenses else { return AppLocalization.string(.calendarDayNoExpenses(date)) }
+        return AppLocalization.string(.calendarDaySpending(date, day.total.formattedIDR(), day.count))
     }
 }

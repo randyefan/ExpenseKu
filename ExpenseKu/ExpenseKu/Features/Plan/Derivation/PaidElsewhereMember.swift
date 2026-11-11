@@ -31,7 +31,7 @@ nonisolated struct PaidElsewhereMember: Identifiable, Equatable {
         var style = Date.FormatStyle.dateTime.day().month(.abbreviated)
         style.calendar = calendar
         style.timeZone = calendar.timeZone
-        style.locale = calendar.locale ?? .current
+        style.locale = AppLocalization.locale
         dayLabel = expense.date.formatted(style)
     }
 

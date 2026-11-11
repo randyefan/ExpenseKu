@@ -52,11 +52,11 @@ nonisolated struct EnvelopeDetail {
     /// for what the envelope claims (envelope-assignment.md §4.2).
     static func claimsLine(for envelope: PlanItem) -> String {
         let names = claimedNames(of: envelope)
-        return names.isEmpty ? "Assigned expenses only" : names.joined(separator: " · ")
+        return names.isEmpty ? AppLocalization.string(.assignedExpensesOnly) : names.joined(separator: " · ")
     }
 
     static func emptyTitle(for envelope: PlanItem) -> String {
-        "Nothing in \(displayName(of: envelope)) yet"
+        AppLocalization.string(.envelopeEmptyTitle(displayName(of: envelope)))
     }
 
     /// §4.5. The list is joined by hand rather than with `.list(type: .and)`, whose
@@ -64,14 +64,14 @@ nonisolated struct EnvelopeDetail {
     static func emptyMessage(for envelope: PlanItem) -> String {
         let names = claimedNames(of: envelope)
         guard let last = names.last else {
-            return "Only expenses you assign land here. Use ＋ to add one or move some in."
+            return AppLocalization.string(.onlyExpensesYouAssignLandHereUseToAddOneOr)
         }
-        let list = names.count == 1 ? last : names.dropLast().joined(separator: ", ") + " and " + last
-        return "\(list) expenses this cycle land here by themselves."
+        let list = names.count == 1 ? last : names.dropLast().joined(separator: ", ") + AppLocalization.string(.listConjunction) + last
+        return AppLocalization.string(.expensesThisCycleLandHereByThemselves(list))
     }
 
     static func displayName(of envelope: PlanItem) -> String {
-        envelope.name.isEmpty ? "Untitled" : envelope.name
+        envelope.name.isEmpty ? AppLocalization.string(.untitled) : envelope.name
     }
 
     /// §4.6: the detail comes back after another sheet only while its envelope is still

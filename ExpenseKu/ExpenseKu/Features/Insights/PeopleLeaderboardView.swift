@@ -23,7 +23,7 @@ struct PeopleLeaderboardView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: Metric.cardGap) {
-                Text("Who you spend with")
+                Text(appLocalized: .whoYouSpendWith)
                     .font(.dsSubhead)
                     .foregroundStyle(Theme.textSecondary)
 
@@ -49,7 +49,7 @@ struct PeopleLeaderboardView: View {
             .readableColumn()
         }
         .background(Theme.bg)
-        .navigationTitle("People leaderboard")
+        .navigationTitle(AppLocalization.string(.peopleLeaderboard))
         .navigationBarTitleDisplayMode(.inline)
     }
 }

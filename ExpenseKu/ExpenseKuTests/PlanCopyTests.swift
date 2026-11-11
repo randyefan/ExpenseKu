@@ -28,7 +28,7 @@ nonisolated final class PlanCopyTests: XCTestCase {
     /// meaning silently (§6.2).
     func testTheHeadlineAlwaysNamesItsNumber() {
         XCTAssertEqual(CycleHeadline.spending(220_000).label, "Spending")
-        XCTAssertEqual(CycleHeadline.sisa(2_000_000).label, "Sisa")
+        XCTAssertEqual(CycleHeadline.sisa(2_000_000).label, "Remaining")
         XCTAssertEqual(CycleHeadline.sisa(2_000_000).amount, 2_000_000)
     }
 
@@ -172,14 +172,14 @@ nonisolated final class PlanCopyTests: XCTestCase {
     /// I4 names the amount and date before deleting an expense from the ledger.
     func testTheUntickConfirmationNamesWhatItDeletes() {
         let body = PlanCopy.untickBody(amount: 2_200_000, date: date(2026, 10, 5))
-        XCTAssertTrue(body.contains("5 October"), body)
+        XCTAssertTrue(body.contains(date(2026, 10, 5).formatted(.dateTime.day().month(.wide))), body)
         XCTAssertTrue(body.contains("removes it from the ledger"), body)
     }
 
     /// I7 says the opposite, and must: deleting a plan item leaves its expense alone.
     func testTheDeleteConfirmationPromisesTheExpenseSurvives() {
         let body = PlanCopy.deleteItemBody(amount: 4_750_000, date: date(2026, 10, 20))
-        XCTAssertTrue(body.contains("20 October"), body)
+        XCTAssertTrue(body.contains(date(2026, 10, 20).formatted(.dateTime.day().month(.wide))), body)
         XCTAssertTrue(body.contains("stays in your ledger"), body)
     }
 

@@ -14,7 +14,7 @@ struct ExpenseSearchSummary: View {
     let total: Decimal
 
     private var countText: String {
-        count == 1 ? "1 result" : "\(count) results"
+        AppLocalization.string(.searchResultCount(count))
     }
 
     var body: some View {

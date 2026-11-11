@@ -15,7 +15,7 @@ struct CalculatorKeypad: View {
     /// What the ✓ key is about to save. The keypad is shared with the plan editors,
     /// where announcing "Save expense" would say the one thing this feature works
     /// hardest not to confuse: a plan item is not an expense (ADR-0005).
-    var saveLabel: String = "Save expense"
+    var saveLabel: String = AppLocalization.string(.saveExpense)
 
     /// Enables the ✓ (save) key. When false it's dimmed and inert.
     var canSave: Bool
@@ -70,7 +70,7 @@ struct CalculatorKeypad: View {
                         key(width: cell, height: rowHeight) {
                             onCancel()
                         } label: {
-                            Text("Cancel")
+                            Text(appLocalized: .cancel)
                                 .font(.dsSubhead)
                                 .foregroundStyle(Theme.textSecondary)
                         }
@@ -116,8 +116,8 @@ struct CalculatorKeypad: View {
                 .frame(width: width, height: tallHeight)
         }
         .buttonStyle(.pressableCard)
-        .accessibilityLabel("Delete")
-        .accessibilityHint("Double tap and hold to clear the amount")
+        .accessibilityLabel(AppLocalization.string(.delete))
+        .accessibilityHint(AppLocalization.string(.doubleTapAndHoldToClearTheAmount))
         .simultaneousGesture(
             LongPressGesture(minimumDuration: 0.4).onEnded { _ in tap(); onClear() }
         )
@@ -182,10 +182,10 @@ private extension CalcOperator {
 
     var accessibilityName: String {
         switch self {
-        case .add: "Add"
-        case .subtract: "Subtract"
-        case .multiply: "Multiply"
-        case .divide: "Divide"
+        case .add: AppLocalization.string(.add)
+        case .subtract: AppLocalization.string(.subtract)
+        case .multiply: AppLocalization.string(.multiply)
+        case .divide: AppLocalization.string(.divide)
         }
     }
 }

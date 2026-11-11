@@ -41,7 +41,7 @@ nonisolated struct FilterCatalog {
     /// "All", or the Only names then "not" and the Hidden names, each part one or two names
     /// then "+N", in the checklist's order: "Kopi, Makan, not Kos", "Not Cicilan, Kos".
     func summary(of filter: ExpenseFilter, in dimension: FilterDimension) -> String {
-        values(of: filter, in: dimension, capitalisingNot: true) ?? "All"
+        values(of: filter, in: dimension, capitalisingNot: true) ?? AppLocalization.string(.allItems)
     }
 
     /// "Category · not Cicilan, Kos" for one dimension; the values joined by " · " for several.
@@ -59,7 +59,7 @@ nonisolated struct FilterCatalog {
         let hidden = names(of: filter.choices(marked: .hidden, in: dimension), in: dimension)
         var parts: [String] = []
         if !shown.isEmpty { parts.append(Self.abbreviated(shown)) }
-        if !hidden.isEmpty { parts.append((parts.isEmpty && capitalisingNot ? "Not " : "not ") + Self.abbreviated(hidden)) }
+        if !hidden.isEmpty { parts.append((parts.isEmpty && capitalisingNot ? AppLocalization.string(.not) : AppLocalization.string(.excludedNamesPrefix)) + Self.abbreviated(hidden)) }
         return parts.isEmpty ? nil : parts.joined(separator: ", ")
     }
 

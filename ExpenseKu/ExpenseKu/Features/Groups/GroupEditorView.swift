@@ -21,7 +21,7 @@ struct GroupEditorView: View {
 
     var body: some View {
         AppearanceEntityEditor(
-            title: editing == nil ? "New Group" : "Edit Group",
+            title: editing == nil ? AppLocalization.string(.newGroup) : AppLocalization.string(.editGroup),
             editing: editing,
             makeNew: { CategoryGroup() },
             extras: { members }
@@ -32,9 +32,9 @@ struct GroupEditorView: View {
     private var members: some View {
         let names = (editing?.categories ?? []).map(\.name).sorted()
         VStack(alignment: .leading, spacing: 8) {
-            SectionHeaderText("Categories in this group")
+            SectionHeaderText(.categoriesInThisGroup)
             if names.isEmpty {
-                Text("None yet. A category joins a group from the category's own editor.")
+                Text(appLocalized: .noneYetACategoryJoinsAGroupFromTheCategoryS)
                     .font(.dsCaption)
                     .foregroundStyle(Theme.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -50,7 +50,7 @@ struct GroupEditorView: View {
                     }
                     Spacer(minLength: 0)
                 }
-                Text("Change membership from Manage → Categories.")
+                Text(appLocalized: .changeMembershipFromManageCategories)
                     .font(.dsCaption)
                     .foregroundStyle(Theme.textSecondary)
             }

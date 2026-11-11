@@ -37,11 +37,11 @@ struct ReceiptReviewSheet: View {
                 .padding(Metric.screenPadding)
             }
             .background(Theme.bg)
-            .navigationTitle("To check (\(toCheck.count))")
+            .navigationTitle(AppLocalization.string(.toCheck(String(toCheck.count))))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Close", systemImage: "xmark") { dismiss() }
+                    Button(AppLocalization.string(.close), systemImage: "xmark") { dismiss() }
                 }
             }
             .onChange(of: toCheck.isEmpty) { _, isEmpty in

@@ -46,27 +46,27 @@ nonisolated struct EnvelopeOptions {
     func value(for choice: EnvelopeChoice, category: Category?) -> EnvelopeRowValue {
         switch choice.kept(among: envelopes) {
         case .noEnvelope:
-            return EnvelopeRowValue(name: "No envelope", isChosen: true)
+            return EnvelopeRowValue(name: AppLocalization.string(.noEnvelope), isChosen: true)
         case .envelope(let id):
             let name = envelopes.first { $0.persistentModelID == id }?.name ?? ""
             let suffix = offer.section(of: id)?.label.map { "· \($0.short)" }
             return EnvelopeRowValue(name: name, suffix: suffix, isChosen: true)
         case .byCategory:
             guard let claimant = claims.claimant(of: category) else {
-                return EnvelopeRowValue(name: "None", isChosen: false)
+                return EnvelopeRowValue(name: AppLocalization.string(.none), isChosen: false)
             }
-            return EnvelopeRowValue(name: claimant.name, suffix: "· by category", isChosen: false)
+            return EnvelopeRowValue(name: claimant.name, suffix: AppLocalization.string(.byCategory), isChosen: false)
         }
     }
 
     func byCategoryDetail(category: Category?) -> String {
-        guard let category else { return "Choose a category first" }
-        guard let claimant = claims.claimant(of: category) else { return "Outside plan" }
-        return "\(category.name) counts in \(claimant.name)"
+        guard let category else { return AppLocalization.string(.chooseACategoryFirst) }
+        guard let claimant = claims.claimant(of: category) else { return AppLocalization.string(.outsidePlan) }
+        return AppLocalization.string(.countsIn(category.name, claimant.name))
     }
 
-    static let byCategoryDetailForMany = "Each keeps whatever its Category says"
-    static let noEnvelopeDetail = "Outside plan"
+    static var byCategoryDetailForMany: String { AppLocalization.string(.eachKeepsWhateverItsCategorySays) }
+    static var noEnvelopeDetail: String { AppLocalization.string(.outsidePlan) }
 }
 
 /// The editor row's value. A suffix — "· by category", or a paid-early "· Nov" — sits

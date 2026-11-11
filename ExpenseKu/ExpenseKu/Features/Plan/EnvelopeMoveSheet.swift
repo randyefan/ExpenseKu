@@ -44,11 +44,11 @@ struct EnvelopeMoveSheet: View {
                 onApplied()
                 dismiss()
             }
-            .navigationTitle("Move \(PlanCopy.counted(request.expenses.count, "expense"))")
+            .navigationTitle(AppLocalization.string(.move(PlanCopy.counted(request.expenses.count, .expense))))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Close", systemImage: "xmark") { dismiss() }
+                    Button(AppLocalization.string(.close), systemImage: "xmark") { dismiss() }
                 }
             }
         }

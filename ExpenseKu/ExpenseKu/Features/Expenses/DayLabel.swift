@@ -13,9 +13,9 @@ import Foundation
 
 nonisolated enum DayLabel {
     static func title(_ day: Date, calendar: Calendar) -> String {
-        if calendar.isDateInToday(day) { return "Today" }
-        if calendar.isDateInYesterday(day) { return "Yesterday" }
-        return day.formatted(.dateTime.weekday(.abbreviated).day().month(.wide))
+        if calendar.isDateInToday(day) { return AppLocalization.string(.today) }
+        if calendar.isDateInYesterday(day) { return AppLocalization.string(.yesterday) }
+        return day.formatted(.dateTime.weekday(.abbreviated).day().month(.wide).locale(AppLocalization.locale))
     }
 
     /// `title`, plus the year on a day outside the current one — for a list that
@@ -26,12 +26,12 @@ nonisolated enum DayLabel {
               !calendar.isDateInToday(day), !calendar.isDateInYesterday(day) else {
             return title
         }
-        return "\(title) \(day.formatted(.dateTime.year()))"
+        return "\(title) \(day.formatted(.dateTime.year().locale(AppLocalization.locale)))"
     }
 
     static func phrase(_ day: Date, calendar: Calendar) -> String {
-        if calendar.isDateInToday(day) { return "today" }
-        if calendar.isDateInYesterday(day) { return "yesterday" }
-        return "on \(day.formatted(.dateTime.weekday(.abbreviated).day().month(.wide)))"
+        if calendar.isDateInToday(day) { return AppLocalization.string(.todayPhrase) }
+        if calendar.isDateInYesterday(day) { return AppLocalization.string(.yesterdayPhrase) }
+        return AppLocalization.string(.on(day.formatted(.dateTime.weekday(.abbreviated).day().month(.wide).locale(AppLocalization.locale))))
     }
 }

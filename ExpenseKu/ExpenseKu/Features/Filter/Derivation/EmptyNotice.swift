@@ -15,8 +15,8 @@ nonisolated struct EmptyNotice: Equatable {
     let detail: String
     var offersClearFilters = false
 
-    static let filterTitle = "Nothing matches these filters"
-    static let filterPeriodMessage = "Nothing matches these filters in this period."
+    static var filterTitle: String { AppLocalization.string(.nothingMatchesTheseFilters) }
+    static var filterPeriodMessage: String { AppLocalization.string(.nothingMatchesTheseFiltersInThisPeriod) }
 
     static func cycle(
         filter: ExpenseFilter,
@@ -27,7 +27,7 @@ nonisolated struct EmptyNotice: Equatable {
         if !filter.isEmpty, filteredIsEmpty {
             return EmptyNotice(
                 title: filterTitle,
-                detail: "No expenses in \(span) match these filters.",
+                detail: AppLocalization.string(.noExpensesInMatchTheseFilters(span)),
                 offersClearFilters: true
             )
         }
@@ -44,8 +44,8 @@ nonisolated struct EmptyNotice: Equatable {
     ) -> EmptyNotice? {
         if !filter.isEmpty, filteredDayIsEmpty {
             return EmptyNotice(
-                title: "Nothing matches \(dayPhrase)",
-                detail: "Clear the filters to show every expense.",
+                title: AppLocalization.string(.filterEmptyDayTitle(dayPhrase)),
+                detail: AppLocalization.string(.clearTheFiltersToShowEveryExpense),
                 offersClearFilters: true
             )
         }

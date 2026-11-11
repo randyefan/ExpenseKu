@@ -49,9 +49,9 @@ struct CycleChrome: View {
             SegmentedToggle(
                 selection: $lens,
                 segments: [
-                    .init(.list, title: "List", systemImage: "list.bullet"),
-                    .init(.calendar, title: "Month", systemImage: "calendar"),
-                    .init(.plan, title: "Plan", systemImage: "list.clipboard"),
+                    .init(.list, title: AppLocalization.string(.list), systemImage: "list.bullet"),
+                    .init(.calendar, title: AppLocalization.string(.month), systemImage: "calendar"),
+                    .init(.plan, title: AppLocalization.string(.plan), systemImage: "list.clipboard"),
                 ]
             )
             .padding(.bottom, Metric.cardGap)

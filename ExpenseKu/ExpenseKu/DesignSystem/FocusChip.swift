@@ -28,7 +28,7 @@ struct FocusChip: View {
                 .foregroundStyle(Theme.text)
                 .lineLimit(1)
 
-            Button("Clear filter", systemImage: "xmark", action: onClear)
+            Button(AppLocalization.string(.clearFilter), systemImage: "xmark", action: onClear)
                 .labelStyle(.iconOnly)
                 .font(.dsCaption.weight(.semibold))
                 .foregroundStyle(Theme.textSecondary)

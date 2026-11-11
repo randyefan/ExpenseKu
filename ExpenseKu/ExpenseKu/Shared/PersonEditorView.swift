@@ -40,14 +40,14 @@ struct PersonEditorView: View {
                     mark: .initial(PersonAvatar.initial(for: name)),
                     tint: Theme.categoryTint(hex: colorHex, seed: name),
                     name: name,
-                    placeholder: "New Person",
-                    caption: colorHex == nil ? "Person · Automatic colour" : "Person · Custom colour",
+                    placeholder: AppLocalization.string(.newPerson),
+                    caption: colorHex == nil ? AppLocalization.string(.personAutomaticColour) : AppLocalization.string(.personCustomColour),
                     onShuffle: shuffle
                 )
             },
             workbench: { name in
                 VStack(alignment: .leading, spacing: 16) {
-                    SectionHeaderText("Colour")
+                    SectionHeaderText(.colour)
                     ColorWorkbench(colorHex: $colorHex, previewName: name)
                 }
             },

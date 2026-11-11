@@ -33,7 +33,7 @@ struct ExpenseSearchLens: View {
 
             if results.isEmpty {
                 EmptyStateView(
-                    title: "No results",
+                    title: AppLocalization.string(.noResults),
                     systemImage: "magnifyingglass",
                     message: emptyMessage
                 )
@@ -64,9 +64,15 @@ struct ExpenseSearchLens: View {
     /// Names the query — and any filter narrowing it — so a fruitless search
     /// explains itself instead of just going blank.
     private var emptyMessage: String {
-        var message = "Nothing matches “\(query)”"
-        if let categoryName { message += " in \(categoryName)" }
-        if range != .allTime { message += " during \(range.label)" }
-        return message + "."
+        switch (categoryName, range == .allTime) {
+        case (nil, true):
+            AppLocalization.string(.emptySearchQuery(query))
+        case (let category?, true):
+            AppLocalization.string(.emptySearchCategory(query, category))
+        case (nil, false):
+            AppLocalization.string(.emptySearchPeriod(query, range.label))
+        case (let category?, false):
+            AppLocalization.string(.emptySearchCategoryPeriod(query, category, range.label))
+        }
     }
 }

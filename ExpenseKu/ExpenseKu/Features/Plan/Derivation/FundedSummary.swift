@@ -22,6 +22,6 @@ nonisolated struct FundedSummary {
     var isEmpty: Bool { items.isEmpty }
     var total: Decimal { items.reduce(0) { $0 + $1.amount } }
 
-    var title: String { "In the account, not yet paid" }
-    var detail: String { PlanCopy.counted(items.count, "item") + " · " + total.formattedIDR() }
+    var title: String { AppLocalization.string(.inTheAccountNotYetPaid) }
+    var detail: String { PlanCopy.counted(items.count, .item) + " · " + total.formattedIDR() }
 }

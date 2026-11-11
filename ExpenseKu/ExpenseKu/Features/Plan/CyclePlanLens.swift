@@ -100,7 +100,7 @@ struct CyclePlanLens<Header: View>: View {
                   !plan.carryOverNoticeSeen {
             PlanNotice(
                 kind: .carriedOver,
-                title: "Copied from last cycle",
+                title: AppLocalization.string(.copiedFromLastCycle),
                 detail: PlanCopy.carriedOver(from: source, payday: payday,
                                              items: plan.copiedItemCount,
                                              incomeLines: plan.copiedIncomeCount,
@@ -118,10 +118,8 @@ struct CyclePlanLens<Header: View>: View {
                   contents.doneCount == 0 {
             PlanNotice(
                 kind: .payday,
-                title: "Payday — " + PlanCopy.counted(
-                    contents.transfers.count(where: { !$0.isAllIn }), "transfer"
-                ) + " to make",
-                detail: "Work down the checklist at the foot."
+                title: AppLocalization.string(.paydayTransfers(contents.transfers.count(where: { !$0.isAllIn }))),
+                detail: AppLocalization.string(.workDownTheChecklistAtTheFoot)
             )
         }
     }
@@ -237,10 +235,10 @@ struct CyclePlanLens<Header: View>: View {
     private var addRows: some View {
         Section {
             PlanListRow(onSelect: { onAction(.addPlanItem) }) {
-                PickerAddRow(title: "Add plan item").padding(.vertical, 4)
+                PickerAddRow(title: AppLocalization.string(.addPlanItem)).padding(.vertical, 4)
             }
             PlanListRow(onSelect: { onAction(.addIncomeLine) }) {
-                PickerAddRow(title: "Add income line").padding(.vertical, 4)
+                PickerAddRow(title: AppLocalization.string(.addIncomeLine)).padding(.vertical, 4)
             }
             if let lookBackMonth {
                 PlanListRow(onSelect: { onAction(.lookBack) }) {
@@ -248,7 +246,7 @@ struct CyclePlanLens<Header: View>: View {
                 }
             }
         } footer: {
-            Text("＋ in the toolbar still logs an expense. Plan items are added here.")
+            Text(appLocalized: .inTheToolbarStillLogsAnExpensePlanItemsAreAdded)
                 .font(.dsCaption)
                 .foregroundStyle(Theme.textSecondary)
                 .listRowInsets(EdgeInsets(top: 6, leading: 4, bottom: 6, trailing: 4))
@@ -266,7 +264,7 @@ struct CyclePlanLens<Header: View>: View {
                 }
             } header: {
                 SectionHeaderText(
-                    "Transfer checklist · \(TransferLines.sentCount(contents.transfers)) of \(contents.transfers.count) sent"
+                    AppLocalization.string(.transferChecklistOfSent(String(TransferLines.sentCount(contents.transfers)), String(contents.transfers.count)))
                 )
                 .textCase(nil)
                 .listRowInsets(EdgeInsets(top: 14, leading: 4, bottom: 6, trailing: 4))
@@ -282,7 +280,7 @@ struct CyclePlanLens<Header: View>: View {
                     PlanListRow { GroupShareRowView(share: share) }
                 }
             } header: {
-                SectionHeaderText("Share of income · planned")
+                SectionHeaderText(.shareOfIncomePlanned)
                     .textCase(nil)
                     .listRowInsets(EdgeInsets(top: 14, leading: 4, bottom: 6, trailing: 4))
             }

@@ -14,12 +14,12 @@ struct SelectionBar: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Text("\(count) selected")
+            Text(appLocalized: .selected(String(count)))
                 .font(.dsBody).fontWeight(.semibold)
                 .foregroundStyle(Theme.text)
                 .contentTransition(.numericText())
             Spacer(minLength: 8)
-            Button("Move to envelope…", systemImage: "tray", action: onMove)
+            Button(AppLocalization.string(.moveToEnvelope), systemImage: "tray", action: onMove)
                 .font(.dsBody.weight(.semibold))
                 .foregroundStyle(.white)
                 .padding(.horizontal, 18)

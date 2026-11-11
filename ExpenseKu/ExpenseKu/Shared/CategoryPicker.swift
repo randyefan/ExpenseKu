@@ -41,7 +41,7 @@ struct CategoryPicker: View {
             }
             Section {
                 Button { showingNew = true } label: {
-                    PickerAddRow(title: "New Category")
+                    PickerAddRow(title: AppLocalization.string(.newCategory))
                 }
                 .listRowBackground(Theme.card)
             }
@@ -49,7 +49,7 @@ struct CategoryPicker: View {
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
         .background(Theme.bg)
-        .navigationTitle("Category")
+        .navigationTitle(AppLocalization.string(.category))
         .sheet(isPresented: $showingNew) {
             NavigationStack {
                 CategoryEditorView { created in

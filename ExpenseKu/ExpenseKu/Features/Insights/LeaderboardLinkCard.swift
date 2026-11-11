@@ -13,10 +13,10 @@ struct LeaderboardLinkCard: View {
             HStack(spacing: 12) {
                 CategoryIcon(name: "people", systemImage: "person.2.fill", size: 40)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("People leaderboard")
+                    Text(appLocalized: .peopleLeaderboard)
                         .font(.dsBody).fontWeight(.semibold)
                         .foregroundStyle(Theme.text)
-                    Text("Who you spend with")
+                    Text(appLocalized: .whoYouSpendWith)
                         .font(.dsCaption)
                         .foregroundStyle(Theme.textSecondary)
                 }

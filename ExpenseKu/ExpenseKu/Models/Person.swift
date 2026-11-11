@@ -42,6 +42,10 @@ final class Person {
 }
 
 extension Person {
+    var displayName: String {
+        isMe ? AppLocalization.string(.ownerName) : name
+    }
+
     /// The default display name for the protected owner entry.
     static let meName = "Me"
 

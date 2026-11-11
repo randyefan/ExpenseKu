@@ -31,8 +31,8 @@ struct SpendEntityHeader: View {
 
     private var shareCaption: String {
         let half = planFilter.map { " \($0.phrase)" } ?? ""
-        let filtered = isFiltered ? " with these filters" : ""
-        return "\(sharePercent)% of what you spent\(half) in this window\(filtered)"
+        let filtered = isFiltered ? AppLocalization.string(.withTheseFilters) : ""
+        return AppLocalization.string(.entityShareCaption(String(sharePercent), half, filtered))
     }
 
     var body: some View {
@@ -48,7 +48,7 @@ struct SpendEntityHeader: View {
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
 
-                    Text("\(identity.kind) · ^[\(count) expense](inflect: true) · \(windowLabel)")
+                    Text(appLocalized: .entityExpenseCount(identity.kind, count, windowLabel))
                         .font(.dsCaption)
                         .foregroundStyle(Theme.textSecondary)
                         .lineLimit(1)
@@ -79,8 +79,8 @@ struct SpendEntityHeader: View {
                         .foregroundStyle(Theme.textSecondary)
                 }
                 .accessibilityElement(children: .ignore)
-                .accessibilityLabel("Share of spending")
-                .accessibilityValue("\(sharePercent) percent")
+                .accessibilityLabel(AppLocalization.string(.shareOfSpending))
+                .accessibilityValue(AppLocalization.string(.percent(String(sharePercent))))
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

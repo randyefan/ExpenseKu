@@ -20,7 +20,7 @@ struct PlanOverIncomeStrip: View {
             Image(systemName: "exclamationmark.triangle.fill")
                 .font(.dsCaption.weight(.semibold))
                 .foregroundStyle(Theme.negative)
-            Text("Planned past your income — nothing is blocked")
+            Text(appLocalized: .plannedPastYourIncomeNothingIsBlocked)
                 .font(.dsSubhead)
                 .foregroundStyle(Theme.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)

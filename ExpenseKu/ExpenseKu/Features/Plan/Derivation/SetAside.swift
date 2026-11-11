@@ -65,6 +65,6 @@ nonisolated enum SetAside {
         let cycles = Set(items.compactMap(\.plan?.cycleStart)
             .map { PayCycle.containing($0, payday: payday, calendar: calendar) })
         return cycles.sorted { $0.start < $1.start }
-            .map { $0.lastDay(calendar: calendar).formatted(.dateTime.month(.wide)) }
+            .map { $0.lastDay(calendar: calendar).formatted(.dateTime.month(.wide).locale(AppLocalization.locale)) }
     }
 }

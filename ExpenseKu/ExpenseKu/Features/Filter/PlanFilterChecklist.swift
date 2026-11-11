@@ -21,17 +21,17 @@ struct PlanFilterChecklist: View {
                 }
             }
             Section {
-                row(title: "All", tint: nil, isOn: planFilter == nil) { planFilter = nil }
+                row(title: AppLocalization.string(.allItems), tint: nil, isOn: planFilter == nil) { planFilter = nil }
             }
         }
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
         .background(Theme.bg)
-        .navigationTitle("Plan")
+        .navigationTitle(AppLocalization.string(.plan))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                Button("Done", action: onDone)
+                Button(AppLocalization.string(.done), action: onDone)
             }
         }
         .sensoryFeedback(.selection, trigger: planFilter)

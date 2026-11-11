@@ -20,7 +20,7 @@
 import Foundation
 
 nonisolated enum GroupShares {
-    static let ungroupedName = "Ungrouped"
+    static var ungroupedName: String { AppLocalization.string(.ungrouped) }
 
     static func rows(activeItems: [PlanItem], totalIncome: Decimal,
                      paidEarly: PaidEarlyShift = .none, setAside: SetAsideShift = .none) -> [GroupShare] {

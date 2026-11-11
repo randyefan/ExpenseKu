@@ -10,12 +10,12 @@ import SwiftUI
 
 struct ReceiptCheckTag: View {
     var body: some View {
-        Text("Check")
+        Text(appLocalized: .check)
             .font(.dsCaption).fontWeight(.semibold)
             .foregroundStyle(Theme.accentText)
             .padding(.horizontal, 7)
             .padding(.vertical, 2)
             .background(Theme.accent.opacity(Theme.tintFillOpacity), in: .capsule)
-            .accessibilityLabel("Needs checking")
+            .accessibilityLabel(AppLocalization.string(.needsChecking))
     }
 }

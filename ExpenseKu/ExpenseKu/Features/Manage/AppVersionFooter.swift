@@ -10,10 +10,10 @@ import SwiftUI
 struct AppVersionFooter: View {
     var body: some View {
         VStack(spacing: 2) {
-            Text("Made By REJ ❤️")
+            Text(appLocalized: .madeByRej)
                 .font(.dsCaption).fontWeight(.semibold)
                 .foregroundStyle(Theme.textSecondary)
-            Text("Version \(Self.appVersion)")
+            Text(appLocalized: .version(Self.appVersion))
                 .font(.dsCaption)
                 .foregroundStyle(Theme.textSecondary.opacity(0.7))
         }

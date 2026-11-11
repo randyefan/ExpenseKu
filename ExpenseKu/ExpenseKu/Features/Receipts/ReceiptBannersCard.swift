@@ -21,7 +21,7 @@ struct ReceiptBannersCard: View {
         if waiting > 0 || toCheck > 0 {
             VStack(spacing: 0) {
                 if waiting > 0 {
-                    ReceiptBannerRow(title: "^[\(waiting) receipt](inflect: true) waiting",
+                    ReceiptBannerRow(title: AppLocalization.string(.receiptWaiting(waiting)),
                                      caption: inboxCaptionText,
                                      systemImage: "receipt", isAccent: true, action: onInbox)
                 }
@@ -29,8 +29,8 @@ struct ReceiptBannersCard: View {
                     Divider().overlay(Theme.hairline).padding(.leading, Metric.rowIconSize + 12)
                 }
                 if toCheck > 0 {
-                    ReceiptBannerRow(title: "\(toCheck) from receipts to check",
-                                     caption: "Saved from a receipt, not checked yet",
+                    ReceiptBannerRow(title: AppLocalization.string(.fromReceiptsToCheck(String(toCheck))),
+                                     caption: AppLocalization.string(.savedFromAReceiptNotCheckedYet),
                                      systemImage: "list.clipboard", isAccent: false, action: onReview)
                 }
             }
@@ -44,11 +44,11 @@ struct ReceiptBannersCard: View {
         }
     }
 
-    private var inboxCaptionText: LocalizedStringKey {
+    private var inboxCaptionText: String {
         switch inboxCaption {
-        case .shared: "Shared to ExpenseKu on this iPhone"
-        case .reading(let progress): "Reading \(progress.position) of \(progress.total)…"
-        case .ready: "Ready to check"
+        case .shared: AppLocalization.string(.sharedToExpenseKuOnThisIPhone)
+        case .reading(let progress): AppLocalization.string(.readingOf(String(progress.position), String(progress.total)))
+        case .ready: AppLocalization.string(.readyToCheck)
         }
     }
 }

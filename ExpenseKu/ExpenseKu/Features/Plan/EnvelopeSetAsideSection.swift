@@ -37,7 +37,7 @@ struct EnvelopeSetAsideSection: View {
                 .accessibilityElement(children: .combine)
             }
         } header: {
-            SectionHeaderText("Set aside")
+            SectionHeaderText(.setAsideFunds)
                 .textCase(nil)
                 .listRowInsets(EdgeInsets(top: 14, leading: 4, bottom: 6, trailing: 4))
         }
@@ -49,7 +49,7 @@ struct EnvelopeSetAsideSection: View {
     }
 
     private func detail(of line: PlanItem) -> String {
-        let moved = line.isSetAsideMoved ? "moved" : "not moved yet"
+        let moved = line.isSetAsideMoved ? "moved" : AppLocalization.string(.notMovedCaption)
         guard let account = line.account?.name else { return moved.prefix(1).uppercased() + moved.dropFirst() }
         return "\(account) · \(moved)"
     }

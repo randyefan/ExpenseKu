@@ -67,7 +67,7 @@ struct EnvelopeCategoriesPicker: View {
                                 Text(category.name)
                                     .font(.dsBody)
                                     .foregroundStyle(Theme.textSecondary)
-                                Text("already in \(claims[category.persistentModelID] ?? "")")
+                                Text(appLocalized: .alreadyInCaption(claims[category.persistentModelID] ?? ""))
                                     .font(.dsCaption)
                                     .foregroundStyle(Theme.textSecondary.opacity(0.7))
                                     .lineLimit(1)
@@ -80,12 +80,12 @@ struct EnvelopeCategoriesPicker: View {
                         .listRowBackground(Theme.card)
                         .accessibilityElement(children: .ignore)
                         .accessibilityLabel(category.name)
-                        .accessibilityValue("Already in \(claims[category.persistentModelID] ?? "another envelope")")
+                        .accessibilityValue(AppLocalization.string(.alreadyInEnvelope(claims[category.persistentModelID] ?? AppLocalization.string(.anotherEnvelope))))
                     }
                 } header: {
-                    Text("Already in another envelope").textCase(nil)
+                    Text(appLocalized: .alreadyInAnotherEnvelope).textCase(nil)
                 } footer: {
-                    Text("A category belongs to one envelope per plan, so two envelopes can never count the same expense twice.")
+                    Text(appLocalized: .aCategoryBelongsToOneEnvelopePerPlanSoTwoEnvelopes)
                         .font(.dsCaption)
                         .foregroundStyle(Theme.textSecondary)
                 }
@@ -94,19 +94,19 @@ struct EnvelopeCategoriesPicker: View {
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
         .background(Theme.bg)
-        .navigationTitle("Categories")
+        .navigationTitle(AppLocalization.string(.categories))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                Button("Done") { dismiss() }.tint(Theme.accentText)
+                Button(AppLocalization.string(.done)) { dismiss() }.tint(Theme.accentText)
             }
         }
     }
 
     private var headerText: String {
         let name = envelopeName.trimmingCharacters(in: .whitespacesAndNewlines)
-        let subject = name.isEmpty ? "this envelope" : "“\(name)”"
-        return "Pick what \(subject) should total. \(selection.count) selected."
+        let subject = name.isEmpty ? AppLocalization.string(.thisEnvelope) : "“\(name)”"
+        return AppLocalization.string(.pickWhatShouldTotalSelected(subject, String(selection.count)))
     }
 
     private func isSelected(_ category: Category) -> Bool {

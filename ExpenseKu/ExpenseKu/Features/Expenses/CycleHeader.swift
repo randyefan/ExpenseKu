@@ -35,7 +35,7 @@ struct CycleHeader: View {
         VStack(spacing: 14) {
             HStack {
                 CyclePageButton(
-                    label: "Previous cycle",
+                    label: AppLocalization.string(.previousCycle),
                     systemImage: "chevron.left",
                     enabled: canGoBack,
                     action: onPrevious
@@ -60,7 +60,7 @@ struct CycleHeader: View {
                 Spacer(minLength: 8)
 
                 CyclePageButton(
-                    label: "Next cycle",
+                    label: AppLocalization.string(.nextCycle),
                     systemImage: "chevron.right",
                     enabled: canGoForward,
                     action: onNext

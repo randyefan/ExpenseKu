@@ -303,17 +303,17 @@ struct ExpensesView: View {
             .toolbar {
                 if let expenseSelection {
                     ToolbarItem(placement: .navigation) {
-                        Button(expenseSelection.isAllSelected(of: shownContents.expenses) ? "Deselect All" : "Select All") {
+                        Button(expenseSelection.isAllSelected(of: shownContents.expenses) ? AppLocalization.string(.deselectAll) : AppLocalization.string(.selectAll)) {
                             self.expenseSelection?.toggleAll(of: shownContents.expenses)
                         }
                     }
                     ToolbarItem(placement: .primaryAction) {
-                        Button("Done") { self.expenseSelection = nil }
+                        Button(AppLocalization.string(.done)) { self.expenseSelection = nil }
                             .bold()
                     }
                 } else {
                     ToolbarItem(placement: .navigation) {
-                        Button("Monthly Start Date", systemImage: "calendar") {
+                        Button(AppLocalization.string(.monthlyStartDate), systemImage: "calendar") {
                             showingSettings = true
                         }
                         .tint(Theme.textSecondary)
@@ -327,15 +327,15 @@ struct ExpensesView: View {
                     }
                     if canClearPlan {
                         ToolbarItem(placement: .primaryAction) {
-                            Menu("Plan options", systemImage: "ellipsis") {
-                                Button("Clear Plan", systemImage: "trash", role: .destructive,
+                            Menu(AppLocalization.string(.planOptions), systemImage: "ellipsis") {
+                                Button(AppLocalization.string(.clearPlan), systemImage: "trash", role: .destructive,
                                        action: requestClearPlan)
                             }
                             .tint(Theme.text)
                         }
                     }
                     ToolbarItem(placement: .primaryAction) {
-                        Button("Add Expense", systemImage: "plus") {
+                        Button(AppLocalization.string(.addExpense), systemImage: "plus") {
                             newExpense = NewExpensePreset()
                         }
                         .accentCircleButton()
@@ -546,7 +546,7 @@ private extension View {
     @ViewBuilder
     func searchableWhenThereIsSomethingToSearch(text: Binding<String>, enabled: Bool) -> some View {
         if enabled {
-            searchable(text: text, prompt: "Search expenses")
+            searchable(text: text, prompt: AppLocalization.string(.searchExpenses))
                 .searchToolbarBehavior(.minimize)
         } else {
             self

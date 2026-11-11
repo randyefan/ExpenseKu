@@ -47,8 +47,8 @@ struct FilterOptionRow: View {
 
     private var accessibilityValue: String {
         switch mark {
-        case .only: "Only"
-        case .hidden: "Hidden"
+        case .only: AppLocalization.string(.only)
+        case .hidden: AppLocalization.string(.hidden)
         case nil: ""
         }
     }

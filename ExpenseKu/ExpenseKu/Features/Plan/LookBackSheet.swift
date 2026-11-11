@@ -83,7 +83,7 @@ struct LookBackSheet: View {
             .toolbar {
                 ToolbarItem(placement: .principal) { pager }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Done", action: onFinish).tint(Theme.accentText)
+                    Button(AppLocalization.string(.done), action: onFinish).tint(Theme.accentText)
                 }
             }
             .task(id: reviewed) {
@@ -94,14 +94,14 @@ struct LookBackSheet: View {
 
     private var pager: some View {
         HStack(spacing: 10) {
-            Button("Previous cycle", systemImage: "chevron.left") { page(to: reviewed.previous(payday: payday, calendar: calendar)) }
+            Button(AppLocalization.string(.previousCycle), systemImage: "chevron.left") { page(to: reviewed.previous(payday: payday, calendar: calendar)) }
                 .disabled(!CyclePaging.canGoBack(from: reviewed, oldestExpense: expenses.map(\.date).min(),
                                                  oldestPlanStart: PlanLookup.oldestStart(in: plans)))
             Text(LookBackCopy.title(of: reviewed, onScreen: onScreen, calendar: calendar))
                 .font(.dsHeadline)
                 .foregroundStyle(Theme.text)
                 .contentTransition(.numericText())
-            Button("Next cycle", systemImage: "chevron.right") { page(to: reviewed.next(payday: payday, calendar: calendar)) }
+            Button(AppLocalization.string(.nextCycle), systemImage: "chevron.right") { page(to: reviewed.next(payday: payday, calendar: calendar)) }
                 .disabled(!LookBack.canGoForward(from: reviewed, onScreen: onScreen))
         }
         .labelStyle(.iconOnly)

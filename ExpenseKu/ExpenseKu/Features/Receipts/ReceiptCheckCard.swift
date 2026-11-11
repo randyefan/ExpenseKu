@@ -21,31 +21,31 @@ struct ReceiptCheckCard: View {
                     ReceiptThumbnail(data: expense.receiptImage, width: 104, height: 150)
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("Receipt image")
-                .accessibilityHint("Shows the receipt full screen")
+                .accessibilityLabel(AppLocalization.string(.receiptImage))
+                .accessibilityHint(AppLocalization.string(.showsTheReceiptFullScreen))
 
                 VStack(alignment: .leading, spacing: 6) {
                     MoneyText(expense.amount, font: .dsTitle.bold())
-                    Text(expense.date.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated).hour().minute()))
+                    Text(expense.date.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated).hour().minute().locale(AppLocalization.locale)))
                         .font(.dsSubhead)
                         .foregroundStyle(Theme.textSecondary)
-                    ReceiptFieldRow(label: "Account", value: expense.account?.name ?? "None")
-                    ReceiptFieldRow(label: "Category", value: expense.category?.name ?? "Uncategorized")
+                    ReceiptFieldRow(label: AppLocalization.string(.account), value: expense.account?.name ?? AppLocalization.string(.none))
+                    ReceiptFieldRow(label: AppLocalization.string(.category), value: expense.category?.name ?? AppLocalization.string(.uncategorized))
                     if !expense.note.isEmpty {
-                        ReceiptFieldRow(label: "Note", value: expense.note)
+                        ReceiptFieldRow(label: AppLocalization.string(.note), value: expense.note)
                     }
                 }
             }
             HStack(spacing: 8) {
                 Button(action: onEdit) {
-                    Text("Edit")
+                    Text(appLocalized: .edit)
                         .font(.dsSubhead).fontWeight(.semibold)
                         .foregroundStyle(Theme.text)
                         .frame(maxWidth: .infinity, minHeight: 40)
                         .background(Theme.surface, in: .capsule)
                 }
                 Button(action: onLooksRight) {
-                    Text("Looks right")
+                    Text(appLocalized: .looksRight)
                         .font(.dsSubhead).fontWeight(.semibold)
                         .foregroundStyle(Theme.onAccent)
                         .frame(maxWidth: .infinity, minHeight: 40)

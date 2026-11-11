@@ -22,7 +22,7 @@ struct PersonAvatar: View {
     }
 
     init(person: Person, size: CGFloat = Metric.iconSize) {
-        self.init(name: person.name, colorHex: person.colorHex, size: size)
+        self.init(name: person.displayName, colorHex: person.colorHex, size: size)
     }
 
     /// The letter the avatar wears. Shared with the person editor's hero, so a

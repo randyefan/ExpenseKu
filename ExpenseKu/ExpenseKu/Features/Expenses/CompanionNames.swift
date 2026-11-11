@@ -10,7 +10,7 @@ import Foundation
 
 nonisolated enum CompanionNames {
     static func phrase(_ people: [Person]?) -> String {
-        phrase(names: (people ?? []).map(\.name))
+        phrase(names: (people ?? []).map(\.displayName))
     }
 
     static func phrase(names: [String]) -> String {
@@ -21,10 +21,10 @@ nonisolated enum CompanionNames {
         case 1:
             return sorted[0]
         case 2:
-            return "\(sorted[0]) and \(sorted[1])"
+            return AppLocalization.string(.listPair(sorted[0], sorted[1]))
         default:
             guard let last = sorted.last else { return "" }
-            return sorted.dropLast().joined(separator: ", ") + ", and " + last
+            return AppLocalization.string(.listFinal(sorted.dropLast().joined(separator: ", "), last))
         }
     }
 }

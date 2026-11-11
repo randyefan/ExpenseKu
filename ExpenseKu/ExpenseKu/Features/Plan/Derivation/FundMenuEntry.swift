@@ -41,24 +41,24 @@ nonisolated enum FundMenuEntry: Hashable {
 
     var title: String {
         switch self {
-        case .moved(let account): "Moved to \(account)"
-        case .covered(let account): "Covered in \(account)"
-        case .notMoved: "Not moved yet"
-        case .notCovered: "Not covered yet"
-        case .paid: "Paid…"
-        case .setAsideMoved(let account, _): account.map { "Moved to \($0)" } ?? "Set aside"
-        case .setAsideUndo(let hasAccount): hasAccount ? "Not moved yet" : "Not set aside yet"
+        case .moved(let account): AppLocalization.string(.movedTo(account))
+        case .covered(let account): AppLocalization.string(.coveredIn(account))
+        case .notMoved: AppLocalization.string(.notMovedYet)
+        case .notCovered: AppLocalization.string(.notCoveredYet)
+        case .paid: AppLocalization.string(.paid)
+        case .setAsideMoved(let account, _): account.map { AppLocalization.string(.movedTo($0)) } ?? AppLocalization.string(.setAside)
+        case .setAsideUndo(let hasAccount): hasAccount ? AppLocalization.string(.notMovedYet) : AppLocalization.string(.notSetAsideYet)
         }
     }
 
     var subtitle: String {
         switch self {
-        case .moved: "Money is in the account"
-        case .covered: "Enough is there for the debit"
-        case .notMoved, .notCovered: "Back to Todo"
-        case .paid: "Log the expense now"
-        case .setAsideMoved(_, let target): target.map { "Set aside for \($0)" } ?? "No envelope yet"
-        case .setAsideUndo: "Back to Todo"
+        case .moved: AppLocalization.string(.moneyIsInTheAccount)
+        case .covered: AppLocalization.string(.enoughIsThereForTheDebit)
+        case .notMoved, .notCovered: AppLocalization.string(.backToTodo)
+        case .paid: AppLocalization.string(.logTheExpenseNow)
+        case .setAsideMoved(_, let target): target.map { AppLocalization.string(.setAsideFor($0)) } ?? AppLocalization.string(.noEnvelopeYet)
+        case .setAsideUndo: AppLocalization.string(.backToTodo)
         }
     }
 

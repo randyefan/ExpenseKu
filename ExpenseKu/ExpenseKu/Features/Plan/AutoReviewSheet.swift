@@ -55,7 +55,7 @@ struct AutoReviewSheet: View {
                 .listStyle(.insetGrouped)
                 .scrollContentBackground(.hidden)
 
-                Button("All correct — clear the flags", action: clearAll)
+                Button(AppLocalization.string(.allCorrectClearTheFlags), action: clearAll)
                     .font(.dsBody).bold()
                     .foregroundStyle(Theme.onAccent)
                     .frame(maxWidth: .infinity)
@@ -66,11 +66,11 @@ struct AutoReviewSheet: View {
                     .padding(.bottom, 12)
             }
             .background(Theme.bg)
-            .navigationTitle("Review")
+            .navigationTitle(AppLocalization.string(.review))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Done", action: onFinish).tint(Theme.accentText)
+                    Button(AppLocalization.string(.done), action: onFinish).tint(Theme.accentText)
                 }
             }
         }
@@ -83,13 +83,13 @@ struct AutoReviewSheet: View {
                 .foregroundStyle(Theme.accent)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(item.name.isEmpty ? "Plan item" : item.name)
+                Text(item.name.isEmpty ? AppLocalization.string(.planItem) : item.name)
                     .font(.dsBody).bold()
                     .foregroundStyle(Theme.text)
                     .lineLimit(1)
                 Text(expense.amount == item.amount
-                     ? "matches the plan"
-                     : "plan was \(item.amount.formattedIDR())")
+                     ? AppLocalization.string(.matchesThePlan)
+                     : AppLocalization.string(.planWas(item.amount.formattedIDR())))
                     .font(.dsCaption)
                     .foregroundStyle(expense.amount == item.amount ? Theme.textSecondary : Theme.negative)
                     .lineLimit(1)

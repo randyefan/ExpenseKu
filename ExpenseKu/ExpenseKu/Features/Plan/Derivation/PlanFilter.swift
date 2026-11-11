@@ -34,31 +34,31 @@ nonisolated enum PlanFilter: Hashable, CaseIterable {
 
     var title: String {
         switch self {
-        case .outsidePlan: "Outside plan"
-        case .fromPlan: "From plan"
+        case .outsidePlan: AppLocalization.string(.outsidePlan)
+        case .fromPlan: AppLocalization.string(.fromPlan)
         }
     }
 
-    var pillTitle: String { "\(title) only" }
+    var pillTitle: String { AppLocalization.string(.onlyNamedValue(title)) }
 
-    var emptyCycleTitle: String { "Nothing \(phrase)" }
+    var emptyCycleTitle: String { AppLocalization.string(.nothing(phrase)) }
 
     func emptyCycleDetail(span: String) -> String {
-        "No expenses \(phrase) in \(span)."
+        AppLocalization.string(.noExpensesIn(phrase, span))
     }
 
     func emptyDayTitle(dayPhrase: String) -> String {
-        "Nothing \(phrase) \(dayPhrase)"
+        AppLocalization.string(.planEmptyDayTitle(phrase, dayPhrase))
     }
 
-    var emptyDayDetail: String { "Tap \(title) again to show every expense." }
+    var emptyDayDetail: String { AppLocalization.string(.tapAgainToShowEveryExpense(title)) }
 
-    var emptyPeriodMessage: String { "Nothing \(phrase) in this period." }
+    var emptyPeriodMessage: String { AppLocalization.string(.nothingInThisPeriod(phrase)) }
 
     var phrase: String {
         switch self {
-        case .outsidePlan: "outside the plan"
-        case .fromPlan: "from the plan"
+        case .outsidePlan: AppLocalization.string(.outsideThePlan)
+        case .fromPlan: AppLocalization.string(.fromThePlan)
         }
     }
 }

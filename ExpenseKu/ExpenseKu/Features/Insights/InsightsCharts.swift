@@ -88,7 +88,7 @@ struct InsightsCharts: View {
             }
             .reveal(1, trigger: dateRange)
 
-            ChartCard("Spend by Category") {
+            ChartCard(AppLocalization.string(.spendByCategory)) {
                 if byCategory.isEmpty {
                     EmptyChartMessage(message: emptyMessage)
                 } else {
@@ -97,7 +97,7 @@ struct InsightsCharts: View {
             }
             .reveal(2, trigger: dateRange)
 
-            ChartCard("Spend by Account") {
+            ChartCard(AppLocalization.string(.spendByAccount)) {
                 if byAccount.isEmpty {
                     EmptyChartMessage(message: emptyMessage)
                 } else {
@@ -106,7 +106,7 @@ struct InsightsCharts: View {
             }
             .reveal(3, trigger: dateRange)
 
-            ChartCard(title: "Spend over Time", accessory: { ByPayPeriodTag() }) {
+            ChartCard(title: AppLocalization.string(.spendOverTime), accessory: { ByPayPeriodTag() }) {
                 if overTime.isEmpty {
                     EmptyChartMessage(message: emptyMessage)
                 } else {

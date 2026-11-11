@@ -46,7 +46,7 @@ struct PaidElsewhereRowView: View {
         .buttonStyle(.pressableRow)
         .padding(.vertical, 8)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Paid with \(row.accountName)")
+        .accessibilityLabel(AppLocalization.string(.paidWith(row.accountName)))
         .accessibilityValue("\(row.caption), \(row.total.formattedIDR())")
         .accessibilityAddTraits(row.fill == .allIn ? [.isButton, .isSelected] : .isButton)
     }

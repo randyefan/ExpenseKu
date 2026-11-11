@@ -93,7 +93,7 @@ nonisolated struct EnvelopeProgress: Identifiable, Equatable {
     /// "Rp 48.300 over".
     var remainder: Decimal { isOver ? spent - planned : planned - spent }
 
-    var remainderText: String { "\(remainder.formattedIDR()) \(isOver ? "over" : "left")" }
+    var remainderText: String { AppLocalization.string(isOver ? .envelopeRemainderOver(remainder.formattedIDR()) : .envelopeRemainderLeft(remainder.formattedIDR())) }
 
     /// The capped credit paid early brings this envelope's plan (envelope-assignment.md
     /// §4.10.10): never more than it planned.
@@ -113,16 +113,16 @@ nonisolated struct EnvelopeProgress: Identifiable, Equatable {
         let cycles = Set(paidEarlyDates.map { PayCycle.containing($0, payday: payday, calendar: calendar) }
             + setAsideCycleStarts.map { PayCycle.containing($0, payday: payday, calendar: calendar) })
         guard cycles.count == 1, let cycle = cycles.first else {
-            return "\(fromEarlier.formattedIDR()) from earlier"
+            return AppLocalization.string(.fromEarlier(fromEarlier.formattedIDR()))
         }
-        return "\(fromEarlier.formattedIDR()) from \(cycle.lastDay(calendar: calendar).formatted(.dateTime.month(.wide)))"
+        return AppLocalization.string(.from(fromEarlier.formattedIDR(), cycle.lastDay(calendar: calendar).formatted(.dateTime.month(.wide).locale(AppLocalization.locale))))
     }
 
     /// "Rp 1.500.000 from December", under the planned amount; drawn only beside the
     /// from-earlier caption.
     func ownShareCaption(cycle: PayCycle, calendar: Calendar) -> String? {
         guard fromEarlier > 0 else { return nil }
-        return "\(ownShare.formattedIDR()) from \(cycle.lastDay(calendar: calendar).formatted(.dateTime.month(.wide)))"
+        return AppLocalization.string(.from(ownShare.formattedIDR(), cycle.lastDay(calendar: calendar).formatted(.dateTime.month(.wide).locale(AppLocalization.locale))))
     }
 
     /// Deliberately unclamped — past 1 the bar fills its track and recolours rather

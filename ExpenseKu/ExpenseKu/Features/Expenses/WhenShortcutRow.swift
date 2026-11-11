@@ -19,8 +19,8 @@ struct WhenShortcutRow: View {
     }
 
     var body: some View {
-        QuickEntrySection(title: "When") {
-            DatePicker("Date & Time", selection: $date, displayedComponents: [.date, .hourAndMinute])
+        QuickEntrySection(title: AppLocalization.string(.when)) {
+            DatePicker(AppLocalization.string(.dateTime), selection: $date, displayedComponents: [.date, .hourAndMinute])
                 .labelsHidden()
         } content: {
             ChipRail(fade: Metric.screenPadding) {
@@ -48,12 +48,12 @@ struct WhenShortcutRow: View {
                         .contentShape(.capsule)
                 }
                 .buttonStyle(.pressableCard)
-                .accessibilityLabel("Pick a date")
+                .accessibilityLabel(AppLocalization.string(.pickADate))
             }
             // Anchored to the rail, not the calendar chip: picking a date adds a chip ahead
             // of the shortcuts, which slid a chip-anchored popover off the screen.
             .popover(isPresented: $showsCalendar, arrowEdge: .top) {
-                DatePicker("Date & Time", selection: $date, displayedComponents: [.date, .hourAndMinute])
+                DatePicker(AppLocalization.string(.dateTime), selection: $date, displayedComponents: [.date, .hourAndMinute])
                     .datePickerStyle(.graphical)
                     .labelsHidden()
                     .padding()
@@ -64,8 +64,8 @@ struct WhenShortcutRow: View {
     }
 
     static func customTitle(_ date: Date) -> String {
-        let day = date.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated))
-        return "\(day), \(date.formatted(date: .omitted, time: .shortened))"
+        let day = date.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated).locale(AppLocalization.locale))
+        return "\(day), \(date.formatted(Date.FormatStyle(date: .omitted, time: .shortened, locale: AppLocalization.locale)))"
     }
 
     private func choose(_ shortcut: WhenShortcut) {

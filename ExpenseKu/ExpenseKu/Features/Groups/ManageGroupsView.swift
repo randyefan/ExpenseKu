@@ -23,10 +23,10 @@ struct ManageGroupsView: View {
     /// never inserted silently: this runs per device against a store with no unique
     /// constraints (ADR-0002), so an automatic seed would give a two-device owner
     /// twelve groups.
-    private static let starters = [
-        "Fixed Obligations", "Lovely Support", "Housing & Living",
-        "Entertainment & Lifestyle", "Personal Care", "Transportation & Travel",
-    ]
+    private static var starters: [String] { [
+        AppLocalization.string(.starterFixedObligations), AppLocalization.string(.starterLovelySupport), AppLocalization.string(.starterHousingLiving),
+        AppLocalization.string(.starterEntertainmentLifestyle), AppLocalization.string(.starterPersonalCare), AppLocalization.string(.starterTransportationTravel),
+    ] }
 
     var body: some View {
         List {
@@ -39,8 +39,7 @@ struct ManageGroupsView: View {
                             Text(group.name)
                                 .font(.dsBody)
                                 .foregroundStyle(Theme.text)
-                            Text(PlanCopy.counted((group.categories ?? []).count, "category",
-                                                  plural: "categories"))
+                            Text(PlanCopy.counted((group.categories ?? []).count, .category))
                                 .font(.dsCaption)
                                 .foregroundStyle(Theme.textSecondary)
                         }
@@ -59,11 +58,11 @@ struct ManageGroupsView: View {
         .readableListMargins()
         .scrollContentBackground(.hidden)
         .background(Theme.bg)
-        .navigationTitle("Groups")
+        .navigationTitle(AppLocalization.string(.groups))
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button { editor = EditorTarget(group: nil) } label: {
-                    Label("Add Group", systemImage: "plus")
+                    Label(AppLocalization.string(.addGroup), systemImage: "plus")
                 }
                 .accentCircleButton()
             }
@@ -85,11 +84,11 @@ struct ManageGroupsView: View {
     private var emptyState: some View {
         VStack(spacing: Metric.cardGap) {
             EmptyStateView(
-                title: "No Groups",
+                title: AppLocalization.string(.noGroups),
                 systemImage: "tray.full.fill",
-                message: "A group answers what money is for, above the category that says what it bought. Only a plan's share-of-income table reads them."
+                message: AppLocalization.string(.aGroupAnswersWhatMoneyIsForAboveTheCategoryThat)
             )
-            Button("Add the six starter groups", action: addStarters)
+            Button(AppLocalization.string(.addTheSixStarterGroups), action: addStarters)
                 .font(.dsBody).bold()
                 .foregroundStyle(Theme.onAccent)
                 .padding(.horizontal, 20)

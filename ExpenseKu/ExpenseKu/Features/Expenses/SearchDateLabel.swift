@@ -15,7 +15,7 @@ nonisolated enum SearchDateLabel {
     static func text(_ date: Date, now: Date = .now, calendar: Calendar = .current) -> String {
         let sameYear = calendar.component(.year, from: date) == calendar.component(.year, from: now)
         return sameYear
-            ? date.formatted(.dateTime.day().month(.abbreviated))
-            : date.formatted(.dateTime.day().month(.abbreviated).year(.twoDigits))
+            ? date.formatted(.dateTime.day().month(.abbreviated).locale(AppLocalization.locale))
+            : date.formatted(.dateTime.day().month(.abbreviated).year(.twoDigits).locale(AppLocalization.locale))
     }
 }

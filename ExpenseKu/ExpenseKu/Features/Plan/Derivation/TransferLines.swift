@@ -204,9 +204,9 @@ nonisolated struct TransferRow: Identifiable, Equatable {
     /// VoiceOver's value for the line, and what `idb` reads back.
     var fillDescription: String {
         switch fill {
-        case .nothingIn: "Nothing in yet"
-        case .partIn: "\(members.count(where: \.isIn)) of \(members.count) in"
-        case .allIn: "All in"
+        case .nothingIn: AppLocalization.string(.noFundsIn)
+        case .partIn: AppLocalization.string(.ofIn(String(members.count(where: \.isIn)), String(members.count)))
+        case .allIn: AppLocalization.string(.allFundsIn)
         }
     }
 
@@ -214,18 +214,18 @@ nonisolated struct TransferRow: Identifiable, Equatable {
     var paidEarlyText: String? {
         guard paidEarly > 0 else { return nil }
         guard paidEarlyEnvelopes.count == 1, let name = paidEarlyEnvelopes.first else {
-            return "\(paidEarly.formattedIDR()) paid early"
+            return AppLocalization.string(.paidEarlyAmount(paidEarly.formattedIDR()))
         }
-        return "\(paidEarly.formattedIDR()) paid early into \(name)"
+        return AppLocalization.string(.paidEarlyInto(paidEarly.formattedIDR(), name))
     }
 
     /// "Rp 12.000.000 set aside into Jepang"; several envelopes drop the name.
     var setAsideText: String? {
         guard setAside > 0 else { return nil }
         guard setAsideEnvelopes.count == 1, let name = setAsideEnvelopes.first else {
-            return "\(setAside.formattedIDR()) set aside"
+            return AppLocalization.string(.setAsideAmount(setAside.formattedIDR()))
         }
-        return "\(setAside.formattedIDR()) set aside into \(name)"
+        return AppLocalization.string(.setAsideInto(setAside.formattedIDR(), name))
     }
 
     /// The line under the Account's name (bank-logos.md §5.6.4): "2 items · Due 12, 20",
@@ -235,14 +235,14 @@ nonisolated struct TransferRow: Identifiable, Equatable {
     var caption: String {
         if fill == .partIn {
             let inCount = members.count(where: \.isIn)
-            let round = PlanCopy.counted(inCount, "item") + " in · \(members.count - inCount) to go"
+            let round = PlanCopy.counted(inCount, .item) + AppLocalization.string(.inToGo(String(members.count - inCount)))
             return [round, PlanCopy.dueDays(toGoDueDays), creditText].compactMap(\.self)
                 .joined(separator: " · ")
         }
         let count = PlanCopy.itemCount(items: itemCount, envelopes: envelopeCount)
-        let adjustmentText = hasAdjustment ? "\(adjustment.formattedIDR()) adjustment applied" : nil
+        let adjustmentText = hasAdjustment ? AppLocalization.string(.adjustmentApplied(adjustment.formattedIDR())) : nil
         let notes = [adjustmentText, creditText].compactMap(\.self)
-        let autoNote = notes.isEmpty && allAuto ? "Auto debit — keep this covered" : nil
+        let autoNote = notes.isEmpty && allAuto ? AppLocalization.string(.autoDebitKeepThisCovered) : nil
         return ([count, PlanCopy.dueDays(dueDays)] + notes + [autoNote]).compactMap(\.self)
             .joined(separator: " · ")
     }
@@ -251,6 +251,6 @@ nonisolated struct TransferRow: Identifiable, Equatable {
     /// names, so the line stays two lines at most: "Rp 6.500.000 paid early · Rp 12.000.000 set aside".
     var creditText: String? {
         guard paidEarly > 0, setAside > 0 else { return paidEarlyText ?? setAsideText }
-        return "\(paidEarly.formattedIDR()) paid early · \(setAside.formattedIDR()) set aside"
+        return AppLocalization.string(.paidEarlySetAside(paidEarly.formattedIDR(), setAside.formattedIDR()))
     }
 }

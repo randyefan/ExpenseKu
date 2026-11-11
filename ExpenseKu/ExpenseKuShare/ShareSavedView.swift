@@ -48,7 +48,7 @@ struct ShareSavedView: View {
                     .strokeBorder(Theme.hairline, lineWidth: 1)
             }
             Button(action: onDone) {
-                Text("Done")
+                Text(appLocalized: .done)
                     .font(.headline)
                     .foregroundStyle(Theme.onAccent)
                     .frame(maxWidth: .infinity, minHeight: 50)
@@ -60,21 +60,22 @@ struct ShareSavedView: View {
         .padding(.bottom, 24)
         .background(Theme.bg, in: .rect(topLeadingRadius: 34, topTrailingRadius: 34))
         .preferredColorScheme(.dark)
+        .environment(\.locale, AppLocalization.locale)
     }
 
     private var title: String {
         switch state {
-        case .saving: "Saving…"
-        case .saved: "Saved to ExpenseKu"
-        case .failed: "Couldn't save this"
+        case .saving: AppLocalization.string(.saving)
+        case .saved: AppLocalization.string(.savedToExpenseKu)
+        case .failed: AppLocalization.string(.couldnTSaveThis)
         }
     }
 
     private var detail: String {
         switch state {
-        case .saving: "One moment."
-        case .saved: "Open ExpenseKu to log it."
-        case .failed: "Share an image or a PDF of the receipt."
+        case .saving: AppLocalization.string(.oneMoment)
+        case .saved: AppLocalization.string(.openExpenseKuToLogIt)
+        case .failed: AppLocalization.string(.shareAnImageOrAPDFOfTheReceipt)
         }
     }
 

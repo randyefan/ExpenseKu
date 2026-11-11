@@ -31,32 +31,32 @@ struct ManageView: View {
                 VStack(spacing: Metric.cardGap) {
                     VStack(spacing: 0) {
                         NavigationLink(value: Destination.categories) {
-                            ManageMenuRow(title: "Categories", systemImage: "folder.fill",
-                                          subtitle: "^[\(categories.count) category](inflect: true)")
+                            ManageMenuRow(title: AppLocalization.string(.categories), systemImage: "folder.fill",
+                                          subtitle: AppLocalization.string(.categoryCount(categories.count)))
                         }
                         .buttonStyle(.pressableRow)
                         Divider().overlay(Theme.hairline)
                         NavigationLink(value: Destination.groups) {
-                            ManageMenuRow(title: "Groups", systemImage: "tray.full.fill",
-                                          subtitle: "^[\(groups.count) group](inflect: true)")
+                            ManageMenuRow(title: AppLocalization.string(.groups), systemImage: "tray.full.fill",
+                                          subtitle: AppLocalization.string(.groupCount(groups.count)))
                         }
                         .buttonStyle(.pressableRow)
                         Divider().overlay(Theme.hairline)
                         NavigationLink(value: Destination.people) {
-                            ManageMenuRow(title: "People", systemImage: "person.2.fill",
-                                          subtitle: "^[\(people.count) person](inflect: true)")
+                            ManageMenuRow(title: AppLocalization.string(.people), systemImage: "person.2.fill",
+                                          subtitle: AppLocalization.string(.personCount(people.count)))
                         }
                         .buttonStyle(.pressableRow)
                         Divider().overlay(Theme.hairline)
                         NavigationLink(value: Destination.accounts) {
-                            ManageMenuRow(title: "Accounts", systemImage: "creditcard.fill",
-                                          subtitle: "^[\(accounts.count) account](inflect: true)")
+                            ManageMenuRow(title: AppLocalization.string(.accounts), systemImage: "creditcard.fill",
+                                          subtitle: AppLocalization.string(.accountCount(accounts.count)))
                         }
                         .buttonStyle(.pressableRow)
                         Divider().overlay(Theme.hairline)
                         NavigationLink(value: Destination.receiptReading) {
-                            ManageMenuRow(title: "Receipt reading", systemImage: "text.viewfinder",
-                                          subtitle: LocalizedStringKey(receiptModel.phase.subtitle),
+                            ManageMenuRow(title: AppLocalization.string(.receiptReading), systemImage: "text.viewfinder",
+                                          subtitle: receiptModel.phase.subtitle,
                                           tint: Theme.accent)
                         }
                         .buttonStyle(.pressableRow)
@@ -64,15 +64,18 @@ struct ManageView: View {
                     .cardStyle()
                     .reveal(0)
 
-                    AppVersionFooter()
+                    LanguageMenu()
                         .reveal(1)
+
+                    AppVersionFooter()
+                        .reveal(2)
                 }
                 .padding(Metric.screenPadding)
                 .readableColumn()
             }
             .background(Theme.bg)
             .navigationBarTitleDisplayMode(.inline)
-            .navigationTitle("Manage")
+            .navigationTitle(AppLocalization.string(.manage))
             .navigationDestination(for: Destination.self) { destination in
                 switch destination {
                 case .categories: ManageCategoriesView()

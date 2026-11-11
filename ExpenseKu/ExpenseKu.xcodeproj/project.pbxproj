@@ -71,6 +71,10 @@
 				DesignSystem/Theme.swift,
 				Features/Receipts/ReceiptInboxFolder.swift,
 				Features/Receipts/ReceiptInboxItem.swift,
+				Shared/AppLanguage.swift,
+				Shared/AppLocalization.swift,
+				Shared/LanguageSettings.swift,
+				Shared/LocalizedText.swift,
 			);
 			target = 89238FE27B6A4988354C0AA6 /* ExpenseKuShare */;
 		};
@@ -247,6 +251,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				id,
 				Base,
 			);
 			mainGroup = 93A540DC3027BB2D00297F0F;
@@ -541,6 +546,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -600,6 +606,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;

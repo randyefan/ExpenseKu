@@ -34,17 +34,17 @@ nonisolated struct PaidElsewhereRow: Identifiable, Equatable {
 
     var caption: String {
         switch fill {
-        case .nothingIn: "Move from \(homeName)"
-        case .partIn: "\(toMove.formattedIDR()) to move · \(moved.formattedIDR()) moved"
-        case .allIn: "Moved from \(homeName)"
+        case .nothingIn: AppLocalization.string(.moveFrom(homeName))
+        case .partIn: AppLocalization.string(.toMoveMoved(toMove.formattedIDR(), moved.formattedIDR()))
+        case .allIn: AppLocalization.string(.movedFrom(homeName))
         }
     }
 
     var fillDescription: String {
         switch fill {
-        case .nothingIn: "Nothing moved yet"
-        case .partIn: "Part moved"
-        case .allIn: "All moved"
+        case .nothingIn: AppLocalization.string(.nothingMovedYet)
+        case .partIn: AppLocalization.string(.partMoved)
+        case .allIn: AppLocalization.string(.allMoved)
         }
     }
 

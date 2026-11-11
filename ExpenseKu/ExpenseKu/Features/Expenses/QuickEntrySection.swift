@@ -17,7 +17,7 @@ struct QuickEntrySection<Accessory: View, Content: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text(isRequired ? "\(title) · Required" : title)
+                Text(isRequired ? AppLocalization.string(.required(title)) : title)
                     .textCase(.uppercase)
                     .font(.dsCaption).fontWeight(.semibold)
                     .tracking(0.5)

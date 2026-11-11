@@ -17,7 +17,7 @@ struct CategoryGrid: View {
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 4)
 
     var body: some View {
-        QuickEntrySection(title: "Category", isRequired: selection == nil) {
+        QuickEntrySection(title: AppLocalization.string(.category), isRequired: selection == nil) {
             LazyVGrid(columns: columns, spacing: 8) {
                 ForEach(categories) { category in
                     let isSelected = category.persistentModelID == selection?.persistentModelID
@@ -32,12 +32,12 @@ struct CategoryGrid: View {
                     .accessibilityAddTraits(isSelected ? .isSelected : [])
                 }
                 Button(action: onShowAll) {
-                    CategoryTile(name: "All…", isSelected: false, isMuted: true) {
+                    CategoryTile(name: AppLocalization.string(.all), isSelected: false, isMuted: true) {
                         CategoryIcon(symbol: "square.grid.2x2", tint: Theme.textSecondary, size: 30)
                     }
                 }
                 .buttonStyle(.pressableCard)
-                .accessibilityLabel("All categories")
+                .accessibilityLabel(AppLocalization.string(.allCategories))
             }
             .padding(.horizontal, Metric.screenPadding)
         }

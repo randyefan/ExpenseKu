@@ -22,7 +22,7 @@ struct SetAsidePicker: View {
                 Section {
                     ForEach(section.envelopes) { envelope in
                         EnvelopeChoiceRow(title: EnvelopeDetail.displayName(of: envelope),
-                                          detail: "\(envelope.amount.formattedIDR()) planned",
+                                          detail: AppLocalization.string(.plannedAmount(envelope.amount.formattedIDR())),
                                           symbol: "tray", tint: Theme.plan,
                                           isChosen: selection?.persistentModelID == envelope.persistentModelID) {
                             selection = envelope
@@ -38,6 +38,6 @@ struct SetAsidePicker: View {
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
         .background(Theme.bg)
-        .navigationTitle("For")
+        .navigationTitle(AppLocalization.string(.targetLabel))
     }
 }

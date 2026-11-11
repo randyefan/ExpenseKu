@@ -14,7 +14,7 @@ struct FundedFilterBar: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            FocusChip(title: "In the account", systemImage: "arrow.down.to.line", onClear: onClear)
+            FocusChip(title: AppLocalization.string(.inTheAccount), systemImage: "arrow.down.to.line", onClear: onClear)
             Spacer(minLength: 8)
             MoneyText(total, font: .dsSubhead, color: Theme.textSecondary)
         }

@@ -21,7 +21,7 @@ struct ReceiptRun: Identifiable, Hashable {
 
     var id: String { item.id }
 
-    var subtitle: String { "Receipt \(position) of \(total)" }
+    var subtitle: String { AppLocalization.string(.receiptOf(String(position), String(total))) }
 
     static func start(with items: [ReceiptInboxItem]) -> ReceiptRun? {
         items.first.map { ReceiptRun(item: $0, position: 1, total: items.count) }

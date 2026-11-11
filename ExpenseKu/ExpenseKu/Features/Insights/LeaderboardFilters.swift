@@ -19,33 +19,33 @@ struct LeaderboardFilters: View {
         ChipRail {
             Group {
                 Menu {
-                    Picker("Period", selection: $range) {
+                    Picker(AppLocalization.string(.period), selection: $range) {
                         ForEach(DateRangeFilter.allCases) { filter in
                             Text(filter.label).tag(filter)
                         }
                     }
                 } label: {
-                    FilterChip(label: "Period", value: range.label)
+                    FilterChip(label: AppLocalization.string(.period), value: range.label)
                 }
 
                 Menu {
-                    Button("All") { category = nil }
+                    Button(AppLocalization.string(.allItems)) { category = nil }
                     Divider()
                     ForEach(categories) { item in
                         Button(item.name) { category = item }
                     }
                 } label: {
-                    FilterChip(label: "Category", value: category?.name ?? "All")
+                    FilterChip(label: AppLocalization.string(.category), value: category?.name ?? AppLocalization.string(.allItems))
                 }
 
                 Menu {
-                    Button("All") { account = nil }
+                    Button(AppLocalization.string(.allItems)) { account = nil }
                     Divider()
                     ForEach(accounts) { item in
                         Button(item.name) { account = item }
                     }
                 } label: {
-                    FilterChip(label: "Account", value: account?.name ?? "All")
+                    FilterChip(label: AppLocalization.string(.account), value: account?.name ?? AppLocalization.string(.allItems))
                 }
             }
         }

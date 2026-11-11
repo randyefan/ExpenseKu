@@ -27,11 +27,11 @@ struct DuplicateNamePrompt: View {
                     .font(.title3)
                     .foregroundStyle(Theme.accentText)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("“\(existingName)” already exists")
+                    Text(appLocalized: .alreadyExists(existingName))
                         .font(.dsBody).bold()
                         .foregroundStyle(Theme.text)
                         .fixedSize(horizontal: false, vertical: true)
-                    Text("You already have a \(noun) with this name.")
+                    Text(appLocalized: .youAlreadyHaveAWithThisName(noun))
                         .font(.dsSubhead)
                         .foregroundStyle(Theme.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -40,13 +40,13 @@ struct DuplicateNamePrompt: View {
             }
             .cardStyle()
 
-            Button("Use existing", action: onUseExisting)
+            Button(AppLocalization.string(.useExisting), action: onUseExisting)
                 .buttonStyle(FilledPromptButton())
 
-            Button("Create new anyway", action: onCreateAnyway)
+            Button(AppLocalization.string(.createNewAnyway), action: onCreateAnyway)
                 .buttonStyle(OutlinedPromptButton())
 
-            Button("Cancel", action: onCancel)
+            Button(AppLocalization.string(.cancel), action: onCancel)
                 .font(.dsBody)
                 .foregroundStyle(Theme.textSecondary)
                 .padding(.top, 2)

@@ -14,7 +14,7 @@ struct EphemeralStoreBanner: View {
     var body: some View {
         HStack(spacing: Metric.cardGap) {
             Image(systemName: "exclamationmark.triangle.fill")
-            Text("Storage unavailable — expenses won’t be saved.")
+            Text(appLocalized: .storageUnavailableExpensesWonTBeSaved)
                 .font(.dsSubhead)
             Spacer(minLength: 0)
         }

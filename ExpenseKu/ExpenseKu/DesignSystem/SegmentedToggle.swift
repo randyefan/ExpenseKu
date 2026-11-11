@@ -36,46 +36,17 @@ struct SegmentedToggle<Value: Hashable>: View {
     /// and Label's icon gap, so a compact toggle tightens both.
     var isCompact = false
 
-    @Namespace private var pill
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-
     var body: some View {
-        HStack(spacing: 4) {
-            ForEach(segments) { segment in
-                let isSelected = segment.value == selection
-                Button {
-                    withAnimation(reduceMotion ? Motion.reduced : Motion.snap) {
-                        selection = segment.value
-                    }
-                } label: {
-                    Group {
-                        if isCompact {
-                            HStack(spacing: 5) {
-                                Image(systemName: segment.systemImage)
-                                Text(segment.title)
-                            }
-                        } else {
-                            Label(segment.title, systemImage: segment.systemImage)
-                        }
-                    }
-                        .font(.dsSubhead)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(isSelected ? Theme.onAccent : Theme.textSecondary)
-                        .lineLimit(1)
-                        .padding(.horizontal, isCompact ? 10 : 14)
-                        .padding(.vertical, 7)
-                        .background {
-                            if isSelected {
-                                Capsule()
-                                    .fill(Theme.accent)
-                                    .matchedGeometryEffect(id: "selection", in: pill)
-                            }
-                        }
-                        .contentShape(.capsule)
+        Group {
+            if isCompact {
+                ViewThatFits(in: .horizontal) {
+                    SegmentedToggleOptions(selection: $selection, segments: segments, isCompact: true)
+                        .fixedSize(horizontal: true, vertical: false)
+                    SegmentedToggleOptions(selection: $selection, segments: segments,
+                                           isCompact: true, stacksLabels: true)
                 }
-                .buttonStyle(.pressableCard)
-                .accessibilityLabel(segment.title)
-                .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
+            } else {
+                SegmentedToggleOptions(selection: $selection, segments: segments, isCompact: false)
             }
         }
         .padding(3)

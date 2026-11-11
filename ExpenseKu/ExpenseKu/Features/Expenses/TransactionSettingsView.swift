@@ -17,7 +17,7 @@ struct TransactionSettingsView: View {
         NavigationStack {
             VStack(spacing: 12) {
                 HStack {
-                    Text("Monthly Start Date")
+                    Text(appLocalized: .monthlyStartDate)
                         .font(.dsBody)
                         .foregroundStyle(Theme.text)
                     Spacer()
@@ -25,7 +25,7 @@ struct TransactionSettingsView: View {
                 }
                 .cardStyle()
 
-                Text("Your spending cycle resets on this day each month (1–31).")
+                Text(appLocalized: .monthlyStartExplanation)
                     .font(.dsSubhead)
                     .foregroundStyle(Theme.textSecondary)
                     .multilineTextAlignment(.center)
@@ -36,11 +36,11 @@ struct TransactionSettingsView: View {
             .padding(Metric.screenPadding)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Theme.bg)
-            .navigationTitle("Transaction Settings")
+            .navigationTitle(AppLocalization.string(.transactionSettings))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
+                    Button(AppLocalization.string(.done)) { dismiss() }
                 }
             }
         }
@@ -50,4 +50,3 @@ struct TransactionSettingsView: View {
         }
     }
 }
-

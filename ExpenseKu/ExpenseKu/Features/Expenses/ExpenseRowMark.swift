@@ -13,7 +13,7 @@
 
 import SwiftUI
 
-private let uncategorizedName = "Uncategorized"
+private let uncategorizedName = AppLocalization.string(.uncategorized)
 
 extension EnvironmentValues {
     /// Off on a list whose rows all share one Account (§5.5, decision 29).

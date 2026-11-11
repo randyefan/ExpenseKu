@@ -42,7 +42,7 @@ struct PlanDoneSheet: View {
                 List {
                     Section {
                         VStack(spacing: 4) {
-                            Text(item.name.isEmpty ? "Plan item" : item.name)
+                            Text(item.name.isEmpty ? AppLocalization.string(.planItem) : item.name)
                                 .font(.dsTitle).bold()
                                 .foregroundStyle(Theme.text)
                                 .multilineTextAlignment(.center)
@@ -58,14 +58,14 @@ struct PlanDoneSheet: View {
                     }
 
                     Section {
-                        DatePicker("Date", selection: $date, displayedComponents: [.date])
+                        DatePicker(AppLocalization.string(.dateLabel), selection: $date, displayedComponents: [.date])
                             .font(.dsBody)
                             .listRowBackground(Theme.card)
-                        carried("Category", item.category?.name ?? "Uncategorized")
-                        carried("Account", item.account?.name ?? "None")
-                        carried("People", item.people?.isEmpty == false
-                                ? (item.people ?? []).map(\.name).sorted().joined(separator: ", ")
-                                : "None")
+                        carried(AppLocalization.string(.category), item.category?.name ?? AppLocalization.string(.uncategorized))
+                        carried(AppLocalization.string(.account), item.account?.name ?? AppLocalization.string(.none))
+                        carried(AppLocalization.string(.people), item.people?.isEmpty == false
+                                ? (item.people ?? []).map(\.displayName).sorted().joined(separator: ", ")
+                                : AppLocalization.string(.none))
                     }
                 }
                 .listStyle(.insetGrouped)
@@ -73,7 +73,7 @@ struct PlanDoneSheet: View {
 
                 EditorKeypadDock(
                     expr: $expr,
-                    saveLabel: "Log this expense",
+                    saveLabel: AppLocalization.string(.logThisExpense),
                     canSave: resolvedAmount > 0,
                     showsDelete: false,
                     onSave: logExpense,
@@ -82,11 +82,11 @@ struct PlanDoneSheet: View {
                 )
             }
             .background(Theme.bg)
-            .navigationTitle("Log this expense")
+            .navigationTitle(AppLocalization.string(.logThisExpense))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel", action: onFinish).tint(Theme.accentText)
+                    Button(AppLocalization.string(.cancel), action: onFinish).tint(Theme.accentText)
                 }
             }
         }

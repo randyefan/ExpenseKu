@@ -18,17 +18,17 @@ nonisolated enum LookBackMark {
     case addedCategory(Category, to: PlanItem)
 
     var label: String {
-        if case .woken = self { return "Woken" }
-        return "Added"
+        if case .woken = self { return AppLocalization.string(.woken) }
+        return AppLocalization.string(.added)
     }
 
     func caption(planMonth: String) -> String {
         switch self {
-        case .copied: "added to \(planMonth)"
-        case .woken: "woken in \(planMonth)"
-        case .newEnvelope: "new envelope in \(planMonth)"
-        case .newFixed: "new fixed item in \(planMonth)"
-        case .addedCategory(_, let envelope): "added to \(envelope.name)"
+        case .copied: AppLocalization.string(.addedTo(planMonth))
+        case .woken: AppLocalization.string(.wokenIn(planMonth))
+        case .newEnvelope: AppLocalization.string(.newEnvelopeIn(planMonth))
+        case .newFixed: AppLocalization.string(.newFixedItemIn(planMonth))
+        case .addedCategory(_, let envelope): AppLocalization.string(.addedTo(envelope.name))
         }
     }
 }

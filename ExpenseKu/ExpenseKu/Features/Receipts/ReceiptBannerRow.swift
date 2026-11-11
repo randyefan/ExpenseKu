@@ -9,8 +9,8 @@
 import SwiftUI
 
 struct ReceiptBannerRow: View {
-    let title: LocalizedStringKey
-    let caption: LocalizedStringKey
+    let title: String
+    let caption: String
     let systemImage: String
     let isAccent: Bool
     let action: () -> Void

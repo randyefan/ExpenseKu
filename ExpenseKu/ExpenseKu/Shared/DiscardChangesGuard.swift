@@ -28,11 +28,11 @@ private struct DiscardChangesGuard: ViewModifier {
         content
             .interactiveDismissDisabled(hasChanges)
             .background(DismissAttemptObserver { isAsking = true })
-            .alert("Are you sure you want to quit?", isPresented: $isAsking) {
-                Button("Yes", role: .destructive, action: onDiscard)
-                Button("No", role: .cancel) {}
+            .alert(AppLocalization.string(.areYouSureYouWantToQuit), isPresented: $isAsking) {
+                Button(AppLocalization.string(.yes), role: .destructive, action: onDiscard)
+                Button(AppLocalization.string(.no), role: .cancel) {}
             } message: {
-                Text("What you've filled in so far will be lost.")
+                Text(appLocalized: .whatYouVeFilledInSoFarWillBeLost)
             }
     }
 }

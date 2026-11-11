@@ -47,7 +47,7 @@ struct TransferAdjustmentEditorView: View {
                 List {
                     Section {
                         VStack(spacing: 6) {
-                            SectionHeaderText("Adjustment")
+                            SectionHeaderText(.adjustment)
                             AmountHero(displayExpression: expr.displayExpression,
                                        amount: expr.committedAmount)
                         }
@@ -57,21 +57,21 @@ struct TransferAdjustmentEditorView: View {
                     }
 
                     Section {
-                        Picker("Direction", selection: $isNegative) {
-                            Text("Transfer less").tag(true)
-                            Text("Transfer more").tag(false)
+                        Picker(AppLocalization.string(.direction), selection: $isNegative) {
+                            Text(appLocalized: .transferLess).tag(true)
+                            Text(appLocalized: .transferMore).tag(false)
                         }
                         .pickerStyle(.segmented)
                         .listRowBackground(Theme.card)
                     }
 
                     Section {
-                        figureRow("Planned for this account", row.planned, color: Theme.text)
-                        figureRow("Adjustment", adjustment,
+                        figureRow(AppLocalization.string(.plannedForThisAccount), row.planned, color: Theme.text)
+                        figureRow(AppLocalization.string(.adjustment), adjustment,
                                   color: adjustment < 0 ? Theme.negative : Theme.text)
-                        figureRow("Transfer", row.planned + adjustment, color: Theme.accentText)
+                        figureRow(AppLocalization.string(.transfer), row.planned + adjustment, color: Theme.accentText)
                     } footer: {
-                        Text("Use this when money is already sitting in the account, or when this plan owes it something the items do not cover.")
+                        Text(appLocalized: .useThisWhenMoneyIsAlreadySittingInTheAccountOr)
                             .font(.dsCaption)
                             .foregroundStyle(Theme.textSecondary)
                     }
@@ -81,7 +81,7 @@ struct TransferAdjustmentEditorView: View {
 
                 EditorKeypadDock(
                     expr: $expr,
-                    saveLabel: "Save adjustment",
+                    saveLabel: AppLocalization.string(.saveAdjustment),
                     canSave: true,
                     showsDelete: false,
                     onSave: save,
@@ -90,14 +90,14 @@ struct TransferAdjustmentEditorView: View {
                 )
             }
             .background(Theme.bg)
-            .navigationTitle("ke \(row.accountName)")
+            .navigationTitle(AppLocalization.string(.transferDestination(row.accountName)))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel", action: onFinish).tint(Theme.accentText)
+                    Button(AppLocalization.string(.cancel), action: onFinish).tint(Theme.accentText)
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save", action: save).tint(Theme.accentText)
+                    Button(AppLocalization.string(.save), action: save).tint(Theme.accentText)
                 }
             }
         }

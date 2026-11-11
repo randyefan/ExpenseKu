@@ -48,11 +48,11 @@ struct PlanSetAsideRow: View {
 
                     HStack(spacing: 6) {
                         if target == nil {
-                            Text("Pick an envelope")
+                            Text(appLocalized: .pickAnEnvelope)
                                 .font(.dsCaption).bold()
                                 .foregroundStyle(Theme.negative)
                         } else {
-                            Text("Set aside")
+                            Text(appLocalized: .setAside)
                                 .font(.dsCaption)
                                 .foregroundStyle(Theme.textSecondary)
                         }
@@ -79,7 +79,7 @@ struct PlanSetAsideRow: View {
                 .font(.dsCaption.weight(.semibold))
                 .foregroundStyle(target == nil ? Theme.negative : Theme.plan)
                 .accessibilityHidden(true)
-            Text(target.map(EnvelopeDetail.displayName(of:)) ?? "No envelope")
+            Text(target.map(EnvelopeDetail.displayName(of:)) ?? AppLocalization.string(.noEnvelope))
                 .font(.dsBody).bold()
                 .foregroundStyle(Theme.text)
                 .lineLimit(1)
@@ -94,12 +94,12 @@ struct PlanSetAsideRow: View {
     }
 
     private var spokenRow: String {
-        [spokenName, item.amount.formattedIDR(), target == nil ? "Pick an envelope" : nil, item.account?.name]
+        [spokenName, item.amount.formattedIDR(), target == nil ? AppLocalization.string(.pickAnEnvelope) : nil, item.account?.name]
             .compactMap(\.self).joined(separator: ", ")
     }
 
     private var spokenName: String {
-        guard let target, let label else { return "Set aside, no envelope" }
-        return "Set aside for \(EnvelopeDetail.displayName(of: target)), \(label.long)"
+        guard let target, let label else { return AppLocalization.string(.setAsideNoEnvelope) }
+        return AppLocalization.string(.setAsideTargetDescription(EnvelopeDetail.displayName(of: target), label.long))
     }
 }

@@ -76,10 +76,11 @@ nonisolated final class PayCycleTests: XCTestCase {
         XCTAssertEqual(cycle.lastDay(calendar: calendar), startOfDay(2026, 8, 24))
     }
 
-    /// The range text renders as dd/MM/yyyy ~ dd/MM/yyyy over the closed span.
     func testRangeText() {
+        var calendar = calendar
+        calendar.locale = Locale(identifier: "en_US")
         let cycle = PayCycle.containing(date(2026, 8, 9), payday: 25, calendar: calendar)
-        XCTAssertEqual(cycle.rangeText(calendar: calendar), "25/07/2026 ~ 24/08/2026")
+        XCTAssertEqual(cycle.rangeText(calendar: calendar, locale: Locale(identifier: "en_US")), "07/25/2026 ~ 08/24/2026")
     }
 
     /// payday = 1 makes a cycle identical to a calendar month.

@@ -52,7 +52,7 @@ nonisolated struct SpendEntityDetail {
 
     static func emptyTitle(planFilter: PlanFilter?, filter: ExpenseFilter = ExpenseFilter()) -> String {
         if let planFilter { return planFilter.emptyCycleTitle }
-        return filter.isEmpty ? "Nothing in This Window" : EmptyNotice.filterTitle
+        return filter.isEmpty ? AppLocalization.string(.nothingInThisWindow) : EmptyNotice.filterTitle
     }
 
     static func emptyMessage(
@@ -62,7 +62,7 @@ nonisolated struct SpendEntityDetail {
         windowPhrase: String
     ) -> String {
         let half = planFilter.map { " \($0.phrase)" } ?? ""
-        let matching = filter.isEmpty ? "" : " that match these filters"
-        return "\(name) has no expenses\(half) \(windowPhrase)\(matching)."
+        let matching = filter.isEmpty ? "" : AppLocalization.string(.thatMatchTheseFilters)
+        return AppLocalization.string(.hasNoExpenses(name, half, windowPhrase, matching))
     }
 }

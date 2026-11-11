@@ -23,7 +23,7 @@ struct PlanDriftStrip: View {
             Image(systemName: "arrow.up.right")
                 .font(.dsCaption.weight(.semibold))
                 .foregroundStyle(Theme.negative)
-            Text("Over plan so far")
+            Text(appLocalized: .overPlanSoFar)
                 .font(.dsSubhead)
                 .foregroundStyle(Theme.textSecondary)
             Spacer(minLength: 8)

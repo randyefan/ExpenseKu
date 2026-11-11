@@ -10,6 +10,7 @@ import SwiftUI
 struct SectionHeaderText: View {
     let title: String
     init(_ title: String) { self.title = title }
+    init(_ title: LocalizedStringResource) { self.title = AppLocalization.string(title) }
     var body: some View {
         Text(title.uppercased())
             .font(.dsCaption)

@@ -18,10 +18,10 @@ struct ReceiptReadingView: View {
             VStack(alignment: .leading, spacing: Metric.cardGap) {
                 VStack(spacing: 10) {
                     CategoryIcon(symbol: "text.viewfinder", tint: Theme.accent, size: 56)
-                    Text("Fill expenses from receipts")
+                    Text(appLocalized: .fillExpensesFromReceipts)
                         .font(.dsHeadline).bold()
                         .foregroundStyle(Theme.text)
-                    Text("Reads a receipt on this iPhone and fills the amount, date, account, note and category. Nothing leaves the phone.")
+                    Text(appLocalized: .readsAReceiptOnThisIPhoneAndFillsTheAmountDate)
                         .font(.dsSubhead)
                         .foregroundStyle(Theme.textSecondary)
                         .multilineTextAlignment(.center)
@@ -29,7 +29,7 @@ struct ReceiptReadingView: View {
                 .frame(maxWidth: .infinity)
                 .cardStyle(padding: 20)
 
-                SectionHeaderText("Model")
+                SectionHeaderText(.model)
                     .padding(.horizontal, 4)
                     .padding(.top, 10)
 
@@ -40,7 +40,7 @@ struct ReceiptReadingView: View {
                     onRemove: { askingRemove = true }
                 )
 
-                Text("Until the model is here, receipts are read with simpler rules: amount, date and bank when they are clear. A broken download resumes from where it stopped.")
+                Text(appLocalized: .untilTheModelIsHereReceiptsAreReadWithSimplerRules)
                     .font(.dsCaption)
                     .foregroundStyle(Theme.textSecondary)
                     .padding(.horizontal, 4)
@@ -49,19 +49,19 @@ struct ReceiptReadingView: View {
             .readableColumn()
         }
         .background(Theme.bg)
-        .navigationTitle("Receipt reading")
+        .navigationTitle(AppLocalization.string(.receiptReading))
         .navigationBarTitleDisplayMode(.inline)
-        .alert("Download 3.6 GB over cellular?", isPresented: $askingCellular) {
-            Button("Cancel", role: .cancel) {}
-            Button("Download") { store.download(allowingCellular: true) }
+        .alert(AppLocalization.string(.receiptModelCellularDownload), isPresented: $askingCellular) {
+            Button(AppLocalization.string(.cancel), role: .cancel) {}
+            Button(AppLocalization.string(.download)) { store.download(allowingCellular: true) }
         } message: {
-            Text("You are not on Wi-Fi. The download resumes if it is interrupted.")
+            Text(appLocalized: .youAreNotOnWiFiTheDownloadResumesIfIt)
         }
-        .alert("Remove the model?", isPresented: $askingRemove) {
-            Button("Remove", role: .destructive, action: store.remove)
-            Button("Cancel", role: .cancel) {}
+        .alert(AppLocalization.string(.removeTheModel), isPresented: $askingRemove) {
+            Button(AppLocalization.string(.remove), role: .destructive, action: store.remove)
+            Button(AppLocalization.string(.cancel), role: .cancel) {}
         } message: {
-            Text("Receipts will be read with simpler rules.")
+            Text(appLocalized: .receiptsWillBeReadWithSimplerRules)
         }
     }
 

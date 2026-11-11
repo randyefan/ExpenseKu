@@ -30,12 +30,12 @@ nonisolated struct CycleHeadline: Equatable {
 
     /// What the List and Month lenses show: money that has already left.
     static func spending(_ total: Decimal) -> CycleHeadline {
-        CycleHeadline(label: "Spending", amount: total, tint: .neutral)
+        CycleHeadline(label: AppLocalization.string(.spending), amount: total, tint: .neutral)
     }
 
     /// What the Plan lens shows. Sisa is a plan figure, not a balance — it does not
     /// move as money is spent (§9.9).
     static func sisa(_ sisa: Decimal) -> CycleHeadline {
-        CycleHeadline(label: "Sisa", amount: sisa, tint: sisa < 0 ? .negative : .neutral)
+        CycleHeadline(label: AppLocalization.string(.remainingFunds), amount: sisa, tint: sisa < 0 ? .negative : .neutral)
     }
 }

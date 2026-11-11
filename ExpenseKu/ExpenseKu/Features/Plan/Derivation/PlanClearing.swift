@@ -57,41 +57,43 @@ nonisolated enum PlanClearing {
     }
 
     static func title(month: String) -> String {
-        "Clear \(month)\u{2019}s plan?"
+        AppLocalization.string(.clearSPlan(month))
     }
 
     static func message(_ reach: Reach) -> String {
-        [deletedSentence(reach), linkSentence(reach), reach.touchesExpenses ? "Expenses are kept." : nil]
+        [deletedSentence(reach), linkSentence(reach), reach.touchesExpenses ? AppLocalization.string(.expensesAreKept) : nil]
             .compactMap(\.self)
             .joined(separator: " ")
     }
 
     private static func deletedSentence(_ reach: Reach) -> String {
         let parts = [
-            reach.items > 0 ? PlanCopy.counted(reach.items, "item") : nil,
-            reach.dormant > 0 ? PlanCopy.counted(reach.dormant, "row") + " from last cycle" : nil,
-            reach.incomeLines > 0 ? PlanCopy.counted(reach.incomeLines, "income line") : nil
+            reach.items > 0 ? PlanCopy.counted(reach.items, .item) : nil,
+            reach.dormant > 0 ? AppLocalization.string(.planDormantCount(reach.dormant)) : nil,
+            reach.incomeLines > 0 ? PlanCopy.counted(reach.incomeLines, .incomeLine) : nil
         ].compactMap(\.self)
-        guard !parts.isEmpty else { return "The plan will be deleted." }
-        return listed(parts) + " will be deleted."
+        guard !parts.isEmpty else { return AppLocalization.string(.thePlanWillBeDeleted) }
+        return AppLocalization.string(.planClearedParts(listed(parts)))
     }
 
     private static func linkSentence(_ reach: Reach) -> String? {
         let parts = [
-            reach.paidEarly > 0 ? PlanCopy.counted(reach.paidEarly, "expense") + " paid early" : nil,
-            reach.done > 0 ? PlanCopy.counted(reach.done, "expense") + " marked done" : nil,
-            reach.setAsides > 0 ? PlanCopy.counted(reach.setAsides, "set-aside") + " from " + setAsideSource(reach) : nil
+            reach.paidEarly > 0 ? AppLocalization.string(.planEarlyExpenseCount(reach.paidEarly)) : nil,
+            reach.done > 0 ? AppLocalization.string(.planDoneExpenseCount(reach.done)) : nil,
+            reach.setAsides > 0 ? AppLocalization.string(.planSetAsideSourceCount(reach.setAsides, setAsideSource(reach))) : nil
         ].compactMap(\.self)
         guard !parts.isEmpty else { return nil }
-        return listed(parts) + (reach.linkCount == 1 ? " will lose its place in it." : " will lose their place in it.")
+        return AppLocalization.string(reach.linkCount == 1
+                      ? .planClearedLinks(listed(parts)) : .planClearedLinksPlural(listed(parts)))
     }
 
     private static func listed(_ parts: [String]) -> String {
         guard let last = parts.last else { return "" }
-        return parts.count == 1 ? last : parts.dropLast().joined(separator: ", ") + " and " + last
+        return parts.count == 1 ? last
+            : AppLocalization.string(.listFinalNoComma(parts.dropLast().joined(separator: ", "), last))
     }
 
     private static func setAsideSource(_ reach: Reach) -> String {
-        reach.setAsideMonths.count == 1 ? reach.setAsideMonths[0] : "earlier cycles"
+        reach.setAsideMonths.count == 1 ? reach.setAsideMonths[0] : AppLocalization.string(.earlierCycles)
     }
 }

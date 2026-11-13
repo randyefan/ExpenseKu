@@ -14,12 +14,13 @@ nonisolated struct ReceiptReader: Sendable {
 
     @concurrent
     func reading(of data: Data, categories: [String]) async throws -> StoredReceiptReading {
-        let text = try await ReceiptOCR.read(data)
+        let image = ReceiptOCR.imageData(from: data)
+        let text = try await ReceiptOCR.read(image)
         let candidates = CandidateExtractor.extract(from: text)
         var answer: String?
         if let model {
             let prompt = ExtractionPrompt.make(receipt: text, candidates: candidates, categories: categories)
-            answer = try? await model.answer(prompt)
+            answer = try? await model.answer(prompt, image: image)
         }
         return Self.reading(of: text, candidates: candidates, categories: categories,
                             hadModel: model != nil, answer: answer)

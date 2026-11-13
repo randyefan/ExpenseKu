@@ -16,6 +16,7 @@ nonisolated struct ReceiptFill<ID: Hashable> {
         var dateIsUntouched: Bool
         var accountIsDefault: Bool
         var note: String
+        var noteIsUntouched = true
         var hasCategory: Bool
         var people: [ID]
         var clock: Date
@@ -61,8 +62,8 @@ nonisolated struct ReceiptFill<ID: Hashable> {
             let wearing = accounts.filter { $0.brandID == brandID }
             account = .set(wearing.max { $0.uses < $1.uses }?.id)
         }
-        if form.note.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, let counterparty = reading.counterparty {
-            note = counterparty
+        if form.noteIsUntouched, form.note.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            note = reading.expenseDescription ?? reading.counterparty
         }
         if let counterparty = reading.counterparty, let person = Self.person(named: counterparty, in: people),
            !form.people.contains(person) {

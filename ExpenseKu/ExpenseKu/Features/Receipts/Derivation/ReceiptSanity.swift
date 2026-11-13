@@ -22,6 +22,12 @@ nonisolated enum ReceiptSanity {
         if let counterparty = reading.counterparty?.trimmingCharacters(in: .whitespaces) {
             reading.counterparty = counterparty.contains(where: \.isLetter) ? counterparty : nil
         }
+        if let description = reading.expenseDescription {
+            let normalized = description.split(whereSeparator: \.isWhitespace).joined(separator: " ")
+            reading.expenseDescription = normalized.count <= 160
+                && normalized.contains(where: \.isLetter)
+                && !["null", "none"].contains(normalized.lowercased()) ? normalized : nil
+        }
         return reading
     }
 }

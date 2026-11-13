@@ -1619,6 +1619,23 @@
         }
       }
     },
+    "clearDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear description"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hapus deskripsi"
+          }
+        }
+      }
+    },
     "clearExpenseFilters": {
       "extractionState": "manual",
       "localizations": {

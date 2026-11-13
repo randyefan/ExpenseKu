@@ -1,6 +1,6 @@
 # PRD — Reading receipts
 
-Status: Built · amended 9 Nov 2026 with §4.3.1 View receipt and §4.11 Reading ahead, both built
+Status: Built · amended 14 Nov 2026 with image input, share-time fallback and receipt descriptions
 Date: 2026-11-08 · grilled, drawn (flow AG), approved and built the same day as the on-device spike (`.scratch/receipt-ai/`), on `feature/receipt-reading`, not merged until the owner says so
 Owner: Randy Efan
 
@@ -32,8 +32,10 @@ How it reads (proved in the spike, 8 Nov 2026): Vision OCR → code lists every 
 value, date and bank on the receipt as **candidates** → Gemma 4 E2B, running on the phone,
 picks which candidate is the amount, the fee, the date, the bank and the counterparty,
 and which of the owner's Categories fits → code accepts a pick only when it equals a
-candidate. **The model can never invent a number.** Without the model, code rules fill
-what they are sure of.
+candidate. Amounts, fees, dates and banks remain grounded to candidates. The model also
+writes a short description from visible receipt evidence; this generated text is a suggestion
+for the owner to review, not an independently verified extraction. Without the model, code
+rules fill what they are sure of and the counterparty remains the Note fallback.
 
 ## 2. Goals
 
@@ -128,9 +130,9 @@ typed or chose is never replaced.
 | Field | Filled with | Counts as empty when |
 |---|---|---|
 | Amount | the receipt's amount; with a fee, the expression **`amount+fee`** on the keypad, so the saved amount is what left the account and the fee is one ⌫ away | the amount is 0 |
-| Date & time | the receipt's date and time; a receipt date with no time keeps the form's clock time | the date is still the moment the form opened (Now) and was not preset |
+| Date & time | the receipt's date and time; a receipt date with no time keeps the form's clock time. For inbox receipts, the form starts at the time the receipt was shared, which remains the fallback when no valid date is read | the date is still the form's initial value (share time for inbox receipts, Now otherwise) and was not preset |
 | Account | the Account wearing the receipt bank's logo (`brandID`); several → the most used in the last 90 days; none → **None** | still the form's default Account |
-| Note | the counterparty or shop, as printed ("MUHAMMAD FADHIL", "INDOMARET") | empty |
+| Note | Gemma's concise Indonesian description based on visible purchases or stated purpose, aligned with an existing Category; the counterparty or shop as printed when no usable description is returned | empty and untouched; text the owner edited or deliberately cleared stays as chosen for the rest of this form |
 | People | adds the one existing Person whose name equals the counterparty, or equals its leading words ("Salsabila" for "Salsabila Arum Lukit"), ignoring case; zero or several matches → nothing added | always additive; Me stays |
 | Category | Gemma's pick from the owner's Category names | no Category chosen |
 | Envelope | untouched | — |
@@ -249,7 +251,9 @@ each form in the run opens already filled.
   **Later**. A reading that failed is kept as an empty one, and the form opens empty, as
   today; it is not retried.
 - **Rules, then the model.** A reading made by the rules is read again once the model is
-  ready (§4.10).
+  ready (§4.10). An analysis stored before the description prompt is likewise refreshed
+  once when the model is ready. The analysis version is kept beside the receipt; a current
+  attempt is not retried just because it returned no description.
 - **The banner** keeps its title, "N receipts waiting", and only its caption changes:
 
 | Inbox state | Caption |
@@ -277,7 +281,7 @@ each form in the run opens already filled.
 | Needs review + receipt image | until checked (§4.7); synced |
 | The downloaded model | until removed in Manage, or the app is deleted |
 | The loaded model | until the app goes to the background, or reading ahead ends (§4.11) |
-| A receipt's reading | as long as the receipt waits; read again only when it was made by the rules and the model is now ready |
+| A receipt's reading | as long as the receipt waits; refreshed when the model becomes ready after a rules reading, or once after an analysis-version upgrade |
 
 ## 6. Unaffected
 
@@ -411,3 +415,41 @@ FADHIL"; three receipts waiting; three receipt expenses to check.
 | Driving the flow in the simulator | `-seedReceipts` adds a BCA Account, two receipts drawn with SwiftUI in the inbox, and one Belanja expense to check | `DebugReceiptSeed` |
 | Before TestFlight | Deploy the V8 field (`receiptImage`) to CloudKit Production; register the App Group through automatic signing on a device build | — |
 
+
+### Image-assisted reading experiment — 14 Nov 2026
+
+Gemma receives the receipt image alongside the existing OCR text and candidates, using
+MLXVLM from the existing mlx-swift-lm package. PDFs use the same first-page raster for OCR
+and model input. The model still chooses grounded candidate IDs; values absent from OCR
+candidates are not accepted. The existing OCR fallback and share-time date fallback remain.
+On the physical iPhone 18 Pro, image inference initially terminated with signal 9.
+Replaying the same receipt with MLX's default cache reproduced the termination: active
+allocations reached about 3.31 GiB with another 1.15 GiB retained in the allocator cache.
+Limiting `Memory.cacheLimit` to 20 MiB before model loading completed the reading twice;
+the measured MLX active-allocation peak was about 4.80 GiB. This is an allocator cache
+limit, not a limit on model weights or the prompt's KV cache. Keep this limit for iOS.
+Broader receipt accuracy and memory testing remain pending. Simulator verification
+covers compilation, routing tests and the OCR fallback; it cannot exercise MLX inference.
+
+### Receipt descriptions — 14 Nov 2026
+
+The owner requested category-aware analysis and a clear button directly in the existing
+Note field (AG3/AG12). Gemma chooses only an existing Category by goods, services or an
+explicit purpose, not by bank or payment method alone. It produces a single-line Indonesian
+description of at most 160 characters, grounded by instruction in the visible image/OCR.
+The tone is casual, natural everyday Indonesian, like a short personal expense note, without
+stiff formal phrasing or filler; visible names stay unchanged.
+System instructions prioritize visible transaction notes/messages, purchases and stated purpose,
+then useful pocket context. Include a named source pocket as "dari pocket <name>" only when its
+label identifies the source; do not guess direction or treat a pocket name as proof of purpose.
+"Transfer ke <recipient>" is the last resort when no useful note, purchase, purpose or pocket
+context exists, with "Transfer" when the recipient is also unknown. The prompt must not invent
+rent, debts, relationships, account numbers or references. Free text cannot be
+validated against candidates as amounts can, so review remains necessary.
+
+Invalid, missing, blank, numeric-only, null-like or overlong descriptions fall back to the
+counterparty. A description never changes counterparty-based People matching. Existing
+Notes are kept. The right-hand X appears only for nonempty text, clears the entire field,
+keeps the current keyboard focus and prevents subsequent receipt reads from refilling that
+field during the same editor visit. The button has a 44 pt minimum target and localized
+English/Indonesian accessibility labels. Saving after clearing keeps an empty Note.

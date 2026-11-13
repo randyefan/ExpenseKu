@@ -36,6 +36,7 @@ struct ExpenseEditorView: View {
     @State private var expr: ExpressionEvaluator  // keypad-driven amount
     @State private var date: Date
     @State private var note: String
+    @State private var noteIsUntouched = true
     @State private var category: Category?
     @State private var people: [Person]
     @State private var account: Account?
@@ -96,7 +97,7 @@ struct ExpenseEditorView: View {
         self.receiptRun = receiptRun
         self.onRunEnd = onRunEnd
         _expr = State(initialValue: ExpressionEvaluator(amount: editing?.amount ?? 0))
-        _date = State(initialValue: editing?.date ?? date ?? .now)
+        _date = State(initialValue: editing?.date ?? date ?? receiptRun?.item.addedAt ?? .now)
         _note = State(initialValue: editing?.note ?? "")
         _category = State(initialValue: editing?.category)
         _people = State(initialValue: editing?.people ?? [])
@@ -255,7 +256,7 @@ struct ExpenseEditorView: View {
             if let id = QuickPickOrder.defaultAccount(latestFirst: recent) {
                 account = allAccounts.first { $0.persistentModelID == id }
             }
-            if !hasPresetDate {
+            if !hasPresetDate && receiptRun == nil {
                 whenTap = WhenTap(shortcut: .now, date: date)
             }
         }
@@ -336,6 +337,7 @@ struct ExpenseEditorView: View {
             .onChange(of: people) { _, newValue in
                 join(newValue)
             }
+            .onChange(of: note) { noteIsUntouched = false }
             .onChange(of: notesFocused) { _, focused in
                 if focused {
                     withAnimation { scrollPosition.scrollTo(id: notesRowID, anchor: .bottom) }
@@ -519,6 +521,7 @@ struct ExpenseEditorView: View {
                 dateIsUntouched: !hasPresetDate && date == pristine?.date && editing == nil,
                 accountIsDefault: account?.persistentModelID == pristine?.account,
                 note: note,
+                noteIsUntouched: noteIsUntouched,
                 hasCategory: category != nil,
                 people: people.map(\.persistentModelID),
                 clock: date

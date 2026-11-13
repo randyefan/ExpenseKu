@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		798487F2BF1AE52AE110B8F1 /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = F88E4988A795A9A30FAC1A7D /* MLXLLM */; };
+		798487F2BF1AE52AE110B8F1 /* MLXVLM in Frameworks */ = {isa = PBXBuildFile; productRef = F88E4988A795A9A30FAC1A7D /* MLXVLM */; };
 		ABAA8EC4D61BE1D9D4AC48AD /* ExpenseKuShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 66E9F809BE01F4ED9FCAAA4C /* ExpenseKuShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		DB6C2731138054617498EED5 /* Tokenizers in Frameworks */ = {isa = PBXBuildFile; productRef = 47D3061A3ECFBE3E46660341 /* Tokenizers */; };
 		F2D1B15472E3C2287D4CE7B1 /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 303EBC7FA9C84E1FD50F3D87 /* MLXLMCommon */; };
@@ -119,7 +119,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				798487F2BF1AE52AE110B8F1 /* MLXLLM in Frameworks */,
+				798487F2BF1AE52AE110B8F1 /* MLXVLM in Frameworks */,
 				F2D1B15472E3C2287D4CE7B1 /* MLXLMCommon in Frameworks */,
 				DB6C2731138054617498EED5 /* Tokenizers in Frameworks */,
 			);
@@ -198,7 +198,7 @@
 			);
 			name = ExpenseKu;
 			packageProductDependencies = (
-				F88E4988A795A9A30FAC1A7D /* MLXLLM */,
+				F88E4988A795A9A30FAC1A7D /* MLXVLM */,
 				303EBC7FA9C84E1FD50F3D87 /* MLXLMCommon */,
 				47D3061A3ECFBE3E46660341 /* Tokenizers */,
 			);
@@ -729,10 +729,10 @@
 			package = 92E08B8E9FD3B52D4F10007B /* XCRemoteSwiftPackageReference "swift-transformers" */;
 			productName = Tokenizers;
 		};
-		F88E4988A795A9A30FAC1A7D /* MLXLLM */ = {
+		F88E4988A795A9A30FAC1A7D /* MLXVLM */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 948DFE0912AF3194FEAEB48A /* XCRemoteSwiftPackageReference "mlx-swift-lm" */;
-			productName = MLXLLM;
+			productName = MLXVLM;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

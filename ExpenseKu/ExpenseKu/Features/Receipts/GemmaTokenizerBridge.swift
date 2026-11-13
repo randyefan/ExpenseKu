@@ -7,7 +7,7 @@
 //  Face hub client, since the model is already on disk when it loads.
 //
 
-#if canImport(MLXLLM)
+#if canImport(MLXVLM)
 import Foundation
 import MLXLMCommon
 import Tokenizers

@@ -35,6 +35,7 @@ nonisolated enum ReceiptResolver {
         if let answered = answer["category"] {
             reading.categoryName = categories.first { $0.localizedCaseInsensitiveCompare(answered) == .orderedSame }
         }
+        reading.expenseDescription = answer["description"]
         return ReceiptSanity.checked(reading)
     }
 

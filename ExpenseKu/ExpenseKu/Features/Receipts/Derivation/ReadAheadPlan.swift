@@ -17,6 +17,6 @@ nonisolated enum ReadAheadPlan {
 
     static func needsReading(_ stored: StoredReceiptReading?, modelIsReady: Bool) -> Bool {
         guard let stored else { return true }
-        return modelIsReady && !stored.hadModel
+        return modelIsReady && (!stored.hadModel || stored.analysisVersion != StoredReceiptReading.currentAnalysisVersion)
     }
 }

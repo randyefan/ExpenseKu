@@ -22,10 +22,24 @@ struct EnvelopeNoteCard: View {
                     .fill(Theme.hairline)
                     .frame(height: 1)
             }
-            TextField(AppLocalization.string(.addANote), text: $note, axis: .vertical)
-                .font(.dsBody)
-                .focused(notesFocused)
-                .padding(.vertical, 14)
+            HStack {
+                TextField(AppLocalization.string(.addANote), text: $note, axis: .vertical)
+                    .font(.dsBody)
+                    .focused(notesFocused)
+                    .accessibilityIdentifier("expenseDescription")
+                    .padding(.vertical, 14)
+                if !note.isEmpty {
+                    Button(AppLocalization.string(.clearDescription), systemImage: "xmark.circle.fill") {
+                        note = ""
+                    }
+                    .labelStyle(.iconOnly)
+                    .buttonStyle(.plain)
+                    .foregroundStyle(Theme.textSecondary)
+                    .frame(minWidth: 44, minHeight: 44)
+                    .contentShape(.rect)
+                    .accessibilityIdentifier("clearExpenseDescription")
+                }
+            }
         }
         .padding(.horizontal, Metric.cardPadding)
         .background {

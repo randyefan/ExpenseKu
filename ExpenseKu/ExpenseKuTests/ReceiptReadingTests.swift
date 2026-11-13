@@ -228,6 +228,39 @@ nonisolated final class ReceiptReadingTests: XCTestCase {
         XCTAssertEqual(fill(reading, emptyForm()).date, at(2026, 11, 7, 15, 10))
     }
 
+    func testASharedReceiptWithoutADateKeepsItsShareTimeAcrossMidnight() {
+        let sharedAt = at(2026, 11, 7, 23, 58)
+        let item = ReceiptInboxItem(url: URL(filePath: "/inbox/\(Int(sharedAt.timeIntervalSince1970))-receipt.png"))
+        var form = emptyForm()
+        form.clock = item.addedAt
+        var reading = sample
+        reading.date = nil
+
+        let result = fill(reading, form)
+
+        XCTAssertNil(result.date)
+        XCTAssertEqual(result.date ?? form.clock, sharedAt)
+        XCTAssertNotEqual(result.date ?? form.clock, now)
+    }
+
+    func testASharedReceiptWithOnlyADateUsesTheShareClock() {
+        var form = emptyForm()
+        form.clock = at(2026, 11, 7, 23, 58)
+        var reading = sample
+        reading.date = LocalDateTime(year: 2026, month: 11, day: 6, hour: nil, minute: nil)
+
+        XCTAssertEqual(fill(reading, form).date, at(2026, 11, 6, 23, 58))
+    }
+
+    func testASharedReceiptWithADateAndTimeOverridesTheShareTime() {
+        var form = emptyForm()
+        form.clock = at(2026, 11, 7, 23, 58)
+
+        XCTAssertEqual(fill(sample, form).date, at(2026, 8, 22, 14, 28))
+        form.dateIsUntouched = false
+        XCTAssertNil(fill(sample, form).date)
+    }
+
     func testAPersonMatchesOnTheLeadingWordsOfTheCounterparty() {
         var reading = sample
         reading.counterparty = "Salsabila Arum Lukit"

@@ -57,3 +57,13 @@ and cannot open its containing app by any supported API.
 - The app needs `com.apple.developer.kernel.increased-memory-limit` and an App Group
   entitlement.
 - CloudKit Production needs the V8 field deployed before a TestFlight build carries it.
+
+## Amendment — 14 Nov 2026: receipt descriptions
+
+The owner approved image-assisted analysis that chooses an existing Category and writes a
+short Indonesian expense description. Amount, fee, date, bank and counterparty remain
+candidate-grounded. The description is a bounded free-text suggestion from visible receipt
+evidence, saved in the existing Expense Note only while that field is empty and untouched;
+there is no SwiftData schema change. The prompt prohibits guessing a transfer's purpose.
+The owner can clear or edit the suggestion before saving. Stored inbox analyses carry a
+version so older results are refreshed once for this prompt when Gemma is available.

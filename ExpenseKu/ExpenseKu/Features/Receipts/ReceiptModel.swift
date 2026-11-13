@@ -10,5 +10,5 @@
 import Foundation
 
 nonisolated protocol ReceiptModel: Sendable {
-    func answer(_ prompt: String) async throws -> String
+    func answer(_ prompt: String, image: Data) async throws -> String
 }

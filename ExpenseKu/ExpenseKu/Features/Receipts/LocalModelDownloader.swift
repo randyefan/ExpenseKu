@@ -7,7 +7,7 @@
 //  resume, so this one refuses.
 //
 
-#if canImport(MLXLLM)
+#if canImport(MLXVLM)
 import Foundation
 import MLXLMCommon
 

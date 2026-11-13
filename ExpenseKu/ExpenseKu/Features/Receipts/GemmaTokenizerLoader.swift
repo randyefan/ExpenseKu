@@ -5,7 +5,7 @@
 //  Loads the tokenizer from the downloaded model folder.
 //
 
-#if canImport(MLXLLM)
+#if canImport(MLXVLM)
 import Foundation
 import MLXLMCommon
 import Tokenizers

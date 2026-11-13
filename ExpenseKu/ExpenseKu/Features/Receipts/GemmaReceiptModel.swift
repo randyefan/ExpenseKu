@@ -8,14 +8,16 @@
 //  "<turn|>", which the tokenizer does not list as an end token (found in the spike).
 //
 
+import CoreImage
 import Foundation
-#if canImport(MLXLLM)
-import MLXLLM
+#if canImport(MLXVLM)
+import MLX
+import MLXVLM
 import MLXLMCommon
 #endif
 
 nonisolated final class GemmaReceiptModel: ReceiptModel {
-    #if canImport(MLXLLM)
+    #if canImport(MLXVLM)
     static let isAvailable = true
 
     private let loader: Loader
@@ -24,13 +26,19 @@ nonisolated final class GemmaReceiptModel: ReceiptModel {
         loader = Loader(directory: directory)
     }
 
-    func answer(_ prompt: String) async throws -> String {
+    func answer(_ prompt: String, image: Data) async throws -> String {
+        guard let receipt = CIImage(data: image, options: [.applyOrientationProperty: true]) else {
+            throw CocoaError(.fileReadCorruptFile)
+        }
+        Memory.cacheLimit = 20 * 1024 * 1024
+        let container = try await loader.container()
         let session = ChatSession(
-            try await loader.container(),
+            container,
+            instructions: ExtractionPrompt.systemInstructions,
             generateParameters: GenerateParameters(maxTokens: 200, temperature: 0),
             additionalContext: ["enable_thinking": false]
         )
-        return try await session.respond(to: prompt)
+        return try await session.respond(to: prompt, image: .ciImage(receipt))
     }
 
     private actor Loader {
@@ -42,7 +50,7 @@ nonisolated final class GemmaReceiptModel: ReceiptModel {
         func container() async throws -> ModelContainer {
             if let loaded { return loaded }
             let configuration = ModelConfiguration(directory: directory, extraEOSTokens: ["<turn|>"])
-            let container = try await LLMModelFactory.shared.loadContainer(
+            let container = try await VLMModelFactory.shared.loadContainer(
                 from: LocalModelDownloader(), using: GemmaTokenizerLoader(), configuration: configuration)
             loaded = container
             return container
@@ -53,6 +61,6 @@ nonisolated final class GemmaReceiptModel: ReceiptModel {
 
     init(directory: URL) {}
 
-    func answer(_ prompt: String) async throws -> String { "" }
+    func answer(_ prompt: String, image: Data) async throws -> String { "" }
     #endif
 }

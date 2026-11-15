@@ -35,6 +35,8 @@ struct CyclePlanLens<Header: View>: View {
     var sort: PlanSort = .amount
     var lookBackMonth: String?
     var copySourceMonth: String?
+    var guideInvitation: PlanGuideInvitation?
+    var onOpenGuide: () -> Void = {}
     var revealTrigger: AnyHashable = 0
     let onAction: (PlanAction) -> Void
     @ViewBuilder let header: Header
@@ -66,6 +68,8 @@ struct CyclePlanLens<Header: View>: View {
                 Section {
                     PlanEmptyState(
                         copySourceMonth: copySourceMonth,
+                        guideInvitation: guideInvitation,
+                        onOpenGuide: onOpenGuide,
                         onCopy: { onAction(.copyPlan) },
                         onStart: { onAction(.startPlan) }
                     )

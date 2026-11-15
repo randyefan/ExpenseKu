@@ -39,8 +39,8 @@ enum DebugLaunch {
     /// field itself, which no launch arg can reach. Drive that with simdrive.sh.
     static var startScreen: String? { value(for: "-startScreen") }
 
-    /// -planGuide index|invitation|<material>:<step> opens the Plan guide there, for
-    /// screenshots where taps cannot reach (e.g. `-planGuide paydayTransfers:2`).
+    /// -planGuide index|invitation|<material>:<step>[:<spotlight>] opens the Plan guide there, for
+    /// screenshots where taps cannot reach (e.g. `-planGuide paydayTransfers:2:4`).
     static var planGuide: String? { value(for: "-planGuide") }
 
     /// Inserts a small, realistic dataset once, only if the store is empty.

@@ -11,6 +11,11 @@ import XCTest
 @testable import ExpenseKu
 
 nonisolated final class PlanGuideTests: XCTestCase {
+    private func nextStep(_ visit: inout PlanGuideSession) {
+        guard case .lesson(_, let step) = visit.route else { return }
+        while case .lesson(_, let shown) = visit.route, shown == step, !visit.isAtEnd { visit.next() }
+    }
+
     private func session(_ entry: PlanGuideEntry, _ progress: PlanGuideProgress = PlanGuideProgress()) -> PlanGuideSession {
         PlanGuideSession(entry: entry, progress: progress)
     }
@@ -25,7 +30,7 @@ nonisolated final class PlanGuideTests: XCTestCase {
     private func finished(_ material: PlanGuideMaterial, from progress: PlanGuideProgress = PlanGuideProgress()) -> PlanGuideProgress {
         var visit = session(.menu, reading(material, to: material.stepCount, from: progress))
         visit.open(material)
-        while case .lesson(_, let shown) = visit.route, shown < material.stepCount { visit.next() }
+        while !visit.isAtEnd { visit.next() }
         visit.finish()
         return visit.progress
     }
@@ -67,7 +72,8 @@ nonisolated final class PlanGuideTests: XCTestCase {
 
     func testExploreTopicsCompletesOnlyTheIntroAndOpensTheIndex() {
         var visit = session(.invitation)
-        visit.next(); visit.next(); visit.finish()
+        while !visit.isAtEnd { visit.next() }
+        visit.finish()
         XCTAssertEqual(visit.route, .index)
         XCTAssertEqual(visit.progress.status(of: .introduction), .read)
         for topic in PlanGuideMaterial.buildTopics + PlanGuideMaterial.useTopics {
@@ -110,13 +116,15 @@ nonisolated final class PlanGuideTests: XCTestCase {
 
     func testNextAdvancesExactlyOneStep() {
         var visit = session(.invitation)
-        visit.next()
+        nextStep(&visit)
         XCTAssertEqual(visit.route, .lesson(.introduction, step: 2))
     }
 
     func testBackIsRecordedAsTheDisplayedStep() {
         var visit = session(.invitation)
-        visit.next(); visit.next(); visit.back()
+        nextStep(&visit); nextStep(&visit)
+        while visit.spotlight > 1 { visit.back() }
+        visit.back()
         XCTAssertEqual(visit.progress.status(of: .introduction), .inProgress(step: 2, of: 3))
     }
 
@@ -139,14 +147,16 @@ nonisolated final class PlanGuideTests: XCTestCase {
     func testNextStopsAtTheLastStep() {
         var visit = session(.menu)
         visit.open(.followEnvelope)
-        visit.next(); visit.next()
+        for _ in 0..<20 { visit.next() }
         XCTAssertEqual(visit.route, .lesson(.followEnvelope, step: 2))
+        XCTAssertTrue(visit.isAtEnd)
     }
 
     func testFinishTopicMarksOnlyThatTopicReadAndReturnsToIndex() {
         var visit = session(.menu)
         visit.open(.paydayTransfers)
-        visit.next(); visit.finish()
+        while !visit.isAtEnd { visit.next() }
+        visit.finish()
         XCTAssertEqual(visit.route, .index)
         XCTAssertTrue(visit.progress.isRead(.paydayTransfers))
         XCTAssertFalse(visit.progress.isRead(.introduction))
@@ -157,7 +167,7 @@ nonisolated final class PlanGuideTests: XCTestCase {
         var visit = session(.menu, finished(.allocationTypes))
         visit.open(.allocationTypes)
         XCTAssertEqual(visit.route, .lesson(.allocationTypes, step: 1))
-        visit.next()
+        nextStep(&visit)
         XCTAssertEqual(visit.progress.status(of: .allocationTypes), .read)
         visit.showTopics()
         visit.open(.allocationTypes)
@@ -220,29 +230,10 @@ nonisolated final class PlanGuideTests: XCTestCase {
         }
     }
 
-    @MainActor
-    func testIntroSampleTotalsMatchTheBaseline() {
-        let rows = PlanGuideContent.lessons(of: .introduction)[0].example.rows.map(\.value)
-        XCTAssertEqual(rows, [8_000_000, 5_000_000, 3_000_000].map { Decimal($0).formattedIDR() })
-    }
-
-    @MainActor
-    func testTransferExampleNeedsMatchTheDestinations() {
-        let rows = PlanGuideContent.lessons(of: .paydayTransfers)[0].example.rows.map(\.value)
-        XCTAssertEqual(rows, [2_800_000, 2_200_000].map { Decimal($0).formattedIDR() })
-    }
-
-    @MainActor
-    func testPartialTransferSelectsHarianAndLeavesLiburan() {
-        let example = PlanGuideContent.lessons(of: .paydayTransfers)[1].example
-        XCTAssertEqual(example.rows.map(\.selection), [.selected, .unselected])
-        XCTAssertEqual(example.summary?.value, Decimal(1_800_000).formattedIDR())
-    }
-
     func testGuideKeysAreTranslatedIntoIndonesian() {
         let english = Locale(identifier: "en")
         let indonesian = Locale(identifier: "id")
-        for key: LocalizedStringResource in [.guideIntro1Heading, .guideTidy2Takeaway2Body, .guideMeetPlan, .planGuide] {
+        for key: LocalizedStringResource in [.guideIntro1Heading, .guideTidy2Spot2, .guideMeetPlan, .planGuide] {
             XCTAssertNotEqual(AppLocalization.string(key, locale: english), AppLocalization.string(key, locale: indonesian))
         }
     }

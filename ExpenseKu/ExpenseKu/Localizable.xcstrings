@@ -9988,6 +9988,398 @@
         }
       }
     },
+    "guideExampleLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Example · November" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Contoh · November" } }
+      }
+    },
+    "guideSampleHousing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Housing" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Tempat tinggal" } }
+      }
+    },
+    "guideSampleDaily": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Daily" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Sehari-hari" } }
+      }
+    },
+    "guideSampleTravel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Travel" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Perjalanan" } }
+      }
+    },
+    "guideSampleTickets": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Tickets" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Tiket" } }
+      }
+    },
+    "guideSampleGroceries": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Groceries" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Belanja bulanan" } }
+      }
+    },
+    "guideSampleFlightTicket": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Flight ticket" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Tiket pesawat" } }
+      }
+    },
+    "guideIntro1Spot1": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Gaji is the income you expect this cycle." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Gaji adalah pemasukan yang kamu harapkan di periode ini." } }
+      }
+    },
+    "guideIntro1Spot2": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Each item is Fixed, an Envelope or Set aside." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Tiap item berupa Pembayaran, Pos anggaran, atau Sisihkan." } }
+      }
+    },
+    "guideIntro1Spot3": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Remaining is income minus everything planned." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Sisa adalah pemasukan dikurangi semua yang direncanakan." } }
+      }
+    },
+    "guideIntro2Spot1": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Tick Gaji when the money arrives." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Centang Gaji saat uangnya masuk." } }
+      }
+    },
+    "guideIntro2Spot2": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Jago needs %1$@, Mandiri %2$@." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Jago perlu %1$@, Mandiri %2$@." } }
+      }
+    },
+    "guideIntro2Spot3": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Move it in your bank app, then record it here." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Pindahkan lewat aplikasi bankmu, lalu catat di sini." } }
+      }
+    },
+    "guideIntro3Spot1": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Paying Kos marks it Done." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Membayar Kos menandainya Selesai." } }
+      }
+    },
+    "guideIntro3Spot2": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Harian counts every Makan and Transport expense." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Harian menghitung setiap pengeluaran Makan dan Transport." } }
+      }
+    },
+    "guideIntro3Spot3": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Remaining stays %@: the spending was planned." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Sisa tetap %@: belanjanya sudah direncanakan." } }
+      }
+    },
+    "guideStart1Spot1": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Page between cycles with ‹ and ›." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Pindah antarperiode dengan ‹ dan ›." } }
+      }
+    },
+    "guideStart1Spot2": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Enter the income you expect, by name." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Masukkan pemasukan yang kamu harapkan, beserta namanya." } }
+      }
+    },
+    "guideStart1Spot3": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Add plan item adds what the money is for." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Tambah item rencana mencatat untuk apa uangnya." } }
+      }
+    },
+    "guideStart2Spot1": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Copy from brings an earlier plan's items and amounts." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Salin dari membawa item dan jumlah dari rencana sebelumnya." } }
+      }
+    },
+    "guideStart2Spot2": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Start empty when this cycle looks different." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Mulai dari kosong saat periode ini berbeda." } }
+      }
+    },
+    "guideStart2Spot3": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Look back adds items you missed from earlier." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Lihat kembali menambahkan item yang terlewat dari sebelumnya." } }
+      }
+    },
+    "guideTypes1Spot1": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Fixed: one payment, like rent." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Pembayaran: satu kali bayar, seperti sewa." } }
+      }
+    },
+    "guideTypes1Spot2": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Envelope: an allowance for many purchases." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Pos anggaran: jatah untuk banyak pembelian." } }
+      }
+    },
+    "guideTypes1Spot3": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Set aside: money kept now for a later cycle." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Sisihkan: uang yang disimpan sekarang untuk periode nanti." } }
+      }
+    },
+    "guideTypes2Spot1": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "December's Liburan receives this %@." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Liburan bulan Desember menerima %@ ini." } }
+      }
+    },
+    "guideTypes2Spot2": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "It takes %@ off this cycle's Remaining." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Sisa periode ini berkurang %@." } }
+      }
+    },
+    "guideTypes2Spot3": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Tick it once the money is moved to Jago." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Centang setelah uangnya dipindahkan ke Jago." } }
+      }
+    },
+    "guideManage1Spot1": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Tap the row to edit its name, amount or Account." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Ketuk baris untuk mengubah nama, jumlah, atau sumber dananya." } }
+      }
+    },
+    "guideManage1Spot2": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Moved to Mandiri: Kos is Funded, the money is waiting." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Dipindahkan ke Mandiri: Kos berstatus Dana siap, uangnya menunggu." } }
+      }
+    },
+    "guideManage1Spot3": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Paid: Kos is Done and its Expense is recorded." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Dibayar: Kos Selesai dan pengeluarannya tercatat." } }
+      }
+    },
+    "guideManage2Spot1": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Due 5: Kos is due on the 5th." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Jatuh tempo 5: Kos dibayar tanggal 5." } }
+      }
+    },
+    "guideManage2Spot2": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Auto records the payment once the 5th has passed." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Otomatis mencatat pembayarannya setelah tanggal 5 lewat." } }
+      }
+    },
+    "guideManage2Spot3": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Undo Done takes Kos back to Funded." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Membatalkan Selesai mengembalikan Kos ke Dana siap." } }
+      }
+    },
+    "guideTransfers1Spot1": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Tick Gaji when it arrives." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Centang Gaji saat masuk." } }
+      }
+    },
+    "guideTransfers1Spot2": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "One line per Account: what Jago and Mandiri need." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Satu baris per sumber dana: kebutuhan Jago dan Mandiri." } }
+      }
+    },
+    "guideTransfers1Spot3": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Without an Account, Kos needs no transfer line." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Tanpa sumber dana, Kos tidak perlu baris transfer." } }
+      }
+    },
+    "guideTransfers2Spot1": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Deselect Liburan to keep it for later." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Batalkan pilihan Liburan untuk menyimpannya nanti." } }
+      }
+    },
+    "guideTransfers2Spot2": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Transfer now drops to %@." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Transfer sekarang turun menjadi %@." } }
+      }
+    },
+    "guideTransfers2Spot3": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "After moving it in your bank app, record Moved to Jago." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Setelah memindahkan lewat aplikasi bank, catat Dipindahkan ke Jago." } }
+      }
+    },
+    "guideTransfers2Spot4": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Harian is Funded; Jago still has %@ to go." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Harian berstatus Dana siap; Jago masih kurang %@." } }
+      }
+    },
+    "guideEnvelope1Spot1": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "%1$@ left of %2$@." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Tersisa %1$@ dari %2$@." } }
+      }
+    },
+    "guideEnvelope1Spot2": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "+ adds an expense here, or moves one in." } },
+        "id": { "stringUnit": { "state": "translated", "value": "+ menambah pengeluaran di sini, atau memindahkannya ke sini." } }
+      }
+    },
+    "guideEnvelope1Spot3": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Mark Harian as its Envelope while you add it." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Tandai Harian sebagai Pos anggarannya saat menambahkan." } }
+      }
+    },
+    "guideEnvelope1Spot4": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Harian now shows %@ spent." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Harian kini menunjukkan %@ terpakai." } }
+      }
+    },
+    "guideEnvelope1Spot5": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Overspending shows in red; logging is never blocked." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Kelebihan belanja tampil merah; pencatatan tidak pernah diblokir." } }
+      }
+    },
+    "guideEnvelope2Spot1": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Grab %@ was paid on CC Danamon, not Jago." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Grab %@ dibayar dengan CC Danamon, bukan Jago." } }
+      }
+    },
+    "guideEnvelope2Spot2": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "After the real move, record Moved from Jago." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Setelah benar-benar dipindahkan, catat Dipindahkan dari Jago." } }
+      }
+    },
+    "guideEnvelope2Spot3": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Paid early: a November ticket counts in December's Liburan." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Dibayar lebih awal: tiket November dihitung di Liburan Desember." } }
+      }
+    },
+    "guideTidy1Spot1": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Six orders: Amount, Account, Group, Due day, Status, Name." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Enam urutan: Jumlah, Sumber dana, Grup, Jatuh tempo, Status, Nama." } }
+      }
+    },
+    "guideTidy1Spot2": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Account groups rows under each Account." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Sumber dana mengelompokkan baris per sumber dana." } }
+      }
+    },
+    "guideTidy1Spot3": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Group shares: each group's planned share of income." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Porsi grup: bagian pemasukan yang direncanakan untuk tiap grup." } }
+      }
+    },
+    "guideTidy2Spot1": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Review Auto payments when this notice appears." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Periksa pembayaran Otomatis saat pemberitahuan ini muncul." } }
+      }
+    },
+    "guideTidy2Spot2": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Clear Plan empties an upcoming plan; Expenses stay." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Hapus rencana mengosongkan rencana mendatang; pengeluaran tetap ada." } }
+      }
+    },
+    "guideExampleOf": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Example for %@" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Contoh untuk %@" } }
+      }
+    },
+    "guideSpotlightOf": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "%1$lld of %2$lld. %3$@" } },
+        "id": { "stringUnit": { "state": "translated", "value": "%1$lld dari %2$lld. %3$@" } }
+      }
+    },
     "version": {
       "extractionState": "manual",
       "localizations": {
@@ -10442,13 +10834,6 @@
         "id": { "stringUnit": { "state": "translated", "value": "Membuka Pembacaan bukti pembayaran" } }
       }
     },
-    "guideExampleNovember": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "November · Example" } },
-        "id": { "stringUnit": { "state": "translated", "value": "November · Contoh" } }
-      }
-    },
     "guideStepOf": {
       "extractionState": "manual",
       "localizations": {
@@ -10638,20 +11023,6 @@
         "id": { "stringUnit": { "state": "translated", "value": "Lihat panduan" } }
       }
     },
-    "guideSelected": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Selected" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Dipilih" } }
-      }
-    },
-    "guideNotSelected": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Not selected" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Tidak dipilih" } }
-      }
-    },
     "guideIntroTitle": {
       "extractionState": "manual",
       "localizations": {
@@ -10676,71 +11047,8 @@
     "guideIntro1Lead": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Choose a cycle, add expected income and decide what each part is for." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Pilih periode, tambahkan pemasukan yang diharapkan, lalu tentukan kegunaan tiap bagiannya." } }
-      }
-    },
-    "guideIntro1Card": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Your November plan" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Rencana November-mu" } }
-      }
-    },
-    "guideIntro1Row1Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Gaji" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Gaji" } }
-      }
-    },
-    "guideIntro1Row1Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Income expected this cycle" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Pemasukan yang diharapkan periode ini" } }
-      }
-    },
-    "guideIntro1Row2Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Planned allocations" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Alokasi terencana" } }
-      }
-    },
-    "guideIntro1Row2Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Kos · Harian · Liburan in December" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Kos · Harian · Liburan di Desember" } }
-      }
-    },
-    "guideIntro1Row3Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Remaining" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Sisa" } }
-      }
-    },
-    "guideIntro1Row3Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Unallocated in this example, not a bank balance" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Belum dialokasikan dalam contoh ini, bukan saldo bank" } }
-      }
-    },
-    "guideIntro1Takeaway1Heading": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "One plan, three kinds of item" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Satu rencana, tiga jenis item" } }
-      }
-    },
-    "guideIntro1Takeaway1Body": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Use Fixed for one payment, Envelope for many purchases, and Set aside for a later envelope." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Gunakan Pembayaran untuk satu tagihan, Pos anggaran untuk banyak pembelian, dan Sisihkan untuk pos anggaran di periode berikutnya." } }
+        "en": { "stringUnit": { "state": "translated", "value": "Expected income, what each part is for, and what is left." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Pemasukan yang diharapkan, kegunaan tiap bagian, dan sisanya." } }
       }
     },
     "guideIntro2Step": {
@@ -10753,78 +11061,15 @@
     "guideIntro2Heading": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Know where the money goes" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Ketahui ke mana uangnya pergi" } }
+        "en": { "stringUnit": { "state": "translated", "value": "Send each part where it is spent" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Kirim tiap bagian ke tempat dipakainya" } }
       }
     },
     "guideIntro2Lead": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "When Gaji arrives, use the transfer checklist to prepare each Account." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Saat Gaji masuk, gunakan daftar transfer untuk menyiapkan tiap sumber dana." } }
-      }
-    },
-    "guideIntro2Card": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Transfer checklist" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Daftar transfer" } }
-      }
-    },
-    "guideIntro2Row1Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Jago" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Jago" } }
-      }
-    },
-    "guideIntro2Row1Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Harian 1.8m + Liburan 1m · nothing moved yet" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Harian 1,8 jt + Liburan 1 jt · belum ada yang dipindahkan" } }
-      }
-    },
-    "guideIntro2Row2Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Mandiri" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Mandiri" } }
-      }
-    },
-    "guideIntro2Row2Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Kos · nothing moved yet" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Kos · belum ada yang dipindahkan" } }
-      }
-    },
-    "guideIntro2Takeaway1Heading": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Move money in your banking app" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Pindahkan uang di aplikasi bankmu" } }
-      }
-    },
-    "guideIntro2Takeaway1Body": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Then open an Account here, select the items you moved, and record Moved to that Account." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Lalu buka sumber dana di sini, pilih item yang sudah dipindahkan, dan catat Dipindahkan ke sumber dana itu." } }
-      }
-    },
-    "guideIntro2Takeaway2Heading": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Prepare some or all" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Siapkan sebagian atau semuanya" } }
-      }
-    },
-    "guideIntro2Takeaway2Body": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "You can fund Harian now and leave the Liburan set-aside for later. ExpenseKu records your report; it never transfers money." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Kamu bisa menyiapkan Harian sekarang dan menunda dana sisihan Liburan. ExpenseKu mencatat laporanmu; aplikasi ini tidak pernah mentransfer uang." } }
+        "en": { "stringUnit": { "state": "translated", "value": "When income arrives, move each Account's share in your bank app." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Saat pemasukan tiba, pindahkan bagian tiap sumber dana lewat aplikasi bankmu." } }
       }
     },
     "guideIntro3Step": {
@@ -10837,85 +11082,15 @@
     "guideIntro3Heading": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Follow the plan as you spend" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Ikuti rencana saat berbelanja" } }
+        "en": { "stringUnit": { "state": "translated", "value": "Tick off and spend as you go" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Centang dan belanja sambil jalan" } }
       }
     },
     "guideIntro3Lead": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Confirm real payments, watch your allowances and adjust what you planned." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Konfirmasi pembayaran nyata, pantau jatah anggaran, dan sesuaikan rencanamu." } }
-      }
-    },
-    "guideIntro3Card": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "After spending" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Setelah berbelanja" } }
-      }
-    },
-    "guideIntro3Row1Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Kos · Done" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Kos · Sudah dibayar" } }
-      }
-    },
-    "guideIntro3Row1Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Confirmed paid · one linked Expense" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Dikonfirmasi lunas · satu pengeluaran tertaut" } }
-      }
-    },
-    "guideIntro3Row2Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Harian · Envelope" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Harian · Pos anggaran" } }
-      }
-    },
-    "guideIntro3Row2Value": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "%@ spent" } },
-        "id": { "stringUnit": { "state": "translated", "value": "%@ terpakai" } }
-      }
-    },
-    "guideIntro3Row2Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "%1$@ left from %2$@" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Sisa %1$@ dari %2$@" } }
-      }
-    },
-    "guideIntro3Row3Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Remaining" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Sisa" } }
-      }
-    },
-    "guideIntro3Row3Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Still the unallocated plan amount in this example" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Tetap jumlah rencana yang belum dialokasikan dalam contoh ini" } }
-      }
-    },
-    "guideIntro3Takeaway1Heading": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Learn one feature at a time" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Pelajari satu fitur sekaligus" } }
-      }
-    },
-    "guideIntro3Takeaway1Body": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Explore six topics whenever you need them: item types, row actions, payday transfers, envelopes and more." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Jelajahi enam topik kapan pun kamu perlu: jenis item, aksi baris, transfer gajian, pos anggaran, dan lainnya." } }
+        "en": { "stringUnit": { "state": "translated", "value": "Fixed items get paid once; Envelopes fill with everyday spending." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Pembayaran dibayar sekali; Pos anggaran terisi oleh belanja sehari-hari." } }
       }
     },
     "guideStartTitle": {
@@ -10942,190 +11117,36 @@
     "guideStart1Heading": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Give the cycle a starting point" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Beri periode titik awal" } }
+        "en": { "stringUnit": { "state": "translated", "value": "Pick a cycle and fill it in" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Pilih periode lalu isi" } }
       }
     },
     "guideStart1Lead": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Plan ahead with the same cycle arrows used by List and Month." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Rencanakan ke depan dengan panah periode yang sama seperti Daftar dan Bulan." } }
-      }
-    },
-    "guideStart1Card": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Start November" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Mulai November" } }
-      }
-    },
-    "guideStart1Row1Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "1–30 November" } },
-        "id": { "stringUnit": { "state": "translated", "value": "1–30 November" } }
-      }
-    },
-    "guideStart1Row1Value": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Cycle" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Periode" } }
-      }
-    },
-    "guideStart1Row1Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Monthly Start Date determines your cycle boundaries." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Tanggal awal periode menentukan batas periodemu." } }
-      }
-    },
-    "guideStart1Row2Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Gaji" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Gaji" } }
-      }
-    },
-    "guideStart1Row2Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Add income line · expected money, not an Expense" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Tambah pemasukan · uang yang diharapkan, bukan pengeluaran" } }
-      }
-    },
-    "guideStart1Row3Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Add plan item" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Tambah item rencana" } }
-      }
-    },
-    "guideStart1Row3Value": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Allocation" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Alokasi" } }
-      }
-    },
-    "guideStart1Row3Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Choose Fixed, Envelope or Set aside." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Pilih Pembayaran, Pos anggaran atau Sisihkan." } }
-      }
-    },
-    "guideStart1Takeaway1Heading": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Use the right +" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Gunakan + yang tepat" } }
-      }
-    },
-    "guideStart1Takeaway1Body": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Add plan item and Add income line are at the foot of Plan. The toolbar + still logs a real Expense." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Tambah item rencana dan Tambah pemasukan ada di bagian bawah Rencana. Tombol + di toolbar tetap mencatat pengeluaran nyata." } }
+        "en": { "stringUnit": { "state": "translated", "value": "Page to any cycle, even a future one, and start planning." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Buka periode mana pun, bahkan yang akan datang, lalu mulai merencanakan." } }
       }
     },
     "guideStart2Step": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Reuse and fill gaps" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Pakai ulang dan isi celah" } }
-      }
-    },
-    "guideStart2Heading": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Reuse what still makes sense" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Pakai ulang yang masih relevan" } }
-      }
-    },
-    "guideStart2Lead": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Copy an earlier plan on purpose, then adjust it for this cycle." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Salin rencana sebelumnya dengan sengaja, lalu sesuaikan untuk periode ini." } }
-      }
-    },
-    "guideStart2Card": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "A fresh November" } },
-        "id": { "stringUnit": { "state": "translated", "value": "November yang baru" } }
-      }
-    },
-    "guideStart2Row1Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Copy from October" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Salin dari Oktober" } }
-      }
-    },
-    "guideStart2Row1Value": {
       "extractionState": "manual",
       "localizations": {
         "en": { "stringUnit": { "state": "translated", "value": "Reuse" } },
         "id": { "stringUnit": { "state": "translated", "value": "Pakai ulang" } }
       }
     },
-    "guideStart2Row1Detail": {
+    "guideStart2Heading": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Keep planned amounts. Arrived, Funded and Done start fresh. Set aside lines are not copied." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Nominal terencana tetap. Status masuk, Dana siap dan Sudah dibayar dimulai ulang. Baris Sisihkan tidak disalin." } }
+        "en": { "stringUnit": { "state": "translated", "value": "Start from an earlier plan" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Mulai dari rencana sebelumnya" } }
       }
     },
-    "guideStart2Row2Name": {
+    "guideStart2Lead": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Start empty" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Mulai dari kosong" } }
-      }
-    },
-    "guideStart2Row2Value": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Fresh" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Baru" } }
-      }
-    },
-    "guideStart2Row2Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Create a blank plan instead; paging never copies automatically." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Buat rencana kosong; berpindah periode tidak pernah menyalin otomatis." } }
-      }
-    },
-    "guideStart2Takeaway1Heading": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "From last cycle" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Dari periode lalu" } }
-      }
-    },
-    "guideStart2Takeaway1Body": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Unused zero-amount copied rows stay folded away. Open one and edit its amount to use it again." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Baris salinan bernominal nol yang tidak dipakai tetap terlipat. Buka salah satunya dan ubah nominalnya untuk memakainya lagi." } }
-      }
-    },
-    "guideStart2Takeaway2Heading": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Look back at October" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Lihat kembali Oktober" } }
-      }
-    },
-    "guideStart2Takeaway2Body": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Bring in missing earlier items or Outside plan categories. It skips Set aside and leaves the earlier plan alone." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Tambahkan item lama yang belum ada atau kategori Di luar rencana. Sisihkan dilewati dan rencana sebelumnya tidak diubah." } }
+        "en": { "stringUnit": { "state": "translated", "value": "A new cycle stays empty until you choose how to fill it." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Periode baru tetap kosong sampai kamu memilih cara mengisinya." } }
       }
     },
     "guideTypesTitle": {
@@ -11152,78 +11173,15 @@
     "guideTypes1Heading": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "One plan, three kinds of item" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Satu rencana, tiga jenis item" } }
+        "en": { "stringUnit": { "state": "translated", "value": "Three kinds of plan item" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Tiga jenis item rencana" } }
       }
     },
     "guideTypes1Lead": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Plan is the whole cycle. These are the allocations you put inside it." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Rencana mencakup seluruh periode. Ini alokasi yang kamu masukkan ke dalamnya." } }
-      }
-    },
-    "guideTypes1Card": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Inside November" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Di dalam November" } }
-      }
-    },
-    "guideTypes1Row1Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Fixed · Kos" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Pembayaran · Kos" } }
-      }
-    },
-    "guideTypes1Row1Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "One payment. Confirm Done to create its real Expense." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Satu tagihan. Konfirmasi Sudah dibayar untuk membuat pengeluaran nyatanya." } }
-      }
-    },
-    "guideTypes1Row2Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Envelope · Harian" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Pos anggaran · Harian" } }
-      }
-    },
-    "guideTypes1Row2Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "An allowance for many purchases. Counts logged Expenses; never creates one." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Jatah untuk banyak pembelian. Menghitung pengeluaran yang dicatat; tidak pernah membuatnya." } }
-      }
-    },
-    "guideTypes1Row3Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Set aside · Liburan" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Sisihkan · Liburan" } }
-      }
-    },
-    "guideTypes1Row3Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Planned money toward December's Envelope, before anything is bought." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Dana terencana untuk pos anggaran Desember, sebelum ada yang dibeli." } }
-      }
-    },
-    "guideTypes1Takeaway1Heading": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Planned is not spent" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Direncanakan bukan berarti terpakai" } }
-      }
-    },
-    "guideTypes1Takeaway1Body": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Categories can route purchases into an Envelope, or you can assign them explicitly. Expenses linked to Fixed items are excluded." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Kategori bisa mengarahkan pembelian ke pos anggaran, atau kamu bisa menetapkannya langsung. Pengeluaran yang tertaut ke Pembayaran tidak dihitung." } }
+        "en": { "stringUnit": { "state": "translated", "value": "Each item says how that money will be spent." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Tiap item menunjukkan bagaimana uangnya akan dipakai." } }
       }
     },
     "guideTypes2Step": {
@@ -11236,78 +11194,15 @@
     "guideTypes2Heading": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Prepare a later envelope" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Siapkan pos anggaran berikutnya" } }
+        "en": { "stringUnit": { "state": "translated", "value": "Save now for a later cycle" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Simpan sekarang untuk periode nanti" } }
       }
     },
     "guideTypes2Lead": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Use Set aside when you have not bought anything yet." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Gunakan Sisihkan saat kamu belum membeli apa pun." } }
-      }
-    },
-    "guideTypes2Card": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Liburan · December" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Liburan · Desember" } }
-      }
-    },
-    "guideTypes2Row1Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "November sets aside" } },
-        "id": { "stringUnit": { "state": "translated", "value": "November menyisihkan" } }
-      }
-    },
-    "guideTypes2Row1Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Included in November's 5m planned cost; November has 3m remaining." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Termasuk dalam biaya terencana November 5 jt; Sisa November 3 jt." } }
-      }
-    },
-    "guideTypes2Row2Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "December allowance" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Jatah Desember" } }
-      }
-    },
-    "guideTypes2Row2Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "1m already set aside; December still contributes 1m." } },
-        "id": { "stringUnit": { "state": "translated", "value": "1 jt sudah disisihkan; Desember masih menyumbang 1 jt." } }
-      }
-    },
-    "guideTypes2Takeaway1Heading": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Create the later target first" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Buat tujuan berikutnya dulu" } }
-      }
-    },
-    "guideTypes2Takeaway1Body": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "In Add plan item → Set aside, choose an Envelope in an existing later plan. Add that plan and Envelope first if none is offered." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Di Tambah item rencana → Sisihkan, pilih pos anggaran di rencana berikutnya yang sudah ada. Buat rencana dan pos anggaran itu dulu jika belum ada pilihan." } }
-      }
-    },
-    "guideTypes2Takeaway2Heading": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Moved is a separate fact" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Dipindahkan adalah fakta terpisah" } }
-      }
-    },
-    "guideTypes2Takeaway2Body": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Its tick reports that money moved, creates no Expense and has no Funded stage. The planned credit applies before ticking, is uncapped and is never copied forward." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Centangnya melaporkan bahwa uang sudah dipindahkan, tidak membuat pengeluaran, dan tidak punya tahap Dana siap. Kredit terencana berlaku sebelum dicentang, tanpa batas, dan tidak pernah disalin ke periode berikutnya." } }
+        "en": { "stringUnit": { "state": "translated", "value": "Set aside sends this cycle's money to a later Envelope." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Sisihkan mengirim uang periode ini ke Pos anggaran berikutnya." } }
       }
     },
     "guideManageTitle": {
@@ -11327,197 +11222,43 @@
     "guideManage1Step": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Body and status" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Isi baris dan status" } }
+        "en": { "stringUnit": { "state": "translated", "value": "Row and status" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Baris dan status" } }
       }
     },
     "guideManage1Heading": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Open a row or update its status" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Buka baris atau perbarui statusnya" } }
+        "en": { "stringUnit": { "state": "translated", "value": "The row edits, the check tracks" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Baris untuk mengubah, centang untuk melacak" } }
       }
     },
     "guideManage1Lead": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "The row body and its leading status control do different jobs." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Isi baris dan kontrol status di depannya punya tugas berbeda." } }
-      }
-    },
-    "guideManage1Card": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Kos · Mandiri" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Kos · Mandiri" } }
-      }
-    },
-    "guideManage1Row1Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Tap the row body" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Ketuk isi baris" } }
-      }
-    },
-    "guideManage1Row1Value": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Edit" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Ubah" } }
-      }
-    },
-    "guideManage1Row1Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Change Fixed or Set aside. An Envelope opens its spending detail." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Ubah Pembayaran atau Sisihkan. Pos anggaran membuka rincian pengeluarannya." } }
-      }
-    },
-    "guideManage1Row2Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Todo → Funded" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Belum dibayar → Dana siap" } }
-      }
-    },
-    "guideManage1Row2Value": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Moved" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Dipindahkan" } }
-      }
-    },
-    "guideManage1Row2Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Moved to Mandiri means money is ready there, not paid." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Dipindahkan ke Mandiri berarti dana siap di sana, belum dibayar." } }
-      }
-    },
-    "guideManage1Row3Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Funded → Done" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Dana siap → Sudah dibayar" } }
-      }
-    },
-    "guideManage1Row3Value": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Paid…" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Dibayar…" } }
-      }
-    },
-    "guideManage1Row3Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Confirm actual amount and date to create the linked Expense. You can pay directly from Todo." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Konfirmasi nominal dan tanggal sebenarnya untuk membuat pengeluaran tertaut. Kamu bisa langsung bayar dari Belum dibayar." } }
-      }
-    },
-    "guideManage1Takeaway1Heading": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Each kind behaves differently" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Tiap jenis berperilaku berbeda" } }
-      }
-    },
-    "guideManage1Takeaway1Body": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "No Account means no Funded stage. Envelope stops at Funded; Set aside only records moved or not moved." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Tanpa sumber dana tidak ada tahap Dana siap. Pos anggaran berhenti di Dana siap; Sisihkan hanya mencatat sudah atau belum dipindahkan." } }
+        "en": { "stringUnit": { "state": "translated", "value": "Tap a row to change it; its check moves it forward." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Ketuk baris untuk mengubahnya; centangnya memajukan statusnya." } }
       }
     },
     "guideManage2Step": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Dates, Auto and undo" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Tanggal, Otomatis dan batal" } }
+        "en": { "stringUnit": { "state": "translated", "value": "Dates and Auto" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Tanggal dan Otomatis" } }
       }
     },
     "guideManage2Heading": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Automate carefully, undo deliberately" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Otomatiskan dengan hati-hati, batalkan dengan sengaja" } }
+        "en": { "stringUnit": { "state": "translated", "value": "Let due items post themselves" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Biarkan tagihan tercatat sendiri" } }
       }
     },
     "guideManage2Lead": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Auto and undo can create or delete an Expense, so their effects matter." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Otomatis dan pembatalan bisa membuat atau menghapus pengeluaran, jadi efeknya penting." } }
-      }
-    },
-    "guideManage2Card": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Kos as an Auto example" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Kos sebagai contoh Otomatis" } }
-      }
-    },
-    "guideManage2Row1Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Due day 5 · Auto" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Jatuh tempo 5 · Otomatis" } }
-      }
-    },
-    "guideManage2Row1Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "An alternative setting for the same Kos item, not a second payment." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Pengaturan alternatif untuk item Kos yang sama, bukan pembayaran kedua." } }
-      }
-    },
-    "guideManage2Row2Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Open after the due day" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Buka setelah jatuh tempo" } }
-      }
-    },
-    "guideManage2Row2Value": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Review" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Periksa" } }
-      }
-    },
-    "guideManage2Row2Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "The app posts at the planned amount on opening, not in the background, even without Funded." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Aplikasi mencatat nominal terencana saat dibuka, bukan di latar belakang, meski tanpa Dana siap." } }
-      }
-    },
-    "guideManage2Takeaway1Heading": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Check Auto amounts" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Periksa nominal Otomatis" } }
-      }
-    },
-    "guideManage2Takeaway1Body": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Auto requires a due day. Use the review notice to correct what really happened." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Otomatis memerlukan tanggal jatuh tempo. Gunakan pemberitahuan periksa untuk mengoreksi yang sebenarnya terjadi." } }
-      }
-    },
-    "guideManage2Takeaway2Heading": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Undo Done versus Not moved yet" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Batalkan Sudah dibayar versus Belum dipindahkan" } }
-      }
-    },
-    "guideManage2Takeaway2Body": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Undo Done confirms deleting its Expense, returning to Funded with an Account or Todo without one. Not moved yet only clears Funded. Deleting an item keeps an existing Expense." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Membatalkan Sudah dibayar meminta konfirmasi untuk menghapus pengeluarannya, lalu kembali ke Dana siap jika ada sumber dana atau Belum dibayar jika tidak. Belum dipindahkan hanya menghapus Dana siap. Menghapus item tetap menyimpan pengeluaran yang ada." } }
+        "en": { "stringUnit": { "state": "translated", "value": "A due day keeps Kos on time; Auto records it for you." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Tanggal jatuh tempo menjaga Kos tepat waktu; Otomatis mencatatnya untukmu." } }
       }
     },
     "guideTransfersTitle": {
@@ -11537,176 +11278,43 @@
     "guideTransfers1Step": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Destination Accounts" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Sumber dana tujuan" } }
+        "en": { "stringUnit": { "state": "translated", "value": "See destinations" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Lihat tujuan" } }
       }
     },
     "guideTransfers1Heading": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "See every destination on payday" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Lihat setiap tujuan saat gajian" } }
+        "en": { "stringUnit": { "state": "translated", "value": "See where income needs to go" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Lihat ke mana pemasukan harus pergi" } }
       }
     },
     "guideTransfers1Lead": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Mark Gaji arrived, then work down the transfer checklist at the foot of Plan." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Tandai Gaji sudah masuk, lalu kerjakan daftar transfer di bagian bawah Rencana." } }
-      }
-    },
-    "guideTransfers1Card": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Transfer checklist · 0 of 2 sent" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Daftar transfer · 0 dari 2 terkirim" } }
-      }
-    },
-    "guideTransfers1Row1Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Jago" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Jago" } }
-      }
-    },
-    "guideTransfers1Row1Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Harian 1.8m + Liburan 1m" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Harian 1,8 jt + Liburan 1 jt" } }
-      }
-    },
-    "guideTransfers1Row2Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Mandiri" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Mandiri" } }
-      }
-    },
-    "guideTransfers1Row2Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Kos · due 5" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Kos · jatuh tempo 5" } }
-      }
-    },
-    "guideTransfers1Takeaway1Heading": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Account is the destination" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Sumber dana adalah tujuannya" } }
-      }
-    },
-    "guideTransfers1Takeaway1Body": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Assign Accounts to items to group what each needs. Items without an Account have no destination line." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Tetapkan sumber dana pada item untuk mengelompokkan kebutuhan masing-masing. Item tanpa sumber dana tidak punya baris tujuan." } }
-      }
-    },
-    "guideTransfers1Takeaway2Heading": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "A checklist, not a bank balance" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Daftar periksa, bukan saldo bank" } }
-      }
-    },
-    "guideTransfers1Takeaway2Body": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "These are allocations to prepare, not the Account Gaji came from. Transfer in your bank app, then record it here." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Ini alokasi yang perlu disiapkan, bukan sumber dana asal Gaji. Transfer di aplikasi bankmu, lalu catat di sini." } }
+        "en": { "stringUnit": { "state": "translated", "value": "The transfer checklist adds up what each Account needs." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Daftar transfer menjumlahkan kebutuhan tiap sumber dana." } }
       }
     },
     "guideTransfers2Step": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Partial transfers" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Transfer sebagian" } }
+        "en": { "stringUnit": { "state": "translated", "value": "Move some now" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Pindahkan sebagian" } }
       }
     },
     "guideTransfers2Heading": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Move just what is ready now" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Pindahkan yang siap sekarang saja" } }
+        "en": { "stringUnit": { "state": "translated", "value": "Move part of it now" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Pindahkan sebagian sekarang" } }
       }
     },
     "guideTransfers2Lead": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Open Jago and choose which items you have actually moved." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Buka Jago dan pilih item yang benar-benar sudah kamu pindahkan." } }
-      }
-    },
-    "guideTransfers2Card": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Transfer to Jago" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Transfer ke Jago" } }
-      }
-    },
-    "guideTransfers2Label": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Example · 1 of 2 selected" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Contoh · 1 dari 2 dipilih" } }
-      }
-    },
-    "guideTransfers2Row1Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Harian" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Harian" } }
-      }
-    },
-    "guideTransfers2Row2Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Liburan · Dec" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Liburan · Des" } }
-      }
-    },
-    "guideTransfers2Summary": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Transfer now" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Transfer sekarang" } }
-      }
-    },
-    "guideTransfers2Action": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Moved to Jago" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Dipindahkan ke Jago" } }
-      }
-    },
-    "guideTransfers2Takeaway1Heading": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "All Todo items start selected" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Semua item Belum dibayar langsung terpilih" } }
-      }
-    },
-    "guideTransfers2Takeaway1Body": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Deselect to move only some. Recording this example makes Harian Funded; 1m for Liburan stays to go. Set aside uses its moved tick, not Funded." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Batalkan pilihan untuk memindahkan sebagian. Mencatat contoh ini membuat Harian Dana siap; 1 jt untuk Liburan masih tersisa. Sisihkan memakai centang dipindahkan, bukan Dana siap." } }
-      }
-    },
-    "guideTransfers2Takeaway2Heading": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Adjust and revisit" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Sesuaikan dan kembali lagi" } }
-      }
-    },
-    "guideTransfers2Takeaway2Body": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Adjustment is taken in the first round only; a negative value reduces Transfer now. Already in lists Funded/Done items. Undo a Funded item there to return it to To send." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Penyesuaian hanya dihitung di putaran pertama; nilai negatif mengurangi Transfer sekarang. Sudah di menampilkan item Dana siap/Sudah dibayar. Batalkan item Dana siap di sana untuk mengembalikannya ke Perlu dikirim." } }
+        "en": { "stringUnit": { "state": "translated", "value": "Pick which items to send; the rest waits for later." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Pilih item yang dikirim; sisanya menunggu nanti." } }
       }
     },
     "guideEnvelopeTitle": {
@@ -11726,99 +11334,22 @@
     "guideEnvelope1Step": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Counted spending" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Pengeluaran terhitung" } }
+        "en": { "stringUnit": { "state": "translated", "value": "Spend from an Envelope" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Belanja dari Pos anggaran" } }
       }
     },
     "guideEnvelope1Heading": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "See what your allowance covers" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Lihat apa saja yang dicakup jatahmu" } }
+        "en": { "stringUnit": { "state": "translated", "value": "Watch an Envelope fill" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Lihat Pos anggaran terisi" } }
       }
     },
     "guideEnvelope1Lead": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Open Harian to inspect its counted Expenses and remaining allowance." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Buka Harian untuk melihat pengeluaran yang dihitung dan sisa jatahnya." } }
-      }
-    },
-    "guideEnvelope1Card": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Harian · Jago" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Harian · Jago" } }
-      }
-    },
-    "guideEnvelope1Row1Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Planned allowance" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Jatah terencana" } }
-      }
-    },
-    "guideEnvelope1Row1Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Makan + Transport, or explicitly assigned Expenses" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Makan + Transport, atau pengeluaran yang ditetapkan langsung" } }
-      }
-    },
-    "guideEnvelope1Row2Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Kopi + Grab" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Kopi + Grab" } }
-      }
-    },
-    "guideEnvelope1Row2Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "45k on Jago + 75k on CC Danamon" } },
-        "id": { "stringUnit": { "state": "translated", "value": "45 rb dari Jago + 75 rb dari CC Danamon" } }
-      }
-    },
-    "guideEnvelope1Row3Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Remaining" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Tersisa" } }
-      }
-    },
-    "guideEnvelope1Row3Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "No purchases yet means 0 spent; overspending stays visible." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Belum ada pembelian berarti 0 terpakai; kelebihan belanja tetap terlihat." } }
-      }
-    },
-    "guideEnvelope1Takeaway1Heading": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Add or move Expenses" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Tambah atau pindahkan pengeluaran" } }
-      }
-    },
-    "guideEnvelope1Takeaway1Body": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "The row's + offers Add Expense or Move expenses here. Explicit assignment overrides category matching; No envelope opts out." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Tombol + pada baris menawarkan Tambah pengeluaran atau Pindahkan pengeluaran ke sini. Penetapan langsung mengalahkan pencocokan kategori; Tanpa pos anggaran mengecualikannya." } }
-      }
-    },
-    "guideEnvelope1Takeaway2Heading": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Keep each Expense counted once" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Hitung tiap pengeluaran sekali saja" } }
-      }
-    },
-    "guideEnvelope1Takeaway2Body": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "A Category belongs to one Envelope per plan. Fixed-linked Expenses stay outside Envelopes. Earlier contributions appear in detail; overspending never blocks logging." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Satu kategori hanya milik satu pos anggaran per rencana. Pengeluaran yang tertaut ke Pembayaran tetap di luar pos anggaran. Kontribusi sebelumnya tampil di rincian; kelebihan belanja tidak pernah menghalangi pencatatan." } }
+        "en": { "stringUnit": { "state": "translated", "value": "Every Makan and Transport expense counts against Harian." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Setiap pengeluaran Makan dan Transport dihitung di Harian." } }
       }
     },
     "guideEnvelope2Step": {
@@ -11831,78 +11362,15 @@
     "guideEnvelope2Heading": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Keep Account and cycle separate" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Pisahkan sumber dana dan periode" } }
+        "en": { "stringUnit": { "state": "translated", "value": "When money comes from elsewhere" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Saat uang datang dari tempat lain" } }
       }
     },
     "guideEnvelope2Lead": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Where you paid and which cycle you planned for can differ." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Tempat kamu membayar dan periode yang kamu rencanakan bisa berbeda." } }
-      }
-    },
-    "guideEnvelope2Card": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Two different situations" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Dua situasi berbeda" } }
-      }
-    },
-    "guideEnvelope2Row1Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Paid elsewhere · Grab" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Dibayar dari sumber lain · Grab" } }
-      }
-    },
-    "guideEnvelope2Row1Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Harian is kept in Jago; CC Danamon paid. Record Moved from Jago after the actual move." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Harian disimpan di Jago; CC Danamon yang membayar. Catat Dipindahkan dari Jago setelah uangnya benar-benar dipindahkan." } }
-      }
-    },
-    "guideEnvelope2Row2Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Paid early · Ticket" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Dibayar lebih awal · Tiket" } }
-      }
-    },
-    "guideEnvelope2Row2Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Bought in November, assigned to December's existing Liburan Envelope." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Dibeli di November, ditetapkan ke pos anggaran Liburan Desember yang sudah ada." } }
-      }
-    },
-    "guideEnvelope2Takeaway1Heading": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Paid elsewhere keeps Remaining" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Dibayar dari sumber lain tidak mengubah Sisa" } }
-      }
-    },
-    "guideEnvelope2Takeaway1Body": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "The section appears only when both Accounts exist and differ. Choose Expenses to settle in rounds; recording a move creates no new Expense." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Bagian ini muncul hanya jika kedua sumber dana ada dan berbeda. Pilih pengeluaran untuk diselesaikan bertahap; mencatat pemindahan tidak membuat pengeluaran baru." } }
-      }
-    },
-    "guideEnvelope2Takeaway2Heading": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Paid early moves the plan impact" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Dibayar lebih awal memindahkan dampak rencana" } }
-      }
-    },
-    "guideEnvelope2Takeaway2Body": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "The ticket stays in November's ledger and counts in December's Envelope. November's Remaining becomes 2.7m; December contributes 700k after 300k paid early and 1m Set aside. Paid-early credit is capped; Set aside is uncapped and has no purchase." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Tiket tetap tercatat di November dan dihitung di pos anggaran Desember. Sisa November menjadi 2,7 jt; Desember menyumbang 700 rb setelah 300 rb dibayar lebih awal dan 1 jt disisihkan. Kredit dibayar lebih awal dibatasi; Sisihkan tanpa batas dan tanpa pembelian." } }
+        "en": { "stringUnit": { "state": "translated", "value": "Spending from another Account or cycle still lands in the right place." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Belanja dari sumber dana atau periode lain tetap masuk ke tempat yang tepat." } }
       }
     },
     "guideTidyTitle": {
@@ -11922,106 +11390,22 @@
     "guideTidy1Step": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Views and allocation" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Tampilan dan alokasi" } }
+        "en": { "stringUnit": { "state": "translated", "value": "Change the view" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Ubah tampilan" } }
       }
     },
     "guideTidy1Heading": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Read the plan your way" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Baca rencana dengan caramu" } }
+        "en": { "stringUnit": { "state": "translated", "value": "Sort and group your plan" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Urutkan dan kelompokkan rencanamu" } }
       }
     },
     "guideTidy1Lead": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Sorting and filtering change what you see, not what you planned." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Urutan dan filter mengubah yang kamu lihat, bukan yang kamu rencanakan." } }
-      }
-    },
-    "guideTidy1Card": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Choose an order" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Pilih urutan" } }
-      }
-    },
-    "guideTidy1Row1Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Amount · Due day · Name" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Nominal · Jatuh tempo · Nama" } }
-      }
-    },
-    "guideTidy1Row1Value": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Flat" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Rata" } }
-      }
-    },
-    "guideTidy1Row1Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Due day follows its position inside the pay cycle." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Jatuh tempo mengikuti posisinya di dalam periode gaji." } }
-      }
-    },
-    "guideTidy1Row2Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Account · Group · Status" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Sumber dana · Grup · Status" } }
-      }
-    },
-    "guideTidy1Row2Value": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Grouped" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Dikelompokkan" } }
-      }
-    },
-    "guideTidy1Row2Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Status reads Todo → Funded → Done." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Status terbaca Belum dibayar → Dana siap → Sudah dibayar." } }
-      }
-    },
-    "guideTidy1Row3Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Planned group shares" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Porsi grup terencana" } }
-      }
-    },
-    "guideTidy1Row3Value": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "62.5% allocated" } },
-        "id": { "stringUnit": { "state": "translated", "value": "62,5% dialokasikan" } }
-      }
-    },
-    "guideTidy1Row3Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Housing 27.5% · Daily 22.5% · Travel 12.5%" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Housing 27,5% · Daily 22,5% · Travel 12,5%" } }
-      }
-    },
-    "guideTidy1Takeaway1Heading": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Focus on money ready to pay" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Fokus pada dana yang siap dibayar" } }
-      }
-    },
-    "guideTidy1Takeaway1Body": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Tap the Funded notice for unpaid Fixed items. Totals stay; Amount order is forced and the sort control hides. Group shares measure planned income allocation, not actual spending." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Ketuk pemberitahuan Dana siap untuk Pembayaran yang belum lunas. Total tetap; urutan Nominal dipaksakan dan kontrol urutan disembunyikan. Porsi grup mengukur alokasi pemasukan terencana, bukan pengeluaran nyata." } }
+        "en": { "stringUnit": { "state": "translated", "value": "Order rows by what matters now, and see each group's share." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Urutkan baris menurut yang penting sekarang, dan lihat porsi tiap grup." } }
       }
     },
     "guideTidy2Step": {
@@ -12034,85 +11418,15 @@
     "guideTidy2Heading": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Review first, clear with care" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Periksa dulu, hapus dengan hati-hati" } }
+        "en": { "stringUnit": { "state": "translated", "value": "Notices, and a clean slate" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Pemberitahuan, dan mulai bersih" } }
       }
     },
     "guideTidy2Lead": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Notices surface one task at a time. Clearing is reserved for a future plan." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Pemberitahuan menampilkan satu tugas sekaligus. Penghapusan hanya untuk rencana mendatang." } }
-      }
-    },
-    "guideTidy2Card": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Notice priority" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Prioritas pemberitahuan" } }
-      }
-    },
-    "guideTidy2Row1Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Review Auto → copied plan" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Periksa Otomatis → rencana salinan" } }
-      }
-    },
-    "guideTidy2Row1Value": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "First" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Pertama" } }
-      }
-    },
-    "guideTidy2Row1Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Review posted Auto amounts before moving on." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Periksa nominal Otomatis yang tercatat sebelum lanjut." } }
-      }
-    },
-    "guideTidy2Row2Name": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Funded → payday" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Dana siap → gajian" } }
-      }
-    },
-    "guideTidy2Row2Value": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Then" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Lalu" } }
-      }
-    },
-    "guideTidy2Row2Detail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Funded points to unpaid Fixed items; payday points to the transfer checklist." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Dana siap menunjuk Pembayaran yang belum lunas; gajian menunjuk daftar transfer." } }
-      }
-    },
-    "guideTidy2Takeaway1Heading": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Your view can reset" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Tampilanmu bisa kembali semula" } }
-      }
-    },
-    "guideTidy2Takeaway1Body": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Sort returns to Amount on cycle paging or relaunch. Switching lens keeps it." } },
-        "id": { "stringUnit": { "state": "translated", "value": "Urutan kembali ke Nominal saat berpindah periode atau membuka ulang aplikasi. Berganti tampilan tetap mempertahankannya." } }
-      }
-    },
-    "guideTidy2Takeaway2Heading": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Clear only an upcoming plan" } },
-        "id": { "stringUnit": { "state": "translated", "value": "Hapus hanya rencana mendatang" } }
+        "en": { "stringUnit": { "state": "translated", "value": "Notices ask for a look; Clear Plan empties an upcoming cycle." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Pemberitahuan minta diperiksa; Hapus rencana mengosongkan periode mendatang." } }
       }
     },
     "guideTidy2Takeaway2Body": {

@@ -32,7 +32,9 @@ struct PlanEmptyState: View {
 
             if let copySourceMonth {
                 PlanEmptyStateButton(title: AppLocalization.string(.copyFrom(copySourceMonth)), action: onCopy)
+                    .planGuideTarget(.copyFrom, radius: 26)
                 PlanEmptyStateButton(title: AppLocalization.string(.startEmpty), isPrimary: false, action: onStart)
+                    .planGuideTarget(.startEmpty, radius: 26)
             } else {
                 PlanEmptyStateButton(title: AppLocalization.string(.startThisCycleSPlan), action: onStart)
             }

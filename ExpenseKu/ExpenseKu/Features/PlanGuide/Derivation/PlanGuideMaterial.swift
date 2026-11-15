@@ -21,5 +21,21 @@ nonisolated enum PlanGuideMaterial: String, CaseIterable, Codable, Hashable {
     static let buildTopics: [PlanGuideMaterial] = [.startPlan, .allocationTypes, .managePlanItems]
     static let useTopics: [PlanGuideMaterial] = [.paydayTransfers, .followEnvelope, .readAndTidy]
 
-    var stepCount: Int { self == .introduction ? 3 : 2 }
+    var stepCount: Int { spotlightCounts.count }
+
+    var spotlightCounts: [Int] {
+        switch self {
+        case .introduction: [3, 3, 3]
+        case .startPlan: [3, 3]
+        case .allocationTypes: [3, 3]
+        case .managePlanItems: [3, 3]
+        case .paydayTransfers: [3, 4]
+        case .followEnvelope: [5, 3]
+        case .readAndTidy: [3, 2]
+        }
+    }
+
+    func spotlightCount(ofStep step: Int) -> Int {
+        spotlightCounts.indices.contains(step - 1) ? spotlightCounts[step - 1] : 1
+    }
 }

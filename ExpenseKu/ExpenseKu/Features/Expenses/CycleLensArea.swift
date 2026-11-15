@@ -56,6 +56,8 @@ struct CycleLensArea<Header: View>: View {
     let planSort: PlanSort
     let lookBackMonth: String?
     let copySourceMonth: String?
+    let guideInvitation: PlanGuideInvitation?
+    let onOpenGuide: () -> Void
     let onPlanAction: (PlanAction) -> Void
     @Binding var selectedDay: Date?
     let resolvedDay: Date?
@@ -115,6 +117,8 @@ struct CycleLensArea<Header: View>: View {
                     sort: planSort,
                     lookBackMonth: lookBackMonth,
                     copySourceMonth: copySourceMonth,
+                    guideInvitation: guideInvitation,
+                    onOpenGuide: onOpenGuide,
                     revealTrigger: AnyHashable(cycle),
                     onAction: onPlanAction,
                     header: { header }

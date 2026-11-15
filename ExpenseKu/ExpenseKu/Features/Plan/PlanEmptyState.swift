@@ -12,11 +12,18 @@ import SwiftUI
 
 struct PlanEmptyState: View {
     let copySourceMonth: String?
+    var guideInvitation: PlanGuideInvitation?
+    var onOpenGuide: () -> Void = {}
     let onCopy: () -> Void
     let onStart: () -> Void
 
     var body: some View {
         VStack(spacing: Metric.cardGap) {
+            if let guideInvitation {
+                PlanGuideInvitationCard(invitation: guideInvitation, onOpen: onOpenGuide)
+                    .padding(.horizontal, Metric.cardPadding)
+            }
+
             EmptyStateView(
                 title: AppLocalization.string(.noPlanYet),
                 systemImage: "list.clipboard",

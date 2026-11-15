@@ -87,6 +87,10 @@ struct ExpensesView: View {
     @State var envelopeDetailVisit: EnvelopeDetailVisit?
     @State var planSheet: PlanSheet?
     @State var planConfirmation: PlanConfirmation?
+    /// Above the lens's `.id()` like the rest of the plan's state: the guide must outlive
+    /// a page or lens switch underneath it (plan-guide.md §1).
+    @State private var planGuideStore = PlanGuideStore()
+    @State private var planGuideEntry: PlanGuideEntry?
     @State private var searchText = ""
     /// Search filters. The category is held by name, not as a `Category`, so no
     /// live model sits in view state and a deleted category can't dangle here.
@@ -197,6 +201,9 @@ struct ExpensesView: View {
                             planSort: planSort,
                             lookBackMonth: lookBackMonth(planContents),
                             copySourceMonth: copySourceMonth(planContents),
+                            guideInvitation: PlanGuideInvitation.shown(hasPlan: planContents.hasPlan,
+                                                                       progress: planGuideStore.progress),
+                            onOpenGuide: { planGuideEntry = .invitation },
                             onPlanAction: { perform($0, in: planContents) },
                             selectedDay: $selectedDay,
                             resolvedDay: resolvedSelectedDay(in: calendarGrid),
@@ -325,11 +332,16 @@ struct ExpensesView: View {
                             }
                         }
                     }
-                    if canClearPlan {
+                    if lens == .plan {
                         ToolbarItem(placement: .primaryAction) {
                             Menu(AppLocalization.string(.planOptions), systemImage: "ellipsis") {
-                                Button(AppLocalization.string(.clearPlan), systemImage: "trash", role: .destructive,
-                                       action: requestClearPlan)
+                                Button(AppLocalization.string(.planGuide), systemImage: "book") {
+                                    planGuideEntry = .menu
+                                }
+                                if canClearPlan {
+                                    Button(AppLocalization.string(.clearPlan), systemImage: "trash", role: .destructive,
+                                           action: requestClearPlan)
+                                }
                             }
                             .tint(Theme.text)
                         }
@@ -384,6 +396,10 @@ struct ExpensesView: View {
                 onOpenExpense: { selection = $0 },
                 onDismiss: returnToEnvelopeDetail
             )
+            .fullScreenCover(item: $planGuideEntry) { entry in
+                PlanGuideView(entry: entry, store: planGuideStore)
+                    .presentationBackground(Theme.bg)
+            }
             .sensoryFeedback(.selection, trigger: cycle)
             .sensoryFeedback(.selection, trigger: lens)
             .onAppear { resetToCurrentCycle() }
@@ -434,6 +450,10 @@ struct ExpensesView: View {
                     lens = .list
                 default:
                     break
+                }
+                if let guide = DebugLaunch.planGuide {
+                    lens = .plan
+                    planGuideEntry = guide == "invitation" ? .invitation : .menu
                 }
             }
             #endif

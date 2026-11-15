@@ -1,10 +1,11 @@
 # PRD — Plan guide
 
-Status: Accepted
+Status: Built
 Date: 2026-11-15
 Owner: Randy Efan
 
-Design: Wonder **ExpenseKu → 05 · Proposals — not built → Flow AM · Plan guide, expanded**.
+Design: Wonder **ExpenseKu → 05 · Proposals — not built → Flow AM · Plan guide, expanded — built**
+(kept on page 05 like every built flow until the page 02 migration).
 Flow AM supersedes the narrower Flow AL, which remains available for comparison.
 
 Companions: `CONTEXT.md`, ADR-0005, `payday-planning.md`, `clear-plan.md`,
@@ -279,10 +280,42 @@ The owner approved Flow AM and all calls below on November 15, 2026.
 
 ### 8.2 Verification and limits
 
-Runtime implementation, Dynamic Type, VoiceOver and motion checks are next, following the approved design.
-The earlier Device-panel inspection failed twice: Xcode could not start its simulator
-service on this macOS, including a retry selecting Xcode 27.2. No alternative device
-control is used. Flow AM is verified against source, companion rules and exported PNGs.
+Built 15 November 2026 on `feature/plan-guide`. `PlanGuideTests` holds one test per rule of
+§4.1, §4.2, §4.3, §4.5 and §6 (30 tests); Debug and Release suites pass with no new warnings.
+
+The Device panel opened the simulator and read its accessibility tree, but every tap failed
+("Runner did not accept connection: this Xcode cannot start its simulator service on this
+macOS"), as in the proposal stage. No other device control was used. Instead a DEBUG-only
+`-planGuide index|invitation|<material>:<step>` launch argument opened each state for a
+screenshot, and navigation (Next, Back, Topics, Finish, Close, reread) is covered by tests.
+
+| Observed in the simulator | Frame |
+|---|---|
+| No plan, intro not started: Meet Plan / View guide above the empty state; ••• menu present | AM1 |
+| Intro steps 1–3, with Topics / Back / Next / Explore topics | AM2–AM4 |
+| Topic lessons, including the partial-transfer selection example | AM13, AM15, AM16 |
+| Index with independent saved states after several relaunches | AM18 |
+| No plan, intro in progress: Continue introduction | AM19 |
+| Existing plan: no card, ••• menu present | AM20 |
+| Indonesian index and lesson copy | All |
+| Accessibility XL: lesson scrolls, footer actions stay reachable | AM2–AM18 |
+
+Covered by tests only, because they need a tap: opening the menu (Plan guide before Clear
+Plan), completing the intro to hide the card (AM21), Back/Topics/Finish persistence, and
+rereading a Read topic.
+
+### 8.4 Closed during implementation
+
+| Gap | Resolution |
+|---|---|
+| English word for Sisa | The app's English label is Remaining; the guide follows it (§4.6). Frames AM2, AM4, AM9 and AM15 synced. Indonesian keeps Sisa |
+| Index intro block before the intro starts (no frame) | "Not started · 3-step introduction" with Start introduction |
+| Status of a material opened at step 1 then closed | Step 1 of N: opening counts as started |
+| Plan options menu while searching | Shown whenever the lens is Plan, matching how Clear Plan already behaved |
+| Invitation card width | Inset like the Start / Copy buttons below it, not the header card above |
+| Progress storage | `UserDefaults.standard`, key `planGuideProgress`, JSON per material; unreadable data starts afresh |
+| Example amounts | Formatted with the app's IDR format for the current locale, so they match real rows |
+| Example row at large text | Name and value stack when they no longer fit one line |
 
 ### 8.3 Proposal verification
 

@@ -12,16 +12,27 @@ import SwiftUI
 struct PlanGuideView: View {
     let store: PlanGuideStore
     @State private var session: PlanGuideSession
+    @State private var samples = PlanGuideSampleCache()
     @Environment(\.dismiss) private var dismiss
 
     init(entry: PlanGuideEntry, store: PlanGuideStore) {
         self.store = store
         var session = PlanGuideSession(entry: entry, progress: store.progress)
         #if DEBUG
-        if let target = DebugLaunch.planGuide?.split(separator: ":"), target.count == 2,
+        if let target = DebugLaunch.planGuide?.split(separator: ":"), target.count >= 2,
            let material = PlanGuideMaterial(rawValue: String(target[0])), let step = Int(target[1]) {
+            let spotlight = target.count > 2 ? Int(target[2]) ?? 1 : 1
             session.open(material)
-            while case .lesson(_, let shown) = session.route, shown < step { session.next() }
+            func isPast() -> Bool {
+                guard case .lesson(_, let shown) = session.route else { return false }
+                return shown > step || (shown == step && session.spotlight > spotlight)
+            }
+            func isBefore() -> Bool {
+                guard case .lesson(_, let shown) = session.route else { return false }
+                return shown < step || (shown == step && session.spotlight < spotlight)
+            }
+            while isPast(), !session.isAtStart { session.back() }
+            while isBefore(), !session.isAtEnd { session.next() }
         }
         #endif
         _session = State(initialValue: session)
@@ -42,7 +53,11 @@ struct PlanGuideView: View {
                     step: step,
                     stepCount: material.stepCount,
                     lesson: PlanGuideContent.lessons(of: material)[step - 1],
+                    spotlight: session.spotlight,
+                    isAtStart: session.isAtStart,
+                    isAtEnd: session.isAtEnd,
                     finishTitle: AppLocalization.string(material == .introduction ? .guideExploreTopics : .guideFinishTopic),
+                    cache: samples,
                     onClose: { dismiss() },
                     onTopics: { withAnimation(Motion.snap) { session.showTopics() } },
                     onBack: { withAnimation(Motion.snap) { session.back() } },

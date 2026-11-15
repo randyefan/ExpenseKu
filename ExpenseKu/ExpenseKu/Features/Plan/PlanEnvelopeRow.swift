@@ -95,6 +95,7 @@ struct PlanEnvelopeRow: View {
                         Color.clear.frame(width: addSize, height: 1)
                     }
                     .alignmentGuide(.envelopeBarLine) { $0[.bottom] }
+                    .planGuideTarget(.envelopeBar, radius: 8)
 
                     if let fromEarlierCaption {
                         FromEarlierCaption(text: fromEarlierCaption)
@@ -109,6 +110,7 @@ struct PlanEnvelopeRow: View {
         }
         .overlay(alignment: Alignment(horizontal: .trailing, vertical: .envelopeBarLine)) {
             EnvelopeAddMenu(name: item.name, onAddExpense: onAddExpense, onMoveExpenses: onMoveExpenses)
+                .planGuideTarget(.envelopeAdd, radius: EnvelopeAddMenu.size / 2)
         }
         .padding(.vertical, 10)
     }

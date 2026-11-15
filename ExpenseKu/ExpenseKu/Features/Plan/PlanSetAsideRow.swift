@@ -33,6 +33,7 @@ struct PlanSetAsideRow: View {
             DoneCheck(state: .state(for: item), tap: .of(item), itemName: spokenName,
                       accountName: item.account?.name,
                       onTap: {}, onChoose: onChooseFunding)
+                .planGuideTarget(.check, radius: 18)
                 .padding(.top, 1)
 
             Button(action: onSelect) {
@@ -69,6 +70,7 @@ struct PlanSetAsideRow: View {
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(spokenRow)
             .accessibilityAddTraits(.isButton)
+            .planGuideTarget(.rowBody)
         }
         .padding(.vertical, 10)
     }

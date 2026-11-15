@@ -47,6 +47,7 @@ struct PlanFixedRow: View {
             DoneCheck(state: state, tap: .of(item), itemName: item.name,
                       accountName: item.account?.name,
                       onTap: onTapCheck, onChoose: onChooseFunding)
+                .planGuideTarget(.check, radius: 18)
                 .padding(.top, 1)
 
             Button(action: onSelect) {
@@ -79,6 +80,7 @@ struct PlanFixedRow: View {
                 .contentShape(.rect)
             }
             .buttonStyle(.pressableRow)
+            .planGuideTarget(.rowBody)
         }
         .padding(.vertical, 10)
     }
@@ -106,9 +108,11 @@ struct PlanFixedRow: View {
             if let dueDay = item.dueDay {
                 let label = DueDay.label(day: dueDay, in: cycle, today: today, calendar: calendar)
                 PlanChip(kind: label.isSoon ? .dueSoon : .due, text: label.text)
+                    .planGuideTarget(.dueChip, radius: 8)
             }
             if item.isAuto {
                 PlanChip(kind: .auto, text: AppLocalization.string(.auto), symbol: "bolt.fill")
+                    .planGuideTarget(.autoChip, radius: 8)
             }
             if actual?.needsReview == true {
                 PlanChip(kind: .review, text: AppLocalization.string(.review))

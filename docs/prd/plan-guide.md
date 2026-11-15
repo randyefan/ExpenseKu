@@ -98,6 +98,9 @@ that the topic library is complete merely because the introduction is complete.
 
 ### 4.4 Topic coverage and order
 
+> Superseded on 2026-11-16 by `plan-guide-visual.md` §4.5: lessons now show real Plan
+> components with spotlights, and the edge-case rules below are no longer taught.
+
 Each topic has two short full-screen lessons. The lesson table is also the content
 contract: text may be shortened during implementation without dropping these rules.
 

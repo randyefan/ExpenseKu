@@ -78,6 +78,7 @@ struct ExpenseKuApp: App {
     @State private var receiptInbox = ReceiptInbox()
     @State private var receiptModel = ReceiptModelStore()
     @State private var receiptReadAhead = ReceiptReadAhead()
+    @State private var tourStore = TourStore()
     @Environment(\.scenePhase) private var scenePhase
 
     init() {
@@ -95,6 +96,7 @@ struct ExpenseKuApp: App {
                 .environment(receiptInbox)
                 .environment(receiptModel)
                 .environment(receiptReadAhead)
+                .environment(tourStore)
         }
         .modelContainer(store.container)
         .onChange(of: scenePhase) { _, phase in
@@ -102,6 +104,7 @@ struct ExpenseKuApp: App {
             case .active:
                 LanguageSettings.shared.refresh()
                 receiptInbox.refresh()
+                tourStore.refresh()
             case .background:
                 receiptReadAhead.stop()
                 receiptModel.unload()

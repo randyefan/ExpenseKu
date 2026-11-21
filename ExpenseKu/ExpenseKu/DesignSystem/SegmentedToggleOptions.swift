@@ -53,6 +53,7 @@ struct SegmentedToggleOptions<Value: Hashable>: View {
                     .contentShape(.capsule)
                 }
                 .buttonStyle(.pressableCard)
+                .tourTarget(segment.tourTarget, radius: 18)
                 .accessibilityLabel(segment.title)
                 .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
             }

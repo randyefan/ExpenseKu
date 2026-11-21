@@ -92,6 +92,8 @@ struct ExpensesView: View {
     @State private var planGuideStore = PlanGuideStore()
     @State private var planGuideEntry: PlanGuideEntry?
     @State private var searchText = ""
+    @State private var searchPresented = false
+    @Environment(\.tour) private var tour
     /// Search filters. The category is held by name, not as a `Category`, so no
     /// live model sits in view state and a deleted category can't dangle here.
     @State private var searchCategoryName: String?
@@ -156,6 +158,9 @@ struct ExpensesView: View {
             )
         } ?? filteredContents
         let calendarGrid = cycleCalendar(for: cycle, expenses: shownContents.expenses, calendar: calendar)
+        let showsGuideInvitation = tour == nil
+            ? PlanGuideInvitation.shown(hasPlan: planContents.hasPlan, progress: planGuideStore.progress)
+            : nil
 
         NavigationStack {
             ZStack {
@@ -201,8 +206,7 @@ struct ExpensesView: View {
                             planSort: planSort,
                             lookBackMonth: lookBackMonth(planContents),
                             copySourceMonth: copySourceMonth(planContents),
-                            guideInvitation: PlanGuideInvitation.shown(hasPlan: planContents.hasPlan,
-                                                                       progress: planGuideStore.progress),
+                            guideInvitation: showsGuideInvitation,
                             onOpenGuide: { planGuideEntry = .invitation },
                             onPlanAction: { perform($0, in: planContents) },
                             selectedDay: $selectedDay,
@@ -303,7 +307,8 @@ struct ExpensesView: View {
                 }
             }
             .toolbar(expenseSelection == nil ? .automatic : .hidden, for: .tabBar)
-            .searchableWhenThereIsSomethingToSearch(text: $searchText, enabled: !expenses.isEmpty && expenseSelection == nil)
+            .searchableWhenThereIsSomethingToSearch(text: $searchText, isPresented: $searchPresented,
+                                                    enabled: !expenses.isEmpty && expenseSelection == nil)
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(Theme.bg, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
@@ -358,6 +363,7 @@ struct ExpensesView: View {
                 NavigationStack {
                     ExpenseEditorView(envelope: preset.envelope, date: preset.date)
                 }
+                .tourLayer(.editor)
                 .presentationBackground(Theme.bg)
             }
             .sheet(item: $receiptRun, onDismiss: continueReceiptRun) { run in
@@ -400,6 +406,24 @@ struct ExpensesView: View {
                 PlanGuideView(entry: entry, store: planGuideStore)
                     .presentationBackground(Theme.bg)
             }
+            .onChange(of: cycle) { _, newCycle in
+                tour?.note(.cycle(isCurrent: newCycle == PayCycle.containing(.now, payday: payday, calendar: calendar)))
+            }
+            .onChange(of: lens) { _, newLens in
+                tour?.note(.lens(newLens.tourLens))
+            }
+            .onChange(of: searchPresented) { _, presented in
+                if presented { tour?.note(.searchOpened) }
+            }
+            .onChange(of: tour?.command) { _, request in
+                switch request?.command {
+                case .openEditor: newExpense = NewExpensePreset()
+                case .clearSearch:
+                    searchText = ""
+                    searchPresented = false
+                default: break
+                }
+            }
             .sensoryFeedback(.selection, trigger: cycle)
             .sensoryFeedback(.selection, trigger: lens)
             .onAppear { resetToCurrentCycle() }
@@ -417,6 +441,7 @@ struct ExpensesView: View {
                 cycle = PayCycle.containing(.now, payday: newValue, calendar: calendar)
             }
             .onChange(of: searchText) { _, newValue in
+                tour?.note(.search(newValue))
                 if !newValue.isEmpty { expenseSelection = nil }
                 // Filters belong to a query, not to the tab: clearing the search
                 // clears them, so the next one never starts secretly narrowed.
@@ -564,12 +589,23 @@ private extension View {
     /// sits under the cycle header and lens toggle inside a VStack. Minimizing is
     /// what actually delivers "no vertical cost until you want it".
     @ViewBuilder
-    func searchableWhenThereIsSomethingToSearch(text: Binding<String>, enabled: Bool) -> some View {
+    func searchableWhenThereIsSomethingToSearch(text: Binding<String>, isPresented: Binding<Bool>,
+                                                enabled: Bool) -> some View {
         if enabled {
-            searchable(text: text, prompt: AppLocalization.string(.searchExpenses))
+            searchable(text: text, isPresented: isPresented, prompt: AppLocalization.string(.searchExpenses))
                 .searchToolbarBehavior(.minimize)
         } else {
             self
+        }
+    }
+}
+
+private extension ExpensesView.Lens {
+    var tourLens: TourLens {
+        switch self {
+        case .list: .list
+        case .calendar: .month
+        case .plan: .plan
         }
     }
 }

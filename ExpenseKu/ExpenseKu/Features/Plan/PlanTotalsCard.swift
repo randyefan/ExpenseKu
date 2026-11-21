@@ -30,6 +30,7 @@ struct PlanTotalsCard: View {
                         onEdit: { onAction(.editIncomeLine(line)) }
                     )
                     .planGuideTarget(.incomeLine)
+                    .tourTarget(.incomeLine)
                     Divider().overlay(Theme.hairline)
                 }
 
@@ -59,6 +60,7 @@ struct PlanTotalsCard: View {
                 }
                 .padding(.vertical, 8)
                 .planGuideTarget(.remainingLine)
+                .tourTarget(.remainingLine)
             }
             .cardStyle()
 

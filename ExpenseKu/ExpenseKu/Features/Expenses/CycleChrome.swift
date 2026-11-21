@@ -50,8 +50,8 @@ struct CycleChrome: View {
                 selection: $lens,
                 segments: [
                     .init(.list, title: AppLocalization.string(.list), systemImage: "list.bullet"),
-                    .init(.calendar, title: AppLocalization.string(.month), systemImage: "calendar"),
-                    .init(.plan, title: AppLocalization.string(.plan), systemImage: "list.clipboard"),
+                    .init(.calendar, title: AppLocalization.string(.month), systemImage: "calendar", tourTarget: .monthLens),
+                    .init(.plan, title: AppLocalization.string(.plan), systemImage: "list.clipboard", tourTarget: .planLens),
                 ]
             )
             .padding(.bottom, Metric.cardGap)

@@ -40,6 +40,7 @@ struct CycleHeader: View {
                     enabled: canGoBack,
                     action: onPrevious
                 )
+                .tourTarget(.previousCycle, radius: 22)
 
                 Spacer(minLength: 8)
 
@@ -65,6 +66,7 @@ struct CycleHeader: View {
                     enabled: canGoForward,
                     action: onNext
                 )
+                .tourTarget(.nextCycle, radius: 22)
             }
 
             VStack(spacing: 2) {

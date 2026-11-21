@@ -20,6 +20,7 @@ struct RootView: View {
     @Environment(ReceiptInbox.self) private var receiptInbox
     @Environment(ReceiptModelStore.self) private var receiptModel
     @Environment(ReceiptReadAhead.self) private var receiptReadAhead
+    @Environment(TourStore.self) private var tourStore
     @State private var selection: AppTab = .expenses
     #if DEBUG
     @State private var debugScreen: DebugScreen?
@@ -41,6 +42,9 @@ struct RootView: View {
         .safeAreaInset(edge: .top) {
             if isEphemeralStore { EphemeralStoreBanner() }
         }
+        .fullScreenCover(item: tourLaunch) { launch in
+            WelcomeTourView(launch: launch, store: tourStore, onEnd: closeTour)
+        }
         #if DEBUG
         .fullScreenCover(item: $debugScreen) { screen in
             DebugHarness(screen: screen.name)
@@ -56,11 +60,12 @@ struct RootView: View {
             // Auto items materialise here, lazily: iOS does not run this in the
             // background, so an Auto expense appears the first time the app is
             // opened after its due day passes (ADR-0007).
-            PlanMaintenance.run(in: modelContext)
+            PlanMaintenance.run(in: modelContext, payday: Payday.stored)
             #if DEBUG
             applyDebugLaunch()
             readReceiptsAhead()
             #endif
+            openTourIfDue()
         }
         .task {
             // CloudKit merged changes from another device — re-check the "Me"
@@ -68,9 +73,37 @@ struct RootView: View {
             let changes = NotificationCenter.default.notifications(named: .NSPersistentStoreRemoteChange)
             for await _ in changes {
                 Person.reconcileMe(in: modelContext)
-                PlanMaintenance.run(in: modelContext)
+                PlanMaintenance.run(in: modelContext, payday: Payday.stored)
             }
         }
+    }
+
+    private var tourLaunch: Binding<TourLaunch?> {
+        Binding(get: { tourStore.launch }, set: { tourStore.launch = $0 })
+    }
+
+    /// The tour fades itself out first, so the cover leaves without its slide.
+    private func closeTour() {
+        var transaction = Transaction()
+        transaction.disablesAnimations = true
+        withTransaction(transaction) { tourStore.launch = nil }
+    }
+
+    private func openTourIfDue() {
+        #if DEBUG
+        if DebugLaunch.resetsWelcomeTour {
+            tourStore.record(TourOutcome?.none)
+            tourStore.record(TourProgress())
+        }
+        if let entry = DebugLaunch.welcomeTour {
+            tourStore.launch = TourLaunch(entry: entry, isReplay: false)
+            return
+        }
+        guard !DebugLaunch.drivesScreens else { return }
+        #endif
+        guard ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil else { return }
+        let count = (try? modelContext.fetchCount(FetchDescriptor<Expense>())) ?? 0
+        tourStore.openIfDue(hasExpenses: count > 0, isEphemeral: isEphemeralStore)
     }
 
     private func readReceiptsAhead() {

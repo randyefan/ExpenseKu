@@ -8,6 +8,7 @@
 //  press wash.
 //
 
+import SwiftData
 import SwiftUI
 
 struct ExpenseListRow: View {
@@ -30,6 +31,7 @@ struct ExpenseListRow: View {
             .contentShape(.rect)
         }
         .buttonStyle(.pressableRow)
+        .tourLanding(expense.persistentModelID)
         .disabled(selectionMark == .unavailable)
         .opacity(selectionMark == .unavailable ? 0.4 : 1)
         .accessibilityAddTraits(selectionMark == .on ? .isSelected : [])

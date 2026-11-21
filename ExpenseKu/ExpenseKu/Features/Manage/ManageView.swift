@@ -82,7 +82,8 @@ struct ManageView: View {
                                           subtitle: AppLocalization.string(.tourPlayAgain), tint: Theme.accent)
                         }
                         .buttonStyle(.pressableRow)
-                        .cardStyle()
+                        .padding(.horizontal, Metric.cardPadding)
+                        .cardStyle(padding: 0)
                         .reveal(2)
                     }
 

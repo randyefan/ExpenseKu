@@ -37,6 +37,8 @@ struct SpendEntityView: View {
     @State private var editing: Expense?
     @State private var moveRequest: EnvelopeMoveRequest?
     @State private var growth = ChartGrowth()
+    @State private var scrollPosition = ScrollPosition()
+    @Environment(\.tour) private var tour
 
     init(route: SpendEntityRoute) {
         self.route = route
@@ -79,6 +81,15 @@ struct SpendEntityView: View {
             .padding(.vertical, Metric.screenPadding)
             .readableColumn()
             .motion(Motion.settle, value: detail.listed.count)
+            .scrollTargetLayout()
+        }
+        .scrollPosition($scrollPosition)
+        .onChange(of: tour?.command, initial: true) { _, request in
+            guard request?.command == .showToday else { return }
+            Task {
+                try? await Task.sleep(for: .milliseconds(450))
+                withAnimation(Motion.settle) { scrollPosition.scrollTo(id: Self.tourDay, anchor: .center) }
+            }
         }
         .safeAreaInset(edge: .bottom) {
             VStack(spacing: 10) {
@@ -225,8 +236,17 @@ struct SpendEntityView: View {
                              ExpenseRowLead.accountsLead(subject: route.subject, narrowing: narrowing))
                 .padding(.horizontal, Metric.screenPadding)
                 .reveal(index + 4, trigger: window)
+                .id(tourDayID(for: group))
             }
         }
+    }
+
+    private static let tourDay = "tourDay"
+
+    private func tourDayID(for group: ExpenseDayGroup) -> AnyHashable {
+        guard let recorded = tour?.recordedExpenseID,
+              group.expenses.contains(where: { $0.persistentModelID == recorded }) else { return AnyHashable(group.id) }
+        return AnyHashable(Self.tourDay)
     }
 
     /// A new chip clears the plan filter (decision 13) and the narrowing stays (D5).

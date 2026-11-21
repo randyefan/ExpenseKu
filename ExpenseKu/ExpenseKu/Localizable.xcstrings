@@ -11435,6 +11435,573 @@
         "en": { "stringUnit": { "state": "translated", "value": "Use Plan options → Clear Plan. The confirmation names links that lose their place; Expenses are kept. Current and past plans cannot be cleared. Guide progress stays." } },
         "id": { "stringUnit": { "state": "translated", "value": "Gunakan Opsi rencana → Hapus rencana. Konfirmasinya menyebut tautan yang akan hilang; pengeluaran tetap disimpan. Rencana saat ini dan sebelumnya tidak bisa dihapus. Kemajuan panduan tetap tersimpan." } }
       }
+    },
+    "tourName": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "ExpenseKu tour" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Tur ExpenseKu" } }
+      }
+    },
+    "tourChapterRecord": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Record" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Catat" } }
+      }
+    },
+    "tourChapterBrowse": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Browse" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Jelajah" } }
+      }
+    },
+    "tourChapterPlan": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Plan" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Rencana" } }
+      }
+    },
+    "tourChapterInsights": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Insights" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Analisis" } }
+      }
+    },
+    "tourChapterRecordDetail": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Log by hand and from a receipt" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Catat manual dan dari bukti pembayaran" } }
+      }
+    },
+    "tourChapterBrowseDetail": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Cycles, Month and Search" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Periode, Bulan, dan Cari" } }
+      }
+    },
+    "tourChapterPlanDetail": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Income, Envelopes and Remaining" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Pemasukan, Pos anggaran, dan Sisa" } }
+      }
+    },
+    "tourChapterInsightsDetail": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Charts, a Category and People" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Grafik, Kategori, dan Orang" } }
+      }
+    },
+    "tourChapterRecordRecap": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "You logged one expense by hand and one from a receipt." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Satu pengeluaran dicatat manual dan satu dari bukti pembayaran." } }
+      }
+    },
+    "tourChapterBrowseRecap": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "You paged cycles, saw the month, and searched a note." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Periode sudah dibuka, bulan sudah dilihat, catatan sudah dicari." } }
+      }
+    },
+    "tourChapterPlanRecap": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "You saw where the income goes before it is spent." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Terlihat ke mana pemasukan pergi sebelum dibelanjakan." } }
+      }
+    },
+    "tourChapterInsightsRecap": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "You opened a Category and the People leaderboard." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Kategori dan Peringkat orang sudah dibuka." } }
+      }
+    },
+    "tourRecordAdd": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Tap + to record what you spent." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Ketuk + untuk mencatat pengeluaran." } }
+      }
+    },
+    "tourRecordAddNudge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Tap the + button." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Ketuk tombol +." } }
+      }
+    },
+    "tourRecordKeypad": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Type 30000 + 15000. The keypad adds it up." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Ketik 30000 + 15000. Keypad menjumlahkannya." } }
+      }
+    },
+    "tourRecordKeypadNudge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Use the keypad: 30000 + 15000." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Pakai keypad: 30000 + 15000." } }
+      }
+    },
+    "tourRecordCategory": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Every expense has a Category. Pick Makan." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Setiap pengeluaran punya Kategori. Pilih Makan." } }
+      }
+    },
+    "tourRecordCategoryNudge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Pick Makan." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Pilih Makan." } }
+      }
+    },
+    "tourRecordPerson": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Who was it with, or for? Add Ibu." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Bersama atau untuk siapa? Tambahkan Ibu." } }
+      }
+    },
+    "tourRecordPersonNudge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Add Ibu." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Tambahkan Ibu." } }
+      }
+    },
+    "tourRecordAccount": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Which Account paid? Pick Jago." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Sumber dana mana yang membayar? Pilih Jago." } }
+      }
+    },
+    "tourRecordAccountNudge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Pick Jago." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Pilih Jago." } }
+      }
+    },
+    "tourRecordSave": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Save it." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Simpan." } }
+      }
+    },
+    "tourRecordSaveNudge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Tap ✓ to save." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Ketuk ✓ untuk menyimpan." } }
+      }
+    },
+    "tourRecordSaved": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Saved. It is in today's group." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Tersimpan. Ada di kelompok hari ini." } }
+      }
+    },
+    "tourRecordReceipt": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "A receipt fills the form for you. It is read on this iPhone." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Bukti pembayaran mengisi formulir. Dibaca langsung di iPhone ini." } }
+      }
+    },
+    "tourRecordReceiptNudge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Tap the receipt button." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Ketuk tombol bukti pembayaran." } }
+      }
+    },
+    "tourRecordReceiptReading": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Watch the amount, Category and note fill in." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Lihat jumlah, Kategori, dan catatan terisi." } }
+      }
+    },
+    "tourRecordReceiptCheck": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Check it, then save." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Periksa, lalu simpan." } }
+      }
+    },
+    "tourRecordReceiptSaved": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Saved, marked To check until you look at it." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Tersimpan, ditandai Perlu diperiksa sampai dilihat." } }
+      }
+    },
+    "tourBrowsePrevious": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Each cycle runs from payday to payday. Tap ‹ for the last one." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Setiap periode berjalan dari gajian ke gajian. Ketuk ‹ untuk periode lalu." } }
+      }
+    },
+    "tourBrowsePreviousNudge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Tap ‹." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Ketuk ‹." } }
+      }
+    },
+    "tourBrowseLastCycle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "This is the last one, %@. Tap › to come back." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Ini periode lalu, %@. Ketuk › untuk kembali." } }
+      }
+    },
+    "tourBrowseNextNudge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Tap ›." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Ketuk ›." } }
+      }
+    },
+    "tourBrowseMonth": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Month shows the same cycle as a calendar." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Bulan menampilkan periode yang sama sebagai kalender." } }
+      }
+    },
+    "tourBrowseMonthNudge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Tap Month." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Ketuk Bulan." } }
+      }
+    },
+    "tourBrowseSearch": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Search finds any expense by its note." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Cari menemukan pengeluaran mana pun lewat catatannya." } }
+      }
+    },
+    "tourBrowseSearchNudge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Tap the magnifying glass." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Ketuk kaca pembesar." } }
+      }
+    },
+    "tourBrowseSearchType": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Type kopi." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Ketik kopi." } }
+      }
+    },
+    "tourBrowseSearchTypeNudge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Type kopi in the search field." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Ketik kopi di kolom pencarian." } }
+      }
+    },
+    "tourPlanLens": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Plan splits income before you spend it." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Rencana membagi pemasukan sebelum dibelanjakan." } }
+      }
+    },
+    "tourPlanLensNudge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Tap Plan." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Ketuk Rencana." } }
+      }
+    },
+    "tourPlanIncome": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Gaji is the income this cycle expects." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Gaji adalah pemasukan yang diharapkan periode ini." } }
+      }
+    },
+    "tourPlanHarian": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Harian already counts the Makan you recorded." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Harian sudah menghitung Makan yang tadi dicatat." } }
+      }
+    },
+    "tourPlanRemaining": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Remaining is what is left after the plan. The Plan guide shows the rest." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Sisa adalah yang tersisa setelah rencana. Panduan Rencana menjelaskan sisanya." } }
+      }
+    },
+    "tourSpotlightNudge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Tap Next to go on." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Ketuk Lanjut untuk meneruskan." } }
+      }
+    },
+    "tourInsightsTab": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Insights turns expenses into charts." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Analisis mengubah pengeluaran menjadi grafik." } }
+      }
+    },
+    "tourInsightsTabNudge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Tap Insights." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Ketuk Analisis." } }
+      }
+    },
+    "tourInsightsMakan": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Tap Makan to see what is inside." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Ketuk Makan untuk melihat isinya." } }
+      }
+    },
+    "tourInsightsMakanNudge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Tap Makan." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Ketuk Makan." } }
+      }
+    },
+    "tourInsightsMakanFound": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "There is the Rp 45.000 you recorded." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Itu Rp 45.000 yang tadi dicatat." } }
+      }
+    },
+    "tourInsightsLeaderboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "See who the money goes with." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Lihat dengan siapa uangnya keluar." } }
+      }
+    },
+    "tourInsightsLeaderboardNudge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Tap People leaderboard." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Ketuk Peringkat orang." } }
+      }
+    },
+    "tourInsightsIbuFirst": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Ibu ranks first. Insights is all yours." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Ibu di peringkat pertama. Analisis siap dipakai." } }
+      }
+    },
+    "tourWalletWaving": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Wallet, waving" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Dompet, melambai" } }
+      }
+    },
+    "tourWalletTalking": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Wallet, talking" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Dompet, berbicara" } }
+      }
+    },
+    "tourWalletPointing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Wallet, pointing" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Dompet, menunjuk" } }
+      }
+    },
+    "tourWalletHappy": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Wallet, happy" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Dompet, senang" } }
+      }
+    },
+    "tourWalletConfused": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Wallet, confused" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Dompet, bingung" } }
+      }
+    },
+    "tourSkip": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Skip" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Lewati" } }
+      }
+    },
+    "tourNext": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Next" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Lanjut" } }
+      }
+    },
+    "tourEyebrow": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Chapter %1$lld · %2$@" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Bab %1$lld · %2$@" } }
+      }
+    },
+    "tourSkipQuestion": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Skip the tour? You can open it again from Manage." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Lewati tur? Tur bisa dibuka lagi dari Kelola." } }
+      }
+    },
+    "tourKeepGoing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Keep going" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Lanjutkan" } }
+      }
+    },
+    "tourOpeningTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Meet ExpenseKu" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Kenalan dengan ExpenseKu" } }
+      }
+    },
+    "tourOpeningLead": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "A short tour you play with your own fingers, on sample data. Nothing touches your expenses." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Tur singkat yang dimainkan langsung dengan jari, memakai data contoh. Pengeluaran yang asli tidak tersentuh." } }
+      }
+    },
+    "tourOpeningMeta": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "4 chapters · about 3 minutes · sample data" } },
+        "id": { "stringUnit": { "state": "translated", "value": "4 bab · sekitar 3 menit · data contoh" } }
+      }
+    },
+    "tourStart": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Start" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Mulai" } }
+      }
+    },
+    "tourClosingTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "You are ready" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Siap dipakai" } }
+      }
+    },
+    "tourClosingLead": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "That was sample data. Your ExpenseKu starts empty, ready for your first real expense." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Tadi itu data contoh. ExpenseKu dimulai kosong, siap untuk pengeluaran pertama yang asli." } }
+      }
+    },
+    "tourStartUsing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Start using ExpenseKu" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Mulai pakai ExpenseKu" } }
+      }
+    },
+    "tourChapterDone": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Chapter %lld done" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Bab %lld selesai" } }
+      }
+    },
+    "tourNextChapter": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Next · Chapter %lld" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Berikutnya · Bab %lld" } }
+      }
+    },
+    "tourTapToContinue": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Tap anywhere to continue" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Ketuk di mana saja untuk lanjut" } }
+      }
+    },
+    "tourChaptersDone": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "%lld of 4 chapters done" } },
+        "id": { "stringUnit": { "state": "translated", "value": "%lld dari 4 bab selesai" } }
+      }
+    },
+    "tourOpen": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Open" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Buka" } }
+      }
+    },
+    "tourPlayAgain": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Play any chapter again" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Mainkan bab mana pun lagi" } }
+      }
+    },
+    "tourMapLead": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Pick a chapter. It plays on to the end of the tour." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Pilih bab. Tur berlanjut sampai akhir." } }
+      }
+    },
+    "tourMapFoot": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Sample data only. Your expenses stay as they are." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Hanya data contoh. Pengeluaran tetap seperti semula." } }
+      }
+    },
+    "tourStartFromBeginning": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Start from the beginning" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Mulai dari awal" } }
+      }
     }
   },
   "version": "1.1"

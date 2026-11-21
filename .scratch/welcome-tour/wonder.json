@@ -1,0 +1,131 @@
+{
+  "file": "ExpenseKu",
+  "fileId": "01a1baed-bacf-7680-9996-4696474c5186",
+  "page": "05 · Proposals — not built",
+  "pageId": "f0d8de99-b82d-52a9-8afb-f953d5533f8c",
+  "flow": "AO",
+  "header": "des",
+  "layout": "column x = 502 * (n - 1) for AOn; header y 23300; captions y 23470; phones y 23640, second phone of a column y 24640, third y 25640",
+  "poseSources": {
+    "Waving": "eon",
+    "Talking": "ooo",
+    "Pointing": "loc",
+    "Happy": "lai",
+    "Confused": "ide",
+    "waving-ref-png": "https://cdn.wonder.so/images/01a1baed-bacf-7680-9996-4696474c5186/0903ea4a03c8a95f70e42b75e3ec2b9349fb68732804c95fe9b0957a704a5ee3.png"
+  },
+  "tokensAdded": [
+    "theme/tour-scrim #000000b8",
+    "theme/tour-bubble #f2f3f5",
+    "theme/tour-bubble-text #14161a",
+    "theme/tour-bubble-muted #5a5f66",
+    "theme/tour-track #14161a26"
+  ],
+  "frames": {
+    "AO1": [
+      "job"
+    ],
+    "AO2": [
+      "san"
+    ],
+    "AO3": [
+      "lax"
+    ],
+    "AO4": [
+      "moi"
+    ],
+    "AO5": [
+      "dts"
+    ],
+    "AO6": [
+      "oct"
+    ],
+    "AO7": [
+      "taw",
+      "gil"
+    ],
+    "AO8": [
+      "usc",
+      "cat",
+      "win"
+    ],
+    "AO9": [
+      "val"
+    ],
+    "AO10": [
+      "two"
+    ],
+    "AO11": [
+      "fed",
+      "yis"
+    ],
+    "AO12": [
+      "abc"
+    ],
+    "AO13": [
+      "lie"
+    ],
+    "AO14": [
+      "met"
+    ],
+    "AO15": [
+      "ugh",
+      "cog",
+      "bow"
+    ],
+    "AO16": [
+      "hwa"
+    ],
+    "AO17": [
+      "eve",
+      "bop"
+    ],
+    "AO18": [
+      "ade",
+      "nit"
+    ],
+    "AO19": [
+      "toa"
+    ],
+    "AO20": [
+      "dvd"
+    ],
+    "AO21": [
+      "buf",
+      "zee"
+    ],
+    "AO22": [
+      "gan"
+    ],
+    "AO23": [
+      "inc"
+    ]
+  },
+  "captions": {
+    "AO1": "ron",
+    "AO2": "him",
+    "AO3": "pdt",
+    "AO4": "fow",
+    "AO5": "ace",
+    "AO6": "cap",
+    "AO7": "rhe",
+    "AO8": "wal",
+    "AO9": "aku",
+    "AO10": "map",
+    "AO11": "dev",
+    "AO12": "inf",
+    "AO13": "hip",
+    "AO14": "pol",
+    "AO15": "pea",
+    "AO16": "lac",
+    "AO17": "man",
+    "AO18": "wav",
+    "AO19": "law",
+    "AO20": "ups",
+    "AO21": "cio",
+    "AO22": "sky",
+    "AO23": "mob"
+  },
+  "status": "proposal",
+  "poseSourcesPlacedAt": "x 11546..13786, y 23640 (row beside AO23)"
+}

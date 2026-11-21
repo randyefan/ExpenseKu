@@ -20,6 +20,8 @@ struct ExpenseSearchLens: View {
     let onSelect: (Expense) -> Void
     let onDelete: (IndexSet, [Expense]) -> Void
 
+    @State private var resultsHeight: CGFloat = 0
+
     var body: some View {
         VStack(spacing: 0) {
             // Kept above the results in every state: when a narrow filter is what
@@ -57,6 +59,15 @@ struct ExpenseSearchLens: View {
                 .readableListMargins()
                 .scrollContentBackground(.hidden)
                 .background(Theme.bg)
+                .onScrollGeometryChange(for: CGFloat.self) { $0.contentSize.height } action: { _, height in
+                    resultsHeight = height
+                }
+                .overlay(alignment: .top) {
+                    Color.clear
+                        .frame(height: resultsHeight)
+                        .tourTarget(.searchResults, radius: Metric.cardRadius)
+                        .allowsHitTesting(false)
+                }
             }
         }
     }

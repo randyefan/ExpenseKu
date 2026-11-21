@@ -42,6 +42,8 @@ struct InsightsView: View {
     @State private var payday: Int = Payday.current
     @State private var now = Date.now
     @State private var path: [Destination] = []
+    @Environment(\.tour) private var tour
+    @State private var scrollPosition = ScrollPosition(edge: .top)
 
     private static var oldestExpense: FetchDescriptor<Expense> {
         var descriptor = FetchDescriptor<Expense>(sortBy: [SortDescriptor(\.date)])
@@ -91,12 +93,14 @@ struct InsightsView: View {
                     .id(dateRange)
 
                     LeaderboardLinkCard()
+                        .tourTarget(.leaderboardCard, radius: Metric.cardRadius)
                         .reveal(5, trigger: dateRange)
                 }
                 .padding(Metric.screenPadding)
                 .readableColumn()
                 .motion(Motion.snap, value: window)
             }
+            .scrollPosition($scrollPosition)
             .safeAreaInset(edge: .bottom) {
                 VStack(spacing: 10) {
                     if !activeFilter.isEmpty {
@@ -140,6 +144,24 @@ struct InsightsView: View {
             }
         }
         .onAppear(perform: refresh)
+        .onChange(of: path) { _, newPath in
+            switch newPath.last {
+            case .leaderboard: tour?.note(.leaderboard)
+            case .spendEntity(let route):
+                if case .category(let id) = route.subject, let category = context.model(for: id) as? Category {
+                    tour?.note(.categoryDetail(category.name))
+                }
+            default: break
+            }
+        }
+        .onChange(of: tour?.command) { _, request in
+            guard request?.command == .popInsights else { return }
+            path = []
+            Task {
+                try? await Task.sleep(for: .milliseconds(450))
+                withAnimation(Motion.settle) { scrollPosition.scrollTo(edge: .bottom) }
+            }
+        }
         .task {
             #if DEBUG
             applyDebugStartScreen()

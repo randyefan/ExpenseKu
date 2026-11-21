@@ -23,6 +23,7 @@
 //  and the totals stay, untouched, and the rest of the list steps aside until ✕.
 //
 
+import SwiftData
 import SwiftUI
 
 struct CyclePlanLens<Header: View>: View {
@@ -41,7 +42,22 @@ struct CyclePlanLens<Header: View>: View {
     let onAction: (PlanAction) -> Void
     @ViewBuilder let header: Header
 
+    /// The tour's spotlights end on the last plan row, which would sit under the tab bar.
+    @Environment(\.tour) private var tour
+
     var body: some View {
+        ScrollViewReader { proxy in
+            list
+                .onChange(of: tour?.command) { _, request in
+                    guard request?.command == .revealPlanRows,
+                          let last = contents.plan?.items?.max(by: { $0.createdAt < $1.createdAt }) else { return }
+                    withAnimation(Motion.settle) { proxy.scrollTo(last.persistentModelID, anchor: .center) }
+                }
+        }
+    }
+
+    // List ignores ScrollPosition, so the tour's scroll goes through a ScrollViewReader.
+    private var list: some View {
         List {
             Section {
                 VStack(spacing: Metric.cardGap) {
@@ -168,6 +184,7 @@ struct CyclePlanLens<Header: View>: View {
                                 onAddExpense: { onAction(.addExpense(to: item)) },
                                 onMoveExpenses: { onAction(.moveExpenses(to: item)) }
                             )
+                            .tourTarget(.harianRow)
                         } else {
                             PlanFixedRow(
                                 item: item,

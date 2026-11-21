@@ -70,6 +70,7 @@ struct LeaderboardRanking: View {
                             growth: growth.factor
                         )
                         .contentShape(.rect)
+                        .tourTarget(index == 0 ? .topRank : nil)
                     }
                     .buttonStyle(.pressableRow)
 

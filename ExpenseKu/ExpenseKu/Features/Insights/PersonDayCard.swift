@@ -7,6 +7,7 @@
 //  draws, so the two screens agree about what a day looks like.
 //
 
+import SwiftData
 import SwiftUI
 
 struct PersonDayCard: View {
@@ -36,6 +37,7 @@ struct PersonDayCard: View {
                         onSelect(expense)
                     } label: {
                         ExpenseRow(expense: expense)
+                            .tourLanding(expense.persistentModelID)
                             .contentShape(.rect)
                     }
                     .buttonStyle(.pressableRow)

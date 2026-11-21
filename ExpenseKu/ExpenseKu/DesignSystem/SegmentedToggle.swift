@@ -21,12 +21,14 @@ struct SegmentedToggle<Value: Hashable>: View {
         let value: Value
         let title: String
         let systemImage: String
+        let tourTarget: TourTarget?
         var id: Value { value }
 
-        init(_ value: Value, title: String, systemImage: String) {
+        init(_ value: Value, title: String, systemImage: String, tourTarget: TourTarget? = nil) {
             self.value = value
             self.title = title
             self.systemImage = systemImage
+            self.tourTarget = tourTarget
         }
     }
 

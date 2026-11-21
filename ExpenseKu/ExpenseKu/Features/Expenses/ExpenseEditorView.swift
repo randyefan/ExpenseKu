@@ -22,6 +22,7 @@ struct ExpenseEditorView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(ReceiptModelStore.self) private var receiptModel
     @Environment(ReceiptReadAhead.self) private var receiptReadAhead
+    @Environment(\.tour) private var tour
 
     /// nil = adding a new expense; non-nil = editing an existing one.
     let editing: Expense?
@@ -190,8 +191,10 @@ struct ExpenseEditorView: View {
     var body: some View {
         editorBody
             .onAppear(perform: applyDefaultsIfNeeded)
-            .confirmsDiscard(when: hasChanges && receiptRun == nil, onDiscard: finish)
-            .interactiveDismissDisabled(receiptRun != nil)
+            .onAppear { tour?.note(.editorOpened) }
+            .onDisappear { tour?.note(.editorClosed) }
+            .confirmsDiscard(when: hasChanges && receiptRun == nil && tour == nil, onDiscard: finish)
+            .interactiveDismissDisabled(receiptRun != nil || tour != nil)
             .overlay {
                 if readingTask != nil {
                     ReadingReceiptOverlay(onCancel: cancelReading)
@@ -253,7 +256,7 @@ struct ExpenseEditorView: View {
             if let me = me.first, !people.contains(where: { $0.persistentModelID == me.persistentModelID }) {
                 people.insert(me, at: 0)
             }
-            if let id = QuickPickOrder.defaultAccount(latestFirst: recent) {
+            if tour?.leavesAccountEmpty != true, let id = QuickPickOrder.defaultAccount(latestFirst: recent) {
                 account = allAccounts.first { $0.persistentModelID == id }
             }
             if !hasPresetDate && receiptRun == nil {
@@ -296,21 +299,28 @@ struct ExpenseEditorView: View {
 
                     AmountHero(displayExpression: expr.displayExpression, amount: resolvedAmount)
                         .padding(.horizontal, Metric.screenPadding)
+                        .tourTarget(.amountReadout, radius: Metric.cardRadius)
 
                     WhenShortcutRow(date: $date, tap: $whenTap)
 
                     CategoryGrid(categories: categoryTiles, selection: $category) {
                         picker = .categories
                     }
+                    .tourTarget(.categoryGrid, radius: Metric.cardRadius)
+                    .id(TourTarget.categoryGrid)
 
                     PeopleChipRail(rail: peopleRail, everyone: everyone, selection: $people) {
                         picker = .people
                     }
+                    .tourTarget(.peopleRail, radius: Metric.cardRadius)
+                    .id(TourTarget.peopleRail)
 
                     AccountMenuRow(accounts: allAccounts.ordered(by: order.accounts, appendingRest: true),
                                    selection: $account) {
                         showingNewAccount = true
                     }
+                    .tourTarget(.accountRow, radius: Metric.cardRadius)
+                    .id(TourTarget.accountRow)
 
                     EnvelopeNoteCard(envelope: envelopeField, category: category,
                                      note: $note, notesFocused: $notesFocused)
@@ -333,9 +343,21 @@ struct ExpenseEditorView: View {
             }
             .onChange(of: category) { _, newValue in
                 pull(newValue)
+                tour?.note(.category(newValue?.name))
             }
             .onChange(of: people) { _, newValue in
                 join(newValue)
+                tour?.note(.people(newValue.map(\.name)))
+            }
+            .onChange(of: account) { _, newValue in
+                tour?.note(.account(newValue?.name))
+            }
+            .onChange(of: resolvedAmount) { _, newValue in
+                tour?.note(.amount(newValue))
+            }
+            .onChange(of: tour?.command) { _, request in
+                guard case .scrollEditor(let target) = request?.command else { return }
+                withAnimation { scrollPosition.scrollTo(id: target, anchor: .center) }
             }
             .onChange(of: note) { noteIsUntouched = false }
             .onChange(of: notesFocused) { _, focused in
@@ -353,6 +375,7 @@ struct ExpenseEditorView: View {
                     onCancel: cancel,
                     onDelete: deleteExpense
                 )
+                .tourTarget(.keypad, radius: Metric.cardRadius)
             }
 
             if keypadFollowsForm {
@@ -389,12 +412,17 @@ struct ExpenseEditorView: View {
                 ToolbarSpacer(.fixed, placement: .primaryAction)
             }
             ToolbarItem(placement: .primaryAction) {
-                ReadReceiptMenu(
-                    onPhotos: { showingPhotos = true },
-                    onCamera: { showingCamera = true },
-                    onPaste: pasteReceipt
-                )
-                .disabled(readingTask != nil)
+                if tour != nil {
+                    Button(AppLocalization.string(.readReceipt), systemImage: "receipt", action: readTourReceipt)
+                        .disabled(readingTask != nil)
+                } else {
+                    ReadReceiptMenu(
+                        onPhotos: { showingPhotos = true },
+                        onCamera: { showingCamera = true },
+                        onPaste: pasteReceipt
+                    )
+                    .disabled(readingTask != nil)
+                }
             }
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
@@ -439,6 +467,10 @@ struct ExpenseEditorView: View {
             target.markReceiptChecked()
         }
         try? context.save()
+        if let tour {
+            tour.land(target.persistentModelID)
+            tour.note(.saved)
+        }
         if receiptRun != nil { endRun(.saved) } else { finish() }
     }
 
@@ -466,6 +498,28 @@ struct ExpenseEditorView: View {
             guard let stored, !Task.isCancelled else { return }
             readingTask = nil
             apply(stored, from: data)
+        }
+    }
+
+    /// The tour's receipt mission (welcome-tour.md §4.5): no source menu and no model, a
+    /// prepared reading whose amount, Category and note land one at a time.
+    private func readTourReceipt() {
+        tour?.note(.receiptTapped)
+        readingTask = Task {
+            try? await Task.sleep(for: .seconds(2))
+            guard !Task.isCancelled else { return }
+            readingTask = nil
+            try? await Task.sleep(for: .milliseconds(400))
+            withAnimation(Motion.settle) { expr = ExpressionEvaluator(amount: TourReceipt.amount) }
+            try? await Task.sleep(for: .milliseconds(600))
+            withAnimation(Motion.settle) {
+                category = allCategories.first { $0.name == TourScript.makan }
+            }
+            try? await Task.sleep(for: .milliseconds(600))
+            withAnimation(Motion.settle) { note = TourReceipt.note }
+            receiptImage = TourReceipt.imageData()
+            try? await Task.sleep(for: .milliseconds(500))
+            tour?.note(.receiptFilled)
         }
     }
 

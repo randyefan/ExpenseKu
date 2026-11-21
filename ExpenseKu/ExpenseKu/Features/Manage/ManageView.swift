@@ -24,11 +24,20 @@ struct ManageView: View {
     @Query private var accounts: [Account]
     @State private var path: [Destination] = []
     @Environment(ReceiptModelStore.self) private var receiptModel
+    @Environment(TourStore.self) private var tourStore
+    @Environment(\.tour) private var tour
+    @State private var showingTourMap = false
+    @State private var pickedTourEntry: TourEntry?
 
     var body: some View {
         NavigationStack(path: $path) {
             ScrollView {
                 VStack(spacing: Metric.cardGap) {
+                    if tour == nil, tourStore.outcome != .finished {
+                        TourManageCard(done: tourStore.progress.done) { showingTourMap = true }
+                            .reveal(0)
+                    }
+
                     VStack(spacing: 0) {
                         NavigationLink(value: Destination.categories) {
                             ManageMenuRow(title: AppLocalization.string(.categories), systemImage: "folder.fill",
@@ -67,6 +76,16 @@ struct ManageView: View {
                     LanguageMenu()
                         .reveal(1)
 
+                    if tour == nil, tourStore.outcome == .finished {
+                        Button { showingTourMap = true } label: {
+                            ManageMenuRow(title: AppLocalization.string(.tourName), systemImage: "wallet.bifold.fill",
+                                          subtitle: AppLocalization.string(.tourPlayAgain), tint: Theme.accent)
+                        }
+                        .buttonStyle(.pressableRow)
+                        .cardStyle()
+                        .reveal(2)
+                    }
+
                     AppVersionFooter()
                         .reveal(2)
                 }
@@ -86,6 +105,10 @@ struct ManageView: View {
                 }
             }
         }
+        .sheet(isPresented: $showingTourMap, onDismiss: openPickedTour) {
+            TourChapterMapSheet(done: tourStore.progress.done) { pickedTourEntry = $0 }
+                .presentationBackground(Theme.bg)
+        }
         .task {
             #if DEBUG
             switch DebugLaunch.startScreen {
@@ -98,5 +121,11 @@ struct ManageView: View {
             }
             #endif
         }
+    }
+
+    private func openPickedTour() {
+        guard let pickedTourEntry else { return }
+        self.pickedTourEntry = nil
+        tourStore.launch = TourLaunch(entry: pickedTourEntry, isReplay: true)
     }
 }

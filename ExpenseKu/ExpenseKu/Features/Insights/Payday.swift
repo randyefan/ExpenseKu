@@ -18,9 +18,18 @@ enum Payday {
     private static let key = "payday"
     private static var store: NSUbiquitousKeyValueStore { .default }
 
+    /// Set while the ExpenseKu tour shows its sample, whose cycles run from the 25th
+    /// (welcome-tour.md §5); the screens it borrows read the payday from `current`.
+    static var sampleOverride: Int?
+
+    static var current: Int {
+        get { sampleOverride ?? stored }
+        set { stored = newValue }
+    }
+
     /// The stored payday, clamped to a valid day-of-month. Returns `defaultValue`
     /// when never set (an unset key reads back as 0 from the KV store).
-    static var current: Int {
+    static var stored: Int {
         get {
             let stored = Int(store.longLong(forKey: key))
             guard range.contains(stored) else { return defaultValue }

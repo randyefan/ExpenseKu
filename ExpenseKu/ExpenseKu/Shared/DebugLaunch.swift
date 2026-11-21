@@ -43,6 +43,21 @@ enum DebugLaunch {
     /// screenshots where taps cannot reach (e.g. `-planGuide paydayTransfers:2:4`).
     static var planGuide: String? { value(for: "-planGuide") }
 
+    /// -welcomeTour opening|1…4 opens the ExpenseKu tour on its opening or at a chapter's start.
+    static var welcomeTour: TourEntry? {
+        guard let value = value(for: "-welcomeTour") else { return nil }
+        if value == "opening" { return .opening }
+        return Int(value).flatMap(TourChapter.init(rawValue:)).map(TourEntry.chapter)
+    }
+
+    /// -resetWelcomeTour forgets the tour's outcome and progress, as on a first install.
+    static var resetsWelcomeTour: Bool { args.contains("-resetWelcomeTour") }
+
+    /// True when launch arguments drive the app to a screen, so the tour stays shut.
+    static var drivesScreens: Bool {
+        shouldSeed || startTab != nil || startScreen != nil || planGuide != nil
+    }
+
     /// Inserts a small, realistic dataset once, only if the store is empty.
     @MainActor
     static func seedIfNeeded(_ context: ModelContext) {

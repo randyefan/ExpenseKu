@@ -37,6 +37,7 @@ struct SpendByCategoryChart: View {
                     .contentShape(.rect)
                 }
                 .buttonStyle(.pressableRow)
+                .tourTarget(item.categoryName == TourScript.makan ? .makanBar : nil)
             }
         }
         .growsOnAppear(growth, trigger: data.map(\.id))

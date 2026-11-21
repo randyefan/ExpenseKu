@@ -138,6 +138,7 @@ struct CalculatorKeypad: View {
         }
         .buttonStyle(.pressableCard)
         .disabled(!canSave)
+        .tourTarget(.saveKey, radius: 14)
         .accessibilityLabel(saveLabel)
     }
 
